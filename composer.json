@@ -1,0 +1,5 @@
+{
+    "require": {
+        "directorytree/ldaprecord": "^1.12"
+    }
+}
