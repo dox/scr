@@ -20,7 +20,7 @@ if (isset($_POST['memberUID'])) {
 <div class="container">
   <div class="px-3 py-3 pt-md-5 pb-md-4 text-center">
     <h1 class="display-4"><?php echo $memberObject->displayName(); ?></h1>
-    <p class="lead"><?php echo $memberObject->type; ?></p>
+    <p class="lead"><?php echo $memberObject->type . $memberObject->memberBadge(); ?></p>
   </div>
 
   <main>

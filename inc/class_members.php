@@ -32,7 +32,7 @@ class members extends member {
     $memberTitlesMandatory = array("");
     $memberTitlesSettings = explode(",", $settingsClass->value('member_titles'));
     $memberTitles = array_merge($memberTitlesMandatory, $memberTitlesSettings);
-    
+
     return $memberTitles;
   }
 }
