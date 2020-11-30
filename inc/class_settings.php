@@ -20,7 +20,7 @@ class settings {
 
   public function value($name = null) {
     global $db;
-    
+
     $sql  = "SELECT *  FROM " . self::$table_name;
     $sql .= " WHERE name = '" . $name . "'";
 
@@ -29,7 +29,7 @@ class settings {
 
     return $settingValue;
   }
-  
+
   public function update($array = null) {
     global $db;
 
@@ -49,7 +49,7 @@ class settings {
 
     return $update;
   }
-  
+
   public function create($array = null) {
 	global $db;
 
@@ -64,12 +64,12 @@ class settings {
 
     $sql .= " (" . implode(",", $sqlColumns) . ") ";
     $sql .= " VALUES (" . implode(",", $sqlValues) . ")";
-    
+
     $create = $db->query($sql);
 
     return $create;
   }
-  
+
   public function alert ($type = null, $title = null, $description = null) {
 	  $alertClasses = array("primary", "secondary", "success" , "danger" , "warning", "info");
 	  if (in_array($type, $alertClasses)) {
@@ -77,14 +77,14 @@ class settings {
 	  } else {
 		  $class = "alert-secondary";
 	  }
-	  
+
 	  $output  = "<div class=\"container\">";
 	  $output .= "<div class=\"alert " . $class . " alert-dismissible show\" role=\"alert\">";
 	  $output .= "<strong>" . $title . "</strong> " . $description;
 	  $output .= "<button type=\"button\" class=\"btn-close\" data-dismiss=\"alert\" aria-label=\"Close\"></button>";
 	  $output .= "</div>";
 	  $output .= "</div>";
-	  
+
 	  return $output;
   }
 }

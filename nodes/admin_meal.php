@@ -3,7 +3,7 @@ admin_gatekeeper();
 
 $mealsClass = new meals();
 
-$mealObject = new meal($_GET['uid']);
+$mealObject = new meal($_GET['mealUID']);
 
 
 ?>

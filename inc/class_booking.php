@@ -4,8 +4,8 @@ class booking {
 
   public $uid;
   public $date;
-  public $mealUID;
-  public $memberUID;
+  public $meal_uid;
+  public $member_ldap;
   public $guests_array; // json encoded array
   public $wine;
   public $dessert;
@@ -31,23 +31,41 @@ class booking {
     }
     return $guestsArray;
   }
-  
+
   public function addGuest($newGuestArray = null) {
 	  global $db;
-	  
+
 	  $allGuests = $this->guestsArray();
 	  array_push($allGuests, $newGuestArray);
 	  $allGuests = json_encode($allGuests);
-	  
+
 	  $sql  = "UPDATE " . self::$table_name;
 	  $sql .= " SET guests_array = '" . $allGuests . "' ";
 	  $sql .= " WHERE uid = '" . $this->uid . "' LIMIT 1";
-	  
+
 	  $booking = $db->query($sql);
-	  
+
 	  return $this->guests_array;
   }
-  
+
+  public function create($array = null) {
+	   global $db;
+
+    $sql  = "INSERT INTO " . self::$table_name;
+
+    foreach ($array AS $updateItem => $value) {
+      $sqlColumns[] = $updateItem;
+      $sqlValues[] = "'" . $value . "' ";
+    }
+
+    $sql .= " (" . implode(",", $sqlColumns) . ") ";
+    $sql .= " VALUES (" . implode(",", $sqlValues) . ")";
+
+    $create = $db->query($sql);
+
+    return $create;
+  }
+
   public function update($array = null) {
 	 global $db;
 

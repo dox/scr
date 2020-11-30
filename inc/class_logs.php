@@ -45,7 +45,7 @@ class logs {
     $sql  = "INSERT INTO " . self::$table_name;
     $sql .= " (ip, type, username, description) ";
     $sql .= " VALUES ('" . ip2long($_SERVER['REMOTE_ADDR']) . "', '" . $type . "', '" . $_SESSION['username'] . "', '" . $description . "')";
-    
+
     $logs = $db->query($sql);
 
   }

@@ -10,12 +10,14 @@ class member {
   public $type;
   public $email;
   public $dietary;
+  public $opt_in;
 
   function __construct($memberUID = null) {
     global $db;
 
 		$sql  = "SELECT * FROM " . self::$table_name;
     $sql .= " WHERE uid = '" . $memberUID . "'";
+    $sql .= " OR ldap = '" . $memberUID . "'";
 
 		$member = $db->query($sql)->fetchArray();
 
@@ -38,6 +40,20 @@ class member {
     }
 
     $name = $title . $firstname . $lastname;
+
+    return $name;
+  }
+
+  public function public_displayName() {
+    if ($this->opt_in == 1) {
+      $name = $this->displayName();
+    } else {
+      $name = "HIDDEN";
+    }
+
+    if ($this->ldap == $_SESSION['username']) {
+      $name = $name . " <i>(You)</i>";
+    }
 
     return $name;
   }

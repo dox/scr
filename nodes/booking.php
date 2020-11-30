@@ -1,14 +1,15 @@
 <?php
+$meal = new meal($_GET['mealUID']);
+
 $bookingsClass = new bookings();
-$bookingObject = new booking($_GET['bookingUID']);
+$bookingByMember = $bookingsClass->bookingForMealByMember($meal->uid, $_SESSION['username']);
+$bookingObject = new booking($bookingByMember['uid']);
 
 if (!empty($_POST['guest_name'])) {
   $bookingObject->update($_POST);
   $bookingObject = new booking($_GET['bookingUID']);
   echo $settingsClass->alert("success", $_POST['name'], " booking updated");
 }
-
-$meal = new meal($bookingObject->mealUID);
 
 //$bookingsThisMeal = $bookingsClass->bookings_this_meal($meal->uid);
 
@@ -68,7 +69,7 @@ printArray($arr);
         foreach ($meal->bookings_this_meal() AS $booking) {
           $totalGuests = count(json_decode($booking['guests_array']));
 
-          $memberObject = new member($booking['memberUID']);
+          $memberObject = new member($booking['member_ldap']);
           echo "<li>" . $memberObject->public_displayName() . " (" . $totalGuests . " guests)</li>";
         }
         ?>
@@ -106,7 +107,7 @@ printArray($arr);
 
           <div class="form-group">
             <div class="form-check form-switch">
-	            <input class="form-check-input" type="checkbox" id="guest_wine" name="guest_wine"">
+	            <input class="form-check-input" type="checkbox" id="guest_wine" name="guest_wine">
 	            <label class="form-check-label" for="domus">Wine</label>
 	        </div>
           </div>

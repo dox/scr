@@ -40,18 +40,24 @@ class meal {
     $output .= "<li>Collection from Wolfson Hall</li>";
     $output .= "</ul>";
 
-    $output .= "<div class=\"btn-group\">";
-    $output .= "<button type=\"button\" id=\"mealUID-" . $this->uid . "\" class=\"btn btn-outline-primary\" onclick=\"bookMealQuick(this.id)\">Book Meal</button>";
-    $output .= "<button type=\"button\" id=\"mealUID_dropdown-" . $this->uid . "\" class=\"btn btn-outline-primary dropdown-toggle dropdown-toggle-split\" data-toggle=\"dropdown\" aria-expanded=\"false\">";
-    $output .= "<span class=\"visually-hidden\">Toggle Dropdown</span>";
-    $output .= "</button>";
-    $output .= "<ul class=\"dropdown-menu\">";
-    $output .= "<li><a class=\"dropdown-item\" href=\"index.php?n=booking&bookingUID=" . $this->uid . "\">Manage Booking</a></li>";
-    $output .= "<li><a class=\"dropdown-item\" href=\"index.php?n=admin_meal&uid=" . $this->uid . "\">Manage Meal</a></li>";
-    $output .= "<li><hr class=\"dropdown-divider\"></li>";
-    $output .= "<li><a class=\"dropdown-item\" href=\"#\">Cancel Booking</a></li>";
-    $output .= "</ul>";
-    $output .= "</div>";
+    if ($bookingsClass->bookingExistCheck($this->uid, $_SESSION['username'])) {
+      $output .= "<a href=\"index.php?n=booking&mealUID=" . $this->uid . "\" role=\"button\" class=\"btn btn-success\" id=\"mealUID-" . $this->uid . "\">Manage Booking</a>";
+    } else {
+      $output .= "<a href=\"#\" role=\"button\" class=\"btn btn-outline-primary\" id=\"mealUID-" . $this->uid . "\" onclick=\"bookMealQuick(this.id)\">Book Meal</a>";
+    }
+
+    //$output .= "<div class=\"btn-group\">";
+    //$output .= "<button type=\"button\" id=\"mealUID-" . $this->uid . "\" class=\"btn btn-outline-primary\" onclick=\"bookMealQuick(this.id)\">Book Meal</button>";
+    //$output .= "<button type=\"button\" id=\"mealUID_dropdown-" . $this->uid . "\" class=\"btn btn-outline-primary dropdown-toggle dropdown-toggle-split\" data-toggle=\"dropdown\" aria-expanded=\"false\">";
+    //$output .= "<span class=\"visually-hidden\">Toggle Dropdown</span>";
+    //$output .= "</button>";
+    //$output .= "<ul class=\"dropdown-menu\">";
+    //$output .= "<li><a class=\"dropdown-item\" href=\"index.php?n=booking&mealUID=" . $this->uid . "\">Manage Booking</a></li>";
+    //$output .= "<li><a class=\"dropdown-item\" href=\"index.php?n=admin_meal&mealUID=" . $this->uid . "\">Manage Meal</a></li>";
+    //$output .= "<li><hr class=\"dropdown-divider\"></li>";
+    //$output .= "<li><a class=\"dropdown-item\" href=\"#\">Cancel Booking</a></li>";
+    //$output .= "</ul>";
+    //$output .= "</div>";
 
     $output .= "</div>";
     $output .= "</div>";
@@ -68,9 +74,7 @@ class meal {
     global $db;
 
     $sql  = "SELECT *  FROM bookings";
-    $sql .= " WHERE mealUID = '" . $this->uid . "'";
-
-    echo $sql;
+    $sql .= " WHERE meal_uid = '" . $this->uid . "'";
 
     $bookings = $db->query($sql)->fetchAll();
 

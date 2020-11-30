@@ -95,7 +95,7 @@ class term {
 
     $sql .= " (" . implode(",", $sqlColumns) . ") ";
     $sql .= " VALUES (" . implode(",", $sqlValues) . ")";
-    
+
     $create = $db->query($sql);
 
     return $create;
