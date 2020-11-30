@@ -7,11 +7,7 @@ class bookings extends booking {
   public function totalBookingsByMealUID($mealUID = null) {
     global $db;
 
-    $sql  = "SELECT *  FROM " . self::$table_name;
-    $sql .= " WHERE mealUID = '" . $mealUID . "'";
-    $sql .= " ORDER BY uid ASC";
-
-    $bookings = $db->query($sql)->fetchAll();
+    $bookings = $this->bookings_this_meal($mealUID);
 
     foreach ($bookings AS $booking) {
       $guestsArray[] = count($booking['guests_array']);

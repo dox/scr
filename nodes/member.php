@@ -13,6 +13,9 @@ $membersClass = new members();
 $memberObject = new member($memberUID);
 
 if (isset($_POST['memberUID'])) {
+  if (!isset($_POST['opt_in'])) {
+    $_POST['opt_in'] = 0;
+  }
   $memberObject->update($_POST);
   $memberObject = new member($memberUID);
 }
@@ -234,20 +237,12 @@ if (isset($_POST['memberUID'])) {
 
           <hr class="my-4">
 
-          <h4 class="mb-3">Payment</h4>
+          <h4 class="mb-3">Privacy</h4>
 
           <div class="my-3">
-            <div class="form-check">
-              <input id="credit" type="radio" class="form-check-input" checked required>
-              <label class="form-check-label" for="credit">Credit card</label>
-            </div>
-            <div class="form-check">
-              <input id="debit" type="radio" class="form-check-input" required>
-              <label class="form-check-label" for="debit">Debit card</label>
-            </div>
-            <div class="form-check">
-              <input id="paypal"type="radio" class="form-check-input" required>
-              <label class="form-check-label" for="paypal">PayPal</label>
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" id="opt_in" name="opt_in" value="1" <?php if ($memberObject->opt_in == "1") { echo " checked";} ?>>
+              <label class="form-check-label" for="opt_in">Allow my name to appear on dining lists (also applies to my guests)</label>
             </div>
           </div>
 

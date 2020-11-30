@@ -63,5 +63,18 @@ class meal {
   public function termNumber() {
     return "??";
   }
+
+  public function bookings_this_meal() {
+    global $db;
+
+    $sql  = "SELECT *  FROM bookings";
+    $sql .= " WHERE mealUID = '" . $this->uid . "'";
+
+    echo $sql;
+
+    $bookings = $db->query($sql)->fetchAll();
+
+    return $bookings;
+  }
 }
 ?>

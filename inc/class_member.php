@@ -10,6 +10,7 @@ class member {
   public $type;
   public $email;
   public $dietary;
+  public $opt_in;
 
   function __construct($memberUID = null) {
     global $db;
@@ -38,6 +39,16 @@ class member {
     }
 
     $name = $title . $firstname . $lastname;
+
+    return $name;
+  }
+
+  public function public_displayName() {
+    if ($this->opt_in == 1) {
+      $name = $this->displayName();
+    } else {
+      $name = "Name hidden";
+    }
 
     return $name;
   }

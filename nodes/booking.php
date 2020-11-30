@@ -8,9 +8,9 @@ if (!empty($_POST['guest_name'])) {
   echo $settingsClass->alert("success", $_POST['name'], " booking updated");
 }
 
-$meal = new meal($booking->mealUID);
+$meal = new meal($bookingObject->mealUID);
 
-//$bookingsThisMeal = $bookingsClass->allByMealUID($meal->uid);
+//$bookingsThisMeal = $bookingsClass->bookings_this_meal($meal->uid);
 
 /*
 $arr = array(
@@ -63,9 +63,16 @@ printArray($arr);
       </div>
       <div class="col-md-7 col-lg-8">
         <h4 class="mb-3">Guest List</h4>
+        <ul>
         <?php
-        printArray($bookingsThisMeal);
+        foreach ($meal->bookings_this_meal() AS $booking) {
+          $totalGuests = count(json_decode($booking['guests_array']));
+
+          $memberObject = new member($booking['memberUID']);
+          echo "<li>" . $memberObject->public_displayName() . " (" . $totalGuests . " guests)</li>";
+        }
         ?>
+        </ul>
       </div>
     </div>
   </main>
