@@ -85,5 +85,22 @@ class booking {
 
     return $update;
   }
+
+  public function delete() {
+    global $db;
+    global $logsClass;
+
+    $bookingUID = $this->uid;
+
+    $sql  = "DELETE FROM " . self::$table_name;
+    $sql .= " WHERE uid = '" . $this->uid . "' ";
+    $sql .= " LIMIT 1";
+
+    $delete = $db->query($sql);
+
+    $logsClass->create("booking", "Booking deleted for " . $_SESSION['username'] . " for meal " . $bookingUID);
+
+    return $delete;
+  }
 }
 ?>

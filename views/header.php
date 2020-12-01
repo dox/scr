@@ -26,7 +26,8 @@
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-expanded="false">Settings</a>
               <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <li><a class="dropdown-item" href="index.php?n=member">Member Info</a></li>
+                <?php
+								if($_SESSION['admin'] == true) { ?><li><a class="dropdown-item" href="index.php?n=admin_impersonate">Impersonate</a></li><?php } ?>
                 <li><a class="dropdown-item" href="index.php?n=admin_members">Members</a></li>
                 <li><a class="dropdown-item" href="index.php?n=admin_meals">Meals</a></li>
                 <li><a class="dropdown-item" href="index.php?n=admin_terms">Terms</a></li>

@@ -1,5 +1,15 @@
 <?php
 $termObject = new term();
+
+if (isset($_GET['deleteBookingUID'])) {
+  $bookingObject = new booking($_GET['deleteBookingUID']);
+  if ($bookingObject->member_ldap == $_SESSION['username']) {
+    echo "DELETE";
+    $bookingObject->delete();
+  } else {
+    echo "Meal for '" . $bookingObject->member_ldap . "' not deleted.  You do not have permission as " . $_SESSION['username'];
+  }
+}
 ?>
 <main class="container">
   <div class="px-3 py-3 pt-md-5 pb-md-4 text-center">

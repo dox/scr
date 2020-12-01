@@ -24,7 +24,7 @@ function bookMealQuick(this_id) {
       buttonClicked.removeAttribute("onclick");
       buttonClicked.href = "index.php?n=booking&mealUID=" + mealUID;
       buttonClicked.innerText = 'Manage Booking';
-
+      
       //alert(`Done, got ${request.response.length} bytes`); // response is the server response
     }
   };
@@ -34,6 +34,12 @@ function bookMealQuick(this_id) {
   };
 
   return false;
+}
+
+function bookingDeleteButton() {
+  if (window.confirm("Are you sure you want to run delete this meal booking?  This will also remove all of your guests from this booking.")) {
+			location.href = 'index.php';
+	}
 }
 
 
