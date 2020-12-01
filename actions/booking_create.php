@@ -1,4 +1,5 @@
 <?php
+//quit();
 include_once("../inc/autoload.php");
 
 $bookingObject = new booking();

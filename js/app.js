@@ -4,19 +4,34 @@ function bookMealQuick(this_id) {
   var mealUID = this_id.replace("mealUID-", "");
 
   var buttonClicked = document.getElementById(this_id);
-
-  buttonClicked.className = 'btn btn-success';
-  buttonClicked.removeAttribute("onclick");
-  buttonClicked.href = "index.php?n=booking&mealUID=" + mealUID;
-  buttonClicked.innerText = 'Manage Booking';
-
   var formData = new FormData();
-  //formData.append("member_ldap", 'test');
+
   formData.append("meal_uid", mealUID);
 
+  //https://javascript.info/xmlhttprequest GREAT documentation!
   var request = new XMLHttpRequest();
+
   request.open("POST", "../actions/booking_create.php");
   request.send(formData);
+
+  // 4. This will be called after the response is received
+  request.onload = function() {
+    if (request.status != 200) { // analyze HTTP status of the response
+      alert("Something went wrong.  Please refresh this page and try again.");
+      alert(`Error ${request.status}: ${request.statusText}`); // e.g. 404: Not Found
+    } else { // show the result
+      buttonClicked.className = 'btn btn-success';
+      buttonClicked.removeAttribute("onclick");
+      buttonClicked.href = "index.php?n=booking&mealUID=" + mealUID;
+      buttonClicked.innerText = 'Manage Booking';
+
+      //alert(`Done, got ${request.response.length} bytes`); // response is the server response
+    }
+  };
+
+  request.onerror = function() {
+    alert("Request failed");
+  };
 
   return false;
 }
