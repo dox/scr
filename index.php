@@ -1,6 +1,19 @@
 <?php
 include_once("inc/autoload.php");
 
+// impersonate
+if (isset($_POST['impersonate_ldap'])) {
+  $_SESSION['username_original'] = $_SESSION['username'];
+  $_SESSION['username'] = $_POST['impersonate_ldap'];
+  $_SESSION['impersonating'] = "true";
+}
+// impersonate stop
+if (isset($_POST['stop_impersonating'])) {
+  $_SESSION['username'] = $_SESSION['username_original'];
+  unset($_SESSION['username_original']);
+  unset($_SESSION['impersonating']);
+}
+
 if (isset($_POST['inputUsername']) && isset($_POST['inputPassword'])) {
 	if ($ldap_connection->auth()->attempt($_POST['inputUsername'] . LDAP_ACCOUNT_SUFFIX, $_POST['inputPassword'], $stayAuthenticated = true)) {
 		$arrayOfAdmins = explode(",", $settingsClass->value('member_admins'));
@@ -43,7 +56,8 @@ if ($_SESSION['logon'] != true) {
   <link rel="canonical" href="https://scr2.seh.ox.ac.uk/">
 
   <!-- Bootstrap core CSS -->
-	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-CuOF+2SnTUfTwSZjCXf01h7uYhfOBuxIhGKPbfEJ3+FqH/s6cIFN9bGr1HmAg4fQ" crossorigin="anonymous">
+	<!--<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-CuOF+2SnTUfTwSZjCXf01h7uYhfOBuxIhGKPbfEJ3+FqH/s6cIFN9bGr1HmAg4fQ" crossorigin="anonymous">-->
+  <link rel="stylesheet" href="https://unpkg.com/@tabler/core@latest/dist/css/tabler.min.css">
 
 	<!-- Favicons -->
 	<link rel="apple-touch-icon" sizes="180x180" href="/img/favicons/apple-touch-icon.png">
@@ -55,17 +69,19 @@ if ($_SESSION['logon'] != true) {
   <meta name="theme-color" content="#7952b3">
 
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-popRpmFF9JQgExhfw5tZT4I9/CI5e2QcuUZPOVXb1m7qUmeR2b50u+YFEYe1wgzy" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@tabler/core@latest/dist/js/tabler.min.js"></script>
 
 	<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
 	<script src="js/app.js"></script>
 </head>
 
 <!--<body>-->
-<body class="bg-light">
-	<div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+<body>
 		<?php
 		include_once("views/header.php");
 		?>
+
+    <div class="container">
 		<?php
 
 		$node = "nodes/index.php";
@@ -77,9 +93,11 @@ if ($_SESSION['logon'] != true) {
 				}
 			}
 		include_once($node);
-
+    ?>
+    </div>
+    <?php
 		include_once("views/footer.php");
 		?>
-	</div>
+
 </body>
 </html>

@@ -1,5 +1,4 @@
 <?php
-//quit();
 include_once("../inc/autoload.php");
 
 $bookingObject = new booking();
@@ -10,6 +9,9 @@ $bookingArray = array(
 );
 
 $booking = $bookingObject->create($bookingArray);
+
+//quit();
+echo "Booking made";
 
 $logsClass->create("booking", "Booking made for " . $_SESSION['username'] . " for meal " . $_POST['meal_uid']);
 ?>
