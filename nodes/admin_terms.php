@@ -14,7 +14,7 @@ $terms = $termsClass->all();
 <div class="container">
   <div class="px-3 py-3 pt-md-5 pb-md-4 text-center">
     <h1 class="display-4">Terms</h1>
-    <p class="lead">Some text here about meal booking.  Make it simple!</p>
+    <p class="lead">Term dates from <a href="https://www.ox.ac.uk/about/facts-and-figures/dates-of-term">Oxford's website</a>.</p>
   </div>
 
   <div class="pb-3 text-right">

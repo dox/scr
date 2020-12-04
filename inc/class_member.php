@@ -8,6 +8,7 @@ class member {
   public $firstname;
   public $lastname;
   public $type;
+  public $precedence;
   public $email;
   public $dietary;
   public $opt_in;

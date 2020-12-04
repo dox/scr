@@ -22,7 +22,7 @@ $members = $membersClass->all();
 <div class="container">
   <div class="px-3 py-3 pt-md-5 pb-md-4 text-center">
     <h1 class="display-4">SCR Members</h1>
-    <p class="lead">Some text here about meal booking.  Make it simple!</p>
+    <p class="lead">Members, and their order of precedence.</p>
   </div>
 
   <div class="pb-3 text-right">
@@ -92,30 +92,88 @@ function itterate() {
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
-      <form method="post" id="termForm" action="index.php?n=admin_terms">
+      <form method="post" id="termForm" action="<?php echo $_SERVER['REQUEST_URI']; ?>">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Add New Term Date</h5>
+        <h5 class="modal-title" id="exampleModalLabel">Add New SCR Memeber</h5>
         <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-          <div class="form-group">
-            <label for="inputTermName">Term Name</label>
-            <input type="text" class="form-control" name="inputTermName" id="inputTermName" aria-describedby="termNameHelp">
-            <small id="termNameHelp" class="form-text text-muted">Something like 'Trinity 2020'</small>
+          <div class="mb-12">
+            <label for="title" class="form-label">Title</label>
+            <select class="form-select" name="title" id="title" required>
+              <?php
+              foreach ($membersClass->memberTitles() AS $title) {
+                $output = "<option value=\"" . $title . "\">" . $title . "</option>";
+
+                echo $output;
+              }
+              ?>
+            </select>
+            <div class="invalid-feedback">
+              Title is required.
+            </div>
           </div>
 
-          <div class="form-group">
-            <label for="inputTermStartDate">Term Start Date</label>
-            <input type="text" class="form-control" name="inputTermStartDate" id="inputTermStartDate" aria-describedby="termStartDate">
-            <small id="termStartDate" class="form-text text-muted">2020-01-01</small>
+          <div class="mb-12">
+            <label for="firstname" class="form-label">First name</label>
+            <input type="text" class="form-control" name="firstname" id="firstname" placeholder="" value="<?php echo $memberObject->firstname; ?>" required>
+            <div class="invalid-feedback">
+              Valid first name is required.
+            </div>
           </div>
 
-          <div class="form-group">
-            <label for="inputTermEndDate">Term End Date</label>
-            <input type="text" class="form-control" name="inputTermEndDate" id="inputTermEndDate" aria-describedby="termEndDate">
-            <small id="termEndDate" class="form-text text-muted">2020-09-30</small>
+          <div class="col-12">
+            <label for="lastname" class="form-label">Last name</label>
+            <input type="text" class="form-control" name="lastname" id="lastname" placeholder="" value="<?php echo $memberObject->lastname; ?>" required>
+            <div class="invalid-feedback">
+              Valid last name is required.
+            </div>
           </div>
 
+          <div class="col-12">
+            <label for="ldap" class="form-label">LDAP Username</label>
+            <div class="input-group">
+              <span class="input-group-text">@</span>
+              <input type="text" class="form-control" name="ldap" id="ldap" placeholder="LDAP Username" value="<?php echo $memberObject->ldap; ?>" required>
+            <div class="invalid-feedback">
+                LDAP Username is required.
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12">
+            <label for="type" class="form-label">Member Type</label>
+            <select class="form-select" name="type" id="type" required>
+              <?php
+              foreach ($membersClass->memberTypes() AS $type) {
+                if ($type == $memberObject->type) {
+                  $selected = " selected ";
+                } else {
+                  $selected = "";
+                }
+                $output = "<option value=\"" . $type . "\"" . $selected . ">" . $type . "</option>";
+
+                echo $output;
+              }
+              ?>
+            </select>
+            <div class="invalid-feedback">
+              Please select a valid Member Type.
+            </div>
+          </div>
+
+          <div class="col-12">
+            <label for="dietary" class="form-label">Dietary Information</label>
+            <input type="text" class="form-control" name="dietary" id="dietary" placeholder="">
+          </div>
+
+          <div class="col-12">
+            <label for="email" class="form-label">Email <span class="text-muted">(Optional)</span></label>
+            <input type="email" class="form-control" name="email" id="email" placeholder="" value="<?php echo $memberObject->email; ?>">
+            <div class="invalid-feedback">
+              Please enter a valid email address for shipping updates.
+            </div>
+          </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

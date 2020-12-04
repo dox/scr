@@ -155,7 +155,7 @@ printArray($arr);
         <p>Are you sure you want to delete this meal booking?  This will also delete any guests you have booked for this meal.</p>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-link link-secondary mr-auto" data-dismiss="modal">Close</button>
         <a href="index.php?deleteBookingUID=<?php echo $bookingObject->uid; ?>" role="button" class="btn btn-danger" onclck="bookingDeleteButton();">Delete</a>
       </div>
     </div>

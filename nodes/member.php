@@ -6,7 +6,7 @@ if (isset($_GET['memberUID'])) {
     admin_gatekeeper();
   }
 } else {
-  $memberUID = 1;
+  $memberUID = $_SESSION['username'];
 }
 
 $membersClass = new members();
@@ -106,7 +106,7 @@ if (isset($_POST['memberUID'])) {
         </ul>
       </div>
       <div class="col-md-7 col-lg-8">
-        <h4 class="mb-3">Personal Information</h4>
+        <h4 class="d-flex mb-3">Personal Information</h4>
         <form method="post" id="memberUpdate" action="<?php echo $_SERVER['REQUEST_URI']; ?>" class="needs-validation" novalidate>
           <div class="row g-3">
             <div class="col-md-2">
@@ -193,49 +193,44 @@ if (isset($_POST['memberUID'])) {
 
 
 
-            <div class="col-md-4">
-              <label for="state" class="form-label">Title</label>
-              <select class="form-select" id="state" required>
-                <?php
-                foreach ($membersClass->memberTitles() AS $title) {
-                  if ($title == $memberObject->title) {
-                    $selected = " selected ";
-                  } else {
-                    $selected = "";
-                  }
-                  $output = "<option value=\"" . $title . "\"" . $selected . ">" . $title . "</option>";
-
-                  echo $output;
-                }
-                ?>
-              </select>
-              <div class="invalid-feedback">
-                Title is required.
-              </div>
-            </div>
-
-            <div class="col-md-3">
-              <label for="zip" class="form-label">Other2 </label>
-              <input type="text" class="form-control" id="zip" placeholder="" required>
-              <div class="invalid-feedback">
-                Other 2 required.
-              </div>
-            </div>
-          </div>
 
           <hr class="my-4">
 
-          <div class="form-check">
-            <input type="checkbox" class="form-check-input" id="same-address">
-            <label class="form-check-label" for="same-address">Always domus?</label>
+          <div class="divide-y">
+            <div>
+              <label class="row">
+                <span class="col">Default Domus</span>
+                <span class="col-auto">
+                  <label class="form-check form-check-single form-switch"><input class="form-check-input" type="checkbox" checked=""></label>
+                </span>
+              </label>
+            </div>
+            <div>
+              <label class="row">
+                <span class="col">Default Wine</span>
+                <span class="col-auto">
+                  <label class="form-check form-check-single form-switch"><input class="form-check-input" type="checkbox" checked=""></label>
+                </span>
+              </label>
+            </div>
+            <div>
+              <label class="row">
+                <span class="col">Default Dessert</span>
+                <span class="col-auto">
+                  <label class="form-check form-check-single form-switch"><input class="form-check-input" type="checkbox" checked=""></label>
+                </span>
+              </label>
+            </div>
           </div>
 
-          <div class="form-check">
-            <input type="checkbox" class="form-check-input" id="save-info">
-            <label class="form-check-label" for="save-info">Wine/desert?</label>
+          <hr />
+          <div class="input-icon">
+            <input id="calendar-time" type="text" value="2020-06-20" class="form-control flatpickr-input active" placeholder="Select a date" readonly="readonly">
+            <span class="input-icon-addon"><svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><rect x="4" y="5" width="16" height="16" rx="2"></rect><line x1="16" y1="3" x2="16" y2="7"></line><line x1="8" y1="3" x2="8" y2="7"></line><line x1="4" y1="11" x2="20" y2="11"></line><line x1="11" y1="15" x2="12" y2="15"></line><line x1="12" y1="15" x2="12" y2="18"></line></svg>
+            </span>
           </div>
 
-          <hr class="my-4">
+          <hr />
 
           <h4 class="mb-3">Privacy</h4>
 
