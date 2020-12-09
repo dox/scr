@@ -154,21 +154,51 @@ function admin_gatekeeper() {
 	}
 }
 
-function makeTitle() {
+function makeTitle($title = null, $subtitle = nulll, $iconsArray = null) {
 	$output  = "<div class=\"px-3 py-3 pt-md-5 pb-md-4 text-center\">";
-	$output .= "<h1 class=\"display-4\">Week x: " . $meal->name . "</h1>";
-	$output .= "<p class=\"lead\">Some text here about meal booking.  Make it simple!</p>";
+	$output .= "<h1 class=\"display-4\">" . $title . "</h1>";
+
+	if ($subtitle != null) {
+		$output .= "<p class=\"lead\">" . $subtitle . "</p>";
+	}
+
 	$output .= "</div>";
 
 	$output .= "<div class=\"pb-3 text-right\">";
-	$output .= "<button type=\"button\" class=\"btn btn-danger\" data-toggle=\"modal\" data-target=\"#staticBackdrop\">";
-	$output .= "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-trash\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\">";
-	$output .= "<path d=\"M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z\"/>";
-	$output .= "<path fill-rule=\"evenodd\" d=\"M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4L4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z\"/>";
-	$output .= "</svg> Delete Booking";
-	$output .= "</button>";
+	foreach ($iconsArray AS $icon) {
+		$output .= "<button type=\"button\" class=\"btn " . $icon['class'] . "\" data-toggle=\"modal\" data-target=\"#staticBackdrop\">";
+		$output .= "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-trash\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\">";
+		$output .= "<path d=\"M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z\"/>";
+		$output .= "<path fill-rule=\"evenodd\" d=\"M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4L4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z\"/>";
+		$output .= "</svg> " . $icon['name'];
+		$output .= "</button>";
+	}
 	$output .= "</div>";
-	$output .= "";
+
+	return $output;
+}
+
+function ALTmakeTitle($title = null, $subtitle = nulll, $iconsArray = null) {
+
+	$output  = "<div class=\"page-header text-white d-print-none\">";
+	$output .= "<div class=\"row align-items-center\">";
+	$output .= "<div class=\"col\">";
+	$output .= " <div class=\"page-pretitle\">" . $subtitle . "</div>";
+	$output .= "<h2 class=\"page-title\">" . $title . "</h2>";
+	$output .= "</div>";
+	$output .= "<div class=\"col-auto ms-auto d-print-none\">";
+	$output .= "<div class=\"btn-list\">";
+	$output .= "<span class=\"d-none d-sm-inline\">";
+	$output .= "<a href=\"#\" class=\"btn btn-white\">test</a>";
+	$output .= "</span>";
+	$output .= "<a href=\"#\" class=\"btn btn-primary d-none d-sm-inline-block\" data-bs-toggle=\"modal\" data-bs-target=\"#modal-report\">";
+	$output .= "<svg xmlns=\"http://www.w3.org/2000/svg\" class=\"icon\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" stroke-width=\"2\" stroke=\"currentColor\" fill=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path stroke=\"none\" d=\"M0 0h24v24H0z\" fill=\"none\"></path><line x1=\"12\" y1=\"5\" x2=\"12\" y2=\"19\"></line><line x1=\"5\" y1=\"12\" x2=\"19\" y2=\"12\"></line></svg>";
+	$output .= "Create new report";
+	$output .= "</a>";
+	$output .= "</div>";
+	$output .= "</div>";
+	$output .= "</div>";
+	$output .= "</div>";
 
 	return $output;
 }
