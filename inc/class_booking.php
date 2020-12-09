@@ -3,6 +3,7 @@ class booking {
   protected static $table_name = "bookings";
 
   public $uid;
+  public $type;
   public $date;
   public $meal_uid;
   public $member_ldap;

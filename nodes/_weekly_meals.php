@@ -11,7 +11,7 @@ $mealsClass = new meals();
 $datetimeFormatShort = $settingsClass->value('datetime_format_short');
 ?>
 
-<h1><?php echo "<h1>" . $suppliedWeek . " <span class=\"text-muted\">" . $currentTerm->weekStartDate($suppliedWeek) . "</span></h1>"; ?></h1>
+<!--<h1><?php echo "<h1>" . $suppliedWeek . " <span class=\"text-muted\">" . $currentTerm->weekStartDate($suppliedWeek) . "</span></h1>"; ?></h1>-->
 
 <?php
 
@@ -19,8 +19,9 @@ $datetimeFormatShort = $settingsClass->value('datetime_format_short');
 for($i = 0; $i < 7; $i++){
   $date = strtotime("+$i day", strtotime($suppliedWeek));
 
-  echo "<h2>" . date('l d', $date) . "</h2>";
-  echo "<div class=\"row row-cols-1 row-cols-md-3 mb-3 text-center\">";
+  echo "<h2 class=\"text-center\">" . date('l', $date) . " <span class=\"text-muted\">" . date('F jS', $date) . "</span></h2>";
+
+  echo "<div class=\"row row-cols-1 row-cols-md-3 mb-3 text-center justify-content-md-center\">";
   $meals = $mealsClass->allByDate(date('Y-m-d', $date));
 
   foreach ($meals AS $meal) {

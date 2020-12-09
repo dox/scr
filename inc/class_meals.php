@@ -31,5 +31,18 @@ class meals extends meal {
     return $mealTypesSettings;
   }
 
+  public function mealLocations() {
+    global $db;
+
+    $sql  = "SELECT location  FROM " . self::$table_name;
+    $sql .= " WHERE DATE(date_meal) > DATE_SUB(NOW(),INTERVAL 1 YEAR)";
+    $sql .= " GROUP BY location";
+    $sql .= " ORDER BY location ASC";
+
+    $locations = $db->query($sql)->fetchAll();
+
+    return $locations;
+  }
+
 }
 ?>

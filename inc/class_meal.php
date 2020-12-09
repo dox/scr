@@ -4,9 +4,13 @@ class meal {
 
   public $uid;
   public $name;
-  public $capacity;
-  public $guests_allowed;
   public $date_meal;
+  public $location;
+  public $scr_capacity;
+  public $mcr_capacity;
+  public $scr_guests;
+  public $mcr_guests;
+  public $notes;
 
 
   function __construct($mealUID = null) {
@@ -38,11 +42,15 @@ class meal {
     $output .= "</div>";
 
     $output .= "<div class=\"card-body \">";
-    $output .= "<h1 class=\"card-title pricing-card-title\">" . $bookingsThisMeal . " <small class=\"text-muted\">/ " . $this->capacity . " bookings</small></h1>";
+    $output .= "<h1 class=\"card-title pricing-card-title\">" . $bookingsThisMeal . " <small class=\"text-muted\">/ " . $this->totalCapacity() . " bookings</small></h1>";
     $output .= "<ul class=\"list-unstyled mt-3 mb-4\">";
-    $output .= "<li>Wolfson Hall</li>";
-    $output .= "<li>8am - 9.30am</li>";
-    $output .= "<li>Collection from Wolfson Hall</li>";
+    $output .= "<li>" . $this->location . "</li>";
+    $output .= "<li>" . date('H:i', strtotime($this->date_meal)) . "</li>";
+
+    if (isset($this->notes)) {
+      $output .= "<li>" . $this->notes . "</li>";
+    }
+
     $output .= "</ul>";
 
     if ($bookingsClass->bookingExistCheck($this->uid, $_SESSION['username'])) {
@@ -69,6 +77,15 @@ class meal {
     $output .= "</div>";
 
     return $output;
+  }
+
+  public function totalCapacity() {
+    $scrCapacity = $this->scr_capacity;
+    $mcrCapacity = $this->mcr_capacity;
+
+    $totalCapacity = $scrCapacity + $mcrCapacity;
+
+    return $totalCapacity;
   }
 
   public function termNumber() {

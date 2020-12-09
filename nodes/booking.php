@@ -1,5 +1,9 @@
 <?php
+$termsClass = new terms();
+
 $meal = new meal($_GET['mealUID']);
+$checkTerm = $termsClass->checkIsInTerm($meal->date_meal);
+$term = new term($checkTerm[0]['uid']);
 
 $bookingsClass = new bookings();
 $bookingByMember = $bookingsClass->bookingForMealByMember($meal->uid, $_SESSION['username']);
@@ -24,7 +28,7 @@ printArray($arr);
 ?>
 <div class="container">
   <div class="px-3 py-3 pt-md-5 pb-md-4 text-center">
-    <h1 class="display-4">Week x: <?php echo $meal->name; ?></h1>
+    <h1 class="display-4">Week <?php echo $term->whichWeek($meal->date_meal) . " " . $meal->name; ?></h1>
     <p class="lead">Some text here about meal booking.  Make it simple!</p>
   </div>
 

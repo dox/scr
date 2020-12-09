@@ -1,3 +1,5 @@
+<script src="https://cdn.jsdelivr.net/npm/litepicker/dist/js/main.js"></script>
+
 <?php
 admin_gatekeeper();
 
@@ -5,6 +7,7 @@ $mealsClass = new meals();
 
 $mealObject = new meal($_GET['mealUID']);
 
+printArray($_POST);
 
 ?>
 <div class="container">
@@ -97,10 +100,10 @@ $mealObject = new meal($_GET['mealUID']);
       </div>
       <div class="col-md-7 col-lg-8">
         <h4 class="mb-3">Meal Information</h4>
-        <form method="post" id="memberUpdate" action="<?php echo $_SERVER['REQUEST_URI']; ?>" class="needs-validation" novalidate>
-          <div class="row g-3">
-            <div class="col-md-2">
-              <label for="title" class="form-label">Type</label>
+        <form method="post" id="mealUpdate" action="<?php echo $_SERVER['REQUEST_URI']; ?>" class="needs-validation" novalidate>
+          <div class="row">
+            <div class="col-4">
+              <label for="type" class="form-label">Type</label>
               <select class="form-select" name="type" id="type" required>
                 <?php
                 foreach ($mealsClass->mealTypes() AS $type) {
@@ -119,82 +122,150 @@ $mealObject = new meal($_GET['mealUID']);
                 Title is required.
               </div>
             </div>
-
-            <div class="col-sm-5">
-              <label for="firstname" class="form-label">First name</label>
-              <input type="text" class="form-control" name="firstname" id="firstname" placeholder="" value="<?php echo $memberObject->firstname; ?>" required>
+            <div class="col-8">
+              <label for="name" class="form-label">Meal name</label>
+              <input type="text" class="form-control" name="name" id="name" placeholder="" value="<?php echo $mealObject->name; ?>" required>
               <div class="invalid-feedback">
-                Valid first name is required.
+                Valid Meal name is required.
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-4">
+              <label for="date_meal" class="form-label">Meal Date/Time</label>
+              <input type="date" class="form-control" name="date_meal" id="date_meal" placeholder="" value="<?php echo $mealObject->date_meal; ?>" required>
+              <div class="invalid-feedback">
+                Meal Date is required.
+              </div>
+            </div>
+            <div class="col-8">
+              <label for="location" class="form-label">Location</label>
+              <input type="text" list="locations_datalist" class="form-control" name="location" id="location" placeholder="" value="<?php echo $mealObject->location; ?>" required>
+              <datalist id="locations_datalist">
+                <?php
+                foreach ($mealsClass->mealLocations() AS $location) {
+                  echo "<option value=\"" . $location['location'] . "\">";
+                }
+                ?>
+              </datalist>
+              <div class="invalid-feedback">
+                Location is required.
               </div>
             </div>
 
-            <div class="col-sm-5">
-              <label for="lastname" class="form-label">Last name</label>
-              <input type="text" class="form-control" name="lastname" id="lastname" placeholder="" value="<?php echo $memberObject->lastname; ?>" required>
-              <div class="invalid-feedback">
-                Valid last name is required.
-              </div>
-            </div>
 
-            <div class="col-12">
-              <label for="ldap" class="form-label">LDAP Username</label>
-              <div class="input-group">
-                <span class="input-group-text">@</span>
-                <input type="text" class="form-control" name="ldap" id="ldap" placeholder="LDAP Username" value="<?php echo $memberObject->ldap; ?>" required>
-              <div class="invalid-feedback">
-                  Your username is required.
+
+
+
+
+            <div class="row">
+              <div class="col-6">
+                <label for="scr_capacity" class="form-label">SCR Capacity</label>
+                <input type="number" class="form-control" name="scr_capacity" id="scr_capacity" placeholder="" value="<?php echo $mealObject->scr_capacity; ?>" required>
+                <div class="invalid-feedback">
+                  SCR Capacity is required.
+                </div>
+              </div>
+
+              <div class="col-6">
+                <label for="scr_guests" class="form-label">SCR Guests (per member)</label>
+                <input type="number" class="form-control" name="scr_guests" id="scr_guests" placeholder="" value="<?php echo $mealObject->scr_guests; ?>" required>
+                <div class="invalid-feedback">
+                  SCR Guests is required.
                 </div>
               </div>
             </div>
 
-            <div class="col-12">
-              <label for="email" class="form-label">Email <span class="text-muted">(Optional)</span></label>
-              <input type="email" class="form-control" name="email" id="email" placeholder="" value="<?php echo $memberObject->email; ?>">
-              <div class="invalid-feedback">
-                Please enter a valid email address for shipping updates.
+            <div class="row">
+              <div class="col-6">
+                <label for="mcr_capacity" class="form-label">MCR Capacity</label>
+                <input type="number" class="form-control" name="mcr_capacity" id="mcr_capacity" placeholder="" value="<?php echo $mealObject->mcr_capacity; ?>" required>
+                <div class="invalid-feedback">
+                  SCR Capacity is required.
+                </div>
+              </div>
+
+              <div class="col-6">
+                <label for="mcr_guests" class="form-label">MCR Guests (per member)</label>
+                <input type="number" class="form-control" name="mcr_guests" id="mcr_guests" placeholder="" value="<?php echo $mealObject->mcr_guests; ?>" required>
+                <div class="invalid-feedback">
+                  SCR Guests is required.
+                </div>
               </div>
             </div>
 
-            <div class="col-12">
-              <label for="dietary" class="form-label">Dietary Information</label>
-              <input type="text" class="form-control" name="dietary" id="dietary" placeholder="">
+            <label for="notes" class="form-label">Notes</label>
+            <input type="text" class="form-control" name="notes" id="notes" placeholder="" value="<?php echo $mealObject->notes; ?>" required>
+            <div class="invalid-feedback">
+              Valid Meal name is required.
+            </div>
+
+            <hr />
+
+            <div class="divide-y">
+              <div>
+                <label class="row">
+                  <span class="col">Domus</span>
+                  <span class="col-auto">
+                    <label class="form-check form-check-single form-switch"><input class="form-check-input" type="checkbox" checked=""></label>
+                  </span>
+                </label>
+              </div>
+              <div>
+                <label class="row">
+                  <span class="col">Wine</span>
+                  <span class="col-auto">
+                    <label class="form-check form-check-single form-switch"><input class="form-check-input" type="checkbox" checked=""></label>
+                  </span>
+                </label>
+              </div>
+              <div>
+                <label class="row">
+                  <span class="col">Dessert</span>
+                  <span class="col-auto">
+                    <label class="form-check form-check-single form-switch"><input class="form-check-input" type="checkbox" checked=""></label>
+                  </span>
+                </label>
+              </div>
             </div>
 
 
-Fellows Only:
+
+
+
+
+
 Where:
-When:
-Notes:
-MCR Guests:
+
+
 Wine:
 Dessert:
-SCR Capacity:
-(0 for unlimited)
+
 Dessert Capacity:
 (0 for unlimited)
 Dessert:
-Meal Time
-Term:
-Week:
-Day:
-Time:	 :
+
 Deadline Time
 Unbookable
 (& contact):
-No guest bookings:
-Term:
-Week:
-Day:
-Time:	 :
 
 
 
-          </div>
 
           <hr class="my-4">
-          <input type="hidden" name="memberUID" id="memberUID" value="<?php echo $memberObject->uid;?>">
-          <button class="btn btn-primary btn-lg btn-block" type="submit">Update Member Details</button>
+          <input type="hidden" name="mealUID" id="mealUID" value="<?php echo $mealObject->uid;?>">
+          <button class="btn btn-primary btn-lg btn-block" type="submit">Update Meal Details</button>
         </form>
       </div>
     </div>
   </main>
+
+
+<script>
+var picker = new Litepicker({
+  element: document.getElementById('date_meal'),
+  firstDay: 0,
+  format: 'YYYY-MM-DD',
+  singleMode: true
+});
+</script>
