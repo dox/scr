@@ -52,6 +52,13 @@ class term {
     return datediff('ww', $dateFrom, $dateTo, false) + 1;
   }
 
+  public function whichWeek($date = null) {
+    $dateFrom = $this->date_start;
+    $dateTo   = $date;
+
+    return datediff('ww', $dateFrom, $dateTo, false) + 1;
+  }
+
   public function weekStartDate($weekNum = null) {
     if ($weekNum == null) {
       $weekNum = $this->currentWeek();
