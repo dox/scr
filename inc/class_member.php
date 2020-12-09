@@ -46,15 +46,20 @@ class member {
   }
 
   public function public_displayName() {
-    if ($this->opt_in == 1) {
+    if ($_SESSION['admin'] == true) {
       $name = $this->displayName();
     } else {
-      $name = "HIDDEN";
+      if ($this->opt_in == 1) {
+        $name = $this->displayName();
+      } else {
+        $name = "HIDDEN";
+      }
     }
 
     if ($this->ldap == $_SESSION['username']) {
       $name = $name . " <i>(You)</i>";
     }
+
 
     return $name;
   }
@@ -69,7 +74,7 @@ class member {
     </svg>";
 
     if ($this->ldap == $scrStewardLDAP) {
-      $badge = " <span class=\"badge bg-warning\">" . $starIcon . " SCR Steward</span>";
+      $badge = " <span class=\"badge bg-warning\" >" . $starIcon . " SCR Steward</span>";
     } else {
       $badge = "";
     }

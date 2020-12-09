@@ -35,49 +35,59 @@ $members = $membersClass->all();
   </div>
 
   <form method="post" id="termForm" action="index.php?n=admin_members">
-    <ul class="list-group nested-sortable" name="demo1" id="demo1">
+  <div class="card">
+    <div class="list list-row list-hoverable" id="members_list">
       <?php
+      $scrStewardLDAP = $settingsClass->value('member_steward');
+
       foreach ($members AS $member) {
         $memberObject = new member($member['uid']);
 
-        $icon = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-grip-horizontal handle\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M2 8a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm0-3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm3 3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm0-3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm3 3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm0-3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm3 3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm0-3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm3 3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm0-3a1 1 0 1 1 0 2 1 1 0 0 1 0-2z\"/></svg>&nbsp;&nbsp;";
+        $output  = "<div class=\"list-item\" id=\"" . $memberObject->uid . "\">";
+        $output .= "<div><span class=\"badge handle\"></span></div>";
+        $output .= "<a href=\"index.php?n=member&memberUID=" . $memberObject->uid . "\"><span class=\"avatar\">?</span></a>";
+        $output .= "<div class=\"text-truncate\">";
+        $output .= "<a href=\"index.php?n=member&memberUID=" . $memberObject->uid . "\" class=\"text-body d-block\">" . $memberObject->displayName() . "</a>";
+        $output .= "<small class=\"d-block text-muted text-truncate mt-n1\">" . $memberObject->type . "</small>";
+        $output .= "</div>";
 
-        $output  = "<li id=\"" . $memberObject->uid . "\" class=\"list-group-item\">" . $icon;
-        $output .= "<a href=\"index.php?n=member&memberUID=" . $memberObject->uid . "\">" . $memberObject->displayName() . "</a>" . $memberObject->memberBadge();
-        $output .= "<span class=\"float-right text-muted\">" . $memberObject->type . "</span>";
-        $output .= "</li>";
+        if ($memberObject->ldap == $scrStewardLDAP) {
+          $output .= "<a href=\"#\" data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" title=\"SCR Steward\" class=\"list-item-actions show\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"icon text-yellow\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" stroke-width=\"2\" stroke=\"currentColor\" fill=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path stroke=\"none\" d=\"M0 0h24v24H0z\" fill=\"none\"></path><path d=\"M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z\"></path></svg></a>";
+        }
+
+        $output .= "</div>";
+        $output .= "";
+
 
         echo $output;
       }
       ?>
-    </ul>
-    <input type="hidden" name="precedence" id="precedence" value="" />
-    <br />
-    <button type="submit" onclick="itterate()" class="btn btn-block btn-primary">Save Order</button>
-  </form>
+  </div>
 </div>
 
+<input type="hidden" name="precedence" id="precedence" value="" />
+<br />
+<button type="submit" onclick="itterate()" class="btn btn-block btn-primary">Save Order</button>
+</form>
+
 <script>
-new Sortable(demo1, {
+new Sortable(members_list, {
   handle: '.handle',
   animation: 150,
   ghostClass: 'blue-background-class'
 });
 
 function itterate() {
-  var selection = document.getElementById("demo1").getElementsByTagName("li");
+  var selection = document.getElementById("members_list").getElementsByClassName("list-item");
 
   var arrayMembersUIDs = '';
 
   for(var i = 0; i < selection.length; i++) {
     arrayMembersUIDs = arrayMembersUIDs + selection[i]['id'] + ",";
-      // do something with selection[i]
-      //alert(selection[i]['id']);
   }
 
   document.getElementById("precedence").value = arrayMembersUIDs;
 }
-
 </script>
 
 <style>
@@ -85,8 +95,6 @@ function itterate() {
 	cursor: grab;
 }
 </style>
-
-
 
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -190,4 +198,9 @@ function itterate() {
 function dismiss(el){
   document.getElementById(el).parentNode.style.display='none';
 };
+
+var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+  return new bootstrap.Tooltip(tooltipTriggerEl)
+})
 </script>
