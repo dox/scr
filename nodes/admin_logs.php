@@ -35,30 +35,31 @@ foreach ($logsArray AS $logType => $totalsArray) {
   $graphData[] = $output;
 }
 ?>
+<?php
+$title = "Logs";
+$subtitle = "Admin/User logs for the last " . $logsDisplay . " days";
 
-<div class="container">
-  <div class="px-3 py-3 pt-md-5 pb-md-4 text-center">
-    <h1 class="display-4">Logs</h1>
-    <p class="lead">Admin/User logs for the last <?php echo $logsDisplay; ?> days</p>
-  </div>
-  <canvas id="logChart"></canvas>
-  <div class="list-group">
-    <?php
-    foreach ($logs AS $log) {
-      $output  = "<a href=\"#\" class=\"list-group-item list-group-item-action\">";
-      $output .= "<div class=\"d-flex w-100 justify-content-between\">";
-      $output .= "<h5 class=\"mb-1\">" . $log['username'] . " - " . $log['description'] . "</h5>";
-      $output .= "<small class=\"text-muted\">" . date('Y-m-d H:i:s', strtotime($log['date'])) . "</small>";
-      //$output .= "<span class=\"badge bg-primary rounded-pill\">" . $log['type'] . "</span>";
-      $output .= "</div>";
-      //$output .= "<p class=\"mb-1\">" . $log['description'] . "</p>";
-      $output .= "<small class=\"text-muted\"><span class=\"badge bg-primary rounded-pill\">" . $log['type'] . "</span> " . $log['ip'] . "</small>";
-      $output .= "</a>";
+echo makeTitle($title, $subtitle);
+?>
 
-      echo $output;
-    }
-    ?>
-  </div>
+<canvas id="logChart"></canvas>
+
+<div class="list-group">
+  <?php
+  foreach ($logs AS $log) {
+    $output  = "<a href=\"#\" class=\"list-group-item list-group-item-action\">";
+    $output .= "<div class=\"d-flex w-100 justify-content-between\">";
+    $output .= "<h5 class=\"mb-1\">" . $log['username'] . " - " . $log['description'] . "</h5>";
+    $output .= "<small class=\"text-muted\">" . date('Y-m-d H:i:s', strtotime($log['date'])) . "</small>";
+    //$output .= "<span class=\"badge bg-primary rounded-pill\">" . $log['type'] . "</span>";
+    $output .= "</div>";
+    //$output .= "<p class=\"mb-1\">" . $log['description'] . "</p>";
+    $output .= "<small class=\"text-muted\"><span class=\"badge bg-primary rounded-pill\">" . $log['type'] . "</span> " . $log['ip'] . "</small>";
+    $output .= "</a>";
+
+    echo $output;
+  }
+  ?>
 </div>
 
 <script>

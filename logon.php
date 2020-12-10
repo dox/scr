@@ -17,7 +17,8 @@
   <link rel="canonical" href="https://v5.getbootstrap.com/docs/5.0/examples/cover/">
 
   <!-- Bootstrap core CSS -->
-	<link rel="stylesheet" href="https://unpkg.com/@tabler/core@latest/dist/css/tabler.min.css">
+	<link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/app.css" rel="stylesheet">
 
   <!-- Favicons -->
 	<link rel="apple-touch-icon" sizes="180x180" href="/img/favicons/apple-touch-icon.png">

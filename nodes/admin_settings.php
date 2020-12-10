@@ -16,54 +16,51 @@ if (isset($_POST['uid'])) {
 $settings = $settingsClass->all();
 
 ?>
-<div class="container">
-  <div class="px-3 py-3 pt-md-5 pb-md-4 text-center">
-    <h1 class="display-4">Site Settings</h1>
-    <p class="lead">Some text here about meal booking.  Make it simple!</p>
-  </div>
 
-  <div class="pb-3 text-right">
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-      <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-calendar-plus" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-        <path fill-rule="evenodd" d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
-        <path fill-rule="evenodd" d="M8 7a.5.5 0 0 1 .5.5V9H10a.5.5 0 0 1 0 1H8.5v1.5a.5.5 0 0 1-1 0V10H6a.5.5 0 0 1 0-1h1.5V7.5A.5.5 0 0 1 8 7z"/>
-      </svg> Add new
-    </button>
-  </div>
+<?php
+$title = "Site Settings";
+$subtitle = "Customise the behaviour, display and configuration of this site.";
+$icons[] = array("class" => "btn-primary", "name" => $icon_edit. " Add New", "value" => "data-toggle=\"modal\" data-target=\"#exampleModal\"");
 
-  <div class="accordion" id="accordionExample">
-    <?php
-    foreach ($settings AS $setting) {
-      $itemName = "collapse-" . $setting['uid'];
+echo makeTitle($title, $subtitle, $icons);
+?>
 
-      $output  = "<div class=\"accordion-item\">";
-      $output .= "<h2 class=\"accordion-header\" id=\"" . $setting['uid'] . "\">";
-      $output .= "<button class=\"accordion-button collapsed\" type=\"button\" data-toggle=\"collapse\" data-target=\"#" . $itemName . "\" aria-expanded=\"true\" aria-controls=\"" . $itemName . "\">";
-      $output .= "<strong>" . $setting['name'] . "</strong>: " . $setting['description'];
-      $output .= "</button></h2>";
-      $output .= "<div id=\"" . $itemName . "\" class=\"accordion-collapse collapse\" aria-labelledby=\"" . $setting['uid'] . "\" data-parent=\"#accordionExample\">";
-      $output .= "<div class=\"accordion-body\">";
+<div class="alert alert-danger text-center"><strong>Warning!</strong> Making changes to these settings can distrupt the running of the SCR Booking site.  Proceed with caution.</div>
 
-      $output .= "<form method=\"post\" id=\"form-" .  $setting['uid'] . "\" action=\"" . $_SERVER['REQUEST_URI'] . "\" class=\"needs-validation\" novalidate>";
+<div class="accordion" id="accordionExample">
+  <?php
+  foreach ($settings AS $setting) {
+    $itemName = "collapse-" . $setting['uid'];
 
-      $output .= "<div class=\"input-group mb-3\">";
-      $output .= "<input type=\"text\" class=\"form-control\" id=\"value\" name=\"value\" value=\"" . $setting['value']. "\">";
-      $output .= "<button class=\"btn btn-outline-secondary\" type=\"submit\" id=\"button-addon2\">Update</button>";
-      $output .= "<input type=\"hidden\" id=\"uid\" name=\"uid\" value=\"" . $setting['uid']. "\">";
-      $output .= "</div>";
+    $output  = "<div class=\"card\">";
+    $output .= "<div class=\"card-header\" id=\"" . $setting['uid'] . "\">";
+    $output .= "<h2 class=\"mb-0\"><button class=\"btn btn-link btn-block text-left collapsed\" type=\"button\" data-toggle=\"collapse\" data-target=\"#" . $itemName . "\" aria-expanded=\"true\" aria-controls=\"" . $itemName . "\">";
+    $output .= "<strong>" . $setting['name'] . "</strong>: " . $setting['description'];
+    $output .= "</button></h2></div>";
 
-      $output .= "</form>";
+    $output .= "<div id=\"" . $itemName . "\" class=\"collapse\" aria-labelledby=\"" . $setting['uid'] . "\" data-parent=\"#accordionExample\">";
+    $output .= "<div class=\"card-body\">";
 
-      $output .= "</div>";
-      $output .= "</div>";
-      $output .= "</div>";
+    $output .= "<form method=\"post\" id=\"form-" .  $setting['uid'] . "\" action=\"" . $_SERVER['REQUEST_URI'] . "\" class=\"needs-validation\" novalidate>";
 
-      echo $output;
-    }
-    ?>
-  </div>
+    $output .= "<div class=\"input-group\">";
+    $output .= "<input type=\"text\" class=\"form-control\" id=\"value\" name=\"value\" value=\"" . $setting['value']. "\">";
+    $output .= "<div class=\"input-group-append\">";
+    $output .= "<button class=\"btn btn-primary\" type=\"submit\" id=\"button-addon2\">Update</button>";
+    $output .= "</div>";
+    $output .= "</div>";
+    $output .= "<input type=\"hidden\" id=\"uid\" name=\"uid\" value=\"" . $setting['uid']. "\">";
+
+    $output .= "</form>";
+
+    $output .= "</div>";
+    $output .= "</div>";
+    $output .= "</div>";
+
+    echo $output;
+  }
+  ?>
 </div>
-
 
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -98,9 +95,6 @@ $settings = $settingsClass->all();
       </form>
     </div>
   </div>
-</div>
-
-
 
 <script>
 function dismiss(el){

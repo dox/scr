@@ -19,55 +19,51 @@ if (isset($_POST['precedence'])) {
 $members = $membersClass->all();
 
 ?>
-<div class="container">
-  <div class="px-3 py-3 pt-md-5 pb-md-4 text-center">
-    <h1 class="display-4">SCR Members</h1>
-    <p class="lead">Members, and their order of precedence.</p>
-  </div>
+<?php
+$title = "SCR Memebers";
+$subtitle = "Members, and their order of precedence.";
+$icons[] = array("class" => "btn-primary", "name" => $icon_add_member . " Add New", "value" => "data-toggle=\"modal\" data-target=\"#exampleModal\"");
 
-  <div class="pb-3 text-right">
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-      <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-calendar-plus" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-        <path fill-rule="evenodd" d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
-        <path fill-rule="evenodd" d="M8 7a.5.5 0 0 1 .5.5V9H10a.5.5 0 0 1 0 1H8.5v1.5a.5.5 0 0 1-1 0V10H6a.5.5 0 0 1 0-1h1.5V7.5A.5.5 0 0 1 8 7z"/>
-      </svg> Add new
-    </button>
-  </div>
-
-  <form method="post" id="termForm" action="index.php?n=admin_members">
-  <div class="card">
-    <div class="list list-row list-hoverable" id="members_list">
+echo makeTitle($title, $subtitle, $icons);
+?>
+<form method="post" id="termForm" action="index.php?n=admin_members">
+  <ul class="list-group" id="members_list">
       <?php
       $scrStewardLDAP = $settingsClass->value('member_steward');
+
+
+
+
 
       foreach ($members AS $member) {
         $memberObject = new member($member['uid']);
 
-        $output  = "<div class=\"list-item\" id=\"" . $memberObject->uid . "\">";
-        $output .= "<div><span class=\"badge handle\"></span></div>";
-        $output .= "<a href=\"index.php?n=member&memberUID=" . $memberObject->uid . "\"><span class=\"avatar\">?</span></a>";
-        $output .= "<div class=\"text-truncate\">";
-        $output .= "<a href=\"index.php?n=member&memberUID=" . $memberObject->uid . "\" class=\"text-body d-block\">" . $memberObject->displayName() . "</a>";
-        $output .= "<small class=\"d-block text-muted text-truncate mt-n1\">" . $memberObject->type . "</small>";
+        $output  = "<li class=\"list-group-item list-group-item-action\" id=\"" . $memberObject->uid . "\">";
+        $output .= "<div class=\"d-flex w-100 \">";
+        $output .= "<svg class=\"handle mr-2\" width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-grip-vertical\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\">";
+        $output .= "<path d=\"M7 2a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM7 5a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM7 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm-3 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm-3 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z\"/>";
+        $output .= "</svg>";
+
+        $output .= "<a href=\"index.php?n=member&memberUID=" . $memberObject->uid . "\"><span class=\"avatar avatar-sm\" style=\"background-image: url(http://ocsd.seh.ox.ac.uk//photos/UAS_UniversityCard-10076320.jpg)\">?</span></a>";
+        $output .= "<a href=\"index.php?n=member&memberUID=" . $memberObject->uid . "\" class=\"mb-1\">" . $memberObject->displayName() . "</a>";
         $output .= "</div>";
+        $output .= "<small class=\"\">" . $memberObject->type . "</small>";
 
         if ($memberObject->ldap == $scrStewardLDAP) {
-          $output .= "<a href=\"#\" data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" title=\"SCR Steward\" class=\"list-item-actions show\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"icon text-yellow\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" stroke-width=\"2\" stroke=\"currentColor\" fill=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path stroke=\"none\" d=\"M0 0h24v24H0z\" fill=\"none\"></path><path d=\"M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z\"></path></svg></a>";
+          $output .= "<a href=\"#\" data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" title=\"SCR Steward\" class=\"list-item-actions text-warning float-right show\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"icon text-yellow\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" stroke-width=\"2\" stroke=\"currentColor\" fill=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path stroke=\"none\" d=\"M0 0h24v24H0z\" fill=\"none\"></path><path d=\"M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z\"></path></svg></a>";
         }
 
-        $output .= "</div>";
-        $output .= "";
-
+        $output .= "</li>";
 
         echo $output;
       }
       ?>
-  </div>
-</div>
+  </li>
+  </ul>
 
-<input type="hidden" name="precedence" id="precedence" value="" />
-<br />
-<button type="submit" onclick="itterate()" class="btn btn-block btn-primary">Save Order</button>
+  <input type="hidden" name="precedence" id="precedence" value="" />
+  <br />
+  <button type="submit" onclick="itterate()" class="btn btn-block btn-primary">Save Order</button>
 </form>
 
 <script>

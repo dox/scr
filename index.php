@@ -60,8 +60,9 @@ if ($_SESSION['logon'] != true) {
   <link rel="canonical" href="https://scr2.seh.ox.ac.uk/">
 
   <!-- Bootstrap core CSS -->
-	<!--<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-CuOF+2SnTUfTwSZjCXf01h7uYhfOBuxIhGKPbfEJ3+FqH/s6cIFN9bGr1HmAg4fQ" crossorigin="anonymous">-->
-  <link rel="stylesheet" href="https://unpkg.com/@tabler/core@latest/dist/css/tabler.min.css">
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/app.css" rel="stylesheet">
+  <!--<link rel="stylesheet" href="https://unpkg.com/@tabler/core@latest/dist/css/tabler.min.css">-->
 
 	<!-- Favicons -->
 	<link rel="apple-touch-icon" sizes="180x180" href="/img/favicons/apple-touch-icon.png">
@@ -72,8 +73,8 @@ if ($_SESSION['logon'] != true) {
   <link rel="icon" href="/img/favicons/favicon.ico">
   <meta name="theme-color" content="#7952b3">
 
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-popRpmFF9JQgExhfw5tZT4I9/CI5e2QcuUZPOVXb1m7qUmeR2b50u+YFEYe1wgzy" crossorigin="anonymous"></script>
-  <script src="https://unpkg.com/@tabler/core@latest/dist/js/tabler.min.js"></script>
+  <script src="js/bootstrap.bundle.min.js"></script>
+  <!--<script src="https://unpkg.com/@tabler/core@latest/dist/js/tabler.min.js"></script>-->
 
 	<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
 	<script src="js/app.js"></script>

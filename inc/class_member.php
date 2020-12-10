@@ -116,8 +116,40 @@ class member {
     return $update;
   }
 
+  public function mealUIDS_upcoming() {
+    global $db;
 
+    $sql  = "SELECT * FROM bookings, meals";
+    $sql .= " WHERE DATE(meals.date_meal) >= CURDATE()";
+    $sql .= " AND bookings.member_ldap = '" . $this->ldap . "'";
+    $sql .= " AND bookings.meal_uid = meals.uid ";
+    $sql .= " ORDER BY meals.date_meal DESC";
 
+    $bookings = $db->query($sql)->fetchAll();
 
+    foreach ($bookings AS $booking) {
+      $bookingUIDSarray[] = $booking['meal_uid'];
+    }
+
+    return $bookingUIDSarray;
+  }
+
+  public function mealUIDS_previous() {
+    global $db;
+
+    $sql  = "SELECT * FROM bookings, meals";
+    $sql .= " WHERE DATE(meals.date_meal) < CURDATE()";
+    $sql .= " AND bookings.member_ldap = '" . $this->ldap . "'";
+    $sql .= " AND bookings.meal_uid = meals.uid ";
+    $sql .= " ORDER BY meals.date_meal DESC";
+
+    $bookings = $db->query($sql)->fetchAll();
+
+    foreach ($bookings AS $booking) {
+      $bookingUIDSarray[] = $booking['meal_uid'];
+    }
+
+    return $bookingUIDSarray;
+  }
 }
 ?>

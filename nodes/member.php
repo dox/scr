@@ -11,6 +11,8 @@ if (isset($_GET['memberUID'])) {
 
 $membersClass = new members();
 $memberObject = new member($memberUID);
+$upcomingMealUIDS = $memberObject->mealUIDS_upcoming();
+$previousMealUIDS = $memberObject->mealUIDS_previous();
 
 if (isset($_POST['memberUID'])) {
   if (!isset($_POST['opt_in'])) {
@@ -23,59 +25,40 @@ if (isset($_POST['memberUID'])) {
 <?php
 $title = $memberObject->displayName();
 $subtitle = $memberObject->type . $memberObject->memberBadge();
-$icons[] = array("class" => "btn-danger", "name" => "Test1", "value" => "");
-$icons[] = array("class" => "btn-primary", "name" => "Test2", "value" => "");
 
-echo ALTmakeTitle($title, $subtitle, $icons);
+echo makeTitle($title, $subtitle);
 ?>
 
 <div class="row g-3">
   <div class="col-md-5 col-lg-4 order-md-last">
     <h4 class="d-flex justify-content-between align-items-center mb-3">
       <span class="text-muted">Upcoming Meals</span>
-      <span class="badge bg-secondary rounded-pill">3</span>
+      <span class="badge bg-secondary rounded-pill"><?php echo count($upcomingMealUIDS); ?></span>
     </h4>
     <ul class="list-group mb-3">
-      <li class="list-group-item d-flex justify-content-between lh-sm">
-        <div>
-          <h6 class="my-0">Product name</h6>
-          <small class="text-muted">Brief description</small>
-        </div>
-        <span class="text-muted">$12</span>
-      </li>
-      <li class="list-group-item d-flex justify-content-between lh-sm">
-        <div>
-          <h6 class="my-0">Second product</h6>
-          <small class="text-muted">Brief description</small>
-        </div>
-        <span class="text-muted">$8</span>
-      </li>
-      <li class="list-group-item d-flex justify-content-between lh-sm">
-        <div>
-          <h6 class="my-0">Third item</h6>
-          <small class="text-muted">Brief description</small>
-        </div>
-        <span class="text-muted">$5</span>
-      </li>
-      <li class="list-group-item d-flex justify-content-between bg-light">
-        <div class="text-success">
-          <h6 class="my-0">Promo code</h6>
-          <small>EXAMPLECODE</small>
-        </div>
-        <span class="text-success">−$5</span>
-      </li>
+      <?php
+      foreach ($upcomingMealUIDS AS $mealUID) {
+        $mealObject = new meal($mealUID);
+
+        echo $mealObject->display_mealAside();
+      }
+      ?>
     </ul>
 
     <hr />
 
     <h4 class="d-flex justify-content-between align-items-center mb-3">
       <span class="text-muted">Previous Meals</span>
-      <span class="badge bg-secondary rounded-pill">3</span>
+      <span class="badge bg-secondary rounded-pill"><?php echo count($previousMealUIDS); ?></span>
     </h4>
     <ul class="list-group mb-3">
-      <li class="list-group-item d-flex justify-content-between">
-        <span><a href="index.php?n=member_detailed&memberUID=<?php echo $memberObject->uid; ?>">View all</a></span>
-      </li>
+      <?php
+      foreach ($previousMealUIDS AS $mealUID) {
+        $mealObject = new meal($mealUID);
+
+        echo $mealObject->display_mealAside();
+      }
+      ?>
     </ul>
   </div>
 

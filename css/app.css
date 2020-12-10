@@ -1,0 +1,157 @@
+body {
+  margin: 0;
+  font-size: .875rem;
+  font-weight: 400;
+  line-height: 1.4285714;
+  color: #232e3c;
+  background-color: #f4f6fa;
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent
+}
+
+[tabindex="-1"]:focus:not(:focus-visible) {
+    outline:0 !important
+}
+
+
+.avatar {
+    --tblr-avatar-size: 2.5rem;
+    position: relative;
+    width: var(--tblr-avatar-size);
+    height: var(--tblr-avatar-size);
+    font-size: calc(var(--tblr-avatar-size) / 2.8571429);
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #656d77;
+    text-align: center;
+    text-transform: uppercase;
+    vertical-align: bottom;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    background: #f0f2f6 no-repeat center/cover;
+    border-radius:3px
+}
+
+.avatar svg {
+    width: 1.5rem;
+    height:1.5rem
+}
+
+.avatar .badge {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    border-radius: 50%;
+    box-shadow:0 0 0 2px #fff
+}
+
+a.avatar {
+    cursor:pointer
+}
+
+.avatar-rounded {
+    border-radius:50%
+}
+
+.avatar-xs {
+    --tblr-avatar-size:1.25rem
+}
+
+.avatar-xs .badge:empty {
+    width: .3125rem;
+    height:.3125rem
+}
+
+.avatar-sm {
+    --tblr-avatar-size:2rem
+}
+
+.avatar-sm .badge:empty {
+    width: .5rem;
+    height:.5rem
+}
+
+.avatar-md {
+    --tblr-avatar-size:3.75rem
+}
+
+.avatar-md .badge:empty {
+    width: .9375rem;
+    height:.9375rem
+}
+
+.avatar-lg {
+    --tblr-avatar-size:5rem
+}
+
+.avatar-lg .badge:empty {
+    width: 1.25rem;
+    height:1.25rem
+}
+
+.avatar-xl {
+    --tblr-avatar-size:7rem
+}
+
+.avatar-xl .badge:empty {
+    width: 1.75rem;
+    height:1.75rem
+}
+
+.avatar-list {
+    display: inline-flex;
+    padding: 0;
+    margin:0 0 -.5rem
+}
+
+.avatar-list .avatar {
+    margin-bottom:.5rem
+}
+
+.avatar-list .avatar:not(:last-child) {
+    margin-right:.5rem
+}
+
+.avatar-list a.avatar:hover {
+    z-index:1
+}
+
+.avatar-list-stacked .avatar {
+    margin-right: -.5rem !important;
+    box-shadow:0 0 0 2px #fff
+}
+
+.card-footer .avatar-list-stacked .avatar {
+    box-shadow:0 0 0 2px rgba(35, 46, 60, .024)
+}
+
+.avatar-upload {
+    width: 4rem;
+    height: 4rem;
+    border: 1px dashed #e6e8e9;
+    background: #fff;
+    flex-direction: column;
+    transition:.3s color, .3s background-color
+}
+
+.avatar-upload svg {
+    width: 1.5rem;
+    height: 1.5rem;
+    stroke-width:1
+}
+
+.avatar-upload:hover {
+    border-color: #206bc4;
+    color: #206bc4;
+    text-decoration:none
+}
+
+.avatar-upload-text {
+    font-size: .625rem;
+    line-height: 1;
+    margin-top:.25rem
+}

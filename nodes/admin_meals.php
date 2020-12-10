@@ -5,11 +5,15 @@ $mealsClass = new meals();
 $meals = $mealsClass->all();
 ?>
 
-<div class="container">
-  <div class="px-3 py-3 pt-md-5 pb-md-4 text-center">
-    <h1 class="display-4">Meals</h1>
-    <p class="lead">Some text here about meal booking.  Make it simple!</p>
-  </div>
+<?php
+$title = "Meals";
+$subtitle = "Some text here about meal booking.  Make it simple!";
+$icons[] = array("class" => "btn-danger", "name" => "Test1", "value" => "");
+$icons[] = array("class" => "btn-primary", "name" => "Test2", "value" => "");
+
+echo makeTitle($title, $subtitle, $icons);
+?>
+
 
   <div class="pb-3 text-right">
 	<a class="btn btn-primary" href="index.php?n=admin_meal" role="button">
@@ -40,4 +44,3 @@ $meals = $mealsClass->all();
     }
     ?>
   </div>
-</div>
