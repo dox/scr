@@ -2,6 +2,7 @@
 
 <?php
 admin_gatekeeper();
+$dateFormat = $settingsClass->value('datetime_format_short');
 
 $mealsClass = new meals();
 
@@ -10,92 +11,36 @@ $mealObject = new meal($_GET['mealUID']);
 printArray($_POST);
 
 ?>
-<div class="container">
-  <div class="px-3 py-3 pt-md-5 pb-md-4 text-center">
-    <h1 class="display-4"><?php echo $mealObject->name; ?></h1>
-    <p class="lead"><?php echo $mealObject->date_meal; ?></p>
-  </div>
+<?php
+$title = $mealObject->name;
+$subtitle = $mealObject->location . " " . date($dateFormat, strtotime($mealObject->date_meal));
+//$icons[] = array("class" => "btn-danger", "name" => "Test1", "value" => "");
+//$icons[] = array("class" => "btn-primary", "name" => "Test2", "value" => "");
 
-  <main>
-    <div class="row g-3">
+echo makeTitle($title, $subtitle, $icons);
+?>
+<div class="row g-3">
       <div class="col-md-5 col-lg-4 order-md-last">
         <h4 class="d-flex justify-content-between align-items-center mb-3">
-          <span class="text-muted">Timings</span>
+          <span class="text-muted">Diners Signed Up</span>
+          <span class="badge bg-secondary rounded-pill"><?php echo count($mealObject->bookings_this_meal()); ?></span>
         </h4>
         <ul class="list-group mb-3">
-          <li class="list-group-item d-flex justify-content-between lh-sm">
-            <div>
-              <h6 class="my-0">Product name</h6>
-              <small class="text-muted">Brief description</small>
-            </div>
-            <span class="text-muted">$12</span>
-          </li>
-          <li class="list-group-item d-flex justify-content-between lh-sm">
-            <div>
-              <h6 class="my-0">Second product</h6>
-              <small class="text-muted">Brief description</small>
-            </div>
-            <span class="text-muted">$8</span>
-          </li>
-          <li class="list-group-item d-flex justify-content-between lh-sm">
-            <div>
-              <h6 class="my-0">Third item</h6>
-              <small class="text-muted">Brief description</small>
-            </div>
-            <span class="text-muted">$5</span>
-          </li>
-          <li class="list-group-item d-flex justify-content-between bg-light">
-            <div class="text-success">
-              <h6 class="my-0">Promo code</h6>
-              <small>EXAMPLECODE</small>
-            </div>
-            <span class="text-success">−$5</span>
-          </li>
-          <li class="list-group-item d-flex justify-content-between">
-            <span>Total (USD)</span>
-            <strong>$20</strong>
-          </li>
-        </ul>
+          <?php
+          foreach ($mealObject->bookings_this_meal() AS $booking) {
+            $memberObject = new member($booking['member_ldap']);
 
-        <hr />
+            $output  = "<li class=\"list-group-item d-flex justify-content-between lh-sm\">";
+            $output .= "<div class=\"text-muted\">";
+            $output .= "<h6 class=\"my-0\"><a href=\"index.php?n=booking&mealUID=" . $memberObject->uid . "\" class=\"text-muted\">" . $memberObject->displayName() . "</a></h6>";
+            $output .= "<small class=\"text-muted\">" . date($dateFormat, strtotime($booking['date'])) . " " . date('H:i:s', strtotime($booking['date'])) . "</small>";
+            $output .= "</div>";
+            $output .= "<span class=\"text-muted\">" . count(json_decode($booking['guests_array'])) . autoPluralise(" guest", " guests", count(json_decode($booking['guests_array']))) . "</span>";
+            $output .= "</li>";
 
-        <h4 class="d-flex justify-content-between align-items-center mb-3">
-          <span class="text-muted">Meal Information</span>
-          <span class="badge bg-secondary rounded-pill">3</span>
-        </h4>
-        <ul class="list-group mb-3">
-          <li class="list-group-item d-flex justify-content-between lh-sm">
-            <div>
-              <h6 class="my-0">Product name</h6>
-              <small class="text-muted">Brief description</small>
-            </div>
-            <span class="text-muted">$12</span>
-          </li>
-          <li class="list-group-item d-flex justify-content-between lh-sm">
-            <div>
-              <h6 class="my-0">Second product</h6>
-              <small class="text-muted">Brief description</small>
-            </div>
-            <span class="text-muted">$8</span>
-          </li>
-          <li class="list-group-item d-flex justify-content-between lh-sm">
-            <div>
-              <h6 class="my-0">Third item</h6>
-              <small class="text-muted">Brief description</small>
-            </div>
-            <span class="text-muted">$5</span>
-          </li>
-          <li class="list-group-item d-flex justify-content-between bg-light">
-            <div class="text-success">
-              <h6 class="my-0">Promo code</h6>
-              <small>EXAMPLECODE</small>
-            </div>
-            <span class="text-success">−$5</span>
-          </li>
-          <li class="list-group-item d-flex justify-content-between">
-            <span>Total (USD)</span>
-            <strong>$20</strong>
-          </li>
+            echo $output;
+          }
+          ?>
         </ul>
       </div>
       <div class="col-md-7 col-lg-8">
@@ -228,11 +173,11 @@ printArray($_POST);
                 </label>
               </div>
             </div>
+</div>
 
 
 
-
-
+<!--
 
 
 Where:
@@ -250,7 +195,7 @@ Unbookable
 (& contact):
 
 
-
+-->
 
           <hr class="my-4">
           <input type="hidden" name="mealUID" id="mealUID" value="<?php echo $mealObject->uid;?>">
@@ -258,7 +203,6 @@ Unbookable
         </form>
       </div>
     </div>
-  </main>
 
 
 <script>

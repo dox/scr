@@ -27,6 +27,9 @@ $title = $memberObject->displayName();
 $subtitle = $memberObject->type . $memberObject->memberBadge();
 
 echo makeTitle($title, $subtitle);
+
+include_once('_member_stats.php');
+
 ?>
 
 <div class="row g-3">

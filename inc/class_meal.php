@@ -111,6 +111,10 @@ class meal {
   }
 
   public function display_mealAside() {
+    global $settingsClass;
+
+    $dateFormat = $settingsClass->value('datetime_format_short');
+
     if (date('Y-m-d', strtotime($this->date_meal)) == date('Y-m-d')) {
       $class = "text-success";
     } else {
@@ -122,10 +126,12 @@ class meal {
     $output .= "<h6 class=\"my-0\"><a href=\"index.php?n=booking&mealUID=" . $this->uid . "\" class=\"" . $class . "\">" . $this->name . "</a></h6>";
     $output .= "<small class=\"" . $class . "\">" . $this->location . "</small>";
     $output .= "</div>";
-    $output .= "<span class=\"" . $class . "\">" . date('Y-m-d', strtotime($this->date_meal)) . "</span>";
+    $output .= "<span class=\"" . $class . "\">" . date($dateFormat, strtotime($this->date_meal)) . "</span>";
     $output .= "</li>";
 
     return $output;
   }
+
+
 }
 ?>

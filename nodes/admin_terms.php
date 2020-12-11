@@ -1,5 +1,6 @@
 <?php
 admin_gatekeeper();
+$dateFormat = $settingsClass->value('datetime_format_short');
 
 $termsClass = new terms();
 
@@ -38,7 +39,7 @@ echo makeTitle($title, $subtitle, $icons);
     //$output .= "<span class=\"badge bg-primary rounded-pill\">" . $log['type'] . "</span>";
     $output .= "</div>";
     //$output .= "<p class=\"mb-1\">" . $log['description'] . "</p>";
-    $output .= "<small class=\"text-muted\">" . date('Y-m-d', strtotime($termObject->date_start)) . " - " . date('Y-m-d', strtotime($termObject->date_end)) . "</small>";
+    $output .= "<small class=\"text-muted\">" . date($dateFormat, strtotime($termObject->date_start)) . " - " . date($dateFormat, strtotime($termObject->date_end)) . "</small>";
     $output .= "</a>";
 
     echo $output;

@@ -7,6 +7,7 @@ admin_gatekeeper();
 $logs = $logsClass->all();
 $logsTypes = $logsClass->types();
 $logsDisplay = $settingsClass->value('logs_display');
+$dateFormat = $settingsClass->value('datetime_format_short');
 
 $i=$logsDisplay;
 do {
@@ -43,6 +44,7 @@ echo makeTitle($title, $subtitle);
 ?>
 
 <canvas id="logChart"></canvas>
+<canvas id="canvas2"></canvas>
 
 <div class="list-group">
   <?php
@@ -50,7 +52,7 @@ echo makeTitle($title, $subtitle);
     $output  = "<a href=\"#\" class=\"list-group-item list-group-item-action\">";
     $output .= "<div class=\"d-flex w-100 justify-content-between\">";
     $output .= "<h5 class=\"mb-1\">" . $log['username'] . " - " . $log['description'] . "</h5>";
-    $output .= "<small class=\"text-muted\">" . date('Y-m-d H:i:s', strtotime($log['date'])) . "</small>";
+    $output .= "<small class=\"text-muted\">" . date($dateFormat, strtotime($log['date'])) . " " . date('H:i:s', strtotime($log['date'])) . "</small>";
     //$output .= "<span class=\"badge bg-primary rounded-pill\">" . $log['type'] . "</span>";
     $output .= "</div>";
     //$output .= "<p class=\"mb-1\">" . $log['description'] . "</p>";
@@ -65,7 +67,7 @@ echo makeTitle($title, $subtitle);
 <script>
 var ctx = document.getElementById('logChart').getContext('2d');
 var myChart = new Chart(ctx, {
-    type: 'line',
+    type: 'bar',
     data: {
         labels: [<?php echo implode(", ", $datesArray); ?>],
         datasets: [
@@ -90,4 +92,71 @@ var myChart = new Chart(ctx, {
       }
     }
 });
+
+var barChartData = {
+			labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+			datasets: [{
+				label: 'Dataset 1',
+				backgroundColor: ['rgba(54, 162, 235, 0.2)'],
+				data: [
+					2,
+					5,
+					3,
+					2,
+					5,
+					6,
+					7
+				]
+			}, {
+				label: 'Dataset 2',
+				data: [
+          2,
+					5,
+					3,
+					2,
+					5,
+					6,
+					7
+				]
+			}, {
+				label: 'Dataset 3',
+				data: [
+          2,
+					5,
+					3,
+					2,
+					5,
+					6,
+					7
+				]
+			}]
+
+		};
+		window.onload = function() {
+			var ctx = document.getElementById('canvas2').getContext('2d');
+			window.myBar = new Chart(ctx, {
+				type: 'bar',
+				data: barChartData,
+				options: {
+					title: {
+						display: true,
+						text: 'Chart.js Bar Chart - Stacked'
+					},
+					tooltips: {
+						mode: 'index',
+						intersect: false
+					},
+					responsive: true,
+					scales: {
+						xAxes: [{
+							stacked: true,
+						}],
+						yAxes: [{
+							stacked: true
+						}]
+					}
+				}
+			});
+		};
+
 </script>

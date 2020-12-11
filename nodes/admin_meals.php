@@ -1,5 +1,6 @@
 <?php
 admin_gatekeeper();
+$dateFormat = $settingsClass->value('datetime_format_short');
 
 $mealsClass = new meals();
 $meals = $mealsClass->all();
@@ -37,7 +38,7 @@ echo makeTitle($title, $subtitle, $icons);
       //$output .= "<span class=\"badge bg-primary rounded-pill\">" . $log['type'] . "</span>";
       $output .= "</div>";
       //$output .= "<p class=\"mb-1\">" . $log['description'] . "</p>";
-      $output .= "<small class=\"text-muted\">" . date('Y-m-d', strtotime($mealObject->date)) . " - " . date('Y-m-d', strtotime($mealObject->date)) . "</small>";
+      $output .= "<small class=\"text-muted\">" . date($dateFormat, strtotime($mealObject->date)) . " - " . date($dateFormat, strtotime($mealObject->date)) . "</small>";
       $output .= "</a>";
 
       echo $output;

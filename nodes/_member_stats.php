@@ -1,4 +1,61 @@
-
+<div class="row row-deck row-cards">
+  <div class="col-sm-6 col-lg-3">
+    <div class="card">
+      <div class="card-body">
+        <div class="subheader">Meals This Term</div>
+        <div class="h1 mb-3">23</div>
+        <div>Remaining Allowance</div>
+        <div class="progress progress-sm">
+          <div class="progress-bar bg-blue" style="width: 75%" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">
+            <span class="visually-hidden">75% Complete</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-lg-3">
+    <div class="card">
+      <div class="card-body">
+        <div class="subheader">Guests This Term</div>
+        <div class="h1 mb-3">23</div>
+        <div>Remaining Allowance</div>
+        <div class="progress progress-sm">
+          <div class="progress-bar bg-blue" style="width: 75%" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">
+            <span class="visually-hidden">75% Complete</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-lg-3">
+    <div class="card">
+      <div class="card-body">
+        <div class="subheader">All Guests</div>
+        <div class="h1 mb-3">23</div>
+        <div>Remaining Allowance</div>
+        <div class="progress progress-sm">
+          <div class="progress-bar bg-blue" style="width: 75%" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">
+            <span class="visually-hidden">75% Complete</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-lg-3">
+    <div class="card">
+      <div class="card-body">
+        <div class="subheader">All Meals</div>
+        <div class="h1 mb-3">1045</div>
+        <div>Remaining Allowance</div>
+        <div class="progress progress-sm">
+          <div class="progress-bar bg-blue" style="width: 75%" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">
+            <span class="visually-hidden">75% Complete</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 
         <div class="row row-deck row-cards">
