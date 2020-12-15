@@ -20,7 +20,7 @@ $members = $membersClass->all();
 
 ?>
 <?php
-$title = "SCR Memebers";
+$title = "SCR Members";
 $subtitle = "Members, and their order of precedence.";
 $icons[] = array("class" => "btn-primary", "name" => $icon_add_member . " Add New", "value" => "data-toggle=\"modal\" data-target=\"#exampleModal\"");
 
