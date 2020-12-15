@@ -120,7 +120,7 @@ function itterate() {
 
           <div class="mb-12">
             <label for="firstname" class="form-label">First name</label>
-            <input type="text" class="form-control" name="firstname" id="firstname" placeholder="" value="<?php echo $memberObject->firstname; ?>" required>
+            <input type="text" class="form-control" name="firstname" id="firstname" required>
             <div class="invalid-feedback">
               Valid first name is required.
             </div>
@@ -128,7 +128,7 @@ function itterate() {
 
           <div class="col-12">
             <label for="lastname" class="form-label">Last name</label>
-            <input type="text" class="form-control" name="lastname" id="lastname" placeholder="" value="<?php echo $memberObject->lastname; ?>" required>
+            <input type="text" class="form-control" name="lastname" id="lastname" required>
             <div class="invalid-feedback">
               Valid last name is required.
             </div>
@@ -138,7 +138,7 @@ function itterate() {
             <label for="ldap" class="form-label">LDAP Username</label>
             <div class="input-group">
               <span class="input-group-text">@</span>
-              <input type="text" class="form-control" name="ldap" id="ldap" placeholder="LDAP Username" value="<?php echo $memberObject->ldap; ?>" required>
+              <input type="text" class="form-control" name="ldap" id="ldap" required>
             <div class="invalid-feedback">
                 LDAP Username is required.
               </div>
@@ -150,12 +150,7 @@ function itterate() {
             <select class="form-select" name="type" id="type" required>
               <?php
               foreach ($membersClass->memberTypes() AS $type) {
-                if ($type == $memberObject->type) {
-                  $selected = " selected ";
-                } else {
-                  $selected = "";
-                }
-                $output = "<option value=\"" . $type . "\"" . $selected . ">" . $type . "</option>";
+                $output = "<option value=\"" . $type . "\"" . ">" . $type . "</option>";
 
                 echo $output;
               }
@@ -168,12 +163,12 @@ function itterate() {
 
           <div class="col-12">
             <label for="dietary" class="form-label">Dietary Information</label>
-            <input type="text" class="form-control" name="dietary" id="dietary" placeholder="">
+            <input type="text" class="form-control" name="dietary" id="dietary">
           </div>
 
           <div class="col-12">
             <label for="email" class="form-label">Email <span class="text-muted">(Optional)</span></label>
-            <input type="email" class="form-control" name="email" id="email" placeholder="" value="<?php echo $memberObject->email; ?>">
+            <input type="email" class="form-control" name="email" id="email">
             <div class="invalid-feedback">
               Please enter a valid email address for shipping updates.
             </div>
