@@ -49,7 +49,7 @@ class meal {
     $output .= "<div class=\"card-body \">";
     $output .= "<h1 class=\"card-title pricing-card-title\">" . $bookingsThisMeal . " <small class=\"text-muted\">/ " . $this->totalCapacity() . " bookings</small></h1>";
     $output .= "<ul class=\"list-unstyled mt-3 mb-4\">";
-    $output .= "<li>" . $this->location . "</li>";
+    $output .= "<li>" . $this->type . ", " . $this->location . "</li>";
     $output .= "<li>" . date('H:i', strtotime($this->date_meal)) . "</li>";
 
     if (isset($this->notes)) {
@@ -113,8 +113,6 @@ class meal {
   public function display_mealAside() {
     global $settingsClass;
 
-    $dateFormat = $settingsClass->value('datetime_format_short');
-
     if (date('Y-m-d', strtotime($this->date_meal)) == date('Y-m-d')) {
       $class = "text-success";
     } else {
@@ -126,10 +124,50 @@ class meal {
     $output .= "<h6 class=\"my-0\"><a href=\"index.php?n=booking&mealUID=" . $this->uid . "\" class=\"" . $class . "\">" . $this->name . "</a></h6>";
     $output .= "<small class=\"" . $class . "\">" . $this->location . "</small>";
     $output .= "</div>";
-    $output .= "<span class=\"" . $class . "\">" . date($dateFormat, strtotime($this->date_meal)) . "</span>";
+    $output .= "<span class=\"" . $class . "\">" . dateDisplay($this->date_meal) . "</span>";
     $output .= "</li>";
 
     return $output;
+  }
+
+  public function update($array = null) {
+    global $db;
+
+    $sql  = "UPDATE " . self::$table_name;
+
+    foreach ($array AS $updateItem => $value) {
+      if ($updateItem != 'mealUID') {
+        $sqlUpdate[] = $updateItem ." = '" . $value . "' ";
+      }
+    }
+
+    $sql .= " SET " . implode(", ", $sqlUpdate);
+    $sql .= " WHERE uid = '" . $this->uid . "' ";
+    $sql .= " LIMIT 1";
+
+    $update = $db->query($sql);
+
+    return $update;
+  }
+
+  public function create($array = null) {
+	global $db;
+
+    $sql  = "INSERT INTO " . self::$table_name;
+
+    foreach ($array AS $updateItem => $value) {
+      if ($updateItem != 'mealNEW') {
+        $sqlColumns[] = $updateItem;
+        $sqlValues[] = "'" . $value . "' ";
+      }
+    }
+
+    $sql .= " (" . implode(",", $sqlColumns) . ") ";
+    $sql .= " VALUES (" . implode(",", $sqlValues) . ")";
+
+    $create = $db->query($sql);
+
+    return $create;
   }
 
 

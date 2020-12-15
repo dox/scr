@@ -50,11 +50,29 @@ function bookingDeleteButton() {
 function guestDomus(this_id) {
   var domusCheckBox = document.getElementById(this_id);
   var domusDescriptionInput = document.getElementById('guest_domus_description');
+  var domusDescriptionHelp = document.getElementById('guest_domus_descriptionHelp');
 
   if (domusCheckBox.checked == true) {
-	  domusDescriptionInput.disabled = false;
+    domusDescriptionInput.hidden = false;
+    domusDescriptionHelp.hidden = false;
   } else {
-	  domusDescriptionInput.disabled = true;
+    domusDescriptionInput.hidden = true;
+    domusDescriptionHelp.hidden = true;
+	  domusDescriptionInput.value = "";
+  }
+}
+
+function domus(this_id) {
+  var domusCheckBox = document.getElementById(this_id);
+  var domusDescriptionInput = document.getElementById('domus_description');
+  var domusDescriptionHelp = document.getElementById('domus_descriptionHelp');
+
+  if (domusCheckBox.checked == true) {
+    domusDescriptionInput.hidden = false;
+    domusDescriptionHelp.hidden = false;
+  } else {
+    domusDescriptionInput.hidden = true;
+    domusDescriptionHelp.hidden = true;
 	  domusDescriptionInput.value = "";
   }
 }

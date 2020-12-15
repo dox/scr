@@ -154,6 +154,7 @@ include_once('_member_stats.php');
         <hr class="my-4">
 
         <div class="divide-y">
+          <h4 class="mb-3">Default Preferences</h4>
           <div>
             <label class="row">
               <span class="col">Default Domus</span>
@@ -182,14 +183,6 @@ include_once('_member_stats.php');
 
         <hr />
 
-        <div class="input-icon">
-          <input id="calendar-time" type="text" value="2020-06-20" class="form-control flatpickr-input active" placeholder="Select a date" readonly="readonly">
-          <span class="input-icon-addon"><svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><rect x="4" y="5" width="16" height="16" rx="2"></rect><line x1="16" y1="3" x2="16" y2="7"></line><line x1="8" y1="3" x2="8" y2="7"></line><line x1="4" y1="11" x2="20" y2="11"></line><line x1="11" y1="15" x2="12" y2="15"></line><line x1="12" y1="15" x2="12" y2="18"></line></svg>
-          </span>
-        </div>
-
-        <hr />
-
         <h4 class="mb-3">Privacy</h4>
 
         <div class="my-3">
@@ -199,40 +192,7 @@ include_once('_member_stats.php');
           </div>
         </div>
 
-        <div class="row gy-3">
-          <div class="col-md-6">
-            <label for="cc-name" class="form-label">Name on card</label>
-            <input type="text" class="form-control" id="cc-name" placeholder="" required>
-            <small class="text-muted">Full name as displayed on card</small>
-            <div class="invalid-feedback">
-              Name on card is required
-            </div>
-          </div>
 
-          <div class="col-md-6">
-            <label for="cc-number" class="form-label">Credit card number</label>
-            <input type="text" class="form-control" id="cc-number" placeholder="" required>
-            <div class="invalid-feedback">
-              Credit card number is required
-            </div>
-          </div>
-
-          <div class="col-md-3">
-            <label for="cc-expiration" class="form-label">Expiration</label>
-            <input type="text" class="form-control" id="cc-expiration" placeholder="" required>
-            <div class="invalid-feedback">
-              Expiration date required
-            </div>
-          </div>
-
-          <div class="col-md-3">
-            <label for="cc-cvv" class="form-label">CVV</label>
-            <input type="text" class="form-control" id="cc-cvv" placeholder="" required>
-            <div class="invalid-feedback">
-              Security code required
-            </div>
-          </div>
-        </div>
 
         <hr class="my-4">
 
