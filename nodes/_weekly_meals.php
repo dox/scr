@@ -8,7 +8,6 @@ $currentWeek = $termsClass->currentWeek();
 
 $mealsClass = new meals();
 
-$datetimeFormatShort = $settingsClass->value('datetime_format_short');
 ?>
 
 <!--<h1><?php echo "<h1>" . $suppliedWeek . " <span class=\"text-muted\">" . $currentTerm->weekStartDate($suppliedWeek) . "</span></h1>"; ?></h1>-->

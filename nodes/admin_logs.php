@@ -7,7 +7,6 @@ admin_gatekeeper();
 $logs = $logsClass->all();
 $logsTypes = $logsClass->types();
 $logsDisplay = $settingsClass->value('logs_display');
-$dateFormat = $settingsClass->value('datetime_format_short');
 
 $i=$logsDisplay;
 do {
@@ -52,7 +51,7 @@ echo makeTitle($title, $subtitle);
     $output  = "<a href=\"#\" class=\"list-group-item list-group-item-action\">";
     $output .= "<div class=\"d-flex w-100 justify-content-between\">";
     $output .= "<h5 class=\"mb-1\">" . $log['username'] . " - " . $log['description'] . "</h5>";
-    $output .= "<small class=\"text-muted\">" . date($dateFormat, strtotime($log['date'])) . " " . date('H:i:s', strtotime($log['date'])) . "</small>";
+    $output .= "<small class=\"text-muted\">" . dateDisplay($log['date']) . " " . date('H:i:s', strtotime($log['date'])) . "</small>";
     //$output .= "<span class=\"badge bg-primary rounded-pill\">" . $log['type'] . "</span>";
     $output .= "</div>";
     //$output .= "<p class=\"mb-1\">" . $log['description'] . "</p>";

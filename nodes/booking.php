@@ -30,6 +30,10 @@ printArray($arr);
 <?php
 $title = "Week " . $term->whichWeek($meal->date_meal) . " " . $meal->name;
 $subtitle = "Some text here about meal booking.  Make it simple!";
+if ($_SESSION['admin'] == true) {
+  //$icons[] = array("class" => "btn-warning", "name" => $icon_edit. " Edit Meal", "value" => "a href=\"index.php?n=admin_meal=" . $meal->uid . "\"");
+}
+$icons[] = array("class" => "btn-primary", "name" => $icon_add_member. " Add Guest", "value" => "data-toggle=\"modal\" data-target=\"#exampleModal\"");
 $icons[] = array("class" => "btn-danger", "name" => $icon_delete. " Delete Booking", "value" => "data-toggle=\"modal\" data-target=\"#staticBackdrop\"");
 
 echo makeTitle($title, $subtitle, $icons);
@@ -37,6 +41,39 @@ echo makeTitle($title, $subtitle, $icons);
 
 <div class="row g-3">
       <div class="col-md-5 col-lg-4 order-md-last">
+        <div class="divide-y">
+          <div>
+            <label class="row">
+              <span class="col">Domus</span>
+              <span class="col-auto">
+                <label class="form-check form-check-single form-switch">
+                  <input class="form-check-input" id="domus" type="checkbox" <?php if ($bookingObject->domus == 1) { echo "checked";} ?> onchange="domus(this.id)">
+                </label>
+              </span>
+              <input type="text" class="form-control" id="domus_description" placeholder="Domus reason (required)" hidden>
+              <small id="domus_descriptionHelp" class="form-text text-muted" hidden>A brief description of why your booking is Domus</small>
+            </label>
+          </div>
+          <div>
+            <label class="row">
+              <span class="col">Wine</span>
+              <span class="col-auto">
+                <label class="form-check form-check-single form-switch"><input class="form-check-input" type="checkbox" <?php if ($bookingObject->wine == 1) { echo "checked";} ?>></label>
+              </span>
+            </label>
+          </div>
+          <div>
+            <label class="row">
+              <span class="col">Dessert</span>
+              <span class="col-auto">
+                <label class="form-check form-check-single form-switch"><input class="form-check-input" type="checkbox" <?php if ($bookingObject->dessert == 1) { echo "checked";} ?>></label>
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <hr />
+
         <h4 class="d-flex justify-content-between align-items-center mb-3">
           <span class="text-muted">Your Guests</span>
           <span class="badge bg-secondary rounded-pill"><?php echo count($bookingObject->guestsArray()); ?></span>
@@ -63,10 +100,8 @@ echo makeTitle($title, $subtitle, $icons);
           ?>
         </ul>
 
-        <div class="d-grid gap-2">
-	        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">Add Guest</button>
-        </div>
-    </button>
+
+
       </div>
       <div class="col-md-7 col-lg-8">
         <h4 class="mb-3">Guest List</h4>
@@ -122,8 +157,8 @@ echo makeTitle($title, $subtitle, $icons);
           </div>
           <div class="form-group">
             <label for="date_start">Domus Description</label>
-            <input type="text" class="form-control" name="guest_domus_description" id="guest_domus_description" disabled aria-describedby="domus_description">
-            <small id="domus_descriptionHelp" class="form-text text-muted">A brief description of why this guest is Domus</small>
+            <input type="text" class="form-control" name="guest_domus_description" id="guest_domus_description" hidden aria-describedby="domus_description" placeholder="Domus reason (required)">
+            <small id="guest_domus_descriptionHelp" class="form-text text-muted" hidden>A brief description of why this guest is Domus</small>
           </div>
 
       </div>

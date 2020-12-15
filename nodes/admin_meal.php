@@ -1,21 +1,34 @@
-<script src="https://cdn.jsdelivr.net/npm/litepicker/dist/js/main.js"></script>
+<link href="css/pikaday.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous"></script>
+<script src="js/pikaday.js"></script>
 
 <?php
 admin_gatekeeper();
-$dateFormat = $settingsClass->value('datetime_format_short');
 
 $mealsClass = new meals();
 
 $mealObject = new meal($_GET['mealUID']);
 
-printArray($_POST);
+
+if (isset($_POST['mealUID'])) {
+  $mealObject->update($_POST);
+  $mealObject = new meal($_GET['mealUID']);
+}
 
 ?>
 <?php
-$title = $mealObject->name;
-$subtitle = $mealObject->location . " " . date($dateFormat, strtotime($mealObject->date_meal));
-//$icons[] = array("class" => "btn-danger", "name" => "Test1", "value" => "");
-//$icons[] = array("class" => "btn-primary", "name" => "Test2", "value" => "");
+if (isset($_GET['add'])) {
+  $title = "Add New Meal";
+  $subtitle = "Add new meal - instant";
+  //$icons[] = array("class" => "btn-primary", "name" => "Guest List", "value" => "");
+  //$icons[] = array("class" => "btn-primary", "name" => "Test2", "value" => "");
+} else {
+  $title = $mealObject->name;
+  $subtitle = $mealObject->location . " " . dateDisplay($mealObject->date_meal);
+  $icons[] = array("class" => "btn-primary", "name" => "Guest List", "value" => "");
+  //$icons[] = array("class" => "btn-primary", "name" => "Test2", "value" => "");
+}
+
 
 echo makeTitle($title, $subtitle, $icons);
 ?>
@@ -33,7 +46,7 @@ echo makeTitle($title, $subtitle, $icons);
             $output  = "<li class=\"list-group-item d-flex justify-content-between lh-sm\">";
             $output .= "<div class=\"text-muted\">";
             $output .= "<h6 class=\"my-0\"><a href=\"index.php?n=booking&mealUID=" . $memberObject->uid . "\" class=\"text-muted\">" . $memberObject->displayName() . "</a></h6>";
-            $output .= "<small class=\"text-muted\">" . date($dateFormat, strtotime($booking['date'])) . " " . date('H:i:s', strtotime($booking['date'])) . "</small>";
+            $output .= "<small class=\"text-muted\">" . dateDisplay($booking['date']) . " " . date('H:i:s', strtotime($booking['date'])) . "</small>";
             $output .= "</div>";
             $output .= "<span class=\"text-muted\">" . count(json_decode($booking['guests_array'])) . autoPluralise(" guest", " guests", count(json_decode($booking['guests_array']))) . "</span>";
             $output .= "</li>";
@@ -45,7 +58,13 @@ echo makeTitle($title, $subtitle, $icons);
       </div>
       <div class="col-md-7 col-lg-8">
         <h4 class="mb-3">Meal Information</h4>
-        <form method="post" id="mealUpdate" action="<?php echo $_SERVER['REQUEST_URI']; ?>" class="needs-validation" novalidate>
+        <?php
+        if (isset($_GET['add'])) {
+          echo "<form method=\"post\" id=\"mealUpdate\" action=\"index.php?n=admin_meals\" class=\"needs-validation\" novalidate>";
+        } else {
+          echo "<form method=\"post\" id=\"mealUpdate\" action=\"" . $_SERVER['REQUEST_URI'] . "\" class=\"needs-validation\" novalidate>";
+        }
+        ?>
           <div class="row">
             <div class="col-4">
               <label for="type" class="form-label">Type</label>
@@ -74,16 +93,8 @@ echo makeTitle($title, $subtitle, $icons);
                 Valid Meal name is required.
               </div>
             </div>
-          </div>
-          <div class="row">
-            <div class="col-4">
-              <label for="date_meal" class="form-label">Meal Date/Time</label>
-              <input type="date" class="form-control" name="date_meal" id="date_meal" placeholder="" value="<?php echo $mealObject->date_meal; ?>" required>
-              <div class="invalid-feedback">
-                Meal Date is required.
-              </div>
-            </div>
-            <div class="col-8">
+
+            <div class="col-12">
               <label for="location" class="form-label">Location</label>
               <input type="text" list="locations_datalist" class="form-control" name="location" id="location" placeholder="" value="<?php echo $mealObject->location; ?>" required>
               <datalist id="locations_datalist">
@@ -97,119 +108,156 @@ echo makeTitle($title, $subtitle, $icons);
                 Location is required.
               </div>
             </div>
+          </div>
 
+          <hr />
 
+          <?php
+          if (isset($_GET['add'])) {
+            $cutoffMinutes = $settingsClass->value('booking_cutoff');
 
+            $date_meal = date('Y-m-d H:i');
+            $date_cutoff = date('Y-m-d H:i', strtotime(date('Y-m-d') . ' -' . $cutoffMinutes . " minutes"));
+          } else {
+            $date_meal = date('Y-m-d H:i', strtotime($mealObject->date_meal));
+            $date_cutoff = date('Y-m-d H:i', strtotime($mealObject->date_cutoff));
+          }
 
-
-
-            <div class="row">
-              <div class="col-6">
-                <label for="scr_capacity" class="form-label">SCR Capacity</label>
-                <input type="number" class="form-control" name="scr_capacity" id="scr_capacity" placeholder="" value="<?php echo $mealObject->scr_capacity; ?>" required>
-                <div class="invalid-feedback">
-                  SCR Capacity is required.
-                </div>
-              </div>
-
-              <div class="col-6">
-                <label for="scr_guests" class="form-label">SCR Guests (per member)</label>
-                <input type="number" class="form-control" name="scr_guests" id="scr_guests" placeholder="" value="<?php echo $mealObject->scr_guests; ?>" required>
-                <div class="invalid-feedback">
-                  SCR Guests is required.
-                </div>
-              </div>
-            </div>
-
-            <div class="row">
-              <div class="col-6">
-                <label for="mcr_capacity" class="form-label">MCR Capacity</label>
-                <input type="number" class="form-control" name="mcr_capacity" id="mcr_capacity" placeholder="" value="<?php echo $mealObject->mcr_capacity; ?>" required>
-                <div class="invalid-feedback">
-                  SCR Capacity is required.
-                </div>
-              </div>
-
-              <div class="col-6">
-                <label for="mcr_guests" class="form-label">MCR Guests (per member)</label>
-                <input type="number" class="form-control" name="mcr_guests" id="mcr_guests" placeholder="" value="<?php echo $mealObject->mcr_guests; ?>" required>
-                <div class="invalid-feedback">
-                  SCR Guests is required.
-                </div>
+          echo $date_meal;
+          ?>
+          <div class="row">
+            <div class="col-6">
+              <label for="date_meal" class="form-label">Meal Date/Time</label>
+              <input type="text" class="form-control" name="date_meal" id="date_meal" placeholder="" value="<?php echo $date_meal; ?>" required>
+              <div class="invalid-feedback">
+                Meal Date is required.
               </div>
             </div>
 
-            <label for="notes" class="form-label">Notes</label>
-            <input type="text" class="form-control" name="notes" id="notes" placeholder="" value="<?php echo $mealObject->notes; ?>" required>
-            <div class="invalid-feedback">
-              Valid Meal name is required.
-            </div>
-
-            <hr />
-
-            <div class="divide-y">
-              <div>
-                <label class="row">
-                  <span class="col">Domus</span>
-                  <span class="col-auto">
-                    <label class="form-check form-check-single form-switch"><input class="form-check-input" type="checkbox" checked=""></label>
-                  </span>
-                </label>
-              </div>
-              <div>
-                <label class="row">
-                  <span class="col">Wine</span>
-                  <span class="col-auto">
-                    <label class="form-check form-check-single form-switch"><input class="form-check-input" type="checkbox" checked=""></label>
-                  </span>
-                </label>
-              </div>
-              <div>
-                <label class="row">
-                  <span class="col">Dessert</span>
-                  <span class="col-auto">
-                    <label class="form-check form-check-single form-switch"><input class="form-check-input" type="checkbox" checked=""></label>
-                  </span>
-                </label>
+            <div class="col-6">
+              <label for="date_cutoff" class="form-label">Meal Date/Time Cut-Off</label>
+              <input type="date" class="form-control" name="date_cutoff" id="date_cutoff" placeholder="" value="<?php echo $date_cutoff; ?>" required>
+              <div class="invalid-feedback">
+                Meal Cutoff Date is required.
               </div>
             </div>
+
+
+
+
+          </div>
+          <hr />
+
+          <div class="row">
+            <div class="col-4">
+              <label for="scr_capacity" class="form-label">SCR Capacity</label>
+              <input type="number" class="form-control" name="scr_capacity" id="scr_capacity" value="<?php echo $mealObject->scr_capacity; ?>" min=0 required>
+              <div class="invalid-feedback">
+                SCR Capacity is required.
+              </div>
+            </div>
+
+            <div class="col-4">
+              <label for="scr_guests" class="form-label">SCR Guests (per member)</label>
+              <input type="number" class="form-control" name="scr_guests" id="scr_guests" value="<?php echo $mealObject->scr_guests; ?>" min=0 required>
+              <div class="invalid-feedback">
+                SCR Guests is required.
+              </div>
+            </div>
+
+            <div class="col-4">
+              <label for="scr_dessert_capacity" class="form-label">SCR Dessert Capacity</label>
+              <input type="number" class="form-control" name="scr_dessert_capacity" id="scr_dessert_capacity" value="<?php echo $mealObject->scr_dessert_capacity; ?>" min=0 required>
+              <div class="invalid-feedback">
+                SCR Dessert Capacity is required.
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-4">
+              <label for="mcr_capacity" class="form-label">MCR Capacity</label>
+              <input type="number" class="form-control" name="mcr_capacity" id="mcr_capacity" value="<?php echo $mealObject->mcr_capacity; ?>" min=0 required>
+              <div class="invalid-feedback">
+                SCR Capacity is required.
+              </div>
+            </div>
+
+            <div class="col-4">
+              <label for="mcr_guests" class="form-label">MCR Guests (per member)</label>
+              <input type="number" class="form-control" name="mcr_guests" id="mcr_guests" value="<?php echo $mealObject->mcr_guests; ?>" min=0 required>
+              <div class="invalid-feedback">
+                SCR Guests is required.
+              </div>
+            </div>
+
+            <div class="col-4">
+              <label for="mcr_dessert_capacity" class="form-label">MCR Desert Capacity</label>
+              <input type="number" class="form-control" name="mcr_dessert_capacity" id="mcr_dessert_capacity" value="<?php echo $mealObject->mcr_dessert_capacity; ?>" min=0 required>
+              <div class="invalid-feedback">
+                MCR Dessert Capacity is required.
+              </div>
+            </div>
+          </div>
+
+          <hr />
+
+          <label for="notes" class="form-label">Notes</label>
+          <input type="text" class="form-control" name="notes" id="notes" value="<?php echo $mealObject->notes; ?>" required>
+          <div class="invalid-feedback">
+            Valid Meal name is required.
+          </div>
+
+          <hr />
+
+          <div class="divide-y">
+            <div>
+              <label class="row">
+                <span class="col">Domus</span>
+                <span class="col-auto">
+                  <label class="form-check form-check-single form-switch"><input class="form-check-input" type="checkbox" checked=""></label>
+                </span>
+              </label>
+            </div>
+            <div>
+              <label class="row">
+                <span class="col">Wine</span>
+                <span class="col-auto">
+                  <label class="form-check form-check-single form-switch"><input class="form-check-input" type="checkbox" checked=""></label>
+                </span>
+              </label>
+            </div>
+          </div>
+        </div>
 </div>
-
-
-
-<!--
-
-
-Where:
-
-
-Wine:
-Dessert:
-
-Dessert Capacity:
-(0 for unlimited)
-Dessert:
-
-Deadline Time
-Unbookable
-(& contact):
-
-
--->
-
           <hr class="my-4">
-          <input type="hidden" name="mealUID" id="mealUID" value="<?php echo $mealObject->uid;?>">
-          <button class="btn btn-primary btn-lg btn-block" type="submit">Update Meal Details</button>
+          <?php
+          if (isset($_GET['add'])) {
+            echo "<input type=\"hidden\" name=\"mealNEW\" id=\"mealNEW\">";
+            echo "<button class=\"btn btn-primary btn-lg btn-block\" type=\"submit\">Add New Meal</button>";
+          } else {
+            echo "<input type=\"hidden\" name=\"mealUID\" id=\"mealUID\" value=\"" . $mealObject->uid . "\">";
+            echo "<button class=\"btn btn-primary btn-lg btn-block\" type=\"submit\">Update Meal Details</button>";
+          }
+          ?>
+
         </form>
       </div>
     </div>
 
-
 <script>
-var picker = new Litepicker({
-  element: document.getElementById('date_meal'),
+var picker = new Pikaday({
+  field: document.getElementById('date_meal'),
   firstDay: 0,
-  format: 'YYYY-MM-DD',
-  singleMode: true
+  format: 'Y-MM-DD hh:mm',
+  showTime: true,
+  showMinutes: true,
+  incrementMinuteBy: 4
+});
+
+var picker = new Pikaday({
+  field: document.getElementById('date_cutoff'),
+  firstDay: 0,
+  format: 'Y-MM-DD hh:mm'
 });
 </script>

@@ -5,6 +5,17 @@ function printArray($array) {
 	echo ("</pre>");
 }
 
+function dateDisplay($date = null) {
+	global $settingsClass;
+
+	$dateFormat = $settingsClass->value('datetime_format_short');
+
+	$returnDate = date($dateFormat, strtotime($date));
+
+	return $returnDate;
+}
+
+
 function autoPluralise ($singular, $plural, $count = 1) {
 	// fantasticly clever function to return the correct plural of a word/count combo
 	// Usage:	$singular	= single version of the word (e.g. 'Bus')

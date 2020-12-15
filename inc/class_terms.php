@@ -27,7 +27,7 @@ class terms extends term {
 
   public function arrayWindowOfWeeks() {
     $weeksBefore = 3;
-    $weeksAfter = 4;
+    $weeksAfter = 5;
 
     $i = $weeksBefore;
     do {
