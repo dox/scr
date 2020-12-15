@@ -20,16 +20,19 @@ do {
   $i--;
 } while ($i >= 0);
 
-
 foreach ($logsArray AS $logType => $totalsArray) {
   $logsColour = $settingsClass->value('logs_colour_' . $logType);
 
+  if (!isset($logsColour)) {
+    $logsColour = "rgba(" . rand(0,255) . ", " . rand(0,255) . ", " . rand(0,255) . ", 0.2)";
+  }
+
   $output  = "{";
   $output .= "label: '" . $logType . "',";
-  $output .= "data: [" . implode(",", $totalsArray) . "],";
-  $output .= "backgroundColor: ['" . $logsColour . "'],";
-  $output .= "borderColor: ['" . $logsColour . "'],";
-  $output .= "borderWidth: 1";
+  $output .= "backgroundColor: '" . $logsColour . "',";
+  $output .= "data: [" . implode(",", $totalsArray) . "]";
+  //$output .= "borderColor: ['" . $logsColour . "'],";
+  //$output .= "borderWidth: 1";
   $output .= "}";
 
   $graphData[] = $output;
@@ -42,7 +45,6 @@ $subtitle = "Admin/User logs for the last " . $logsDisplay . " days";
 echo makeTitle($title, $subtitle);
 ?>
 
-<canvas id="logChart"></canvas>
 <canvas id="canvas2"></canvas>
 
 <div class="list-group">
@@ -64,71 +66,10 @@ echo makeTitle($title, $subtitle);
 </div>
 
 <script>
-var ctx = document.getElementById('logChart').getContext('2d');
-var myChart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-        labels: [<?php echo implode(", ", $datesArray); ?>],
-        datasets: [
-          <?php echo implode(",", $graphData); ?>
-        ]
-    },
-    options: {
-      scales: {
-        xAxes: [{
-          //stacked: true
-				}],
-        yAxes: [{
-          //stacked: true,
-					scaleLabel: {
-						display: true,
-						labelString: 'Total Logs'
-					},
-          ticks: {
-            beginAtZero: true
-          }
-        }]
-      }
-    }
-});
-
 var barChartData = {
-			labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-			datasets: [{
-				label: 'Dataset 1',
-				backgroundColor: ['rgba(54, 162, 235, 0.2)'],
-				data: [
-					2,
-					5,
-					3,
-					2,
-					5,
-					6,
-					7
-				]
-			}, {
-				label: 'Dataset 2',
-				data: [
-          2,
-					5,
-					3,
-					2,
-					5,
-					6,
-					7
-				]
-			}, {
-				label: 'Dataset 3',
-				data: [
-          2,
-					5,
-					3,
-					2,
-					5,
-					6,
-					7
-				]
-			}]
+			labels: [<?php echo implode(", ", $datesArray); ?>],
+			datasets: [
+        <?php echo implode(",", $graphData); ?>]
 
 		};
 		window.onload = function() {
@@ -137,10 +78,6 @@ var barChartData = {
 				type: 'bar',
 				data: barChartData,
 				options: {
-					title: {
-						display: true,
-						text: 'Chart.js Bar Chart - Stacked'
-					},
 					tooltips: {
 						mode: 'index',
 						intersect: false
@@ -151,7 +88,11 @@ var barChartData = {
 							stacked: true,
 						}],
 						yAxes: [{
-							stacked: true
+							stacked: true,
+              scaleLabel: {
+    						display: true,
+    						labelString: 'Total Logs'
+    					}
 						}]
 					}
 				}
