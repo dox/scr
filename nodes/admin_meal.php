@@ -1,6 +1,5 @@
-<link href="css/pikaday.css" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous"></script>
-<script src="js/pikaday.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 <?php
 admin_gatekeeper();
@@ -45,7 +44,7 @@ echo makeTitle($title, $subtitle, $icons);
 
             $output  = "<li class=\"list-group-item d-flex justify-content-between lh-sm\">";
             $output .= "<div class=\"text-muted\">";
-            $output .= "<h6 class=\"my-0\"><a href=\"index.php?n=booking&mealUID=" . $memberObject->uid . "\" class=\"text-muted\">" . $memberObject->displayName() . "</a></h6>";
+            $output .= "<h6 class=\"my-0\"><a href=\"index.php?n=booking&memberLDAP=" . $booking['member_ldap'] . "&mealUID=" . $booking['meal_uid'] . "\" class=\"text-muted\">" . $memberObject->displayName() . "</a></h6>";
             $output .= "<small class=\"text-muted\">" . dateDisplay($booking['date']) . " " . date('H:i:s', strtotime($booking['date'])) . "</small>";
             $output .= "</div>";
             $output .= "<span class=\"text-muted\">" . count(json_decode($booking['guests_array'])) . autoPluralise(" guest", " guests", count(json_decode($booking['guests_array']))) . "</span>";
@@ -116,14 +115,12 @@ echo makeTitle($title, $subtitle, $icons);
           if (isset($_GET['add'])) {
             $cutoffMinutes = $settingsClass->value('booking_cutoff');
 
-            $date_meal = date('Y-m-d H:i');
-            $date_cutoff = date('Y-m-d H:i', strtotime(date('Y-m-d') . ' -' . $cutoffMinutes . " minutes"));
+            $date_meal = date('Y-m-d 12:00');
+            $date_cutoff = date('Y-m-d 12:00', strtotime(date('Y-m-d') . ' -' . $cutoffMinutes . " minutes"));
           } else {
             $date_meal = date('Y-m-d H:i', strtotime($mealObject->date_meal));
             $date_cutoff = date('Y-m-d H:i', strtotime($mealObject->date_cutoff));
           }
-
-          echo $date_meal;
           ?>
           <div class="row">
             <div class="col-6">
@@ -245,19 +242,16 @@ echo makeTitle($title, $subtitle, $icons);
       </div>
     </div>
 
-<script>
-var picker = new Pikaday({
-  field: document.getElementById('date_meal'),
-  firstDay: 0,
-  format: 'Y-MM-DD hh:mm',
-  showTime: true,
-  showMinutes: true,
-  incrementMinuteBy: 4
-});
+    <script>
+    var fp = flatpickr("#date_meal", {
+      enableTime: true,
+      dateFormat: "Y-m-d H:i",
+      time_24hr: true
+    })
 
-var picker = new Pikaday({
-  field: document.getElementById('date_cutoff'),
-  firstDay: 0,
-  format: 'Y-MM-DD hh:mm'
-});
-</script>
+    var fp = flatpickr("#date_cutoff", {
+      enableTime: true,
+      dateFormat: "Y-m-d H:i",
+      time_24hr: true
+    })
+    </script>
