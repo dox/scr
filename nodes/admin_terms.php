@@ -1,3 +1,6 @@
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
 <?php
 admin_gatekeeper();
 
@@ -89,4 +92,12 @@ echo makeTitle($title, $subtitle, $icons);
 function dismiss(el){
   document.getElementById(el).parentNode.style.display='none';
 };
+
+var fp = flatpickr("#date_start", {
+  dateFormat: "Y-m-d"
+})
+
+var fp = flatpickr("#date_end", {
+  dateFormat: "Y-m-d"
+})
 </script>
