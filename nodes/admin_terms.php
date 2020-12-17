@@ -68,13 +68,13 @@ echo makeTitle($title, $subtitle, $icons);
           <div class="form-group">
             <label for="date_start">Term Start Date</label>
             <input type="text" class="form-control" name="date_start" id="date_start" aria-describedby="termStartDate">
-            <small id="date_startHelp" class="form-text text-muted">2020-01-01</small>
+            <small id="date_startHelp" class="form-text text-muted">Sunday of 1st week</small>
           </div>
 
           <div class="form-group">
             <label for="date_end">Term End Date</label>
             <input type="text" class="form-control" name="date_end" id="date_end" aria-describedby="termEndDate">
-            <small id="date_endHelp" class="form-text text-muted">2020-09-30</small>
+            <small id="date_endHelp" class="form-text text-muted">Saturday of 8th week</small>
           </div>
 
       </div>
@@ -94,10 +94,24 @@ function dismiss(el){
 };
 
 var fp = flatpickr("#date_start", {
-  dateFormat: "Y-m-d"
+  dateFormat: "Y-m-d",
+  enable: [
+        function(date) {
+            // return true to disable
+            return (date.getDay() === 0);
+
+        }
+    ]
 })
 
 var fp = flatpickr("#date_end", {
-  dateFormat: "Y-m-d"
+  dateFormat: "Y-m-d",
+  enable: [
+        function(date) {
+            // return true to disable
+            return (date.getDay() === 6);
+
+        }
+    ]
 })
 </script>
