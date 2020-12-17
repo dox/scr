@@ -22,7 +22,7 @@ function bookMealQuick(this_id) {
       alert("Something went wrong.  Please refresh this page and try again.");
       alert(`Error ${request.status}: ${request.statusText}`); // e.g. 404: Not Found
     } else { // show the result
-      alert(this.responseText);
+      //alert(this.responseText);
 
       buttonClicked.className = 'btn btn-success';
       buttonClicked.removeAttribute("onclick");

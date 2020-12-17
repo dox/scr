@@ -4,6 +4,7 @@ admin_gatekeeper();
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
 
 <?php
+$logsClass->purge();
 $logs = $logsClass->all();
 $logsTypes = $logsClass->types();
 $logsDisplay = $settingsClass->value('logs_display');

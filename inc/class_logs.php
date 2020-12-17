@@ -64,6 +64,28 @@ class logs {
 
     return $types;
   }
+
+  public function purge() {
+		global $db;
+    global $settingsClass;
+
+    $logs_retention = $settingsClass->value('logs_retention');
+
+		$sql = "SELECT * FROM " . self::$table_name . " WHERE type = 'purge' AND DATE(date) = '" . date('Y-m-d') . "' LIMIT 1";
+		$lastPurge = $db->query($sql)->fetchAll();
+
+		if (empty($lastPurge)) {
+			$sql = "SELECT * FROM " . self::$table_name . " WHERE DATE(date) < '" . date('Y-m-d', strtotime('-' . $logs_retention . ' days')) . "'";
+			$logsToDelete = $db->query($sql)->fetchAll();
+
+			if (count($logsToDelete) > 0) {
+				$sql = "DELETE FROM " . self::$table_name . " WHERE DATE(date) < '" . date('Y-m-d', strtotime('-' . $logs_retention . ' days')) . "'";
+				$logsToDelete = $db->query($sql);
+
+        $this->create("purge", count($logsToDelete) . " log(s) purged");
+			}
+		}
+	}
 }
 
 $logsClass = new logs();

@@ -3,7 +3,7 @@ include_once("inc/autoload.php");
 
 // impersonate
 if (isset($_POST['impersonate_ldap'])) {
-  $logsClass->create("impersonation", $_SESSION['username'] . " impersonating " . $_POST['impersonate_ldap']);
+  $logsClass->create("admin", $_SESSION['username'] . " impersonating " . $_POST['impersonate_ldap']);
 
   $_SESSION['username_original'] = $_SESSION['username'];
   $_SESSION['username'] = $_POST['impersonate_ldap'];
@@ -11,7 +11,7 @@ if (isset($_POST['impersonate_ldap'])) {
 }
 // impersonate stop
 if (isset($_POST['stop_impersonating'])) {
-  $logsClass->create("impersonation", $_SESSION['username_original'] . " no longer impersonating " . $_SESSION['username']);
+  $logsClass->create("admin", $_SESSION['username_original'] . " no longer impersonating " . $_SESSION['username']);
 
   $_SESSION['username'] = $_SESSION['username_original'];
   unset($_SESSION['username_original']);
