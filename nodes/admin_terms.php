@@ -33,7 +33,7 @@ echo makeTitle($title, $subtitle, $icons);
       $class = "";
     }
 
-    $output  = "<a href=\"#\" class=\"list-group-item " . $class . " list-group-item-action\">";
+    $output  = "<a href=\"index.php?n=admin_term&termUID=" . $termObject->uid . "\" class=\"list-group-item " . $class . " list-group-item-action\">";
     $output .= "<div class=\"d-flex w-100 justify-content-between\">";
     $output .= "<h5 class=\"mb-1\">" . $termObject->name . "</h5>";
     $output .= "<small class=\"text-muted\">" . "<span class=\"badge bg-primary rounded-pill\">" . $termObject->weeksInTerm() . " weeks</span> " . $log['ip'] . "</small>";

@@ -23,6 +23,19 @@ class meals extends meal {
     return $meals;
   }
 
+  public function betweenDates($dateFrom = null, $dateTo = null) {
+    global $db;
+
+    $sql  = "SELECT *  FROM " . self::$table_name;
+    $sql .= " WHERE DATE(date_meal) >= '" . $dateFrom . "'";
+    $sql .= " AND DATE(date_meal) <= '" . $dateTo . "'";
+    $sql .= " ORDER BY date_meal DESC";
+
+    $meals = $db->query($sql)->fetchAll();
+
+    return $meals;
+  }
+
   public function mealTypes() {
     global $settingsClass;
 

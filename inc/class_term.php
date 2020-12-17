@@ -45,6 +45,19 @@ class term {
     return $currentTerm;
   }
 
+  public function nextTerm() {
+    global $db;
+
+    $sql  = "SELECT *  FROM " . self::$table_name;
+    $sql .= " WHERE DATE(date_start) > '" . $this->date_end . "'";
+    $sql .= " ORDER BY date_start ASC";
+    $sql .= " LIMIT 1";
+
+    $nextTerm = $db->query($sql)->fetchAll();
+
+    return $nextTerm;
+  }
+
   public function currentWeek() {
     $dateFrom = $this->date_start;
     $dateTo   = date('Y-m-d');
@@ -89,7 +102,8 @@ class term {
   }
 
   public function create($array = null) {
-	global $db;
+	   global $db;
+     global $logsClass;
 
     $sql  = "INSERT INTO " . self::$table_name;
 
@@ -104,8 +118,31 @@ class term {
     $sql .= " VALUES (" . implode(",", $sqlValues) . ")";
 
     $create = $db->query($sql);
+    $logsClass->create("admin", "Term [uid:" . $create->lastInsertID() . "] created");
 
     return $create;
+  }
+
+  public function update($array = null) {
+    global $db;
+    global $logsClass;
+
+    $sql  = "UPDATE " . self::$table_name;
+
+    foreach ($array AS $updateItem => $value) {
+      if ($updateItem != 'termUID') {
+        $sqlUpdate[] = $updateItem ." = '" . $value . "' ";
+      }
+    }
+
+    $sql .= " SET " . implode(", ", $sqlUpdate);
+    $sql .= " WHERE uid = '" . $this->uid . "' ";
+    $sql .= " LIMIT 1";
+
+    $update = $db->query($sql);
+    $logsClass->create("admin", "Term [uid:" . $this->uid . "] updated");
+
+    return $update;
   }
 }
 ?>

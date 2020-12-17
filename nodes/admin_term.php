@@ -1,0 +1,122 @@
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<?php
+admin_gatekeeper();
+
+$termsClass = new terms();
+$termObject = new term($_GET['termUID']);
+
+$nextTerm = $termObject->nextTerm();
+
+$mealsClass = new meals();
+$meals = $mealsClass->betweenDates($termObject->date_start, $termObject->date_end);
+$mealsAfterTerm = $mealsClass->betweenDates($termObject->date_end, date('Y-m-d', strtotime($nextTerm[0]['date_start'] . " -1 day")));
+
+if (isset($_POST['termUID'])) {
+  $termObject->update($_POST);
+  $termObject = new term($_GET['termUID']);
+}
+
+?>
+<?php
+$title = $termObject->name;
+$subtitle = $termObject->date_start . " - " . dateDisplay($termObject->date_end);
+//$icons[] = array("class" => "btn-primary", "name" => "Guest List", "value" => "");
+//$icons[] = array("class" => "btn-primary", "name" => "Test2", "value" => "");
+
+echo makeTitle($title, $subtitle, $icons);
+?>
+<div class="row g-3">
+  <div class="col-md-5 col-lg-4 order-md-last">
+    <h4 class="d-flex justify-content-between align-items-center mb-3">
+      <span class="text-muted">Meals</span>
+      <span class="badge bg-secondary rounded-pill"><?php echo count($meals); ?></span>
+    </h4>
+    <ul class="list-group mb-3">
+      <?php
+      foreach ($meals AS $meal) {
+        $memberObject = new member($booking['member_ldap']);
+
+        $output  = "<li class=\"list-group-item d-flex justify-content-between lh-sm\">";
+        $output .= "<div class=\"text-muted\">";
+        $output .= "<h6 class=\"my-0\"><a href=\"index.php?n=booking&memberLDAP=" . $booking['member_ldap'] . "&mealUID=" . $booking['meal_uid'] . "\" class=\"text-muted\">" . $memberObject->displayName() . "</a></h6>";
+        $output .= "<small class=\"text-muted\">" . dateDisplay($booking['date']) . " " . date('H:i:s', strtotime($booking['date'])) . "</small>";
+        $output .= "</div>";
+        $output .= "<span class=\"text-muted\">" . count(json_decode($booking['guests_array'])) . autoPluralise(" guest", " guests", count(json_decode($booking['guests_array']))) . "</span>";
+        $output .= "</li>";
+
+        echo $output;
+      }
+      ?>
+    </ul>
+
+    <h4 class="d-flex justify-content-between align-items-center mb-3">
+      <span class="text-muted">Meals Post-Term (Vacation)</span>
+      <span class="badge bg-secondary rounded-pill"><?php echo count($mealsAfterTerm); ?></span>
+    </h4>
+    <ul class="list-group mb-3">
+      <?php
+      foreach ($mealsAfterTerm AS $meal) {
+        $mealObject = new meal($meal['uid']);
+
+        $output  = "<li class=\"list-group-item d-flex justify-content-between lh-sm\">";
+        $output .= "<div class=\"text-muted\">";
+        $output .= "<h6 class=\"my-0\"><a href=\"index.php?n=admin_meal&mealUID=" . $mealObject->uid . "\" class=\"text-muted\">" . $mealObject->name . "</a></h6>";
+        $output .= "<small class=\"text-muted\">" . dateDisplay($mealObject->date_meal) . " " . date('H:i', strtotime($mealObject->date_meal)) . "</small>";
+        $output .= "</div>";
+        $output .= "<span class=\"text-muted\">" . count(json_decode($booking['guests_array'])) . autoPluralise(" guest", " guests", count(json_decode($booking['guests_array']))) . "</span>";
+        $output .= "</li>";
+
+        echo $output;
+      }
+      ?>
+    </ul>
+  </div>
+  <div class="col-md-7 col-lg-8">
+    <h4 class="mb-3">Term Information</h4>
+    <form method="post" id="termUpdate" action="<?php echo $_SERVER['REQUEST_URI']; ?>" class="needs-validation" novalidate>
+      <div class="row">
+        <div class="col-12">
+          <label for="name" class="form-label">Term name</label>
+          <input type="text" class="form-control" name="name" id="name" placeholder="" value="<?php echo $termObject->name; ?>" required>
+          <div class="invalid-feedback">
+            Valid Meal name is required.
+          </div>
+        </div>
+      <div class="row">
+        <div class="col-6">
+          <label for="date_start" class="form-label">Term Start Date</label>
+          <input type="text" class="form-control" name="date_start" id="date_start" placeholder="" value="<?php echo date('Y-m-d', strtotime($termObject->date_start)); ?>" required>
+          <div class="invalid-feedback">
+            Meal Date is required.
+          </div>
+        </div>
+
+        <div class="col-6">
+          <label for="date_end" class="form-label">Term End Date</label>
+          <input type="date" class="form-control" name="date_end" id="date_end" placeholder="" value="<?php echo date('Y-m-d', strtotime($termObject->date_end)); ?>" required>
+          <div class="invalid-feedback">
+            Meal Cutoff Date is required.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="my-4">
+
+    <input type="hidden" name="termUID" id="termUID" value="<?php echo $termObject->uid; ?>">
+    <button class="btn btn-primary btn-lg btn-block" type="submit">Update Term Details</button>
+  </form>
+</div>
+
+
+<script>
+var fp = flatpickr("#date_start", {
+  dateFormat: "Y-m-d"
+})
+
+var fp = flatpickr("#date_end", {
+  dateFormat: "Y-m-d"
+})
+</script>
