@@ -12,10 +12,13 @@ class terms extends term {
   }
 
   public function checkIsInTerm($date = null) {
+    // accounts for 0th week automatically
+    // so the term dates on the site should start on 1st week (as given by Oxford)
+    
     global $db;
 
     $sql  = "SELECT *  FROM " . self::$table_name;
-    $sql .= " WHERE date_start < '" . $date . "' AND date_end > '" . $date . "'";
+    $sql .= " WHERE DATE_SUB(date_start, INTERVAL 7 DAY) <= '" . $date . "' AND date_end >= '" . $date . "'";
     $sql .= " LIMIT 1";
 
     //echo $sql;
