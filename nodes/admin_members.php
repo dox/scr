@@ -3,7 +3,6 @@ admin_gatekeeper();
 
 $membersClass = new members();
 
-
 if (isset($_POST['precedence'])) {
   $precedenceArray = explode(",", $_POST['precedence']);
 
@@ -26,39 +25,34 @@ $icons[] = array("class" => "btn-primary", "name" => $icon_add_member . " Add Ne
 
 echo makeTitle($title, $subtitle, $icons);
 ?>
+
 <form method="post" id="termForm" action="index.php?n=admin_members">
+  <!--<div class="list-group" id="members_list">-->
   <ul class="list-group" id="members_list">
-      <?php
-      $scrStewardLDAP = $settingsClass->value('member_steward');
+    <?php
+    $scrStewardLDAP = $settingsClass->value('member_steward');
+
+    foreach ($members AS $member) {
+      $memberObject = new member($member['uid']);
+      $handle  = "<svg width=\"16\" height=\"16\" class=\"handle\"><use xlink:href=\"img/icons.svg#grip-vertical\"/></svg>";
 
 
+      $output  = "<li class=\"list-group-item\" id=\"" . $memberObject->uid . "\">";
+      $output .= $handle;
+      $output .= "<a href=\"index.php?n=member&memberUID=" . $memberObject->uid . "\">" . $memberObject->displayName() . "</a>";
 
-
-
-      foreach ($members AS $member) {
-        $memberObject = new member($member['uid']);
-
-        $output  = "<li class=\"list-group-item list-group-item-action\" id=\"" . $memberObject->uid . "\">";
-        $output .= "<div class=\"d-flex w-100 \">";
-        $output .= "<svg class=\"handle mr-2\" width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-grip-vertical\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\">";
-        $output .= "<path d=\"M7 2a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM7 5a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM7 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm-3 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm-3 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z\"/>";
-        $output .= "</svg>";
-
-        $output .= "<a href=\"index.php?n=member&memberUID=" . $memberObject->uid . "\"><span class=\"avatar avatar-sm\" style=\"background-image: url(http://ocsd.seh.ox.ac.uk//photos/UAS_UniversityCard-10076320.jpg)\">?</span></a>";
-        $output .= "<a href=\"index.php?n=member&memberUID=" . $memberObject->uid . "\" class=\"mb-1\">" . $memberObject->displayName() . "</a>";
-        $output .= "</div>";
-        $output .= "<small class=\"\">" . $memberObject->type . "</small>";
-
-        if ($memberObject->ldap == $scrStewardLDAP) {
-          $output .= "<a href=\"#\" data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" title=\"SCR Steward\" class=\"list-item-actions text-warning float-right show\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"icon text-yellow\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" stroke-width=\"2\" stroke=\"currentColor\" fill=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path stroke=\"none\" d=\"M0 0h24v24H0z\" fill=\"none\"></path><path d=\"M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z\"></path></svg></a>";
-        }
-
-        $output .= "</li>";
-
-        echo $output;
+      $output .= "<span class=\"float-end\">";
+      if ($memberObject->ldap == $scrStewardLDAP) {
+        $output .= "<a href=\"#\" data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" title=\"SCR Steward\" class=\"list-item-actions text-warning\"><svg width=\"16\" height=\"16\"><use xlink:href=\"img/icons.svg#star\"/></svg></a> ";
       }
-      ?>
-  </li>
+      $output .= "<span class=\"text-muted\">" . $memberObject->type . "</span>";
+
+      $output .= "</span>";
+      $output .= "</li>";
+
+      echo $output;
+    }
+    ?>
   </ul>
 
   <input type="hidden" name="precedence" id="precedence" value="" />
@@ -74,7 +68,7 @@ new Sortable(members_list, {
 });
 
 function itterate() {
-  var selection = document.getElementById("members_list").getElementsByClassName("list-item");
+  var selection = document.getElementById("members_list").getElementsByClassName("list-group-item");
 
   var arrayMembersUIDs = '';
 

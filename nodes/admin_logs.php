@@ -48,7 +48,7 @@ echo makeTitle($title, $subtitle);
 
 <canvas id="canvas2"></canvas>
 
-<div class="list-group">
+<div class="list-group mt-3">
   <?php
   foreach ($logs AS $log) {
     $output  = "<a href=\"#\" class=\"list-group-item list-group-item-action\">";

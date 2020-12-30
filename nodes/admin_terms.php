@@ -17,7 +17,7 @@ $terms = $termsClass->all();
 <?php
 $title = "Terms";
 $subtitle = "Term dates from <a href=\"https://www.ox.ac.uk/about/facts-and-figures/dates-of-term\">Oxford's website</a>.";
-$icons[] = array("class" => "btn-primary", "name" => $icon_add_term. " Add New", "value" => "data-toggle=\"modal\" data-target=\"#exampleModal\"");
+$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"16\" height=\"16\"><use xlink:href=\"img/icons.svg#calendar-plus\"/></svg> Add New", "value" => "data-toggle=\"modal\" data-target=\"#exampleModal\"");
 
 echo makeTitle($title, $subtitle, $icons);
 ?>

@@ -37,8 +37,8 @@ class meal {
     $output .= "<div class=\"card-header\">";
 
     if ($_SESSION['admin'] == true) {
-      $output .= "<a href=\"index.php?n=admin_meal&mealUID=" . $this->uid . "\" class=\"float-right\">";
-      $output .= $icon_edit;
+      $output .= "<a href=\"index.php?n=admin_meal&mealUID=" . $this->uid . "\" class=\"float-end\">";
+      $output .= "<svg width=\"16\" height=\"16\"><use xlink:href=\"img/icons.svg#sliders\"/></svg>";
       $output .= "</a>";
     }
 

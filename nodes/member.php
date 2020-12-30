@@ -152,12 +152,20 @@ include_once('_member_stats.php');
         </div>
 
         <hr class="my-4">
-
+        
         <div class="divide-y">
           <h4 class="mb-3">Default Preferences</h4>
           <div>
             <label class="row">
-              <span class="col">Default Domus</span>
+              <span class="col"><svg width="16" height="16"><use xlink:href="img/icons.svg#person-check"></svg> Allow my name to appear on dining lists (also applies to my guests)</span>
+              <span class="col-auto">
+                <label class="form-check form-check-single form-switch"><input class="form-check-input" type="checkbox" id="opt_in" name="opt_in" value="1" <?php if ($memberObject->opt_in == "1") { echo " checked";} ?>></label>
+              </span>
+            </label>
+          </div>
+          <div>
+            <label class="row">
+              <span class="col"><svg width="16" height="16"><use xlink:href="img/icons.svg#graduation-cap"></svg> Default Domus</span>
               <span class="col-auto">
                 <label class="form-check form-check-single form-switch"><input class="form-check-input" type="checkbox" checked=""></label>
               </span>
@@ -165,7 +173,7 @@ include_once('_member_stats.php');
           </div>
           <div>
             <label class="row">
-              <span class="col">Default Wine</span>
+              <span class="col"><svg width="16" height="16"><use xlink:href="img/icons.svg#wine-glass"></svg> Default Wine</span>
               <span class="col-auto">
                 <label class="form-check form-check-single form-switch"><input class="form-check-input" type="checkbox" checked=""></label>
               </span>
@@ -173,26 +181,13 @@ include_once('_member_stats.php');
           </div>
           <div>
             <label class="row">
-              <span class="col">Default Dessert</span>
+              <span class="col"><svg width="16" height="16"><use xlink:href="img/icons.svg#cookie"></svg> Default Dessert</span>
               <span class="col-auto">
                 <label class="form-check form-check-single form-switch"><input class="form-check-input" type="checkbox" checked=""></label>
               </span>
             </label>
           </div>
         </div>
-
-        <hr />
-
-        <h4 class="mb-3">Privacy</h4>
-
-        <div class="my-3">
-          <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" id="opt_in" name="opt_in" value="1" <?php if ($memberObject->opt_in == "1") { echo " checked";} ?>>
-            <label class="form-check-label" for="opt_in">Allow my name to appear on dining lists (also applies to my guests)</label>
-          </div>
-        </div>
-
-
 
         <hr class="my-4">
 

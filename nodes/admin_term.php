@@ -77,27 +77,27 @@ echo makeTitle($title, $subtitle, $icons);
     <h4 class="mb-3">Term Information</h4>
     <form method="post" id="termUpdate" action="<?php echo $_SERVER['REQUEST_URI']; ?>" class="needs-validation" novalidate>
       <div class="row">
-        <div class="col-12">
+        <div class="col mb-3">
           <label for="name" class="form-label">Term name</label>
           <input type="text" class="form-control" name="name" id="name" placeholder="" value="<?php echo $termObject->name; ?>" required>
           <div class="invalid-feedback">
-            Valid Meal name is required.
+            Valid term name is required.
           </div>
         </div>
       <div class="row">
-        <div class="col-6">
+        <div class="col mb-3">
           <label for="date_start" class="form-label">Term Start Date</label>
           <input type="text" class="form-control" name="date_start" id="date_start" placeholder="" value="<?php echo date('Y-m-d', strtotime($termObject->date_start)); ?>" required>
           <div class="invalid-feedback">
-            Meal Date is required.
+            Valid term start date is required.
           </div>
         </div>
 
-        <div class="col-6">
+        <div class="col mb-3">
           <label for="date_end" class="form-label">Term End Date</label>
           <input type="date" class="form-control" name="date_end" id="date_end" placeholder="" value="<?php echo date('Y-m-d', strtotime($termObject->date_end)); ?>" required>
           <div class="invalid-feedback">
-            Meal Cutoff Date is required.
+            Valid term end date is required.
           </div>
         </div>
       </div>

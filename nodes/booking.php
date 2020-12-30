@@ -33,8 +33,8 @@ $subtitle = "Some text here about meal booking.  Make it simple!";
 if ($_SESSION['admin'] == true) {
   //$icons[] = array("class" => "btn-warning", "name" => $icon_edit. " Edit Meal", "value" => "a href=\"index.php?n=admin_meal=" . $meal->uid . "\"");
 }
-$icons[] = array("class" => "btn-primary", "name" => $icon_add_member. " Add Guest", "value" => "data-toggle=\"modal\" data-target=\"#exampleModal\"");
-$icons[] = array("class" => "btn-danger", "name" => $icon_delete. " Delete Booking", "value" => "data-toggle=\"modal\" data-target=\"#staticBackdrop\"");
+$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"16\" height=\"16\"><use xlink:href=\"img/icons.svg#person-plus\"/></svg> Add Guest", "value" => "data-toggle=\"modal\" data-target=\"#exampleModal\"");
+$icons[] = array("class" => "btn-danger", "name" => "<svg width=\"16\" height=\"16\"><use xlink:href=\"img/icons.svg#trash\"/></svg> Delete Booking", "value" => "data-toggle=\"modal\" data-target=\"#staticBackdrop\"");
 
 echo makeTitle($title, $subtitle, $icons);
 ?>
