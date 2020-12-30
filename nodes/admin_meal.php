@@ -145,8 +145,8 @@ echo makeTitle($title, $subtitle, $icons);
           </div>
           <hr />
 
-          <div class="row">
-            <div class="col-4">
+          <div class="row mb-3">
+            <div class="col">
               <label for="scr_capacity" class="form-label">SCR Capacity</label>
               <input type="number" class="form-control" name="scr_capacity" id="scr_capacity" value="<?php echo $mealObject->scr_capacity; ?>" min=0 required>
               <div class="invalid-feedback">
@@ -154,15 +154,16 @@ echo makeTitle($title, $subtitle, $icons);
               </div>
             </div>
 
-            <div class="col-4">
-              <label for="scr_guests" class="form-label">SCR Guests (per member)</label>
+            <div class="col">
+              <label for="scr_guests" class="form-label">SCR Guests</label>
               <input type="number" class="form-control" name="scr_guests" id="scr_guests" value="<?php echo $mealObject->scr_guests; ?>" min=0 required>
+              <div id="scr_guestsHelp" class="form-text">Per member</div>
               <div class="invalid-feedback">
                 SCR Guests is required.
               </div>
             </div>
 
-            <div class="col-4">
+            <div class="col">
               <label for="scr_dessert_capacity" class="form-label">SCR Dessert Capacity</label>
               <input type="number" class="form-control" name="scr_dessert_capacity" id="scr_dessert_capacity" value="<?php echo $mealObject->scr_dessert_capacity; ?>" min=0 required>
               <div class="invalid-feedback">
@@ -172,7 +173,7 @@ echo makeTitle($title, $subtitle, $icons);
           </div>
 
           <div class="row">
-            <div class="col-4">
+            <div class="col">
               <label for="mcr_capacity" class="form-label">MCR Capacity</label>
               <input type="number" class="form-control" name="mcr_capacity" id="mcr_capacity" value="<?php echo $mealObject->mcr_capacity; ?>" min=0 required>
               <div class="invalid-feedback">
@@ -180,15 +181,16 @@ echo makeTitle($title, $subtitle, $icons);
               </div>
             </div>
 
-            <div class="col-4">
-              <label for="mcr_guests" class="form-label">MCR Guests (per member)</label>
+            <div class="col">
+              <label for="mcr_guests" class="form-label">MCR Guests</label>
               <input type="number" class="form-control" name="mcr_guests" id="mcr_guests" value="<?php echo $mealObject->mcr_guests; ?>" min=0 required>
+              <div id="mcr_guestsHelp" class="form-text">Per member</div>
               <div class="invalid-feedback">
                 SCR Guests is required.
               </div>
             </div>
 
-            <div class="col-4">
+            <div class="col">
               <label for="mcr_dessert_capacity" class="form-label">MCR Desert Capacity</label>
               <input type="number" class="form-control" name="mcr_dessert_capacity" id="mcr_dessert_capacity" value="<?php echo $mealObject->mcr_dessert_capacity; ?>" min=0 required>
               <div class="invalid-feedback">
@@ -210,7 +212,7 @@ echo makeTitle($title, $subtitle, $icons);
           <div class="divide-y">
             <div>
               <label class="row">
-                <span class="col">Domus</span>
+                <span class="col"><svg width="16" height="16"><use xlink:href="img/icons.svg#graduation-cap"></svg> Domus</span>
                 <span class="col-auto">
                   <label class="form-check form-check-single form-switch"><input class="form-check-input" type="checkbox" checked=""></label>
                 </span>
@@ -218,7 +220,7 @@ echo makeTitle($title, $subtitle, $icons);
             </div>
             <div>
               <label class="row">
-                <span class="col">Wine</span>
+                <span class="col"><svg width="16" height="16"><use xlink:href="img/icons.svg#wine-glass"></svg> Wine</span>
                 <span class="col-auto">
                   <label class="form-check form-check-single form-switch"><input class="form-check-input" type="checkbox" checked=""></label>
                 </span>

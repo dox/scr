@@ -32,29 +32,26 @@ echo makeTitle($title, $subtitle, $icons);
   foreach ($settings AS $setting) {
     $itemName = "collapse-" . $setting['uid'];
 
-    $output  = "<div class=\"card\">";
-    $output .= "<div class=\"card-header\" id=\"" . $setting['uid'] . "\">";
-    $output .= "<h2 class=\"mb-0\"><button class=\"btn btn-link btn-block text-left collapsed\" type=\"button\" data-toggle=\"collapse\" data-target=\"#" . $itemName . "\" aria-expanded=\"true\" aria-controls=\"" . $itemName . "\">";
-    $output .= "<strong>" . $setting['name'] . "</strong>: " . $setting['description'];
-    $output .= "</button></h2></div>";
+    $output  = "<div class=\"accordion-item\">";
+      $output .= "<h2 class=\"accordion-header\" id=\"" . $setting['uid'] . "\">";
+      $output .= "<button class=\"accordion-button collapsed\" type=\"button\" data-bs-toggle=\"collapse\" data-bs-target=\"#" . $itemName . "\" aria-expanded=\"true\" aria-controls=\"" . $itemName . "\">";
+      $output .= "<strong>" . $setting['name'] . "</strong>: " . $setting['description'];
+      $output .= "</button></h2>";
 
-    $output .= "<div id=\"" . $itemName . "\" class=\"collapse\" aria-labelledby=\"" . $setting['uid'] . "\" data-parent=\"#accordionExample\">";
-    $output .= "<div class=\"card-body\">";
+      $output .= "<div id=\"" . $itemName . "\" class=\"accordion-collapse collapse\" aria-labelledby=\"" . $setting['uid'] . "\" data-bs-parent=\"#accordionExample\">";
+        $output .= "<div class=\"accordion-body\">";
 
-    $output .= "<form method=\"post\" id=\"form-" .  $setting['uid'] . "\" action=\"" . $_SERVER['REQUEST_URI'] . "\" class=\"needs-validation\" novalidate>";
+        $output .= "<form method=\"post\" id=\"form-" .  $setting['uid'] . "\" action=\"" . $_SERVER['REQUEST_URI'] . "\" class=\"needs-validation\" novalidate>";
+        $output .= "<div class=\"input-group\">";
+          $output .= "<input type=\"text\" class=\"form-control\" id=\"value\" name=\"value\" value=\"" . $setting['value']. "\">";
+          $output .= "<button class=\"btn btn-primary\" type=\"submit\" id=\"button-addon2\">Update</button>";
+        $output .= "</div>";
+        $output .= "<input type=\"hidden\" id=\"uid\" name=\"uid\" value=\"" . $setting['uid']. "\">";
+        $output .= "</form>";
 
-    $output .= "<div class=\"input-group\">";
-    $output .= "<input type=\"text\" class=\"form-control\" id=\"value\" name=\"value\" value=\"" . $setting['value']. "\">";
-    $output .= "<div class=\"input-group-append\">";
-    $output .= "<button class=\"btn btn-primary\" type=\"submit\" id=\"button-addon2\">Update</button>";
-    $output .= "</div>";
-    $output .= "</div>";
-    $output .= "<input type=\"hidden\" id=\"uid\" name=\"uid\" value=\"" . $setting['uid']. "\">";
 
-    $output .= "</form>";
-
-    $output .= "</div>";
-    $output .= "</div>";
+        $output .= "</div>";
+      $output .= "</div>";
     $output .= "</div>";
 
     echo $output;

@@ -86,18 +86,17 @@ if ($_SESSION['logon'] != true) {
 		?>
 
     <div class="container">
-		<?php
+      <?php
+  		$node = "nodes/index.php";
+  			if (isset($_GET['n'])) {
+  				$node = "nodes/" . $_GET['n'] . ".php";
 
-		$node = "nodes/index.php";
-			if (isset($_GET['n'])) {
-				$node = "nodes/" . $_GET['n'] . ".php";
-
-				if (!file_exists($node)) {
-					$node = "nodes/404.php";
-				}
-			}
-		include_once($node);
-    ?>
+  				if (!file_exists($node)) {
+  					$node = "nodes/404.php";
+  				}
+  			}
+  		include_once($node);
+      ?>
     </div>
     <?php
 		include_once("views/footer.php");

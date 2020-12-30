@@ -29,7 +29,7 @@ echo makeTitle($title, $subtitle);
       $term = new term($checkTerm[0]['uid']);
       $name = ordinal($term->whichWeek($week)) . " Week";
     } else {
-      $name = "w/c " . date('M jS', strtotime($week));
+      $name = "<small>w/c</small> " . date('M jS', strtotime($week));
     }
 
     if ($week == date('Y-m-d', strtotime('this week -1 day', time()))) {
