@@ -48,12 +48,14 @@ echo makeTitle($title, $subtitle);
 
 <canvas id="canvas2"></canvas>
 
-<div class="list-group mt-3">
+<input type="text" id="myInput" class="form-control mt-3 mb-3" onkeyup="myFunction()" placeholder="Filter Logs...">
+
+<div id="myTable" class="list-group">
   <?php
   foreach ($logs AS $log) {
-    $output  = "<a href=\"#\" class=\"list-group-item list-group-item-action\">";
+    $output  = "<a href=\"#\" class=\"list-group-item list-group-item-action filterRow\">";
     $output .= "<div class=\"d-flex w-100 justify-content-between\">";
-    $output .= "<h5 class=\"mb-1\">" . $log['username'] . " - " . $log['description'] . "</h5>";
+    $output .= "<h5 class=\"mb-1 filterDescription\">" . $log['username'] . " - " . $log['description'] . "</h5>";
     $output .= "<small class=\"text-muted\">" . dateDisplay($log['date']) . " " . date('H:i:s', strtotime($log['date'])) . "</small>";
     //$output .= "<span class=\"badge bg-primary rounded-pill\">" . $log['type'] . "</span>";
     $output .= "</div>";
@@ -100,4 +102,29 @@ var barChartData = {
 			});
 		};
 
+</script>
+
+
+<script>
+function myFunction() {
+  // Declare variables
+  var input, filter, table, tr, td, i, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tr = table.getElementsByClassName("filterRow");
+
+  // Loop through all table rows, and hide those who don't match the search query
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByClassName("filterDescription")[0];
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        tr[i].style.display = "none";
+      }
+    }
+  }
+}
 </script>
