@@ -1,5 +1,5 @@
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<link rel="stylesheet" href="css/flatpickr.min.css">
+<script src="js/flatpickr.js"></script>
 
 <?php
 admin_gatekeeper();
@@ -17,7 +17,7 @@ $terms = $termsClass->all();
 <?php
 $title = "Terms";
 $subtitle = "Term dates from <a href=\"https://www.ox.ac.uk/about/facts-and-figures/dates-of-term\">Oxford's website</a>.";
-$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"16\" height=\"16\"><use xlink:href=\"img/icons.svg#calendar-plus\"/></svg> Add New", "value" => "data-toggle=\"modal\" data-target=\"#exampleModal\"");
+$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"16\" height=\"16\"><use xlink:href=\"img/icons.svg#calendar-plus\"/></svg> Add New", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#exampleModal\"");
 
 echo makeTitle($title, $subtitle, $icons);
 ?>
@@ -56,7 +56,7 @@ echo makeTitle($title, $subtitle, $icons);
       <form method="post" id="termForm" action="<?php echo $_SERVER['REQUEST_URI']; ?>">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLabel">Add New Term Date</h5>
-        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
           <div class="form-group">
@@ -79,7 +79,7 @@ echo makeTitle($title, $subtitle, $icons);
 
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
         <button type="submit" class="btn btn-primary">Save term</button>
       </div>
       </form>
