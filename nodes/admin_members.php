@@ -21,7 +21,7 @@ $members = $membersClass->all();
 <?php
 $title = "SCR Members";
 $subtitle = "Members, and their order of precedence.";
-$icons[] = array("class" => "btn-primary", "name" => $icon_add_member . " Add New", "value" => "data-toggle=\"modal\" data-target=\"#exampleModal\"");
+$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"16\" height=\"16\"><use xlink:href=\"img/icons.svg#person-plus\"/></svg> Add New", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#exampleModal\"");
 
 echo makeTitle($title, $subtitle, $icons);
 ?>
@@ -93,7 +93,7 @@ function itterate() {
       <form method="post" id="termForm" action="<?php echo $_SERVER['REQUEST_URI']; ?>">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLabel">Add New SCR Memeber</h5>
-        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
           <div class="mb-12">
@@ -169,7 +169,7 @@ function itterate() {
           </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
         <button type="submit" class="btn btn-primary">Save term</button>
       </div>
       </form>

@@ -1,5 +1,5 @@
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<link rel="stylesheet" href="css/flatpickr.min.css">
+<script src="js/flatpickr.js"></script>
 
 <?php
 admin_gatekeeper();
@@ -79,7 +79,7 @@ echo makeTitle($title, $subtitle, $icons);
       <div class="row">
         <div class="col mb-3">
           <label for="name" class="form-label">Term name</label>
-          <input type="text" class="form-control" name="name" id="name" placeholder="" value="<?php echo $termObject->name; ?>" required>
+          <input type="text" class="form-control" name="name" id="name" value="<?php echo $termObject->name; ?>" required>
           <div class="invalid-feedback">
             Valid term name is required.
           </div>
@@ -87,7 +87,7 @@ echo makeTitle($title, $subtitle, $icons);
       <div class="row">
         <div class="col mb-3">
           <label for="date_start" class="form-label">Term Start Date</label>
-          <input type="text" class="form-control" name="date_start" id="date_start" placeholder="" value="<?php echo date('Y-m-d', strtotime($termObject->date_start)); ?>" required>
+          <input type="text" class="form-control" name="date_start" id="date_start" value="<?php echo date('Y-m-d', strtotime($termObject->date_start)); ?>" required>
           <div class="invalid-feedback">
             Valid term start date is required.
           </div>

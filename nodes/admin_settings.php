@@ -20,7 +20,7 @@ $settings = $settingsClass->all();
 <?php
 $title = "Site Settings";
 $subtitle = "Customise the behaviour, display and configuration of this site.";
-$icons[] = array("class" => "btn-primary", "name" => $icon_edit. " Add New", "value" => "data-toggle=\"modal\" data-target=\"#exampleModal\"");
+$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"16\" height=\"16\"><use xlink:href=\"img/icons.svg#sliders\"/></svg> Add New", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#exampleModal\"");
 
 echo makeTitle($title, $subtitle, $icons);
 ?>
@@ -66,27 +66,27 @@ echo makeTitle($title, $subtitle, $icons);
       <form method="post" id="termForm" action="index.php?n=admin_settings">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLabel">Add New Setting</h5>
-        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-          <div class="form-group">
+          <div class="mb-3">
             <label for="name">Setting Name</label>
             <input type="text" class="form-control" name="name" id="name" aria-describedby="termNameHelp">
           </div>
 
-          <div class="form-group">
+          <div class="mb-3">
             <label for="date_start">Setting Description</label>
             <input type="text" class="form-control" name="description" id="description" aria-describedby="termStartDate">
           </div>
 
-          <div class="form-group">
+          <div class="mb-3">
             <label for="date_end">Setting Value</label>
             <input type="text" class="form-control" name="value" id="value" aria-describedby="termEndDate">
           </div>
 
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
         <button type="submit" class="btn btn-primary">Save Setting</button>
       </div>
       </form>
