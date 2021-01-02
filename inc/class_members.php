@@ -11,6 +11,30 @@ class members extends member {
     return $terms;
   }
 
+  public function allEnabled() {
+    global $db;
+
+    $sql  = "SELECT *  FROM " . self::$table_name;
+    $sql .= " WHERE enabled = 1";
+    $sql .= " ORDER BY precedence ASC, lastname ASC, firstname ASC";
+
+    $terms = $db->query($sql)->fetchAll();
+
+    return $terms;
+  }
+
+  public function allDisabled() {
+    global $db;
+
+    $sql  = "SELECT *  FROM " . self::$table_name;
+    $sql .= " WHERE enabled = 0";
+    $sql .= " ORDER BY precedence ASC, lastname ASC, firstname ASC";
+
+    $terms = $db->query($sql)->fetchAll();
+
+    return $terms;
+  }
+
   public function memberTypes() {
     $memberType[] = "Principal";
     $memberType[] = "Vice Principal";

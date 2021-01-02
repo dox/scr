@@ -3,6 +3,13 @@ admin_gatekeeper();
 
 $membersClass = new members();
 
+# CHECK IF WE NEED TO CREATE NEW MEMBER FROM FORM SUBMISSION
+if (isset($_POST['memberNew'])) {
+ $memberObject = new member();
+ $memberObject->create($_POST);
+ $membersClass = new members();
+}
+
 if (isset($_POST['precedence'])) {
   $precedenceArray = explode(",", $_POST['precedence']);
 
@@ -15,7 +22,8 @@ if (isset($_POST['precedence'])) {
 
   $logsClass->create("members_update", "Members order updated");
 }
-$members = $membersClass->all();
+$membersEnabled = $membersClass->allEnabled();
+$membersDisabled = $membersClass->allDisabled();
 
 ?>
 <?php
@@ -32,7 +40,7 @@ echo makeTitle($title, $subtitle, $icons);
     <?php
     $scrStewardLDAP = $settingsClass->value('member_steward');
 
-    foreach ($members AS $member) {
+    foreach ($membersEnabled AS $member) {
       $memberObject = new member($member['uid']);
       $handle  = "<svg width=\"16\" height=\"16\" class=\"handle\"><use xlink:href=\"img/icons.svg#grip-vertical\"/></svg>";
 
@@ -59,6 +67,31 @@ echo makeTitle($title, $subtitle, $icons);
   <br />
   <button type="submit" onclick="itterate()" class="btn btn-block btn-primary">Save Order</button>
 </form>
+
+<h2>Disabled Members</h2>
+<ul class="list-group">
+  <?php
+  foreach ($membersDisabled AS $member) {
+    $memberObject = new member($member['uid']);
+    $handle  = "<svg width=\"16\" height=\"16\" class=\"handle\"><use xlink:href=\"img/icons.svg#grip-vertical\"/></svg>";
+
+
+    $output  = "<li class=\"list-group-item\" id=\"" . $memberObject->uid . "\">";
+    $output .= "<a href=\"index.php?n=member&memberUID=" . $memberObject->uid . "\">" . $memberObject->displayName() . "</a>";
+
+    $output .= "<span class=\"float-end\">";
+    if ($memberObject->ldap == $scrStewardLDAP) {
+      $output .= "<a href=\"#\" data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" title=\"SCR Steward\" class=\"list-item-actions text-warning\"><svg width=\"16\" height=\"16\"><use xlink:href=\"img/icons.svg#star\"/></svg></a> ";
+    }
+    $output .= "<span class=\"text-muted\">" . $memberObject->type . "</span>";
+
+    $output .= "</span>";
+    $output .= "</li>";
+
+    echo $output;
+  }
+  ?>
+</ul>
 
 <script>
 new Sortable(members_list, {
@@ -90,7 +123,7 @@ function itterate() {
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
-      <form method="post" id="termForm" action="<?php echo $_SERVER['REQUEST_URI']; ?>">
+      <form method="post" id="memberForm" action="<?php echo $_SERVER['REQUEST_URI']; ?>">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLabel">Add New SCR Memeber</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -167,10 +200,23 @@ function itterate() {
               Please enter a valid email address for shipping updates.
             </div>
           </div>
+
+          <div class="col-12">
+            <label for="enabled" class="form-label">Enabled/Disabled Status</label>
+            <select class="form-select" name="enabled" id="enabled" required>
+              <option value="1" selected>Enabled</option>
+              <option value="0">Disabled</option>
+            </select>
+            <div class="invalid-feedback">
+              Status is required.
+            </div>
+          </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary">Save term</button>
+        <button type="submit" class="btn btn-primary">Add Member</button>
+        <input type="hidden" name="memberNew" value="true" />
+        <input type="hidden" name="precedence" value="999" />
       </div>
       </form>
     </div>

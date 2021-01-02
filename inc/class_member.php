@@ -3,6 +3,7 @@ class member {
   protected static $table_name = "members";
 
   public $uid;
+  public $enabled;
   public $ldap;
   public $title;
   public $firstname;
@@ -21,6 +22,19 @@ class member {
     $sql .= " OR ldap = '" . $memberUID . "'";
 
 		$member = $db->query($sql)->fetchArray();
+
+    if (empty($member)) {
+      $member['uid'] = "0";
+      $member['ldap'] = $memberUID;
+      $member['title'] = "";
+      $member['type'] = "Unknown";
+      $member['firstname'] = $memberUID;
+      $member['lastname'] = $memberUID;
+      $member['precedence'] = "9999";
+      $member['email'] = "no-reply@seh.ox.ac.uk";
+      $member['dietary'] = "";
+      $member['opt_in'] = "0";
+    }
 
 		foreach ($member AS $key => $value) {
 			$this->$key = $value;
@@ -94,6 +108,28 @@ class member {
     $terms = $db->query($sql);
 
     return $terms;
+  }
+
+  public function create($array = null) {
+	   global $db;
+     global $logsClass;
+
+    $sql  = "INSERT INTO " . self::$table_name;
+
+    foreach ($array AS $updateItem => $value) {
+      if ($updateItem != 'memberNew') {
+        $sqlColumns[] = $updateItem;
+        $sqlValues[] = "'" . $value . "' ";
+      }
+    }
+
+    $sql .= " (" . implode(",", $sqlColumns) . ") ";
+    $sql .= " VALUES (" . implode(",", $sqlValues) . ")";
+
+    $create = $db->query($sql);
+    $logsClass->create("admin", "Member [memberUID:" . $create->lastInsertID() . "] created");
+
+    return $create;
   }
 
   public function update($array = null) {

@@ -158,7 +158,13 @@ function admin_gatekeeper() {
 		global $logsClass;
 		$logsClass->create("view_fail", "Page view for " . $_SERVER['REQUEST_URI'] . " failed");
 
-		echo "<p class=\"text-center\">Access denied</p>";
+		$output  = "<div class=\"text-center mt-4\">";
+		$output .= "<svg width=\"48\" height=\"48\"><use xlink:href=\"img/icons.svg#x-circle\"/></svg>";
+		$output .= "<h1 class=\"text-center mt-4\">Access denied</h1>";
+		$output .= "</div>";
+
+		echo $output;
+
 
 		header("Location: http://scr2.seh.ox.ac.uk/logon.php");
 	  exit;

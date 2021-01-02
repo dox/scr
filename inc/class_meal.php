@@ -100,11 +100,9 @@ class meal {
   public function bookings_this_meal() {
     global $db;
 
-    $sql  = "SELECT *  FROM bookings, members";
-    $sql .= " WHERE bookings.member_ldap = members.ldap";
-    $sql .= " AND meal_uid = '" . $this->uid . "'";
-    $sql .= " ORDER BY members.precedence ASC";
-
+    $sql  = "SELECT *  FROM bookings";
+    $sql .= " WHERE meal_uid = '" . $this->uid . "'";
+    
     $bookings = $db->query($sql)->fetchAll();
 
     return $bookings;

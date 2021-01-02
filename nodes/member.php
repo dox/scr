@@ -150,9 +150,19 @@ include_once('_member_stats.php');
             Please enter a valid email address for shipping updates.
           </div>
         </div>
+        <div class="col-12">
+          <label for="enabled" class="form-label">Enabled/Disabled Status</label>
+          <select class="form-select" name="enabled" id="enabled" required>
+            <option value="1" <?php if ($memberObject->enabled == "1") { echo " selected"; } ?>>Enabled</option>
+            <option value="0" <?php if ($memberObject->enabled == "0") { echo " selected"; } ?>>Disabled</option>
+          </select>
+          <div class="invalid-feedback">
+            Status is required.
+          </div>
+        </div>
 
         <hr class="my-4">
-        
+
         <div class="divide-y">
           <h4 class="mb-3">Default Preferences</h4>
           <div>

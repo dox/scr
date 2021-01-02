@@ -140,7 +140,7 @@ class term {
     $sql .= " LIMIT 1";
 
     $update = $db->query($sql);
-    $logsClass->create("admin", "Term [uid:" . $this->uid . "] updated");
+    $logsClass->create("admin", "Term [termUID:" . $this->uid . "] updated");
 
     return $update;
   }
