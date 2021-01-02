@@ -33,8 +33,8 @@ $subtitle = "Some text here about meal booking.  Make it simple!";
 if ($_SESSION['admin'] == true) {
   //$icons[] = array("class" => "btn-warning", "name" => $icon_edit. " Edit Meal", "value" => "a href=\"index.php?n=admin_meal=" . $meal->uid . "\"");
 }
-$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"16\" height=\"16\"><use xlink:href=\"img/icons.svg#person-plus\"/></svg> Add Guest", "value" => "data-toggle=\"modal\" data-target=\"#exampleModal\"");
-$icons[] = array("class" => "btn-danger", "name" => "<svg width=\"16\" height=\"16\"><use xlink:href=\"img/icons.svg#trash\"/></svg> Delete Booking", "value" => "data-toggle=\"modal\" data-target=\"#staticBackdrop\"");
+$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"16\" height=\"16\"><use xlink:href=\"img/icons.svg#person-plus\"/></svg> Add Guest", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#exampleModal\"");
+$icons[] = array("class" => "btn-danger", "name" => "<svg width=\"16\" height=\"16\"><use xlink:href=\"img/icons.svg#trash\"/></svg> Delete Booking", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#staticBackdrop\"");
 
 echo makeTitle($title, $subtitle, $icons);
 ?>
@@ -125,7 +125,7 @@ echo makeTitle($title, $subtitle, $icons);
       <form method="post" action="../actions/booking_add_guest.php" onsubmit="return submitForm(this);">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLabel">Add Guest</h5>
-        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
           <div class="form-group">
@@ -163,8 +163,8 @@ echo makeTitle($title, $subtitle, $icons);
 
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary">Save term</button>
+        <button type="button" class="btn btn-link text-muted" data-bs-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary"><svg width="16" height="16"><use xlink:href="img/icons.svg#person-plus"/></svg> Add Guest</button>
       </div>
       <input type="hidden" id="bookingUID" name="bookingUID" value="<?php echo $bookingObject->uid; ?>">
       </form>
@@ -178,14 +178,14 @@ echo makeTitle($title, $subtitle, $icons);
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">Delete Meal Booking</h5>
-        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <p>Are you sure you want to delete this meal booking?  This will also delete any guests you have booked for this meal.</p>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-link link-secondary mr-auto" data-dismiss="modal">Close</button>
-        <a href="index.php?deleteBookingUID=<?php echo $bookingObject->uid; ?>" role="button" class="btn btn-danger" onclck="bookingDeleteButton();">Delete</a>
+        <button type="button" class="btn btn-link link-secondary mr-auto" data-bs-dismiss="modal">Close</button>
+        <a href="index.php?deleteBookingUID=<?php echo $bookingObject->uid; ?>" role="button" class="btn btn-danger" onclck="bookingDeleteButton();"><svg width="16" height="16"><use xlink:href="img/icons.svg#trash"/></svg> Delete</a>
       </div>
     </div>
   </div>

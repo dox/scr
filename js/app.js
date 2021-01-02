@@ -1,5 +1,3 @@
-
-
 function bookMealQuick(this_id) {
   event.preventDefault()
 
@@ -94,4 +92,44 @@ function submitForm(oFormElement) {
 	xhr.send (new FormData (oFormElement));
 
 	return false;
+}
+
+function ldapLookup() {
+  event.preventDefault();
+
+  var firstname = document.getElementById('firstname').value;
+  var lastname = document.getElementById('lastname').value;
+
+  var formData = new FormData();
+
+  formData.append("firstname", firstname);
+  formData.append("sn", lastname);
+
+  //https://javascript.info/xmlhttprequest GREAT documentation!
+  var request = new XMLHttpRequest();
+
+  request.open("POST", "../actions/ldap_lookup.php", true);
+  request.send(formData);
+
+  // 4. This will be called after the response is received
+  request.onload = function() {
+    if (request.status != 200) { // analyze HTTP status of the response
+      alert("Something went wrong.  Please refresh this page and try again.");
+      alert(`Error ${request.status}: ${request.statusText}`); // e.g. 404: Not Found
+    } else { // show the result
+      if (this.responseText.includes("Unknown")) {
+        alert(this.responseText);
+      } else {
+        document.getElementById('ldap').value = this.responseText;
+      }
+
+      //alert(`Done, got ${request.response.length} bytes`); // response is the server response
+    }
+  };
+
+  request.onerror = function() {
+    alert("Request failed");
+  };
+
+  return false;
 }

@@ -79,8 +79,8 @@ echo makeTitle($title, $subtitle, $icons);
 
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary">Save term</button>
+        <button type="button" class="btn btn-link text-muted" data-bs-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary"><svg width="16" height="16"><use xlink:href="img/icons.svg#calendar-plus"/></svg> Add Term</button>
       </div>
       </form>
     </div>
