@@ -11,11 +11,18 @@ class members extends member {
     return $terms;
   }
 
-  public function allEnabled() {
+  public function allEnabled($type = 'all') {
     global $db;
 
     $sql  = "SELECT *  FROM " . self::$table_name;
-    $sql .= " WHERE enabled = 1";
+    if ($type == "scr") {
+      $sql .= " WHERE type = 'SCR'";
+    } elseif ($type == "mcr") {
+      $sql .= " WHERE type = 'MCR'";
+    } else {
+      $sql .= " WHERE type = type";
+    }
+    $sql .= " AND enabled = 1";
     $sql .= " ORDER BY precedence ASC, lastname ASC, firstname ASC";
 
     $terms = $db->query($sql)->fetchAll();
@@ -23,11 +30,18 @@ class members extends member {
     return $terms;
   }
 
-  public function allDisabled() {
+  public function allDisabled($type = 'all') {
     global $db;
 
     $sql  = "SELECT *  FROM " . self::$table_name;
-    $sql .= " WHERE enabled = 0";
+    if ($type == "scr") {
+      $sql .= " WHERE type = 'SCR'";
+    } elseif ($type == "mcr") {
+      $sql .= " WHERE type = 'MCR'";
+    } else {
+      $sql .= " WHERE type = type";
+    }
+    $sql .= " AND enabled = 0";
     $sql .= " ORDER BY precedence ASC, lastname ASC, firstname ASC";
 
     $terms = $db->query($sql)->fetchAll();
@@ -35,19 +49,14 @@ class members extends member {
     return $terms;
   }
 
-  public function memberTypes() {
-    $memberType[] = "Principal";
-    $memberType[] = "Vice Principal";
-    $memberType[] = "Fellow";
-    $memberType[] = "Research Fellow";
-    $memberType[] = "Stipendiary Lecturer";
-    $memberType[] = "Non-Stipendiary Lecturer";
-    $memberType[] = "Dining Member";
-    $memberType[] = "Official Member";
-    $memberType[] = "College Staff";
-    $memberType[] = "Other";
+  public function memberCategories() {
+    global $settingsClass;
 
-    return $memberType;
+    $memberCategoriesMandatory = array("");
+    $memberCategoriesSettings = explode(",", $settingsClass->value('member_categories'));
+    $memberCategories = array_merge($memberCategoriesMandatory, $memberCategoriesSettings);
+
+    return $memberCategories;
   }
 
   public function memberTitles() {

@@ -4,11 +4,12 @@ class member {
 
   public $uid;
   public $enabled;
+  public $type;
   public $ldap;
   public $title;
   public $firstname;
   public $lastname;
-  public $type;
+  public $category;
   public $precedence;
   public $email;
   public $dietary;

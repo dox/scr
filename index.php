@@ -20,17 +20,54 @@ if (isset($_POST['stop_impersonating'])) {
 
 if (isset($_POST['inputUsername']) && isset($_POST['inputPassword'])) {
 	if ($ldap_connection->auth()->attempt($_POST['inputUsername'] . LDAP_ACCOUNT_SUFFIX, $_POST['inputPassword'], $stayAuthenticated = true)) {
-		$arrayOfAdmins = explode(",", $settingsClass->value('member_admins'));
-		// Successfully authenticated user.
+    $ldapUser = $ldap_connection->query()->where('samaccountname', '=', $_POST['inputUsername'])->get();
+    // Successfully authenticated user.
 		$_SESSION['logon'] = true;
 		$_SESSION['username'] = strtoupper($_POST['inputUsername']);
 
+    // Lookup user in SCR table
+    $sql = "SELECT * FROM members where ldap = '" . escape($_SESSION['username']) . "';";
+    $memberLookup = $db->query($sql)->fetchArray();
+
+    if (!isset($memberLookup['uid'])) {
+      // NEW user (MCR).  Create them!
+      $NEWUSER['title'] = "??";
+      $NEWUSER['enabled'] = "1";
+      $NEWUSER['ldap'] = $ldapUser[0]['samaccountname'][0];
+      $NEWUSER['firstname'] = $ldapUser[0]['givenname'][0];
+      $NEWUSER['lastname'] = $ldapUser[0]['sn'][0];
+      $NEWUSER['category'] = "MCR";
+      $NEWUSER['type'] = "MCR";
+      $NEWUSER['precedence'] = "0";
+      $NEWUSER['email'] = $ldapUser[0]['mail'][0];
+
+      $memberObject = new member();
+      $memberObject->create($NEWUSER);
+    } else {
+      // UPDATE existing SCR member
+      $UPDATEUSER['memberUID'] = $memberLookup['uid'];
+      if (empty($memberLookup['firstname'])) {
+        $UPDATEUSER['firstname'] = $ldapUser[0]['givenname'][0];
+      }
+      if (empty($memberLookup['lastname'])) {
+        $UPDATEUSER['lastname'] = $ldapUser[0]['sn'][0];
+      }
+      if (empty($memberLookup['email'])) {
+        $UPDATEUSER['email'] = $ldapUser[0]['mail'][0];
+      }
+      
+      if (count($UPDATEUSER) > 1) {
+        $memberObject = new member($memberLookup['uid']);
+        $memberObject->update($UPDATEUSER);
+      }
+    }
+
+    $arrayOfAdmins = explode(",", $settingsClass->value('member_admins'));
 		if (in_array(strtoupper($_SESSION['username']), $arrayOfAdmins)) {
 			$_SESSION['admin'] = true;
 		} else {
 			$_SESSION['admin'] = false;
 		}
-
 
 		$logsClass->create("logon_success", $_SESSION['username'] . " logon succesful");
 	} else {

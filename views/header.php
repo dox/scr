@@ -44,7 +44,8 @@
 	          </a>
 	          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
 	            <?php if($_SESSION['admin'] == true) { ?><a class="dropdown-item" href="index.php?n=admin_impersonate">Impersonate</a><?php } ?>
-	            <a class="dropdown-item" href="index.php?n=admin_members">Members</a>
+							<a class="dropdown-item" href="index.php?n=admin_scrmembers">SCR Members</a>
+							<a class="dropdown-item" href="index.php?n=admin_mcrmembers">MCR Members</a>
 	            <a class="dropdown-item" href="index.php?n=admin_meals">Meals</a>
 	            <a class="dropdown-item" href="index.php?n=admin_terms">Terms</a>
 	            <a class="dropdown-item" href="index.php?n=admin_logs">Logs</a>

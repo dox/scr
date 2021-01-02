@@ -109,8 +109,9 @@ include_once('_member_stats.php');
         <div class="col-7">
           <label for="ldap" class="form-label">LDAP Username</label>
           <div class="input-group">
-            <span class="input-group-text">@</span>
+            <span class="input-group-text" onclick="ldapLookup()">@</span>
             <input type="text" class="form-control" name="ldap" id="ldap" placeholder="LDAP Username" value="<?php echo $memberObject->ldap; ?>" required>
+
             <div class="invalid-feedback">
               LDAP Username is required.
             </div>
@@ -118,16 +119,16 @@ include_once('_member_stats.php');
         </div>
 
         <div class="col-md-5">
-          <label for="type" class="form-label">Member Type</label>
-          <select class="form-select" name="type" id="type" required>
+          <label for="category" class="form-label">Member Category</label>
+          <select class="form-select" name="category" id="category" required>
             <?php
-            foreach ($membersClass->memberTypes() AS $type) {
-              if ($type == $memberObject->type) {
+            foreach ($membersClass->memberCategories() AS $category) {
+              if ($category == $memberObject->category) {
                 $selected = " selected ";
               } else {
                 $selected = "";
               }
-              $output = "<option value=\"" . $type . "\"" . $selected . ">" . $type . "</option>";
+              $output = "<option value=\"" . $category . "\"" . $selected . ">" . $category . "</option>";
 
               echo $output;
             }
@@ -140,7 +141,7 @@ include_once('_member_stats.php');
 
         <div class="col-12">
           <label for="dietary" class="form-label">Dietary Information</label>
-          <input type="text" class="form-control" name="dietary" id="dietary" placeholder="">
+          <input type="text" class="form-control" name="dietary" id="dietary" value="<?php echo $memberObject->dietary; ?>">
         </div>
 
         <div class="col-12">

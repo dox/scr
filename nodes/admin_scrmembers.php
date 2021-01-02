@@ -22,8 +22,8 @@ if (isset($_POST['precedence'])) {
 
   $logsClass->create("members_update", "Members order updated");
 }
-$membersEnabled = $membersClass->allEnabled();
-$membersDisabled = $membersClass->allDisabled();
+$membersEnabled = $membersClass->allEnabled('scr');
+$membersDisabled = $membersClass->allDisabled('scr');
 
 ?>
 <?php
@@ -53,7 +53,7 @@ echo makeTitle($title, $subtitle, $icons);
       if ($memberObject->ldap == $scrStewardLDAP) {
         $output .= "<a href=\"#\" data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" title=\"SCR Steward\" class=\"list-item-actions text-warning\"><svg width=\"16\" height=\"16\"><use xlink:href=\"img/icons.svg#star\"/></svg></a> ";
       }
-      $output .= "<span class=\"text-muted\">" . $memberObject->type . "</span>";
+      $output .= "<span class=\"text-muted\">" . $memberObject->category . "</span>";
 
       $output .= "</span>";
       $output .= "</li>";
@@ -83,7 +83,7 @@ echo makeTitle($title, $subtitle, $icons);
     if ($memberObject->ldap == $scrStewardLDAP) {
       $output .= "<a href=\"#\" data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" title=\"SCR Steward\" class=\"list-item-actions text-warning\"><svg width=\"16\" height=\"16\"><use xlink:href=\"img/icons.svg#star\"/></svg></a> ";
     }
-    $output .= "<span class=\"text-muted\">" . $memberObject->type . "</span>";
+    $output .= "<span class=\"text-muted\">" . $memberObject->category . "</span>";
 
     $output .= "</span>";
     $output .= "</li>";
@@ -164,7 +164,7 @@ function itterate() {
           <div class="col-12">
             <label for="ldap" class="form-label">LDAP Username</label>
             <div class="input-group">
-              <span class="input-group-text">@</span>
+              <span class="input-group-text" onclick="ldapLookup()">@</span>
               <input type="text" class="form-control" name="ldap" id="ldap" required>
             <div class="invalid-feedback">
                 LDAP Username is required.
@@ -173,11 +173,11 @@ function itterate() {
           </div>
 
           <div class="col-12">
-            <label for="type" class="form-label">Member Type</label>
-            <select class="form-select" name="type" id="type" required>
+            <label for="category" class="form-label">Member Category</label>
+            <select class="form-select" name="category" id="category" required>
               <?php
-              foreach ($membersClass->memberTypes() AS $type) {
-                $output = "<option value=\"" . $type . "\"" . ">" . $type . "</option>";
+              foreach ($membersClass->memberCategories() AS $category) {
+                $output = "<option value=\"" . $category . "\"" . ">" . $category . "</option>";
 
                 echo $output;
               }
@@ -213,10 +213,11 @@ function itterate() {
           </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary">Add Member</button>
+        <button type="button" class="btn btn-link text-muted" data-bs-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary"><svg width="16" height="16"><use xlink:href="img/icons.svg#person-plus"/></svg> Add Member</button>
         <input type="hidden" name="memberNew" value="true" />
         <input type="hidden" name="precedence" value="999" />
+        <input type="hidden" name="type" value="SCR" />
       </div>
       </form>
     </div>
@@ -234,4 +235,5 @@ var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggl
 var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
   return new bootstrap.Tooltip(tooltipTriggerEl)
 })
+
 </script>
