@@ -22,10 +22,8 @@ if (isset($_POST['termUID'])) {
 <?php
 $title = $termObject->name;
 $subtitle = $termObject->date_start . " - " . dateDisplay($termObject->date_end);
-//$icons[] = array("class" => "btn-primary", "name" => "Guest List", "value" => "");
-//$icons[] = array("class" => "btn-primary", "name" => "Test2", "value" => "");
 
-echo makeTitle($title, $subtitle, $icons);
+echo makeTitle($title, $subtitle);
 ?>
 <div class="row g-3">
   <div class="col-md-5 col-lg-4 order-md-last">
@@ -36,12 +34,12 @@ echo makeTitle($title, $subtitle, $icons);
     <ul class="list-group mb-3">
       <?php
       foreach ($meals AS $meal) {
-        $memberObject = new member($booking['member_ldap']);
+        $mealObject = new meal($meal['uid']);
 
         $output  = "<li class=\"list-group-item d-flex justify-content-between lh-sm\">";
         $output .= "<div class=\"text-muted\">";
-        $output .= "<h6 class=\"my-0\"><a href=\"index.php?n=booking&memberLDAP=" . $booking['member_ldap'] . "&mealUID=" . $booking['meal_uid'] . "\" class=\"text-muted\">" . $memberObject->displayName() . "</a></h6>";
-        $output .= "<small class=\"text-muted\">" . dateDisplay($booking['date']) . " " . date('H:i:s', strtotime($booking['date'])) . "</small>";
+        $output .= "<h6 class=\"my-0\"><a href=\"index.php?n=admin_meal&mealUID=" . $mealObject->uid . "\" class=\"text-muted\">" . $mealObject->name . "</a></h6>";
+        $output .= "<small class=\"text-muted\">" . dateDisplay($mealObject->date_meal) . " " . date('H:i', strtotime($mealObject->date_meal)) . "</small>";
         $output .= "</div>";
         $output .= "<span class=\"text-muted\">" . count(json_decode($booking['guests_array'])) . autoPluralise(" guest", " guests", count(json_decode($booking['guests_array']))) . "</span>";
         $output .= "</li>";
@@ -49,7 +47,6 @@ echo makeTitle($title, $subtitle, $icons);
         echo $output;
       }
       ?>
-    </ul>
 
     <h4 class="d-flex justify-content-between align-items-center mb-3">
       <span class="text-muted">Meals Post-Term (Vacation)</span>
