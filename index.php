@@ -55,7 +55,7 @@ if (isset($_POST['inputUsername']) && isset($_POST['inputPassword'])) {
       if (empty($memberLookup['email'])) {
         $UPDATEUSER['email'] = $ldapUser[0]['mail'][0];
       }
-      
+
       if (count($UPDATEUSER) > 1) {
         $memberObject = new member($memberLookup['uid']);
         $memberObject->update($UPDATEUSER);
@@ -99,7 +99,6 @@ if ($_SESSION['logon'] != true) {
   <!-- Bootstrap core CSS -->
   <link href="css/bootstrap.min.css" rel="stylesheet">
   <link href="css/app.css" rel="stylesheet">
-  <!--<link rel="stylesheet" href="https://unpkg.com/@tabler/core@latest/dist/css/tabler.min.css">-->
 
 	<!-- Favicons -->
 	<link rel="apple-touch-icon" sizes="180x180" href="/img/favicons/apple-touch-icon.png">
@@ -111,9 +110,6 @@ if ($_SESSION['logon'] != true) {
   <meta name="theme-color" content="#7952b3">
 
   <script src="js/bootstrap.bundle.min.js"></script>
-  <!--<script src="https://unpkg.com/@tabler/core@latest/dist/js/tabler.min.js"></script>-->
-
-	<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
 	<script src="js/app.js"></script>
 </head>
 
@@ -138,6 +134,5 @@ if ($_SESSION['logon'] != true) {
     <?php
 		include_once("views/footer.php");
 		?>
-
 </body>
 </html>
