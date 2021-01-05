@@ -4,19 +4,7 @@ class bookings extends booking {
 
   }
 
-  public function totalBookingsByMealUID($mealUID = null) {
-    global $db;
-
-    $bookings = $this->bookingsByMealUID($mealUID);
-
-    foreach ($bookings AS $booking) {
-      $guestsArray[] = count(json_decode($booking['guests_array']));
-    }
-
-    $totalGuests = count($bookings) + array_sum($guestsArray);
-
-    return $totalGuests;
-  }
+  
 
   public function bookingsByMealUID($mealUID = null) {
     global $db;

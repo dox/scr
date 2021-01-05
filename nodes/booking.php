@@ -181,11 +181,23 @@ echo makeTitle($title, $subtitle, $icons);
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <p>Are you sure you want to delete this meal booking?  This will also delete any guests you have booked for this meal.</p>
+        <?php
+        if (date('Y-m-d H:i:s') >= date('Y-m-d H:i:s', strtotime($meal->date_cutoff))) {
+          echo "<p>The deadline for making changes to this booking has passed.  Please contact the Bursary for further assistance.</p>";
+        } else {
+          echo "<p>Are you sure you want to delete this meal booking?  This will also delete any guests you have booked for this meal.</p>";
+        }
+        ?>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-link link-secondary mr-auto" data-bs-dismiss="modal">Close</button>
-        <a href="index.php?deleteBookingUID=<?php echo $bookingObject->uid; ?>" role="button" class="btn btn-danger" onclck="bookingDeleteButton();"><svg width="16" height="16"><use xlink:href="img/icons.svg#trash"/></svg> Delete</a>
+        <?php
+        if (date('Y-m-d H:i:s') >= date('Y-m-d H:i:s', strtotime($meal->date_cutoff))) {
+          echo "<a href=\"#\" role=\"button\" class=\"btn btn-danger disabled\"><svg width=\"16\" height=\"16\"><use xlink:href=\"img/icons.svg#trash\"/></svg> Delete</a>";
+        } else {
+          echo "<a href=\"index.php?deleteBookingUID=" . $bookingObject->uid . "\" role=\"button\" class=\"btn btn-danger\" onclck=\"bookingDeleteButton();\"><svg width=\"16\" height=\"16\"><use xlink:href=\"img/icons.svg#trash\"/></svg> Delete</a>";
+        }
+        ?>
       </div>
     </div>
   </div>

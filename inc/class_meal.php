@@ -5,6 +5,7 @@ class meal {
   public $uid;
   public $name;
   public $date_meal;
+  public $date_cutoff;
   public $location;
   public $scr_capacity;
   public $mcr_capacity;
@@ -29,8 +30,7 @@ class meal {
   public function mealCard() {
     global $icon_edit;
 
-    $bookingsClass = new bookings();
-    $bookingsThisMeal = $bookingsClass->totalBookingsByMealUID($this->uid);
+
 
     $output  = "<div class=\"col\">";
     $output .= "<div class=\"card mb-4 shadow-sm\">";//border-warning mb-3
@@ -47,7 +47,7 @@ class meal {
     $output .= "</div>";
 
     $output .= "<div class=\"card-body \">";
-    $output .= "<h1 class=\"card-title pricing-card-title\">" . $bookingsThisMeal . " <small class=\"text-muted\">/ " . $this->totalCapacity() . " bookings</small></h1>";
+    $output .= "<h1 class=\"card-title pricing-card-title\"><span id=\"capacityUID-" . $this->uid . "\">" . $this->total_bookings_this_meal() . "</span> <small class=\"text-muted\">/ " . $this->totalCapacity() . " bookings</small></h1>";
     $output .= "<ul class=\"list-unstyled mt-3 mb-4\">";
     $output .= "<li>" . $this->type . ", " . $this->location . "</li>";
     $output .= "<li>" . date('H:i', strtotime($this->date_meal)) . "</li>";
@@ -58,11 +58,7 @@ class meal {
 
     $output .= "</ul>";
 
-    if ($bookingsClass->bookingExistCheck($this->uid, $_SESSION['username'])) {
-      $output .= "<a href=\"index.php?n=booking&mealUID=" . $this->uid . "\" role=\"button\" class=\"btn btn-success\" id=\"mealUID-" . $this->uid . "\">Manage Booking</a>";
-    } else {
-      $output .= "<a href=\"#\" role=\"button\" class=\"btn btn-outline-primary\" id=\"mealUID-" . $this->uid . "\" onclick=\"bookMealQuick(this.id)\">Book Meal</a>";
-    }
+    $output .= $this->bookingButton();
 
     //$output .= "<div class=\"btn-group\">";
     //$output .= "<button type=\"button\" id=\"mealUID-" . $this->uid . "\" class=\"btn btn-outline-primary\" onclick=\"bookMealQuick(this.id)\">Book Meal</button>";
@@ -80,6 +76,34 @@ class meal {
     $output .= "</div>";
     $output .= "</div>";
     $output .= "</div>";
+
+    return $output;
+  }
+
+  private function bookingButton() {
+    $bookingsClass = new bookings();
+    $bookingsThisMeal = $this->total_bookings_this_meal();
+
+    $output = "";
+    if ($bookingsClass->bookingExistCheck($this->uid, $_SESSION['username'])) {
+      $output .= "<a href=\"index.php?n=booking&mealUID=" . $this->uid . "\" role=\"button\" class=\"btn w-100 btn-success\" id=\"mealUID-" . $this->uid . "\">Manage Booking</a>";
+    } else {
+      $bookingPossible = true;
+      // check for meal cutoff expiry date
+      if (date('Y-m-d H:i:s') >= date('Y-m-d H:i:s', strtotime($this->date_cutoff))) {
+        $bookingPossible = false;
+        $bookingError = "Deadline Passed";
+      } elseif ($this->total_bookings_this_meal() >= $this->totalCapacity()) {
+        $bookingPossible = false;
+        $bookingError = "Capacity Reached";
+      }
+
+      if ($bookingPossible == true) {
+        $output .= "<a href=\"#\" role=\"button\" class=\"btn w-100 btn-outline-primary\" id=\"mealUID-" . $this->uid . "\" onclick=\"bookMealQuick(this.id)\">Book Meal</a>";
+      } else {
+        $output .= "<a href=\"#\" role=\"button\" class=\"btn w-100 btn-outline-warning disabled\">" . $bookingError ."</a>";
+      }
+    }
 
     return $output;
   }
@@ -108,6 +132,20 @@ class meal {
     $bookings = $db->query($sql)->fetchAll();
 
     return $bookings;
+  }
+
+  public function total_bookings_this_meal() {
+    global $db;
+
+
+    foreach ($this->bookings_this_meal() AS $booking) {
+      $guestsArray[] = count(json_decode($booking['guests_array']));
+    }
+
+
+    $totalGuests = count($this->bookings_this_meal()) + array_sum($guestsArray);
+
+    return $totalGuests;
   }
 
   public function display_mealAside() {
