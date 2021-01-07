@@ -108,7 +108,7 @@ class meal {
           $bookingLink = "#";
           $bookingClass = "btn-outline-secondary";
           $bookingID = "mealUID-" . $this->uid;
-          $bookingOnClick = "";
+          $bookingOnClick = "onclick=\"bookMealQuick(this.id)\"";
           $bookingDisplayText = "Deadline Passed";
         } else {
           $bookingLink = "#";
@@ -125,7 +125,7 @@ class meal {
           $bookingLink = "#";
           $bookingClass = "btn-outline-warning";
           $bookingID = "mealUID-" . $this->uid;
-          $bookingOnClick = "";
+          $bookingOnClick = "onclick=\"bookMealQuick(this.id)\"";
           $bookingDisplayText = "Capacity Reached";
         } else {
           $bookingLink = "#";
