@@ -199,13 +199,13 @@ echo makeTitle($title, $subtitle, $icons);
             </div>
           </div>
 
+          <label for="menu" class="form-label">Menu</label>
+          <input type="text" class="form-control" name="menu" id="menu" value="<?php echo $mealObject->menu; ?>">
+
           <hr />
 
-          <label for="notes" class="form-label">Notes</label>
-          <input type="text" class="form-control" name="notes" id="notes" value="<?php echo $mealObject->notes; ?>" required>
-          <div class="invalid-feedback">
-            Valid Meal name is required.
-          </div>
+          <label for="notes" class="form-label">Notes (Private)</label>
+          <input type="text" class="form-control" name="notes" id="notes" value="<?php echo $mealObject->notes; ?>">
 
           <hr />
 

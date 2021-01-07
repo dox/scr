@@ -62,7 +62,7 @@ if (isset($_POST['inputUsername']) && isset($_POST['inputPassword'])) {
       }
     }
 
-    $arrayOfAdmins = explode(",", $settingsClass->value('member_admins'));
+    $arrayOfAdmins = explode(",", strtoupper($settingsClass->value('member_admins')));
 		if (in_array(strtoupper($_SESSION['username']), $arrayOfAdmins)) {
 			$_SESSION['admin'] = true;
 		} else {

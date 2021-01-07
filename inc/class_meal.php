@@ -11,6 +11,7 @@ class meal {
   public $mcr_capacity;
   public $scr_guests;
   public $mcr_guests;
+  public $menu;
   public $notes;
 
 
@@ -36,6 +37,8 @@ class meal {
     $output .= "<div class=\"card mb-4 shadow-sm\">";//border-warning mb-3
     $output .= "<div class=\"card-header\">";
 
+    $output .= $this->menuTooltip();
+
     if ($_SESSION['admin'] == true) {
       $output .= "<a href=\"index.php?n=admin_meal&mealUID=" . $this->uid . "\" class=\"float-end\">";
       $output .= "<svg width=\"16\" height=\"16\"><use xlink:href=\"img/icons.svg#sliders\"/></svg>";
@@ -47,6 +50,7 @@ class meal {
     $output .= "</div>";
 
     $output .= "<div class=\"card-body \">";
+
     $output .= "<h1 class=\"card-title pricing-card-title\"><span id=\"capacityUID-" . $this->uid . "\">" . $this->total_bookings_this_meal() . "</span> <small class=\"text-muted\">/ " . $this->totalCapacity() . " bookings</small></h1>";
     $output .= "<ul class=\"list-unstyled mt-3 mb-4\">";
     $output .= "<li>" . $this->type . ", " . $this->location . "</li>";
@@ -148,6 +152,20 @@ class meal {
     $totalGuests = count($this->bookings_this_meal()) + array_sum($guestsArray);
 
     return $totalGuests;
+  }
+
+  public function menuTooltip() {
+    if (!empty($this->menu)) {
+
+      $output  = "<button type=\"button\" class=\"btn btn-sm btn-primary float-start\" data-bs-toggle=\"modal\" data-bs-target=\"#exampleModal\" data-bs-whatever=\"@mdo\">Menu</button>";
+
+      $output  = "<button type=\"button\" class=\"btn btn-secondary\" data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" title=\"Tooltip on top\">";
+      $output .= "Menu";
+      $output .= "</button>";
+
+    }
+
+    return $output;
   }
 
   public function display_mealAside() {

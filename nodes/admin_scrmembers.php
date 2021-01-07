@@ -52,9 +52,10 @@ echo makeTitle($title, $subtitle, $icons);
       $output .= "<a href=\"index.php?n=member&memberUID=" . $memberObject->uid . "\">" . $memberObject->displayName() . "</a>";
 
       $output .= "<span class=\"float-end\">";
-      if ($memberObject->ldap == $scrStewardLDAP) {
-        $output .= "<a href=\"#\" data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" title=\"SCR Steward\" class=\"list-item-actions text-warning\"><svg width=\"16\" height=\"16\"><use xlink:href=\"img/icons.svg#star\"/></svg></a> ";
-      }
+      $output .= $memberObject->stewardBadge() ." ";
+
+      $output .= $memberObject->adminBadge() ." ";
+
       $output .= "<span class=\"text-muted\">" . $memberObject->category . "</span>";
 
       $output .= "</span>";
@@ -226,16 +227,12 @@ function itterate() {
   </div>
 </div>
 
-
-
 <script>
+
 function dismiss(el){
   document.getElementById(el).parentNode.style.display='none';
 };
 
-var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-  return new bootstrap.Tooltip(tooltipTriggerEl)
-})
+
 
 </script>

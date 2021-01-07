@@ -26,8 +26,8 @@ if (isset($_POST['memberUID'])) {
 }
 ?>
 <?php
-$title = $memberObject->displayName();
-$subtitle = $memberObject->type . $memberObject->memberBadge();
+$title = $memberObject->displayName() . $memberObject->stewardBadge();
+$subtitle = $memberObject->type . $memberObject->adminBadge();
 
 echo makeTitle($title, $subtitle);
 
