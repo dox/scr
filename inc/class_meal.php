@@ -88,28 +88,56 @@ class meal {
     $bookingsClass = new bookings();
     $bookingsThisMeal = $this->total_bookings_this_meal();
 
-    $output = "";
     if ($bookingsClass->bookingExistCheck($this->uid, $_SESSION['username'])) {
-      $output .= "<a href=\"index.php?n=booking&mealUID=" . $this->uid . "\" role=\"button\" class=\"btn w-100 btn-success\" id=\"mealUID-" . $this->uid . "\">Manage Booking</a>";
+      // Booking exists for users - show the manage button
+      $bookingLink = "index.php?n=booking&mealUID=" . $this->uid;
+      $bookingClass = "btn-success";
+      $bookingID = "mealUID-" . $this->uid;
+      $bookingOnClick = "";
+      $bookingDisplayText = "Manage Booking";
     } else {
-      $bookingPossible = true;
+      $bookingLink = "#";
+      $bookingClass = "btn-outline-primary";
+      $bookingID = "mealUID-" . $this->uid;
+      $bookingOnClick = "onclick=\"bookMealQuick(this.id)\"";
+      $bookingDisplayText = "Book Meal";
+
       // check for meal cutoff expiry date
       if (date('Y-m-d H:i:s') >= date('Y-m-d H:i:s', strtotime($this->date_cutoff))) {
-        $bookingPossible = false;
-        $bookingError = "Deadline Passed";
-        $bookingClass = "btn-outline-secondary";
-      } elseif ($this->total_bookings_this_meal() >= $this->totalCapacity()) {
-        $bookingPossible = false;
-        $bookingError = "Capacity Reached";
-        $bookingClass = "btn-outline-warning";
+        if ($_SESSION['admin'] == true) {
+          $bookingLink = "#";
+          $bookingClass = "btn-outline-secondary";
+          $bookingID = "mealUID-" . $this->uid;
+          $bookingOnClick = "";
+          $bookingDisplayText = "Deadline Passed";
+        } else {
+          $bookingLink = "#";
+          $bookingClass = "btn-outline-secondary disabled";
+          $bookingID = "mealUID-" . $this->uid;
+          $bookingOnClick = "";
+          $bookingDisplayText = "Deadline Passed";
+        }
       }
 
-      if ($bookingPossible == true) {
-        $output .= "<a href=\"#\" role=\"button\" class=\"btn w-100 btn-outline-primary\" id=\"mealUID-" . $this->uid . "\" onclick=\"bookMealQuick(this.id)\">Book Meal</a>";
-      } else {
-        $output .= "<a href=\"#\" role=\"button\" class=\"btn w-100 " . $bookingClass . " disabled\">" . $bookingError ."</a>";
+      // check for meal capacity
+      if ($this->total_bookings_this_meal() >= $this->totalCapacity()) {
+        if ($_SESSION['admin'] == true) {
+          $bookingLink = "#";
+          $bookingClass = "btn-outline-warning";
+          $bookingID = "mealUID-" . $this->uid;
+          $bookingOnClick = "";
+          $bookingDisplayText = "Capacity Reached";
+        } else {
+          $bookingLink = "#";
+          $bookingClass = "btn-outline-warning disabled";
+          $bookingID = "mealUID-" . $this->uid;
+          $bookingOnClick = "";
+          $bookingDisplayText = "Capacity Reached";
+        }
       }
     }
+
+    $output = "<a href=\"" . $bookingLink . "\" role=\"button\" class=\"btn w-100 " . $bookingClass . "\" id=\"" . $bookingID . "\" " . $bookingOnClick . ">" . $bookingDisplayText . "</a>";
 
     return $output;
   }
