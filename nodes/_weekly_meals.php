@@ -20,8 +20,9 @@ for($i = 0; $i < 7; $i++){
 
   echo "<h2 class=\"text-center\">" . date('l', $date) . " <span class=\"text-muted\">" . date('F jS', $date) . "</span></h2>";
 
-  echo "<div class=\"row row-cols-1 row-cols-md-3 mb-3 text-center justify-content-md-center\">";
+  echo "<div class=\"row row-cols-3 row-cols-md-3 mb-3 text-center justify-content-md-center\">";
   $meals = $mealsClass->allByDate(date('Y-m-d', $date));
+  $meals = array_reverse($meals);
 
   foreach ($meals AS $meal) {
     $mealObject = new meal($meal['uid']);
@@ -32,7 +33,7 @@ for($i = 0; $i < 7; $i++){
 }
 
 ?>
-
+<!--
 <div class="row row-cols-2">
   <div class="col">
 <div class="card text-white">
@@ -69,11 +70,10 @@ for($i = 0; $i < 7; $i++){
 </div>
 </div>
 
-
-
 <style>
 
 .border-primary2 {
 	background: linear-gradient(45deg,#4099ff,#73b4ff);
 }
 </style>
+-->

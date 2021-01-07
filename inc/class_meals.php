@@ -4,7 +4,7 @@ class meals extends meal {
     global $db;
 
     $sql  = "SELECT *  FROM " . self::$table_name;
-    $sql .= " ORDER BY uid ASC";
+    $sql .= " ORDER BY date_meal DESC";
 
     $meals = $db->query($sql)->fetchAll();
 
@@ -16,7 +16,7 @@ class meals extends meal {
 
     $sql  = "SELECT *  FROM " . self::$table_name;
     $sql .= " WHERE DATE(date_meal) = '" . $date . "'";
-    $sql .= " ORDER BY uid ASC";
+    $sql .= " ORDER BY date_meal DESC";
 
     $meals = $db->query($sql)->fetchAll();
 

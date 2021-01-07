@@ -51,7 +51,7 @@ class meal {
 
     $output .= "<div class=\"card-body \">";
 
-    $output .= "<h1 class=\"card-title pricing-card-title\"><span id=\"capacityUID-" . $this->uid . "\">" . $this->total_bookings_this_meal() . "</span> <small class=\"text-muted\">/ " . $this->totalCapacity() . " bookings</small></h1>";
+    $output .= "<h1 class=\"card-title pricing-card-title\"><span id=\"capacityUID-" . $this->uid . "\">" . $this->total_bookings_this_meal() . "</span> <small class=\"text-muted\">/ " . $this->totalCapacity() . "<span class=\"d-none d-sm-block d-sm-none d-md-block\"> bookings</span></small></h1>";
     $output .= "<ul class=\"list-unstyled mt-3 mb-4\">";
     $output .= "<li>" . $this->type . ", " . $this->location . "</li>";
     $output .= "<li>" . date('H:i', strtotime($this->date_meal)) . "</li>";
@@ -187,7 +187,7 @@ class meal {
 
       $output  = "<button type=\"button\" class=\"btn btn-sm btn-primary float-start\" data-bs-toggle=\"modal\" data-bs-target=\"#exampleModal\" data-bs-whatever=\"@mdo\">Menu</button>";
 
-      $output  = "<button type=\"button\" class=\"btn btn-secondary\" data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" title=\"Tooltip on top\">";
+      $output  = "<button type=\"button\" class=\"btn btn-sm btn-outline-secondary float-start\" data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" title=\"Tooltip on top\">";
       $output .= "Menu";
       $output .= "</button>";
 
