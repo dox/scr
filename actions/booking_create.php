@@ -14,5 +14,4 @@ $booking = $bookingObject->create($bookingArray);
 //quit();
 echo "Booking made";
 
-$logsClass->create("booking", "Booking made for " . $_SESSION['username'] . " for meal " . $_POST['meal_uid']);
 ?>

@@ -50,7 +50,8 @@ class booking {
   }
 
   public function create($array = null) {
-	   global $db;
+    global $db;
+    global $logsClass;
 
     $sql  = "INSERT INTO " . self::$table_name;
 
@@ -63,6 +64,7 @@ class booking {
     $sql .= " VALUES (" . implode(",", $sqlValues) . ")";
 
     $create = $db->query($sql);
+    $logsClass->create("booking", "[bookingUID:" . $create->lastInsertID() . "] made for " . $_SESSION['username'] . " for [mealUID:" . $array['meal_uid'] . "]");
 
     return $create;
   }
@@ -83,6 +85,7 @@ class booking {
     $sql .= " LIMIT 1";
 
     $update = $db->query($sql);
+    $logsClass->create("booking", "[bookingUID:" .  $this->uid  . "] updated by " . $_SESSION['username'] . " for [mealUID:" . $array['meal_uid'] . "]");
 
     return $update;
   }
@@ -92,15 +95,15 @@ class booking {
     global $logsClass;
 
     $bookingUID = $this->uid;
+    $mealUID = $this->meal_uid;
 
     $sql  = "DELETE FROM " . self::$table_name;
     $sql .= " WHERE uid = '" . $this->uid . "' ";
     $sql .= " LIMIT 1";
 
     $delete = $db->query($sql);
-
-    $logsClass->create("booking", "Booking deleted for " . $_SESSION['username'] . " for meal " . $bookingUID);
-
+    $logsClass->create("booking", "[bookingUID:" .  $bookingUID  . "] deleted by " . $_SESSION['username'] . " for [mealUID:" . $mealUID . "]");
+    
     return $delete;
   }
 }

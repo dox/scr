@@ -135,6 +135,7 @@ class member {
 
   public function update($array = null) {
     global $db;
+    global $logsClass;
 
     $sql  = "UPDATE " . self::$table_name;
 
@@ -152,6 +153,7 @@ class member {
     $sql .= " LIMIT 1";
 
     $update = $db->query($sql);
+    $logsClass->create("members_update", "Member [memberUID:" . $array['memberUID'] . "] updated");
 
     return $update;
   }

@@ -93,15 +93,17 @@ class meal {
       if (date('Y-m-d H:i:s') >= date('Y-m-d H:i:s', strtotime($this->date_cutoff))) {
         $bookingPossible = false;
         $bookingError = "Deadline Passed";
+        $bookingClass = "btn-outline-secondary";
       } elseif ($this->total_bookings_this_meal() >= $this->totalCapacity()) {
         $bookingPossible = false;
         $bookingError = "Capacity Reached";
+        $bookingClass = "btn-outline-warning";
       }
 
       if ($bookingPossible == true) {
         $output .= "<a href=\"#\" role=\"button\" class=\"btn w-100 btn-outline-primary\" id=\"mealUID-" . $this->uid . "\" onclick=\"bookMealQuick(this.id)\">Book Meal</a>";
       } else {
-        $output .= "<a href=\"#\" role=\"button\" class=\"btn w-100 btn-outline-warning disabled\">" . $bookingError ."</a>";
+        $output .= "<a href=\"#\" role=\"button\" class=\"btn w-100 " . $bookingClass . " disabled\">" . $bookingError ."</a>";
       }
     }
 
