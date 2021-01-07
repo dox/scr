@@ -26,7 +26,7 @@ function bookMealQuick(this_id) {
       buttonClicked.className = 'btn btn-success w-100';
       buttonClicked.removeAttribute("onclick");
       buttonClicked.href = "index.php?n=booking&mealUID=" + mealUID;
-      totalBookings.innerHTML = parseInt(totalBookings.innerHTML + 1, 10);
+      totalBookings.innerHTML = parseInt(totalBookings.innerHTML, 10)+1;
       buttonClicked.innerText = 'Manage Booking';
 
       //alert(`Done, got ${request.response.length} bytes`); // response is the server response
