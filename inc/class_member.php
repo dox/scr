@@ -142,6 +142,9 @@ class member {
       if ($updateItem != 'memberUID') {
         $sqlUpdate[] = $updateItem ." = '" . $value . "' ";
       }
+      if (is_array($value)) {
+        $sqlUpdate[] = $updateItem ." = '" . implode(",", $value) . "' ";
+      }
     }
 
     $sql .= " SET " . implode(", ", $sqlUpdate);

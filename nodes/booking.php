@@ -1,5 +1,6 @@
 <?php
 $termsClass = new terms();
+$membersClass = new members();
 
 $meal = new meal($_GET['mealUID']);
 $checkTerm = $termsClass->checkIsInTerm($meal->date_meal);
@@ -8,6 +9,8 @@ $term = new term($checkTerm[0]['uid']);
 $bookingsClass = new bookings();
 $bookingByMember = $bookingsClass->bookingForMealByMember($meal->uid, $_SESSION['username']);
 $bookingObject = new booking($bookingByMember['uid']);
+
+$dietaryOptionsMax = $settingsClass->value('meal_dietary_allowed');
 
 if (!empty($_POST['guest_name'])) {
   $bookingObject->update($_POST);
@@ -134,10 +137,27 @@ echo makeTitle($title, $subtitle, $icons);
             <small id="nameHelp" class="form-text text-muted">This name will show on the sign-up list</small>
           </div>
 
-          <div class="form-group">
-            <label for="date_start">Guest's Dietary Requirements</label>
-            <input type="text" class="form-control" name="guest_dietary" id="guest_dietary" aria-describedby="termStartDate">
-            <small id="dietaryHelp" class="form-text text-muted">Leave blank for 'none'</small>
+          <div class="mb-3">
+            <label for="dietary" class="form-label">Guest's Dietary Information</label>
+            <div class="selectBox" onclick="showCheckboxes()">
+              <select class="form-select">
+                <option>Select up to <?php echo $dietaryOptionsMax; ?> dietary preferences</option>
+              </select>
+              <div class="overSelect"></div>
+            </div>
+            <div id="checkboxes">
+              <?php
+              $memberDietary = explode(",", $memberObject->dietary);
+              foreach ($membersClass->dietaryOptions() AS $dietaryOption) {
+                $output  = "<div class=\"form-check\">";
+                $output .= "<input class=\"form-check-input dietaryOptionsMax\" type=\"checkbox\" onclick=\"checkMaxCheckboxes(" . $dietaryOptionsMax . ")\" name=\"guest_dietary[]\" id=\"guest_dietary\" value=\"" . $dietaryOption . "\">";
+                $output .= "<label class=\"form-check-label\" for=\"" . $dietaryOption . "\">" . $dietaryOption . "</label>";
+                $output .= "</div>";
+
+                echo $output;
+              }
+              ?>
+            </div>
           </div>
 
 
@@ -155,10 +175,10 @@ echo makeTitle($title, $subtitle, $icons);
 	            <label class="form-check-label" for="domus">Domus</label>
 	        </div>
           </div>
-          <div class="form-group">
+          <div class="form-group guest_domus_descriptionDiv visually-hidden">
             <label for="date_start">Domus Description</label>
-            <input type="text" class="form-control" name="guest_domus_description" id="guest_domus_description" hidden aria-describedby="domus_description" placeholder="Domus reason (required)">
-            <small id="guest_domus_descriptionHelp" class="form-text text-muted" hidden>A brief description of why this guest is Domus</small>
+            <input type="text" class="form-control" name="guest_domus_description" id="guest_domus_description" aria-describedby="domus_description" placeholder="Domus reason (required)">
+            <small id="guest_domus_descriptionHelp" class="form-text text-muted">A brief description of why this guest is Domus</small>
           </div>
 
       </div>
@@ -202,3 +222,7 @@ echo makeTitle($title, $subtitle, $icons);
     </div>
   </div>
 </div>
+
+<script>
+checkMaxCheckboxes(<?php echo $dietaryOptionsMax; ?>);
+</script>

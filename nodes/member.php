@@ -1,3 +1,4 @@
+
 <?php
 if (isset($_GET['memberUID'])) {
   if ($_SESSION['admin'] == true) {
@@ -13,6 +14,8 @@ $membersClass = new members();
 $memberObject = new member($memberUID);
 $upcomingMealUIDS = $memberObject->mealUIDS_upcoming();
 $previousMealUIDS = $memberObject->mealUIDS_previous();
+
+$dietaryOptionsMax = $settingsClass->value('meal_dietary_allowed');
 
 if (isset($_POST['memberUID'])) {
   if (!isset($_POST['opt_in'])) {
@@ -141,7 +144,30 @@ include_once('_member_stats.php');
 
         <div class="col-12">
           <label for="dietary" class="form-label">Dietary Information</label>
-          <input type="text" class="form-control" name="dietary" id="dietary" value="<?php echo $memberObject->dietary; ?>">
+          <div class="selectBox" onclick="showCheckboxes()">
+            <select class="form-select">
+              <option>Select up to <?php echo $dietaryOptionsMax; ?> dietary preferences</option>
+            </select>
+            <div class="overSelect"></div>
+          </div>
+          <div id="checkboxes" name="dietary" id="dietary">
+            <?php
+            $memberDietary = explode(",", $memberObject->dietary);
+            foreach ($membersClass->dietaryOptions() AS $dietaryOption) {
+              if (in_array($dietaryOption, $memberDietary)) {
+                $checked = " checked";
+              } else {
+                $checked = "";
+              }
+              $output  = "<div class=\"form-check\">";
+              $output .= "<input class=\"form-check-input dietaryOptionsMax\" type=\"checkbox\" onclick=\"checkMaxCheckboxes(" . $dietaryOptionsMax . ")\" name=\"dietary[]\" id=\"dietary\" value=\"" . $dietaryOption . "\" " . $checked . ">";
+              $output .= "<label class=\"form-check-label\" for=\"" . $dietaryOption . "\">" . $dietaryOption . "</label>";
+              $output .= "</div>";
+
+              echo $output;
+            }
+            ?>
+          </div>
         </div>
 
         <div class="col-12">
@@ -208,3 +234,7 @@ include_once('_member_stats.php');
     </div>
   </div>
 </div>
+
+<script>
+checkMaxCheckboxes(<?php echo $dietaryOptionsMax; ?>);
+</script>

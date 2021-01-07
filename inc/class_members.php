@@ -68,5 +68,14 @@ class members extends member {
 
     return $memberTitles;
   }
+
+  public function dietaryOptions() {
+    global $settingsClass;
+
+    $dietaryOptions = explode(",", $settingsClass->value('meal_dietary'));
+    sort($dietaryOptions);
+
+    return $dietaryOptions;
+  }
 }
 ?>

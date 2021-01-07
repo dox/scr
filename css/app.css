@@ -155,3 +155,19 @@ a.avatar {
     line-height: 1;
     margin-top:.25rem
 }
+
+
+/* multiselect for dietary */
+.selectBox {
+  position: relative;
+}
+.overSelect {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+#checkboxes {
+  display: none;
+}

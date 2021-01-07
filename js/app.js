@@ -49,15 +49,13 @@ function bookingDeleteButton() {
 
 function guestDomus(this_id) {
   var domusCheckBox = document.getElementById(this_id);
+  var domusDescriptionDiv = document.getElementsByClassName('guest_domus_descriptionDiv')[0];
   var domusDescriptionInput = document.getElementById('guest_domus_description');
-  var domusDescriptionHelp = document.getElementById('guest_domus_descriptionHelp');
 
   if (domusCheckBox.checked == true) {
-    domusDescriptionInput.hidden = false;
-    domusDescriptionHelp.hidden = false;
+    domusDescriptionDiv.classList.remove("visually-hidden");
   } else {
-    domusDescriptionInput.hidden = true;
-    domusDescriptionHelp.hidden = true;
+    domusDescriptionDiv.classList.add("visually-hidden");
 	  domusDescriptionInput.value = "";
   }
 }
@@ -134,4 +132,41 @@ function ldapLookup() {
   };
 
   return false;
+}
+
+
+// Multiselect for dietary
+var expanded = false;
+
+function showCheckboxes() {
+  var checkboxes = document.getElementById("checkboxes");
+  if (!expanded) {
+    checkboxes.style.display = "block";
+    expanded = true;
+  } else {
+    checkboxes.style.display = "none";
+    expanded = false;
+  }
+}
+
+function checkMaxCheckboxes(maxAllowed = 2) {
+  var inputElems = document.getElementsByClassName("dietaryOptionsMax"), count = 0;
+
+  for (var i=0; i<inputElems.length; i++) {
+    if (inputElems[i].type == "checkbox" && inputElems[i].checked == true) {
+      count++;
+    }
+  }
+
+  if (count >= maxAllowed) {
+    for (var i=0; i<inputElems.length; i++) {
+      if (inputElems[i].checked != true) {
+        inputElems[i].disabled = true;
+      }
+    }
+  } else {
+    for (var i=0; i<inputElems.length; i++) {
+      inputElems[i].disabled = false;
+    }
+  }
 }
