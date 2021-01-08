@@ -13,7 +13,7 @@ if (isset($_GET['deleteBookingUID'])) {
 ?>
 <?php
 $title = "SCR Meal Booking";
-$subtitle = "Current term: Vacation";
+$subtitle = "Current term: " . $termObject->currentTerm()['name'];
 
 echo makeTitle($title, $subtitle);
 ?>

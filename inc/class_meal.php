@@ -123,23 +123,6 @@ class meal {
       $bookingOnClick = "onclick=\"bookMealQuick(this.id)\"";
       $bookingDisplayText = "Book Meal";
 
-      // check for meal cutoff expiry date
-      if (date('Y-m-d H:i:s') >= date('Y-m-d H:i:s', strtotime($this->date_cutoff))) {
-        if ($_SESSION['admin'] == true) {
-          $bookingLink = "#";
-          $bookingClass = "btn-outline-secondary";
-          $bookingID = "mealUID-" . $this->uid;
-          $bookingOnClick = "onclick=\"bookMealQuick(this.id)\"";
-          $bookingDisplayText = "Deadline Passed";
-        } else {
-          $bookingLink = "#";
-          $bookingClass = "btn-outline-secondary disabled";
-          $bookingID = "mealUID-" . $this->uid;
-          $bookingOnClick = "";
-          $bookingDisplayText = "Deadline Passed";
-        }
-      }
-
       // check for meal capacity
       if ($this->total_bookings_this_meal() >= $this->totalCapacity()) {
         if ($_SESSION['admin'] == true) {
@@ -154,6 +137,23 @@ class meal {
           $bookingID = "mealUID-" . $this->uid;
           $bookingOnClick = "";
           $bookingDisplayText = "Capacity Reached";
+        }
+      }
+
+      // check for meal cutoff expiry date
+      if (date('Y-m-d H:i:s') >= date('Y-m-d H:i:s', strtotime($this->date_cutoff))) {
+        if ($_SESSION['admin'] == true) {
+          $bookingLink = "#";
+          $bookingClass = "btn-outline-secondary";
+          $bookingID = "mealUID-" . $this->uid;
+          $bookingOnClick = "onclick=\"bookMealQuick(this.id)\"";
+          $bookingDisplayText = "Deadline Passed";
+        } else {
+          $bookingLink = "#";
+          $bookingClass = "btn-outline-secondary disabled";
+          $bookingID = "mealUID-" . $this->uid;
+          $bookingOnClick = "";
+          $bookingDisplayText = "Deadline Passed";
         }
       }
     }

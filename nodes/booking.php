@@ -47,7 +47,7 @@ echo makeTitle($title, $subtitle, $icons);
         <div class="divide-y">
           <div>
             <label class="row">
-              <span class="col">Domus</span>
+              <span class="col"><svg width="16" height="16"><use xlink:href="img/icons.svg#graduation-cap"></svg> Domus</span>
               <span class="col-auto">
                 <label class="form-check form-check-single form-switch">
                   <input class="form-check-input" id="domus" type="checkbox" <?php if ($bookingObject->domus == 1) { echo "checked";} ?> onchange="domus(this.id)">
@@ -59,7 +59,7 @@ echo makeTitle($title, $subtitle, $icons);
           </div>
           <div>
             <label class="row">
-              <span class="col">Wine</span>
+              <span class="col"><svg width="16" height="16"><use xlink:href="img/icons.svg#wine-glass"></svg> Wine</span>
               <span class="col-auto">
                 <label class="form-check form-check-single form-switch"><input class="form-check-input" type="checkbox" <?php if ($bookingObject->wine == 1) { echo "checked";} ?>></label>
               </span>
@@ -67,7 +67,7 @@ echo makeTitle($title, $subtitle, $icons);
           </div>
           <div>
             <label class="row">
-              <span class="col">Dessert</span>
+              <span class="col"><svg width="16" height="16"><use xlink:href="img/icons.svg#cookie"></svg> Dessert</span>
               <span class="col-auto">
                 <label class="form-check form-check-single form-switch"><input class="form-check-input" type="checkbox" <?php if ($bookingObject->dessert == 1) { echo "checked";} ?>></label>
               </span>
@@ -163,18 +163,43 @@ echo makeTitle($title, $subtitle, $icons);
 
           <hr />
 
-          <div class="form-group">
-            <div class="form-check form-switch">
-	            <input class="form-check-input" type="checkbox" id="guest_wine" name="guest_wine">
-	            <label class="form-check-label" for="domus">Wine</label>
-	        </div>
+          <div>
+            <label class="row">
+              <span class="col"><svg width="16" height="16"><use xlink:href="img/icons.svg#graduation-cap"></svg> Domus</span>
+              <span class="col-auto">
+                <label class="form-check form-check-single form-switch">
+                  <input class="form-check-input" id="guest_domus" type="checkbox" <?php if ($bookingObject->domus == 1) { echo "checked";} ?> onchange="guestDomus(this.id)">
+                </label>
+              </span>
+              <input type="text" class="form-control" id="domus_description" placeholder="Domus reason (required)" hidden>
+              <small id="domus_descriptionHelp" class="form-text text-muted" hidden>A brief description of why your booking is Domus</small>
+            </label>
           </div>
-          <div class="form-group">
-            <div class="form-check form-switch">
-	            <input class="form-check-input" type="checkbox" id="guest_domus" name="guest_domus" onchange="guestDomus(this.id)">
-	            <label class="form-check-label" for="domus">Domus</label>
-	        </div>
+          <div>
+            <label class="row">
+              <span class="col"><svg width="16" height="16"><use xlink:href="img/icons.svg#wine-glass"></svg> Guest Wine</span>
+              <span class="col-auto">
+                <label class="form-check form-check-single form-switch">
+                  <input class="form-check-input" id="guest_wine" type="checkbox" <?php if ($bookingObject->guest_wine == 1) { echo "checked";} ?>>
+                </label>
+              </span>
+              <input type="text" class="form-control" id="domus_description" placeholder="Domus reason (required)" hidden>
+              <small id="domus_descriptionHelp" class="form-text text-muted" hidden>A brief description of why your booking is Domus</small>
+            </label>
           </div>
+          <div>
+            <label class="row">
+              <span class="col"><svg width="16" height="16"><use xlink:href="img/icons.svg#cookie"></svg> Guest Dessert</span>
+              <span class="col-auto">
+                <label class="form-check form-check-single form-switch">
+                  <input class="form-check-input" id="guest_dessert" type="checkbox" <?php if ($bookingObject->guest_dessert == 1) { echo "checked";} ?>>
+                </label>
+              </span>
+              <input type="text" class="form-control" id="domus_description" placeholder="Domus reason (required)" hidden>
+              <small id="domus_descriptionHelp" class="form-text text-muted" hidden>A brief description of why your booking is Domus</small>
+            </label>
+          </div>
+
           <div class="form-group guest_domus_descriptionDiv visually-hidden">
             <label for="date_start">Domus Description</label>
             <input type="text" class="form-control" name="guest_domus_description" id="guest_domus_description" aria-describedby="domus_description" placeholder="Domus reason (required)">

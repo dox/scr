@@ -27,8 +27,7 @@ class meals extends meal {
     global $db;
 
     $sql  = "SELECT *  FROM " . self::$table_name;
-    $sql .= " WHERE DATE(date_meal) >= '" . $dateFrom . "'";
-    $sql .= " AND DATE(date_meal) <= '" . $dateTo . "'";
+    $sql .= " WHERE DATE(date_meal) BETWEEN '" . $dateFrom . "' AND '" . $dateTo . "'";
     $sql .= " ORDER BY date_meal DESC";
 
     $meals = $db->query($sql)->fetchAll();

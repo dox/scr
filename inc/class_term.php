@@ -39,7 +39,7 @@ class term {
     if (count($currentTerm) == 1) {
       $currentTerm = $currentTerm[0];
     } else {
-      $currentTerm = array("uid"=>"0", "name"=>"Unknown", "date_start"=>"Unknown", "date_end"=>"Unknown");
+      $currentTerm = array("uid"=>"0", "name"=>"Vacation", "date_start"=>"Unknown", "date_end"=>"Unknown");
     }
 
     return $currentTerm;
