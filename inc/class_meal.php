@@ -7,6 +7,9 @@ class meal {
   public $date_meal;
   public $date_cutoff;
   public $location;
+  public $allowed_domus;
+  public $allowed_wine;
+  public $allowed_dessert;
   public $scr_capacity;
   public $mcr_capacity;
   public $scr_guests;
@@ -50,6 +53,24 @@ class meal {
     $output .= "</div>";
 
     $output .= "<div class=\"card-body \">";
+
+    //$output .= "<div class=\"row\">";
+    //$output .= "<div class=\"col\">";
+    if ($this->allowed_domus == 1) {
+      $output .= "<svg width=\"16\" height=\"16\"><use xlink:href=\"img/icons.svg#graduation-cap\"/></svg>";
+    }
+    if ($this->allowed_wine == 1) {
+      $output .= "<svg width=\"16\" height=\"16\"><use xlink:href=\"img/icons.svg#wine-glass\"/></svg>";
+    }
+    if ($this->allowed_dessert == 1) {
+      $output .= "<svg width=\"16\" height=\"16\"><use xlink:href=\"img/icons.svg#cookie\"/></svg>";
+    }
+    //$output .= "</div>";
+    //$output .= "<div class=\"col\">";
+    //$output .= "</div>";
+    //$output .= "<div class=\"col\">";
+    //$output .= "</div>";
+    //$output .= "</div>";
 
     $output .= "<h1 class=\"card-title pricing-card-title\"><span id=\"capacityUID-" . $this->uid . "\">" . $this->total_bookings_this_meal() . "</span> <small class=\"text-muted\">/ " . $this->totalCapacity() . "<span class=\"d-none d-sm-block d-sm-none d-md-block\"> bookings</span></small></h1>";
     $output .= "<ul class=\"list-unstyled mt-3 mb-4\">";

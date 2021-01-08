@@ -10,6 +10,15 @@ $mealObject = new meal($_GET['mealUID']);
 
 
 if (isset($_POST['mealUID'])) {
+  if (!isset($_POST['allowed_domus'])) {
+    $_POST['allowed_domus'] = '0';
+  }
+  if (!isset($_POST['allowed_wine'])) {
+    $_POST['allowed_wine'] = '0';
+  }
+  if (!isset($_POST['allowed_dessert'])) {
+    $_POST['allowed_dessert'] = '0';
+  }
   $mealObject->update($_POST);
   $mealObject = new meal($_GET['mealUID']);
 }
@@ -113,13 +122,13 @@ echo makeTitle($title, $subtitle, $icons);
 
           <?php
           if (isset($_GET['add'])) {
-            $cutoffMinutes = $settingsClass->value('booking_cutoff');
+            $defaultCutoffMins = $settingsClass->value('meal_default_cutoff');
 
-            $date_meal = date('Y-m-d 12:00');
-            $date_cutoff = date('Y-m-d 12:00', strtotime(date('Y-m-d') . ' -' . $cutoffMinutes . " minutes"));
+            $date_meal = date($settingsClass->value('datetime_format_short') . ' 12:00');
+            $date_cutoff = date($settingsClass->value('datetime_format_short') . ' H:i', strtotime($date_meal . ' -' . $defaultCutoffMins . " minutes"));
           } else {
-            $date_meal = date('Y-m-d H:i', strtotime($mealObject->date_meal));
-            $date_cutoff = date('Y-m-d H:i', strtotime($mealObject->date_cutoff));
+            $date_meal = date($settingsClass->value('datetime_format_short') . ' H:i', strtotime($mealObject->date_meal));
+            $date_cutoff = date($settingsClass->value('datetime_format_short') . ' H:i', strtotime($mealObject->date_cutoff));
           }
           ?>
           <div class="row">
@@ -214,7 +223,7 @@ echo makeTitle($title, $subtitle, $icons);
               <label class="row">
                 <span class="col"><svg width="16" height="16"><use xlink:href="img/icons.svg#graduation-cap"></svg> Domus</span>
                 <span class="col-auto">
-                  <label class="form-check form-check-single form-switch"><input class="form-check-input" type="checkbox" checked=""></label>
+                  <label class="form-check form-check-single form-switch"><input class="form-check-input" type="checkbox" name="allowed_domus" <?php if ($mealObject->allowed_domus == 1) { echo "checked=\"\""; } ?> value="1"></label>
                 </span>
               </label>
             </div>
@@ -222,7 +231,15 @@ echo makeTitle($title, $subtitle, $icons);
               <label class="row">
                 <span class="col"><svg width="16" height="16"><use xlink:href="img/icons.svg#wine-glass"></svg> Wine</span>
                 <span class="col-auto">
-                  <label class="form-check form-check-single form-switch"><input class="form-check-input" type="checkbox" checked=""></label>
+                  <label class="form-check form-check-single form-switch"><input class="form-check-input" type="checkbox" name="allowed_wine" <?php if ($mealObject->allowed_wine == 1) { echo "checked=\"\""; } ?> value="1"></label>
+                </span>
+              </label>
+            </div>
+            <div>
+              <label class="row">
+                <span class="col"><svg width="16" height="16"><use xlink:href="img/icons.svg#cookie"></svg> Dessert</span>
+                <span class="col-auto">
+                  <label class="form-check form-check-single form-switch"><input class="form-check-input" type="checkbox" name="allowed_dessert" <?php if ($mealObject->allowed_dessert == 1) { echo "checked=\"\""; } ?> value="1"></label>
                 </span>
               </label>
             </div>
@@ -247,13 +264,26 @@ echo makeTitle($title, $subtitle, $icons);
     <script>
     var fp = flatpickr("#date_meal", {
       enableTime: true,
-      dateFormat: "Y-m-d H:i",
+      dateFormat: "<?php echo $settingsClass->value('datetime_format_short');?> H:i",
+      time_24hr: true,
+      onChange: function(selectedDates, dateStr, instance) {
+        var d=new Date(selectedDates);
+        var diff = <?php echo $settingsClass->value('meal_default_cutoff');?>;
+
+        var newDateObj = new Date(d.getTime() - diff*60000);
+        fp2.setDate(newDateObj)
+      }
+    })
+
+    var fp2 = flatpickr("#date_cutoff", {
+      enableTime: true,
+      dateFormat: "<?php echo $settingsClass->value('datetime_format_short');?> H:i",
       time_24hr: true
     })
 
-    var fp = flatpickr("#date_cutoff", {
-      enableTime: true,
-      dateFormat: "Y-m-d H:i",
-      time_24hr: true
-    })
+    function test(date) {
+      var date = '<?php echo date('Y-m-d', strtotime(selectedDates)); ?>';
+      return date;
+    }
+
     </script>
