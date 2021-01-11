@@ -49,7 +49,8 @@
 	            <a class="dropdown-item" href="index.php?n=admin_meals">Meals</a>
 	            <a class="dropdown-item" href="index.php?n=admin_terms">Terms</a>
 	            <a class="dropdown-item" href="index.php?n=admin_logs">Logs</a>
-	            <a class="dropdown-item" href="index.php?n=admin_settings">Site Settings</a>
+							<a class="dropdown-item" href="index.php?n=admin_settings">Site Settings</a>
+							<a class="dropdown-item" href="index.php?n=admin_reports">Reports</a>
 	            <div class="dropdown-divider"></div>
 	            <a class="dropdown-item" href="logon.php?logout=true">Logout</a>
 	          </div>
