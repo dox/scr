@@ -219,5 +219,36 @@ class member {
 
     return $bookingUIDSarray;
   }
+
+  public function count_allBookings($type = null) {
+    global $db;
+
+    $sql  = "SELECT count(*) AS total FROM bookings";
+    $sql .= " INNER JOIN meals ON bookings.meal_uid = meals.uid";
+    $sql .= " WHERE bookings.member_ldap = '" . $this->ldap . "'";
+
+    if ($type != null) {
+      $sql .= " AND meals.type = '" . $type . "'";
+    }
+    $totalMeals = $db->query($sql)->fetchAll()[0]['total'];
+
+    return $totalMeals;
+  }
+
+  public function count_allGuests() {
+    global $db;
+
+    $sql  = "SELECT * FROM bookings";
+    $sql .= " WHERE member_ldap = '" . $this->ldap . "'";
+    $sql .= " AND guests_array IS NOT NULL";
+
+    $bookings = $db->query($sql)->fetchAll();
+
+    foreach ($bookings AS $booking) {
+      $guestsArray[] = count(json_decode($booking['guests_array']));
+    }
+
+    return array_sum($guestsArray);
+  }
 }
 ?>
