@@ -20,11 +20,11 @@
 						<use xlink:href="img/icons.svg#person"/>
 					</svg> Your Profile</a>
 	      </li>
-	      <li class="nav-item d-print-none"><a class="nav-link" aria-current="page" href="index.php?n=member">
+	      <!--<li class="nav-item d-print-none"><a class="nav-link" aria-current="page" href="index.php?n=member">
 					<svg width="16" height="16" class="text-muted">
 						<use xlink:href="img/icons.svg#list-stars"/>
 					</svg> Your Meals</a>
-	      </li>
+	      </li>-->
 	      <li class="nav-item d-print-none"><a class="nav-link" aria-current="page" href="index.php?n=information">
 					<svg width="16" height="16" class="text-muted">
 						<use xlink:href="img/icons.svg#journal-text"/>
