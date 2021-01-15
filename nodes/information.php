@@ -3,7 +3,7 @@
 
 <?php
 //check if updating existing setting
-if (isset($_POST['uid'])) {
+if (isset($_POST['contentInfo'])) {
   $_POST['contentInfo'] = str_replace("'", "\'", $_POST['contentInfo']);
 
   $sql  = "UPDATE settings";
@@ -43,14 +43,11 @@ echo $text;
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <div class="form-group">
-          <label for="content">Content</label>
-          <textarea rows="10" class="form-control" name="contentInfo" id="contentInfo"><?php echo $text; ?></textarea>
+        <div class="mb-3">
+          <textarea rows="10" class="form-control" name="contentInfo" id="contentInfo"><?php echo htmlspecialchars($text, ENT_QUOTES); ?></textarea>
         </div>
       </div>
       <div class="modal-footer">
-        <input type="hidden" id="uid" name="uid" value="<?php echo "scr_information"; ?>">
-
         <button type="button" class="btn btn-link text-muted" data-bs-dismiss="modal">Close</button>
         <button type="submit" class="btn btn-primary"><svg width="16" height="16"><use xlink:href="img/icons.svg#journal-text"/></svg> Update Information</button>
       </div>
@@ -61,8 +58,7 @@ echo $text;
 
 <script>
 const editor = SUNEDITOR.create(document.getElementById('contentInfo'),{
-	"fullPage": true,
-  "buttonList": [
+	"buttonList": [
 		[
 			"formatBlock",
 			"bold",

@@ -295,7 +295,6 @@ function test(date) {
 
 <script>
 const editor = SUNEDITOR.create(document.getElementById('menu'),{
-  "defaultStyle": "text-align: center;",
 	"buttonList": [
 		[
 			"formatBlock",
