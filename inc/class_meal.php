@@ -150,12 +150,12 @@ class meal {
       }
 
       // check for member disabled
-      if ($_SESSION['admin'] == true) {
+      if ($_SESSION['enabled'] != true) {
           $bookingLink = "#";
           $bookingClass = "btn-outline-secondary";
-          $bookingID = "mealUID-" . $this->uid;
-          $bookingOnClick = "onclick=\"bookMealQuick(this.id)\"";
-          $bookingDisplayText = "Deadline Passed";
+          $bookingID = "";
+          $bookingOnClick = "";
+          $bookingDisplayText = "Your account is disabled";
       }
     }
 

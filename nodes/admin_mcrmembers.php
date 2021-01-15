@@ -58,6 +58,7 @@ echo makeTitle($title, $subtitle);
     ?>
   </ul>
 
+<hr />
 
 <h2>Disabled Members</h2>
 <ul class="list-group">

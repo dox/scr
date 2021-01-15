@@ -71,6 +71,7 @@ echo makeTitle($title, $subtitle, $icons);
   <button type="submit" onclick="itterate()" class="btn btn-block btn-primary">Save Order</button>
 </form>
 
+<hr />
 <h2>Disabled Members</h2>
 <ul class="list-group">
   <?php
