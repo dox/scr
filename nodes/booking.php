@@ -121,8 +121,10 @@ echo makeTitle($title, $subtitle, $icons);
 
         <?php
         if (isset($meal->menu)) {
-          echo "<h4 class=\"mb-3\">Menu</h4>";
+          echo "<div class=\"card\">";
+          echo "<h4 class=\"text-center m-3\">Menu</h4>";
           echo $meal->menu;
+          echo "</div>";
         }
         ?>
       </div>
