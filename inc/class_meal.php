@@ -210,11 +210,6 @@ class meal {
       $output  = "<a href=\"#\" class=\"float-start\" id=\"menuUID-" . $this->uid . "\" data-bs-toggle=\"modal\" data-bs-target=\"#menuModal\" onclick=\"displayMenu(this.id)\">";
       $output .= "<svg width=\"16\" height=\"16\"><use xlink:href=\"img/icons.svg#info-circle\"/></svg>";
       $output .= "</a>";
-
-      //$icon = "<svg width=\"16\" height=\"16\"><use xlink:href=\"img/icons.svg#info-circle\"/></svg>";
-      //$output  = "<button type=\"button\" class=\"btn btn-link btn-sm float-start\" id=\"menuUID-" . $this->uid . "\" data-bs-toggle=\"modal\" data-bs-target=\"#menuModal\" onclick=\"displayMenu(this.id)\">";
-      //$output .= $icon;
-      //$output .= "</button>";
     }
 
     return $output;
