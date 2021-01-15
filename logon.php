@@ -2,7 +2,7 @@
 	include_once("inc/autoload.php");
 
 	if (isset($_GET['logout'])) {
-	  $_SESSION['logon'] = false;
+		session_destroy();
 	}
 ?>
 <!DOCTYPE html>

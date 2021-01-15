@@ -2,19 +2,22 @@
 include_once("inc/autoload.php");
 
 if (isset($_POST['inputUsername']) && isset($_POST['inputPassword'])) {
-	if ($ldap_connection->auth()->attempt($_POST['inputUsername'] . LDAP_ACCOUNT_SUFFIX, $_POST['inputPassword'], $stayAuthenticated = true)) {
+	// first LDAP auth this user...
+	$ldapLookupUsername = escape($_POST['inputUsername']) . LDAP_ACCOUNT_SUFFIX;
+	$ldapLookupPassword = $_POST['inputPassword'];
+	if ($ldap_connection->auth()->attempt($ldapLookupUsername, $ldapLookupPassword, $stayAuthenticated = true)) {
+		// LDAP authentication correct, get the LDAP user
     $ldapUser = $ldap_connection->query()->where('samaccountname', '=', $_POST['inputUsername'])->get();
-    // Successfully authenticated user.
-		$_SESSION['logon'] = true;
-		$_SESSION['username'] = strtoupper($_POST['inputUsername']);
 
-    // Lookup user in SCR table
-    $sql = "SELECT * FROM members where ldap = '" . escape($_SESSION['username']) . "';";
+		// Attempt to match the user in the SCR table
+    $sql = "SELECT * FROM members where ldap = '" . $ldapUser[0]['samaccountname'][0] . "';";
     $memberLookup = $db->query($sql)->fetchArray();
 
     if (!isset($memberLookup['uid'])) {
-      // NEW user (MCR).  Create them!
-      $NEWUSER['title'] = "??";
+			$memberObject = new member();
+
+      // NEW user.  Create them and assume they are MCR...
+      $NEWUSER['title'] = "";
       $NEWUSER['enabled'] = "1";
       $NEWUSER['ldap'] = $ldapUser[0]['samaccountname'][0];
       $NEWUSER['firstname'] = $ldapUser[0]['givenname'][0];
@@ -25,12 +28,12 @@ if (isset($_POST['inputUsername']) && isset($_POST['inputPassword'])) {
       $NEWUSER['email'] = $ldapUser[0]['mail'][0];
       $NEWUSER['enabled'] = "1";
 
-      $memberObject = new member();
       $memberObject->create($NEWUSER);
     } else {
-      // UPDATE existing SCR member
-      $UPDATEUSER['memberUID'] = $memberLookup['uid'];
+			$memberObject = new member($memberLookup['uid']);
 
+      // EXISTING user, fill our their missing details
+      $UPDATEUSER['memberUID'] = $memberLookup['uid'];
       if (empty($memberLookup['firstname'])) {
         $UPDATEUSER['firstname'] = $ldapUser[0]['givenname'][0];
       }
@@ -42,12 +45,14 @@ if (isset($_POST['inputUsername']) && isset($_POST['inputPassword'])) {
       }
 
       if (count($UPDATEUSER) > 1) {
-        $memberObject = new member($memberLookup['uid']);
         $memberObject->update($UPDATEUSER);
       }
     }
 
-    $_SESSION['enabled'] = $memberObject->enabled;
+		// build the $_SESSION array
+		$_SESSION['logon'] = true;
+		$_SESSION['enabled'] = $memberObject->enabled;
+		$_SESSION['username'] = strtoupper($memberObject->ldap);
 
     $arrayOfAdmins = explode(",", strtoupper($settingsClass->value('member_admins')));
 		if (in_array(strtoupper($_SESSION['username']), $arrayOfAdmins)) {
@@ -59,15 +64,14 @@ if (isset($_POST['inputUsername']) && isset($_POST['inputPassword'])) {
 		$logsClass->create("logon_success", $_SESSION['username'] . " logon succesful");
 	} else {
 		// Username or password is incorrect.
-		$_SESSION['logon'] = false;
-		$_SESSION['username'] = null;
-		$_SESSION['admin'] = false;
+		session_destroy();
 		$_SESSION['logon_error'] = "Incorrect username/password";
 
 		$logsClass->create("logon_fail", $_POST['inputUsername'] . " logon failed");
 	}
 }
 if ($_SESSION['logon'] != true) {
+	session_destroy();
 	header("Location: http://scr2.seh.ox.ac.uk/logon.php");
 	exit;
 }
