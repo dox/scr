@@ -21,6 +21,18 @@ if (isset($_POST['memberUID'])) {
   if (!isset($_POST['opt_in'])) {
     $_POST['opt_in'] = 0;
   }
+  if (!isset($_POST['default_domus'])) {
+    $_POST['default_domus'] = 0;
+  }
+  if (!isset($_POST['default_wine'])) {
+    $_POST['default_wine'] = 0;
+  }
+  if (!isset($_POST['default_dessert'])) {
+    $_POST['default_dessert'] = 0;
+  }
+  if (!isset($_POST['dietary'])) {
+    $_POST['dietary'] = null;
+  }
   $memberObject->update($_POST);
   $memberObject = new member($memberUID);
 }
@@ -200,27 +212,28 @@ include_once('_member_stats.php');
               </span>
             </label>
           </div>
+          <hr />
           <div>
             <label class="row">
-              <span class="col"><svg width="16" height="16"><use xlink:href="img/icons.svg#graduation-cap"></svg> Default Domus</span>
+              <span class="col"><svg width="16" height="16"><use xlink:href="img/icons.svg#graduation-cap"></svg> Default Domus <small>(when available)</small></span>
               <span class="col-auto">
-                <label class="form-check form-check-single form-switch"><input class="form-check-input" type="checkbox" checked=""></label>
+                <label class="form-check form-check-single form-switch"><input class="form-check-input" type="checkbox" id="default_domus" name="default_domus" value="1" <?php if ($memberObject->default_domus == "1") { echo " checked";} ?>></label>
               </span>
             </label>
           </div>
           <div>
             <label class="row">
-              <span class="col"><svg width="16" height="16"><use xlink:href="img/icons.svg#wine-glass"></svg> Default Wine</span>
+              <span class="col"><svg width="16" height="16"><use xlink:href="img/icons.svg#wine-glass"></svg> Default Wine <small>(when available)</small></span>
               <span class="col-auto">
-                <label class="form-check form-check-single form-switch"><input class="form-check-input" type="checkbox" checked=""></label>
+                <label class="form-check form-check-single form-switch"><input class="form-check-input" type="checkbox" id="default_wine" name="default_wine" value="1" <?php if ($memberObject->default_wine == "1") { echo " checked";} ?>></label>
               </span>
             </label>
           </div>
           <div>
             <label class="row">
-              <span class="col"><svg width="16" height="16"><use xlink:href="img/icons.svg#cookie"></svg> Default Dessert</span>
+              <span class="col"><svg width="16" height="16"><use xlink:href="img/icons.svg#cookie"></svg> Default Dessert <small>(when available)</small></span>
               <span class="col-auto">
-                <label class="form-check form-check-single form-switch"><input class="form-check-input" type="checkbox" checked=""></label>
+                <label class="form-check form-check-single form-switch"><input class="form-check-input" type="checkbox" id="default_dessert" name="default_dessert" value="1" <?php if ($memberObject->default_dessert == "1") { echo " checked";} ?>></label>
               </span>
             </label>
           </div>
