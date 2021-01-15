@@ -137,7 +137,7 @@ function ldapLookup() {
       if (this.responseText.includes("Unknown")) {
         alert(this.responseText);
       } else {
-        document.getElementById('ldap').value = this.responseText;
+        document.getElementById('ldap').value = this.responseText.toUpperCase();
       }
 
       //alert(`Done, got ${request.response.length} bytes`); // response is the server response
