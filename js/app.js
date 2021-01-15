@@ -77,6 +77,12 @@ function domus(this_id) {
 
 function submitForm(oFormElement) {
 	var xhr = new XMLHttpRequest();
+  //xhr.addEventListener('loadstart', handleEvent);
+  xhr.addEventListener('load', handleEvent);
+  //xhr.addEventListener('loadend', handleEvent);
+  //xhr.addEventListener('progress', handleEvent);
+  xhr.addEventListener('error', handleEvent);
+  //xhr.addEventListener('abort', handleEvent);
 
 	xhr.onload = function(){
 		// success case
@@ -85,13 +91,17 @@ function submitForm(oFormElement) {
 
 	xhr.onerror = function(){
 		// failure case
-		alert (xhr.responseText);
+		alert ("Error" + xhr.responseText);
 	}
 
 	xhr.open (oFormElement.method, oFormElement.action, true);
 	xhr.send (new FormData (oFormElement));
 
 	return false;
+}
+
+function handleEvent() {
+    //log.textContent = log.textContent + `${e.type}: ${e.loaded} bytes transferred\n`;
 }
 
 function ldapLookup() {
@@ -169,6 +179,51 @@ function checkMaxCheckboxes(maxAllowed = 2) {
       inputElems[i].disabled = false;
     }
   }
+}
+
+function displayMenu(this_id) {
+  var mealUID = this_id.replace("menuUID-", "");
+  var request = new XMLHttpRequest();
+
+  request.open('GET', '/nodes/_menu.php?mealUID=' + mealUID, true);
+
+  request.onload = function() {
+    if (request.status >= 200 && request.status < 400) {
+      var resp = request.responseText;
+
+      menuContentDiv.innerHTML = resp;
+    }
+  };
+
+  request.send();
+}
+
+
+function impersonate(oFormElement) {
+  event.preventDefault();
+
+  var impersonateDropdown = document.getElementById('impersonate_ldap');
+  var buttonClicked = document.getElementById('impersonate_submit_button');
+
+  submitForm(oFormElement);
+
+  if (buttonClicked.value == "stop") {
+    buttonClicked.classList.remove("btn-warning");
+    buttonClicked.classList.add("btn-primary");
+    buttonClicked.innerHTML = "Impersonate";
+    buttonClicked.value = "";
+    impersonateDropdown.disabled = false;
+  } else {
+    buttonClicked.classList.remove("btn-primary");
+    buttonClicked.classList.add("btn-warning");
+    buttonClicked.innerHTML = "Stop Impersonating";
+    buttonClicked.value = "stop";
+    impersonateDropdown.disabled = true;
+  }
+
+  //alert("Please click on 'Home'");
+
+  return false;
 }
 
 // setup all tooltips
