@@ -1,23 +1,6 @@
 <?php
 include_once("inc/autoload.php");
 
-// impersonate
-if (isset($_POST['impersonate_ldap'])) {
-  $logsClass->create("admin", $_SESSION['username'] . " impersonating " . $_POST['impersonate_ldap']);
-
-  $_SESSION['username_original'] = $_SESSION['username'];
-  $_SESSION['username'] = $_POST['impersonate_ldap'];
-  $_SESSION['impersonating'] = "true";
-}
-// impersonate stop
-if (isset($_POST['stop_impersonating'])) {
-  $logsClass->create("admin", $_SESSION['username_original'] . " no longer impersonating " . $_SESSION['username']);
-
-  $_SESSION['username'] = $_SESSION['username_original'];
-  unset($_SESSION['username_original']);
-  unset($_SESSION['impersonating']);
-}
-
 if (isset($_POST['inputUsername']) && isset($_POST['inputPassword'])) {
 	if ($ldap_connection->auth()->attempt($_POST['inputUsername'] . LDAP_ACCOUNT_SUFFIX, $_POST['inputPassword'], $stayAuthenticated = true)) {
     $ldapUser = $ldap_connection->query()->where('samaccountname', '=', $_POST['inputUsername'])->get();
@@ -40,12 +23,14 @@ if (isset($_POST['inputUsername']) && isset($_POST['inputPassword'])) {
       $NEWUSER['type'] = "MCR";
       $NEWUSER['precedence'] = "0";
       $NEWUSER['email'] = $ldapUser[0]['mail'][0];
+      $NEWUSER['enabled'] = "1";
 
       $memberObject = new member();
       $memberObject->create($NEWUSER);
     } else {
       // UPDATE existing SCR member
       $UPDATEUSER['memberUID'] = $memberLookup['uid'];
+
       if (empty($memberLookup['firstname'])) {
         $UPDATEUSER['firstname'] = $ldapUser[0]['givenname'][0];
       }
@@ -61,6 +46,8 @@ if (isset($_POST['inputUsername']) && isset($_POST['inputPassword'])) {
         $memberObject->update($UPDATEUSER);
       }
     }
+
+    $_SESSION['enabled'] = $memberObject->enabled;
 
     $arrayOfAdmins = explode(",", strtoupper($settingsClass->value('member_admins')));
 		if (in_array(strtoupper($_SESSION['username']), $arrayOfAdmins)) {

@@ -25,7 +25,7 @@ $icons[] = array("class" => "btn-primary", "name" => "<svg width=\"16\" height=\
 echo makeTitle($title, $subtitle, $icons);
 ?>
 
-<div class="alert alert-danger text-center"><strong>Warning!</strong> Making changes to these settings can distrupt the running of the SCR Booking site.  Proceed with caution.</div>
+<div class="alert alert-danger text-center"><strong>Warning!</strong> Making changes to these settings can disrupt the running of the SCR Booking site.  Proceed with caution.</div>
 
 <div class="accordion" id="accordionExample">
   <?php

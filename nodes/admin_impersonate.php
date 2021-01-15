@@ -7,14 +7,14 @@ echo makeTitle($title, $subtitle);
 
 <div class="row justify-content-md-center">
   <div class="col col-lg-4">
-    <form method="post" id="impersonateForm" action="<?php echo $_SERVER['REQUEST_URI']; ?>">
+    <form method="post" id="impersonateForm" action="../actions/impersonate.php" onsubmit="return impersonate(this);">
       <div class="mb-3">
         <?php
         if (isset($_SESSION['impersonating'])) {
           $selectStatus = " disabled";
         }
         ?>
-        <select <?php echo $selectStatus; ?> class="form-select form-select mb-3" name="impersonate_ldap" aria-label="Impersonate select">
+        <select <?php echo $selectStatus; ?> class="form-select form-select mb-3" id="impersonate_ldap" name="impersonate_ldap" aria-label="Impersonate select">
           <?php
           $membersClass = new members();
 
@@ -33,15 +33,20 @@ echo makeTitle($title, $subtitle);
           ?>
         </select>
       </div>
+
       <div class="d-grid gap-2">
         <?php
         if (isset($_SESSION['impersonating'])) {
-          echo "<button type=\"submit\" class=\"btn btn-warning\">Stop Impersonating</button>";
-          echo "<input type=\"hidden\" name=\"stop_impersonating\" value=\"true\">";
+          $class = "btn-warning";
+          $value = "stop";
+          $text = "Stop Impersonating";
         } else {
-          echo "<button type=\"submit\" class=\"btn btn-primary\">Impersonate</button>";
+          $class = "btn-primary";
+          $value = "";
+          $text = "Impersonate";
         }
         ?>
+        <button type="submit" id="impersonate_submit_button" name="impersonate_submit_button" value="<?php echo $value; ?>" class="btn <?php echo $class; ?>"><?php echo $text; ?></button>
       </div>
     </form>
   </div>

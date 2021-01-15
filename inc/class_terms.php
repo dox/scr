@@ -14,7 +14,7 @@ class terms extends term {
   public function checkIsInTerm($date = null) {
     // accounts for 0th week automatically
     // so the term dates on the site should start on 1st week (as given by Oxford)
-    
+
     global $db;
 
     $sql  = "SELECT *  FROM " . self::$table_name;
@@ -29,8 +29,8 @@ class terms extends term {
   }
 
   public function arrayWindowOfWeeks() {
-    $weeksBefore = 3;
-    $weeksAfter = 5;
+    $weeksBefore = 1;
+    $weeksAfter = 6;
 
     $i = $weeksBefore;
     do {

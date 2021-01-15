@@ -47,7 +47,7 @@ echo makeTitle($title, $subtitle);
         echo $output;
       }
       ?>
-
+    </ul>
     <h4 class="d-flex justify-content-between align-items-center mb-3">
       <span class="text-muted">Meals Post-Term (Vacation)</span>
       <span class="badge bg-secondary rounded-pill"><?php echo count($mealsAfterTerm); ?></span>
@@ -73,14 +73,13 @@ echo makeTitle($title, $subtitle);
   <div class="col-md-7 col-lg-8">
     <h4 class="mb-3">Term Information</h4>
     <form method="post" id="termUpdate" action="<?php echo $_SERVER['REQUEST_URI']; ?>" class="needs-validation" novalidate>
-      <div class="row">
-        <div class="col mb-3">
-          <label for="name" class="form-label">Term name</label>
-          <input type="text" class="form-control" name="name" id="name" value="<?php echo $termObject->name; ?>" required>
-          <div class="invalid-feedback">
-            Valid term name is required.
-          </div>
+      <div class="col mb-3">
+        <label for="name" class="form-label">Term name</label>
+        <input type="text" class="form-control" name="name" id="name" value="<?php echo $termObject->name; ?>" required>
+        <div class="invalid-feedback">
+          Valid term name is required.
         </div>
+      </div>
       <div class="row">
         <div class="col mb-3">
           <label for="date_start" class="form-label">Term Start Date</label>
@@ -92,19 +91,19 @@ echo makeTitle($title, $subtitle);
 
         <div class="col mb-3">
           <label for="date_end" class="form-label">Term End Date</label>
-          <input type="date" class="form-control" name="date_end" id="date_end" placeholder="" value="<?php echo date('Y-m-d', strtotime($termObject->date_end)); ?>" required>
+          <input type="text" class="form-control" name="date_end" id="date_end" value="<?php echo date('Y-m-d', strtotime($termObject->date_end)); ?>" required>
           <div class="invalid-feedback">
             Valid term end date is required.
           </div>
         </div>
       </div>
-    </div>
 
-    <hr class="my-4">
+      <hr class="my-4">
 
-    <input type="hidden" name="termUID" id="termUID" value="<?php echo $termObject->uid; ?>">
-    <button class="btn btn-primary btn-lg btn-block" type="submit">Update Term Details</button>
-  </form>
+      <input type="hidden" name="termUID" id="termUID" value="<?php echo $termObject->uid; ?>">
+      <button class="btn btn-primary btn-lg btn-block" type="submit">Update Term Details</button>
+    </form>
+  </div>
 </div>
 
 
