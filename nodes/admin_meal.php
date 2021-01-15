@@ -76,7 +76,7 @@ echo makeTitle($title, $subtitle, $icons);
     }
     ?>
     <div class="row">
-      <div class="col-4">
+      <div class="col-4 mb-3">
         <label for="type" class="form-label">Type</label>
         <select class="form-select" name="type" id="type" required>
           <?php
@@ -96,7 +96,7 @@ echo makeTitle($title, $subtitle, $icons);
           Title is required.
         </div>
       </div>
-      <div class="col-8">
+      <div class="col-8 mb-3">
         <label for="name" class="form-label">Meal name</label>
         <input type="text" class="form-control" name="name" id="name" placeholder="" value="<?php echo $mealObject->name; ?>" required>
         <div class="invalid-feedback">
@@ -104,7 +104,7 @@ echo makeTitle($title, $subtitle, $icons);
         </div>
       </div>
 
-      <div class="col-12">
+      <div class="col-12 mb-3">
         <label for="location" class="form-label">Location</label>
         <input type="text" list="locations_datalist" class="form-control" name="location" id="location" placeholder="" value="<?php echo $mealObject->location; ?>" required>
         <datalist id="locations_datalist">
@@ -147,7 +147,7 @@ echo makeTitle($title, $subtitle, $icons);
     ?>
 
     <div class="row">
-      <div class="col-6">
+      <div class="col-6 mb-3">
         <label for="date_meal" class="form-label">Meal Date/Time</label>
         <input type="text" class="form-control" name="date_meal" id="date_meal" placeholder="" value="<?php echo $date_meal; ?>" required>
         <div class="invalid-feedback">
@@ -155,7 +155,7 @@ echo makeTitle($title, $subtitle, $icons);
         </div>
       </div>
 
-      <div class="col-6">
+      <div class="col-6 mb-3">
         <label for="date_cutoff" class="form-label">Meal Date/Time Cut-Off</label>
         <input type="date" class="form-control" name="date_cutoff" id="date_cutoff" placeholder="" value="<?php echo $date_cutoff; ?>" required>
         <div class="invalid-feedback">
@@ -175,7 +175,7 @@ echo makeTitle($title, $subtitle, $icons);
         </div>
       </div>
 
-      <div class="col">
+      <div class="col mb-3">
         <label for="scr_guests" class="form-label">SCR Guests</label>
         <input type="number" class="form-control" name="scr_guests" id="scr_guests" value="<?php echo $capacitySCRGuests; ?>" min=0 required>
         <div id="scr_guestsHelp" class="form-text">Per member</div>
@@ -184,7 +184,7 @@ echo makeTitle($title, $subtitle, $icons);
         </div>
       </div>
 
-      <div class="col">
+      <div class="col mb-3">
         <label for="scr_dessert_capacity" class="form-label">SCR Dessert Capacity</label>
         <input type="number" class="form-control" name="scr_dessert_capacity" id="scr_dessert_capacity" value="<?php echo $capacitySCRDessert; ?>" min=0 required>
         <div class="invalid-feedback">
@@ -194,7 +194,7 @@ echo makeTitle($title, $subtitle, $icons);
     </div>
 
     <div class="row">
-      <div class="col">
+      <div class="col mb-3">
         <label for="mcr_capacity" class="form-label">MCR Capacity</label>
         <input type="number" class="form-control" name="mcr_capacity" id="mcr_capacity" value="<?php echo $capacityMCR; ?>" min=0 required>
         <div class="invalid-feedback">
@@ -202,7 +202,7 @@ echo makeTitle($title, $subtitle, $icons);
         </div>
       </div>
 
-      <div class="col">
+      <div class="col mb-3">
         <label for="mcr_guests" class="form-label">MCR Guests</label>
         <input type="number" class="form-control" name="mcr_guests" id="mcr_guests" value="<?php echo $capacityMCRGuests; ?>" min=0 required>
         <div id="mcr_guestsHelp" class="form-text">Per member</div>
@@ -211,7 +211,7 @@ echo makeTitle($title, $subtitle, $icons);
         </div>
       </div>
 
-      <div class="col">
+      <div class="col mb-3">
         <label for="mcr_dessert_capacity" class="form-label">MCR Desert Capacity</label>
         <input type="number" class="form-control" name="mcr_dessert_capacity" id="mcr_dessert_capacity" value="<?php echo $capacityMCRDessert; ?>" min=0 required>
         <div class="invalid-feedback">
@@ -220,12 +220,12 @@ echo makeTitle($title, $subtitle, $icons);
       </div>
     </div>
 
-    <label for="menu" class="form-label">Menu</label>
+    <label for="menu" class="form-label mb-3">Menu</label>
     <input type="text" class="form-control" name="menu" id="menu" value="<?php echo htmlspecialchars($mealObject->menu, ENT_QUOTES); ?>">
 
     <hr />
 
-    <label for="notes" class="form-label">Notes (Private)</label>
+    <label for="notes" class="form-label mb-3">Notes (Private)</label>
     <input type="text" class="form-control" name="notes" id="notes" value="<?php echo $mealObject->notes; ?>">
 
     <hr />
@@ -248,7 +248,7 @@ echo makeTitle($title, $subtitle, $icons);
         </label>
       </div>
       <div>
-        <label class="row">
+        <label class="row mb-3">
           <span class="col"><svg width="16" height="16"><use xlink:href="img/icons.svg#cookie"></svg> Dessert</span>
           <span class="col-auto">
             <label class="form-check form-check-single form-switch"><input class="form-check-input" type="checkbox" name="allowed_dessert" <?php if ($mealObject->allowed_dessert == 1) { echo "checked=\"\""; } ?> value="1"></label>
@@ -258,7 +258,7 @@ echo makeTitle($title, $subtitle, $icons);
       <?php
       if (isset($_GET['add'])) {
         echo "<input type=\"hidden\" name=\"mealNEW\" id=\"mealNEW\">";
-        echo "<button class=\"btn btn-primary btn-lg btn-block\" type=\"submit\">Add New Meal</button>";
+        echo "<button class=\"btn btn-primary btn-lg w-100\" type=\"submit\">Add New Meal</button>";
       } else {
         echo "<input type=\"hidden\" name=\"mealUID\" id=\"mealUID\" value=\"" . $mealObject->uid . "\">";
         echo "<button class=\"btn btn-primary btn-lg w-100\" type=\"submit\">Update Meal Details</button>";
