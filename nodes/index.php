@@ -60,3 +60,20 @@ async function load_home(this_id) {
   home.innerHTML = await (await fetch(url)).text();
 }
 </script>
+
+<div class="modal fade" id="menuModal" tabindex="-1" aria-labelledby="menuModal" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <!--<div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Menu</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>-->
+      <div class="modal-body">
+        <div id="menuContentDiv"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

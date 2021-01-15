@@ -56,15 +56,7 @@ class meal {
 
     //$output .= "<div class=\"row\">";
     //$output .= "<div class=\"col\">";
-    if ($this->allowed_domus == 1) {
-      $output .= "<svg width=\"16\" height=\"16\"><use xlink:href=\"img/icons.svg#graduation-cap\"/></svg>";
-    }
-    if ($this->allowed_wine == 1) {
-      $output .= "<svg width=\"16\" height=\"16\"><use xlink:href=\"img/icons.svg#wine-glass\"/></svg>";
-    }
-    if ($this->allowed_dessert == 1) {
-      $output .= "<svg width=\"16\" height=\"16\"><use xlink:href=\"img/icons.svg#cookie\"/></svg>";
-    }
+
     //$output .= "</div>";
     //$output .= "<div class=\"col\">";
     //$output .= "</div>";
@@ -72,7 +64,7 @@ class meal {
     //$output .= "</div>";
     //$output .= "</div>";
 
-    $output .= "<h1 class=\"card-title pricing-card-title\"><span id=\"capacityUID-" . $this->uid . "\">" . $this->total_bookings_this_meal() . "</span> <small class=\"text-muted\">/ " . $this->totalCapacity() . "<span class=\"d-none d-sm-block d-sm-none d-md-block\"> bookings</span></small></h1>";
+    $output .= "<h2 class=\"card-title pricing-card-title\"><span id=\"capacityUID-" . $this->uid . "\">" . $this->total_bookings_this_meal() . "</span> <small class=\"text-muted\">/ " . $this->totalCapacity() . " bookings</small></h2>";
     $output .= "<ul class=\"list-unstyled mt-3 mb-4\">";
     $output .= "<li>" . $this->type . ", " . $this->location . "</li>";
     $output .= "<li>" . date('H:i', strtotime($this->date_meal)) . "</li>";
@@ -156,6 +148,15 @@ class meal {
           $bookingDisplayText = "Deadline Passed";
         }
       }
+
+      // check for member disabled
+      if ($_SESSION['admin'] == true) {
+          $bookingLink = "#";
+          $bookingClass = "btn-outline-secondary";
+          $bookingID = "mealUID-" . $this->uid;
+          $bookingOnClick = "onclick=\"bookMealQuick(this.id)\"";
+          $bookingDisplayText = "Deadline Passed";
+      }
     }
 
     $output = "<a href=\"" . $bookingLink . "\" role=\"button\" class=\"btn w-100 " . $bookingClass . "\" id=\"" . $bookingID . "\" " . $bookingOnClick . ">" . $bookingDisplayText . "</a>";
@@ -206,12 +207,14 @@ class meal {
   public function menuTooltip() {
     if (!empty($this->menu)) {
 
-      $output  = "<button type=\"button\" class=\"btn btn-sm btn-primary float-start\" data-bs-toggle=\"modal\" data-bs-target=\"#exampleModal\" data-bs-whatever=\"@mdo\">Menu</button>";
+      $output  = "<a href=\"#\" class=\"float-start\" id=\"menuUID-" . $this->uid . "\" data-bs-toggle=\"modal\" data-bs-target=\"#menuModal\" onclick=\"displayMenu(this.id)\">";
+      $output .= "<svg width=\"16\" height=\"16\"><use xlink:href=\"img/icons.svg#info-circle\"/></svg>";
+      $output .= "</a>";
 
-      $output  = "<button type=\"button\" class=\"btn btn-sm btn-outline-secondary float-start\" data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" title=\"Tooltip on top\">";
-      $output .= "Menu";
-      $output .= "</button>";
-
+      //$icon = "<svg width=\"16\" height=\"16\"><use xlink:href=\"img/icons.svg#info-circle\"/></svg>";
+      //$output  = "<button type=\"button\" class=\"btn btn-link btn-sm float-start\" id=\"menuUID-" . $this->uid . "\" data-bs-toggle=\"modal\" data-bs-target=\"#menuModal\" onclick=\"displayMenu(this.id)\">";
+      //$output .= $icon;
+      //$output .= "</button>";
     }
 
     return $output;

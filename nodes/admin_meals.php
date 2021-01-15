@@ -15,7 +15,7 @@ $meals = $mealsClass->all();
 
 <?php
 $title = "Meals";
-$subtitle = "Some text here about meal booking.  Make it simple!";
+$subtitle = "All meals both past and present";
 $icons[] = array("class" => "btn-primary", "name" => "<svg width=\"16\" height=\"16\"><use xlink:href=\"img/icons.svg#plus-circle\"/></svg> Add New", "value" => "onclick=\"location.href='index.php?n=admin_meal&add'\"");
 
 echo makeTitle($title, $subtitle, $icons);

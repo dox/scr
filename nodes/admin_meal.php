@@ -1,5 +1,7 @@
 <link rel="stylesheet" href="css/flatpickr.min.css">
 <script src="js/flatpickr.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/suneditor@latest/dist/css/suneditor.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/suneditor@latest/dist/suneditor.min.js"></script>
 
 <?php
 admin_gatekeeper();
@@ -124,8 +126,8 @@ echo makeTitle($title, $subtitle, $icons);
     if (isset($_GET['add'])) {
       $defaultCutoffMins = $settingsClass->value('meal_default_cutoff');
 
-      $date_meal = date($settingsClass->value('datetime_format_short') . ' 12:00');
-      $date_cutoff = date($settingsClass->value('datetime_format_short') . ' H:i', strtotime($date_meal . ' -' . $defaultCutoffMins . " minutes"));
+      $date_meal = date('Y-m-d' . ' 12:00');
+      $date_cutoff = date('Y-m-d H:i', strtotime($date_meal . ' -' . $defaultCutoffMins . " minutes"));
       $capacitySCR = 0;
       $capacitySCRGuests = 0;
       $capacitySCRDessert = 0;
@@ -219,7 +221,7 @@ echo makeTitle($title, $subtitle, $icons);
     </div>
 
     <label for="menu" class="form-label">Menu</label>
-    <input type="text" class="form-control" name="menu" id="menu" value="<?php echo $mealObject->menu; ?>">
+    <input type="text" class="form-control" name="menu" id="menu" value="<?php echo htmlspecialchars($mealObject->menu, ENT_QUOTES); ?>">
 
     <hr />
 
@@ -289,4 +291,31 @@ function test(date) {
   var date = '<?php echo date('Y-m-d', strtotime(selectedDates)); ?>';
   return date;
 }
+</script>
+
+<script>
+const editor = SUNEDITOR.create(document.getElementById('menu'),{
+  "defaultStyle": "text-align: center;",
+	"buttonList": [
+		[
+			"formatBlock",
+			"bold",
+			"underline",
+			"italic",
+			"strike",
+			"fontColor",
+			"hiliteColor",
+			"removeFormat",
+			"align",
+			"horizontalRule",
+			"link",
+			"fullScreen",
+			"codeView",
+		]
+	]
+});
+
+window.addEventListener("click", function(event) {
+  document.getElementById('menu').value = editor.getContents();
+});
 </script>

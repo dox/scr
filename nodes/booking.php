@@ -118,6 +118,13 @@ echo makeTitle($title, $subtitle, $icons);
         }
         ?>
         </ul>
+
+        <?php
+        if (isset($meal->menu)) {
+          echo "<h4 class=\"mb-3\">Menu</h4>";
+          echo $meal->menu;
+        }
+        ?>
       </div>
     </div>
 
@@ -227,7 +234,7 @@ echo makeTitle($title, $subtitle, $icons);
       </div>
       <div class="modal-body">
         <?php
-        if (date('Y-m-d H:i:s') >= date('Y-m-d H:i:s', strtotime($meal->date_cutoff))) {
+        if (date('Y-m-d H:i:s') >= date('Y-m-d H:i:s', strtotime($meal->date_cutoff)) && $_SESSION['admin'] != "true") {
           echo "<p>The deadline for making changes to this booking has passed.  Please contact the Bursary for further assistance.</p>";
         } else {
           echo "<p>Are you sure you want to delete this meal booking?  This will also delete any guests you have booked for this meal.</p>";
@@ -237,7 +244,7 @@ echo makeTitle($title, $subtitle, $icons);
       <div class="modal-footer">
         <button type="button" class="btn btn-link link-secondary mr-auto" data-bs-dismiss="modal">Close</button>
         <?php
-        if (date('Y-m-d H:i:s') >= date('Y-m-d H:i:s', strtotime($meal->date_cutoff))) {
+        if (date('Y-m-d H:i:s') >= date('Y-m-d H:i:s', strtotime($meal->date_cutoff)) && $_SESSION['admin'] != "true") {
           echo "<a href=\"#\" role=\"button\" class=\"btn btn-danger disabled\"><svg width=\"16\" height=\"16\"><use xlink:href=\"img/icons.svg#trash\"/></svg> Delete</a>";
         } else {
           echo "<a href=\"index.php?deleteBookingUID=" . $bookingObject->uid . "\" role=\"button\" class=\"btn btn-danger\" onclck=\"bookingDeleteButton();\"><svg width=\"16\" height=\"16\"><use xlink:href=\"img/icons.svg#trash\"/></svg> Delete</a>";
