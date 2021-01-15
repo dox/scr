@@ -1,7 +1,6 @@
 <?php
 class settings {
   protected static $table_name = "settings";
-
   public $uid;
   public $name;
   public $description;
@@ -10,8 +9,11 @@ class settings {
   public function all() {
     global $db;
 
+//    $settingsToExclude = array("'scr_information'");
+
     $sql  = "SELECT *  FROM " . self::$table_name;
-    $sql .= " ORDER BY name DESC";
+//    $sql .= " WHERE name NOT IN (" . implode("," , $settingsToExclude) . ")";
+    $sql .= " ORDER BY name ASC";
 
     $settings = $db->query($sql)->fetchAll();
 
