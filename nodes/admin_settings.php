@@ -195,7 +195,7 @@ echo makeTitle($title, $subtitle, $icons);
       <div class="d-flex w-100 justify-content-between">
       <span><svg width="2em" height="2em">
         <use xlink:href="img/icons.svg#x-circle"/>
-      </svg> In-line delete</span>
+      </svg> Access Denied</span>
       <small>[x-circle]</small>
     </div>
     </li>

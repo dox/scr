@@ -34,6 +34,7 @@ class settings {
 
   public function update($array = null) {
     global $db;
+    global $logsClass;
 
     $sql  = "UPDATE " . self::$table_name;
 
@@ -48,12 +49,14 @@ class settings {
     $sql .= " LIMIT 1";
 
     $update = $db->query($sql);
+    $logsClass->create("admin", "Setting [settingUID:" . $array['uid'] . "] updated to '" . $array['value'] . "'");
 
     return $update;
   }
 
   public function create($array = null) {
 	global $db;
+  global $logsClass;
 
     $sql  = "INSERT INTO " . self::$table_name;
 
@@ -68,6 +71,8 @@ class settings {
     $sql .= " VALUES (" . implode(",", $sqlValues) . ")";
 
     $create = $db->query($sql);
+    $logsClass->create("admin", "Setting [settingUID:" . $create->lastInsertID() . "] created with '" . $array['value'] . "'");
+
 
     return $create;
   }
