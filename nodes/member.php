@@ -66,16 +66,22 @@ include_once('_member_stats.php');
     <hr />
 
     <h4 class="d-flex justify-content-between align-items-center mb-3">
-      <span class="text-muted">Previous Meals</span>
+      <span class="text-muted">Recent Meals</span>
       <span class="badge bg-secondary rounded-pill"><?php echo count($previousMealUIDS); ?></span>
     </h4>
     <ul class="list-group mb-3">
       <?php
-      foreach ($previousMealUIDS AS $mealUID) {
-        $mealObject = new meal($mealUID);
+      $i = 0;
+      $mealsToDisplay = $settingsClass->value('member_previous_meals_displayed');
+      do {
+        $mealObject = new meal($previousMealUIDS[$i]);
 
-        echo $mealObject->display_mealAside();
-      }
+        if (isset($mealObject->uid)) {
+          echo $mealObject->display_mealAside();
+        }
+
+        $i++;
+      } while($i <= $mealsToDisplay);
       ?>
     </ul>
   </div>

@@ -32,7 +32,7 @@ printArray($arr);
 
 <?php
 $title = "Week " . $term->whichWeek($meal->date_meal) . " " . $meal->name;
-$subtitle = "Some text here about meal booking.  Make it simple!";
+$subtitle = $meal->type . ": " . $meal->location . ", " . dateDisplay($meal->date_meal, true);
 if ($_SESSION['admin'] == true) {
   //$icons[] = array("class" => "btn-warning", "name" => $icon_edit. " Edit Meal", "value" => "a href=\"index.php?n=admin_meal=" . $meal->uid . "\"");
 }
@@ -122,8 +122,11 @@ echo makeTitle($title, $subtitle, $icons);
         <?php
         if (isset($meal->menu)) {
           echo "<div class=\"card\">";
-          echo "<h4 class=\"text-center m-3\">Menu</h4>";
+          echo "<div class=\"card-body\">";
+          echo "<h4 class=\"card-title text-center\">Menu</h4>";
+          echo "<p class=\"text-center\"><i>" . $meal->location . ", " . dateDisplay($meal->date_meal, true) . "</i></p>";
           echo $meal->menu;
+          echo "</div>";
           echo "</div>";
         }
         ?>

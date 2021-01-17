@@ -21,7 +21,7 @@ if (isset($_POST['termUID'])) {
 ?>
 <?php
 $title = $termObject->name;
-$subtitle = $termObject->date_start . " - " . dateDisplay($termObject->date_end);
+$subtitle = "From " . dateDisplay($termObject->date_start) . ", to " . dateDisplay($termObject->date_end);
 
 echo makeTitle($title, $subtitle);
 ?>
@@ -101,7 +101,7 @@ echo makeTitle($title, $subtitle);
       <hr class="my-4">
 
       <input type="hidden" name="termUID" id="termUID" value="<?php echo $termObject->uid; ?>">
-      <button class="btn btn-primary btn-lg btn-block" type="submit">Update Term Details</button>
+      <button class="btn btn-primary w-100 btn-lg btn-block" type="submit">Update Term Details</button>
     </form>
   </div>
 </div>
