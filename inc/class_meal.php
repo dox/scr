@@ -242,6 +242,7 @@ class meal {
 
     foreach ($array AS $updateItem => $value) {
       if ($updateItem != 'mealUID') {
+        $value = str_replace("'", "\'", $value);
         $sqlUpdate[] = $updateItem ." = '" . $value . "' ";
       }
     }
