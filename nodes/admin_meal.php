@@ -228,6 +228,27 @@ echo makeTitle($title, $subtitle, $icons);
     <label for="notes" class="form-label mb-3">Notes (Private)</label>
     <input type="text" class="form-control" name="notes" id="notes" value="<?php echo $mealObject->notes; ?>">
 
+    <div class="mb-3">
+      <label for="type" class="form-label">Photo</label>
+      <select class="form-select" name="photo" id="photo">
+        <option value=""></option>
+        <?php
+        $photos = explode(",", $settingsClass->value('meal_photos'));
+
+        foreach ($photos AS $photo) {
+          if ($photo == $mealObject->photo) {
+            $selected = " selected ";
+          } else {
+            $selected = "";
+          }
+          $output = "<option value=\"" . $photo . "\"" . $selected . ">" . $photo . "</option>";
+
+          echo $output;
+        }
+        ?>
+      </select>
+    </div>
+
     <hr />
 
     <div class="divide-y">

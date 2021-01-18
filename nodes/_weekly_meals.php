@@ -18,9 +18,9 @@ $mealsClass = new meals();
 for($i = 0; $i < 7; $i++){
   $date = strtotime("+$i day", strtotime($suppliedWeek));
 
-  echo "<h2 class=\"text-center\">" . date('l', $date) . " <span class=\"text-muted\">" . date('F jS', $date) . "</span></h2>";
+  echo "<h2 class=\"text-center mt-3\">" . date('l', $date) . " <span class=\"text-muted\">" . date('F jS', $date) . "</span></h2>";
 
-  echo "<div class=\"row row-cols-3 row-cols-md-3 mb-3 text-center justify-content-md-center\">";
+  echo "<div class=\"row row-cols-md-3 row-cols-sm-1 justify-content-center\">";
   $meals = $mealsClass->allByDate(date('Y-m-d', $date));
   $meals = array_reverse($meals);
 

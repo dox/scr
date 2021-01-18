@@ -4,7 +4,7 @@ function bookMealQuick(this_id) {
   var mealUID = this_id.replace("mealUID-", "");
 
   var buttonClicked = document.getElementById(this_id);
-  var totalBookings = document.getElementById('capacityUID-' + mealUID);
+  //var totalBookings = document.getElementById('capacityUID-' + mealUID);
   var formData = new FormData();
 
   formData.append("meal_uid", mealUID);
@@ -23,10 +23,10 @@ function bookMealQuick(this_id) {
     } else { // show the result
       //alert(this.responseText);
 
-      buttonClicked.className = 'btn btn-success w-100';
+      buttonClicked.className = 'btn btn-sm rounded-0 rounded-bottom btn-success';
       buttonClicked.removeAttribute("onclick");
       buttonClicked.href = "index.php?n=booking&mealUID=" + mealUID;
-      totalBookings.innerHTML = parseInt(totalBookings.innerHTML, 10)+1;
+      //totalBookings.innerHTML = parseInt(totalBookings.innerHTML, 10)+1;
       buttonClicked.innerText = 'Manage Booking';
 
       //alert(`Done, got ${request.response.length} bytes`); // response is the server response

@@ -16,6 +16,7 @@ class meal {
   public $mcr_guests;
   public $menu;
   public $notes;
+  public $photo;
 
 
   function __construct($mealUID = null) {
@@ -32,69 +33,55 @@ class meal {
   }
 
   public function mealCard() {
-    global $icon_edit;
-
-
+    $mealURL = "index.php?n=admin_meal&mealUID=" . $this->uid;
 
     $output  = "<div class=\"col\">";
-    $output .= "<div class=\"card mb-4 shadow-sm\">";//border-warning mb-3
-    $output .= "<div class=\"card-header\">";
+    $output .= "<div class=\"blog-card\">";
+    $output .= "<div class=\"card border-light\">";
+
+    if (!empty($this->photo)) {
+      $imageURL = "../img/cards/" . $this->photo;
+      if(file_exists($imageURL)) {
+        $output .= "<img src=\"" . $imageURL . "\" class=\"card-img-top rounded-top\" alt=\"Meal Image\">";
+      }
+    }
+
+    $output .= "<div class=\"card-body text-center\">";
 
     $output .= $this->menuTooltip();
 
+    $output .= "<small class=\"d-block mb-2\">" . $this->total_bookings_this_meal() . "/" . $this->totalCapacity() . " bookings</small>";
+
     if ($_SESSION['admin'] == true) {
-      $output .= "<a href=\"index.php?n=admin_meal&mealUID=" . $this->uid . "\" class=\"float-end\">";
-      $output .= "<svg width=\"16\" height=\"16\"><use xlink:href=\"img/icons.svg#sliders\"/></svg>";
-      $output .= "</a>";
+      $output .= "<h2 class=\"h5\"><a href=\"" . $mealURL . "\">" . $this->name . "</a></h2>";
+    } else {
+      $output .= "<h2 class=\"h5\">" . $this->name . "</h2>";
     }
 
+    $output .= "<p class=\"card-text my-2\">";
 
-    $output .= "<h4 class=\"my-0 font-weight-normal text-center\">" . $this->name . "</h4>";
-    $output .= "</div>";
-
-    $output .= "<div class=\"card-body \">";
-
-    //$output .= "<div class=\"row\">";
-    //$output .= "<div class=\"col\">";
-
-    //$output .= "</div>";
-    //$output .= "<div class=\"col\">";
-    //$output .= "</div>";
-    //$output .= "<div class=\"col\">";
-    //$output .= "</div>";
-    //$output .= "</div>";
-
-    $output .= "<h2 class=\"card-title pricing-card-title\"><span id=\"capacityUID-" . $this->uid . "\">" . $this->total_bookings_this_meal() . "</span> <small class=\"text-muted\">/ " . $this->totalCapacity() . " bookings</small></h2>";
-    $output .= "<ul class=\"list-unstyled mt-3 mb-4\">";
+    $output .= "<ul class=\"list-unstyled\">";
     $output .= "<li>" . $this->type . ", " . $this->location . "</li>";
     $output .= "<li>" . date('H:i', strtotime($this->date_meal)) . "</li>";
 
-    if (isset($this->notes)) {
+    if (!empty($this->notes)) {
       $output .= "<li>" . $this->notes . "</li>";
     }
 
     $output .= "</ul>";
 
+    $output .= "</p>";
+
+    $output .= "</div>";
+    $output .= "<div class=\"card-footer bg-white border-0 px-0 py-0\">";
     $output .= $this->bookingButton();
-
-    //$output .= "<div class=\"btn-group\">";
-    //$output .= "<button type=\"button\" id=\"mealUID-" . $this->uid . "\" class=\"btn btn-outline-primary\" onclick=\"bookMealQuick(this.id)\">Book Meal</button>";
-    //$output .= "<button type=\"button\" id=\"mealUID_dropdown-" . $this->uid . "\" class=\"btn btn-outline-primary dropdown-toggle dropdown-toggle-split\" data-toggle=\"dropdown\" aria-expanded=\"false\">";
-    //$output .= "<span class=\"visually-hidden\">Toggle Dropdown</span>";
-    //$output .= "</button>";
-    //$output .= "<ul class=\"dropdown-menu\">";
-    //$output .= "<li><a class=\"dropdown-item\" href=\"index.php?n=booking&mealUID=" . $this->uid . "\">Manage Booking</a></li>";
-    //$output .= "<li><a class=\"dropdown-item\" href=\"index.php?n=admin_meal&mealUID=" . $this->uid . "\">Manage Meal</a></li>";
-    //$output .= "<li><hr class=\"dropdown-divider\"></li>";
-    //$output .= "<li><a class=\"dropdown-item\" href=\"#\">Cancel Booking</a></li>";
-    //$output .= "</ul>";
-    //$output .= "</div>";
-
+    $output .= "</div>";
     $output .= "</div>";
     $output .= "</div>";
     $output .= "</div>";
 
     return $output;
+
   }
 
   private function bookingButton() {
@@ -105,13 +92,11 @@ class meal {
       // Booking exists for users - show the manage button
       $bookingLink = "index.php?n=booking&mealUID=" . $this->uid;
       $bookingClass = "btn-success";
-      $bookingID = "mealUID-" . $this->uid;
       $bookingOnClick = "";
       $bookingDisplayText = "Manage Booking";
     } else {
       $bookingLink = "#";
-      $bookingClass = "btn-outline-primary";
-      $bookingID = "mealUID-" . $this->uid;
+      $bookingClass = "btn-primary";
       $bookingOnClick = "onclick=\"bookMealQuick(this.id)\"";
       $bookingDisplayText = "Book Meal";
 
@@ -119,14 +104,12 @@ class meal {
       if ($this->total_bookings_this_meal() >= $this->totalCapacity()) {
         if ($_SESSION['admin'] == true) {
           $bookingLink = "#";
-          $bookingClass = "btn-outline-warning";
-          $bookingID = "mealUID-" . $this->uid;
+          $bookingClass = "btn-warning";
           $bookingOnClick = "onclick=\"bookMealQuick(this.id)\"";
           $bookingDisplayText = "Capacity Reached";
         } else {
           $bookingLink = "#";
-          $bookingClass = "btn-outline-warning disabled";
-          $bookingID = "mealUID-" . $this->uid;
+          $bookingClass = "btn-warning disabled";
           $bookingOnClick = "";
           $bookingDisplayText = "Capacity Reached";
         }
@@ -137,13 +120,11 @@ class meal {
         if ($_SESSION['admin'] == true) {
           $bookingLink = "#";
           $bookingClass = "btn-outline-secondary";
-          $bookingID = "mealUID-" . $this->uid;
           $bookingOnClick = "onclick=\"bookMealQuick(this.id)\"";
           $bookingDisplayText = "Deadline Passed";
         } else {
           $bookingLink = "#";
-          $bookingClass = "btn-outline-secondary disabled";
-          $bookingID = "mealUID-" . $this->uid;
+          $bookingClass = "btn-secondary disabled";
           $bookingOnClick = "";
           $bookingDisplayText = "Deadline Passed";
         }
@@ -152,14 +133,19 @@ class meal {
       // check for member disabled
       if ($_SESSION['enabled'] != true) {
           $bookingLink = "#";
-          $bookingClass = "btn-outline-secondary";
-          $bookingID = "";
+          $bookingClass = "btn-secondary";
           $bookingOnClick = "";
           $bookingDisplayText = "Your account is disabled";
       }
     }
 
-    $output = "<a href=\"" . $bookingLink . "\" role=\"button\" class=\"btn w-100 " . $bookingClass . "\" id=\"" . $bookingID . "\" " . $bookingOnClick . ">" . $bookingDisplayText . "</a>";
+    $output .= "<div class=\"d-grid\">";
+    $output .= "<a class=\"btn btn-sm " . $bookingClass . " rounded-0 rounded-bottom\" href=\"" . $bookingLink . "\" id=\"mealUID-" . $this->uid . "\" " . $bookingOnClick . " >";
+    $output .= $bookingDisplayText;
+    $output .= "</a>";
+    $output .= "</div>";
+
+    //$output = "<a href=\"" . $bookingLink . "\" role=\"button\" class=\"btn w-100 " . $bookingClass . "\" id=\"" . $bookingID . "\" " . $bookingOnClick . ">" . $bookingDisplayText . "</a>";
 
     return $output;
   }
