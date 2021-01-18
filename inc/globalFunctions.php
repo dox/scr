@@ -19,6 +19,20 @@ function dateDisplay($date = null, $longFormat = false) {
 	return $returnDate;
 }
 
+function timeDisplay($date = null, $hour12 = false) {
+	global $settingsClass;
+
+	if ($hour12 == true) {
+		$dateFormat = 'H:i a';
+	} else {
+		$dateFormat = 'H:i';
+	}
+
+	$returnDate = date($dateFormat, strtotime($date));
+
+	return $returnDate;
+}
+
 
 function autoPluralise ($singular, $plural, $count = 1) {
 	// fantasticly clever function to return the correct plural of a word/count combo

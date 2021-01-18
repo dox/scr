@@ -62,7 +62,7 @@ class meal {
 
     $output .= "<ul class=\"list-unstyled\">";
     $output .= "<li>" . $this->type . ", " . $this->location . "</li>";
-    $output .= "<li>" . date('H:i', strtotime($this->date_meal)) . "</li>";
+    $output .= "<li>" . timeDisplay($this->date_meal) . "</li>";
 
     if (!empty($this->notes)) {
       $output .= "<li>" . $this->notes . "</li>";
@@ -119,7 +119,7 @@ class meal {
       if (date('Y-m-d H:i:s') >= date('Y-m-d H:i:s', strtotime($this->date_cutoff))) {
         if ($_SESSION['admin'] == true) {
           $bookingLink = "#";
-          $bookingClass = "btn-outline-secondary";
+          $bookingClass = "btn-secondary";
           $bookingOnClick = "onclick=\"bookMealQuick(this.id)\"";
           $bookingDisplayText = "Deadline Passed";
         } else {

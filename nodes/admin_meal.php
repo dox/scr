@@ -326,7 +326,6 @@ const editor = SUNEDITOR.create(document.getElementById('menu'),{
 			"fontColor",
 			"hiliteColor",
 			"removeFormat",
-			"align",
 			"horizontalRule",
 			"link",
 			"fullScreen",
