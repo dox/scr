@@ -43,7 +43,7 @@ echo makeTitle($title, $subtitle, $icons);
 
         $output .= "<form method=\"post\" id=\"form-" .  $setting['uid'] . "\" action=\"" . $_SERVER['REQUEST_URI'] . "\" class=\"needs-validation\" novalidate>";
         $output .= "<div class=\"input-group\">";
-          $output .= "<input type=\"text\" class=\"form-control\" id=\"value\" name=\"value\" value=\"" . $setting['value']. "\">";
+          $output .= "<input type=\"text\" class=\"form-control\" id=\"value\" name=\"value\" value=\"" . escape($setting['value']). "\">";
           $output .= "<button class=\"btn btn-primary\" type=\"submit\" id=\"button-addon2\">Update</button>";
         $output .= "</div>";
         $output .= "<input type=\"hidden\" id=\"uid\" name=\"uid\" value=\"" . $setting['uid']. "\">";
@@ -65,7 +65,7 @@ echo makeTitle($title, $subtitle, $icons);
   <ul class="list-group">
     <li class="list-group-item list-group-item-action">
       <div class="d-flex w-100 justify-content-between">
-      <span><svg width="2em" height="2em">
+      <span><svg width="2.4em" height="2em">
         <use xlink:href="img/icons.svg#chough-regular"/>
       </svg> Chough (default logo)</span>
       <small>[chough-regular]</small>
@@ -117,14 +117,6 @@ echo makeTitle($title, $subtitle, $icons);
         <use xlink:href="img/icons.svg#journal-text"/>
       </svg> Information</span>
       <small>[journal-text]</small>
-    </div>
-    </li>
-    <li class="list-group-item list-group-item-action">
-      <div class="d-flex w-100 justify-content-between">
-      <span><svg width="2em" height="2em">
-        <use xlink:href="img/icons.svg#star"/>
-      </svg> SCR Steward</span>
-      <small>[star]</small>
     </div>
     </li>
     <li class="list-group-item list-group-item-action">
@@ -210,17 +202,17 @@ echo makeTitle($title, $subtitle, $icons);
     <li class="list-group-item list-group-item-action">
       <div class="d-flex w-100 justify-content-between">
       <span><svg width="2em" height="2em">
-        <use xlink:href="img/icons.svg#book"/>
-      </svg> Book</span>
-      <small>[book]</small>
+        <use xlink:href="img/icons.svg#info-circle"/>
+      </svg> Information</span>
+      <small>[info-circle]</small>
     </div>
     </li>
     <li class="list-group-item list-group-item-action">
       <div class="d-flex w-100 justify-content-between">
-      <span><svg width="2em" height="2em">
-        <use xlink:href="img/icons.svg#info-circle"/>
-      </svg> Information</span>
-      <small>[info-circle]</small>
+      <span><svg width="2em" height="2em" class="spinning">
+        <use xlink:href="img/icons.svg#spinner"/>
+      </svg> Spinner</span>
+      <small>[spinner]</small>
     </div>
     </li>
   </ul>

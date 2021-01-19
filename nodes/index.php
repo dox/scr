@@ -48,13 +48,13 @@ echo makeTitle($title, $subtitle);
 </ul>
 
 <div class="tab-content" id="myTabContent">
-  <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="week-1">1...</div>
+  <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="week-1"><p class="text-center"><svg width="4em" height="4em" class="text-muted spinning"><use xlink:href="img/icons.svg#spinner"/></svg></p></div>
 </div>
-
 
 <script>
 load_home('<?php echo date('Y-m-d', strtotime('this week -1 day', time())); ?>');
 async function load_home(this_id) {
+  home.innerHTML = "<p class=\"text-center\"><svg width=\"4em\" height=\"4em\" class=\"text-muted spinning\"><use xlink:href=\"img/icons.svg#spinner\"/></svg></p>";
   let url = 'nodes/_weekly_meals.php?id=' + this_id;
 
   home.innerHTML = await (await fetch(url)).text();
@@ -69,7 +69,7 @@ async function load_home(this_id) {
         <h5 class="modal-title" id="exampleModalLabel">Menu</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>-->
-      
+
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
       </div>
