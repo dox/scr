@@ -57,6 +57,41 @@ function displayMenu(this_id) {
   request.send();
 }
 
+function applyTemplate() {
+  event.preventDefault();
+  
+  var template_name = document.getElementById('template_name').value;
+  var template_start_date = document.getElementById('template_start_date').value;
+
+  var formData = new FormData();
+
+  formData.append("template_name", template_name);
+  formData.append("template_start_date", template_start_date);
+
+  //https://javascript.info/xmlhttprequest GREAT documentation!
+  var request = new XMLHttpRequest();
+
+  request.open("POST", "../actions/template_apply.php", true);
+  request.send(formData);
+
+  // 4. This will be called after the response is received
+  request.onload = function() {
+    if (request.status != 200) { // analyze HTTP status of the response
+      alert("Something went wrong.  Please refresh this page and try again.");
+      alert(`Error ${request.status}: ${request.statusText}`); // e.g. 404: Not Found
+    } else { // show the result
+      alert("Template applied!");
+      //alert(`Done, got ${request.response.length} bytes`); // response is the server response
+    }
+  };
+
+  request.onerror = function() {
+    alert("Request failed");
+  };
+
+  return false;
+}
+
 function bookingDeleteButton() {
   if (window.confirm("Are you sure you want to run delete this meal booking?  This will also remove all of your guests from this booking.")) {
 			location.href = 'index.php';

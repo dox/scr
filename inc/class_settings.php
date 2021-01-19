@@ -77,6 +77,17 @@ class settings {
     return $create;
   }
 
+  public function templates() {
+    global $db;
+
+    $sql  = "SELECT *  FROM " . self::$table_name;
+    $sql .= " WHERE name LIKE 'template%'";
+
+    $templates = $db->query($sql)->fetchAll();
+
+    return $templates;
+  }
+
   public function alert ($type = null, $title = null, $description = null) {
 	  $alertClasses = array("primary", "secondary", "success" , "danger" , "warning", "info");
 	  if (in_array($type, $alertClasses)) {

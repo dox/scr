@@ -85,7 +85,6 @@ class meal {
     $output .= "</div>";
 
     return $output;
-
   }
 
   private function bookingButton() {
@@ -170,10 +169,14 @@ class meal {
   public function bookings_this_meal() {
     global $db;
 
-    $sql  = "SELECT *  FROM bookings";
+    $sql  = "SELECT * FROM bookings";
     $sql .= " LEFT JOIN members ON bookings.member_ldap = members.ldap";
     $sql .= " WHERE meal_uid = '" . $this->uid . "'";
     $sql .= " ORDER BY members.type DESC, members.precedence ASC, members.lastname ASC";
+
+    $sql  = "SELECT * FROM bookings";
+    $sql .= " WHERE meal_uid = '" . $this->uid . "'";
+    $sql .= " ORDER BY date ASC";
 
     $bookings = $db->query($sql)->fetchAll();
 
@@ -183,11 +186,11 @@ class meal {
   public function total_bookings_this_meal() {
     global $db;
 
-
     foreach ($this->bookings_this_meal() AS $booking) {
-      $guestsArray[] = count(json_decode($booking['guests_array']));
+      if (!empty($booking['guests_array'])) {
+        $guestsArray[] = count(json_decode($booking['guests_array']));
+      }
     }
-
 
     $totalGuests = count($this->bookings_this_meal()) + array_sum($guestsArray);
 
