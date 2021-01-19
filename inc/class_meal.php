@@ -4,6 +4,7 @@ class meal {
 
   public $uid;
   public $name;
+  public $type;
   public $date_meal;
   public $date_cutoff;
   public $location;
@@ -14,6 +15,8 @@ class meal {
   public $mcr_capacity;
   public $scr_guests;
   public $mcr_guests;
+  public $scr_dessert_capacity;
+  public $mcr_dessert_capacity;
   public $menu;
   public $notes;
   public $photo;
@@ -35,7 +38,7 @@ class meal {
   public function mealCard() {
     $mealURL = "index.php?n=admin_meal&mealUID=" . $this->uid;
 
-    $output  = "<div class=\"col\">";
+    $output  = "<div class=\"col-12 mb-3\">";
     $output .= "<div class=\"blog-card\">";
     $output .= "<div class=\"card border-light\">";
 
