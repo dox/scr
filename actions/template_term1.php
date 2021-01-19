@@ -23,29 +23,35 @@ do {
   foreach ($mealsToCreate->$i AS $mealUID) {
     $mealObject = new meal($mealUID);
 
-    $cutoffdeltaSeconds = datediff('s', $mealObject->date_cutoff, $mealObject->date_meal);
-    $newMealDateTime = $dateLookup . " " . date('H:i', strtotime($mealObject->date_meal));
-    $newCutOff = date('Y-m-d H:i', strtotime($newMealDateTime . "-" . $cutoffdeltaSeconds . " seconds"));
+    if ($mealObject->template == 1) {
+      $cutoffdeltaSeconds = datediff('s', $mealObject->date_cutoff, $mealObject->date_meal);
+      $newMealDateTime = $dateLookup . " " . date('H:i', strtotime($mealObject->date_meal));
+      $newCutOff = date('Y-m-d H:i', strtotime($newMealDateTime . "-" . $cutoffdeltaSeconds . " seconds"));
 
-    $newMeal['name'] = $mealObject->name;
-    $newMeal['type'] = $mealObject->type;
-    $newMeal['date_meal'] = $newMealDateTime;
-    $newMeal['date_cutoff'] = $newCutOff;
-    $newMeal['location'] = $mealObject->location;
-    $newMeal['allowed_domus'] = $mealObject->allowed_domus;
-    $newMeal['allowed_wine'] = $mealObject->allowed_wine;
-    $newMeal['allowed_dessert'] = $mealObject->allowed_dessert;
-    $newMeal['scr_capacity'] = $mealObject->scr_capacity;
-    $newMeal['mcr_capacity'] = $mealObject->mcr_capacity;
-    $newMeal['scr_guests'] = $mealObject->scr_guests;
-    $newMeal['mcr_guests'] = $mealObject->mcr_guests;
-    $newMeal['scr_dessert_capacity'] = $mealObject->scr_dessert_capacity;
-    $newMeal['mcr_dessert_capacity'] = $mealObject->mcr_dessert_capacity;
-    $newMeal['menu'] = $mealObject->menu;
-    $newMeal['notes'] = $mealObject->notes;
-    $newMeal['photo'] = $mealObject->photo;
+      $newMeal['name'] = $mealObject->name;
+      $newMeal['type'] = $mealObject->type;
+      $newMeal['date_meal'] = $newMealDateTime;
+      $newMeal['date_cutoff'] = $newCutOff;
+      $newMeal['location'] = $mealObject->location;
+      $newMeal['allowed_domus'] = $mealObject->allowed_domus;
+      $newMeal['allowed_wine'] = $mealObject->allowed_wine;
+      $newMeal['allowed_dessert'] = $mealObject->allowed_dessert;
+      $newMeal['scr_capacity'] = $mealObject->scr_capacity;
+      $newMeal['mcr_capacity'] = $mealObject->mcr_capacity;
+      $newMeal['scr_guests'] = $mealObject->scr_guests;
+      $newMeal['mcr_guests'] = $mealObject->mcr_guests;
+      $newMeal['scr_dessert_capacity'] = $mealObject->scr_dessert_capacity;
+      $newMeal['mcr_dessert_capacity'] = $mealObject->mcr_dessert_capacity;
+      $newMeal['menu'] = $mealObject->menu;
+      $newMeal['notes'] = $mealObject->notes;
+      $newMeal['photo'] = $mealObject->photo;
 
-    printArray($newMeal);
+      printArray($newMeal);
+    } else {
+      echo "ERROR!  Meal [mealUID:" . $mealUID . "] isn't a template!";
+    }
+
+
   }
 
   echo "<hr />";

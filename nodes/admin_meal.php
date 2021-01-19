@@ -21,6 +21,9 @@ if (isset($_POST['mealUID'])) {
   if (!isset($_POST['allowed_dessert'])) {
     $_POST['allowed_dessert'] = '0';
   }
+  if (!isset($_POST['template'])) {
+    $_POST['template'] = '0';
+  }
   $mealObject->update($_POST);
   $mealObject = new meal($_GET['mealUID']);
 }
@@ -103,7 +106,6 @@ echo makeTitle($title, $subtitle, $icons);
           Valid Meal name is required.
         </div>
       </div>
-
       <div class="col-12 mb-3">
         <label for="location" class="form-label">Location</label>
         <input type="text" list="locations_datalist" class="form-control" name="location" id="location" placeholder="" value="<?php echo $mealObject->location; ?>" required>
@@ -286,6 +288,16 @@ echo makeTitle($title, $subtitle, $icons);
           </span>
         </label>
       </div>
+      <hr />
+      <div>
+        <label class="row">
+          <span class="col"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#bullseye"></svg> Template</span>
+          <span class="col-auto">
+            <label class="form-check form-check-single form-switch"><input class="form-check-input" type="checkbox" name="template" <?php if ($mealObject->template == 1) { echo "checked=\"\""; } ?> value="1"></label>
+          </span>
+        </label>
+      </div>
+      <hr />
       <?php
       if (isset($_GET['add'])) {
         echo "<input type=\"hidden\" name=\"mealNEW\" id=\"mealNEW\">";

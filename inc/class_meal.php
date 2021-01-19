@@ -3,6 +3,7 @@ class meal {
   protected static $table_name = "meals";
 
   public $uid;
+  public $template;
   public $name;
   public $type;
   public $date_meal;
