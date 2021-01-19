@@ -9,10 +9,10 @@ class settings {
   public function all() {
     global $db;
 
-//    $settingsToExclude = array("'scr_information'");
+    $settingsToExclude = array("'scr_information'", "'scr_accessibility'");
 
     $sql  = "SELECT *  FROM " . self::$table_name;
-//    $sql .= " WHERE name NOT IN (" . implode("," , $settingsToExclude) . ")";
+    $sql .= " WHERE name NOT IN (" . implode("," , $settingsToExclude) . ")";
     $sql .= " ORDER BY name ASC";
 
     $settings = $db->query($sql)->fetchAll();
