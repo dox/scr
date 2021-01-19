@@ -1,6 +1,8 @@
 <?php
 include_once("../inc/autoload.php");
 
+admin_gatekeeper();
+
 if ($_SESSION['admin'] == true) {
   if (!empty($_POST['firstname'])) {
     $ldapUser = $ldap_connection->query()

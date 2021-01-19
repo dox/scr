@@ -1,6 +1,8 @@
 <?php
 include_once("../inc/autoload.php");
 
+admin_gatekeeper();
+
 // impersonate
 if (isset($_POST['impersonate_ldap'])) {
   $logsClass->create("admin", $_SESSION['username'] . " impersonating " . $_POST['impersonate_ldap']);
