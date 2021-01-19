@@ -149,7 +149,10 @@ echo makeTitle($title, $subtitle, $icons);
     <div class="row">
       <div class="col-6 mb-3">
         <label for="date_meal" class="form-label">Meal Date/Time</label>
-        <input type="text" class="form-control" name="date_meal" id="date_meal" placeholder="" value="<?php echo $date_meal; ?>" required>
+        <div class="input-group">
+          <span class="input-group-text" id="date_meal-addon"><svg width="1em" height="1em" class="text-muted"><use xlink:href="img/icons.svg#calendar-plus"/></svg></span>
+          <input type="text" class="form-control" name="date_meal" id="date_meal" placeholder="" value="<?php echo $date_meal; ?>" aria-describedby="date_meal-addon" required>
+        </div>
         <div class="invalid-feedback">
           Meal Date is required.
         </div>
@@ -157,7 +160,10 @@ echo makeTitle($title, $subtitle, $icons);
 
       <div class="col-6 mb-3">
         <label for="date_cutoff" class="form-label">Meal Date/Time Cut-Off</label>
-        <input type="date" class="form-control" name="date_cutoff" id="date_cutoff" placeholder="" value="<?php echo $date_cutoff; ?>" required>
+        <div class="input-group">
+          <span class="input-group-text" id="date_cutoff-addon"><svg width="1em" height="1em" class="text-muted"><use xlink:href="img/icons.svg#calendar-plus"/></svg></span>
+          <input type="text" class="form-control" name="date_cutoff" id="date_cutoff" placeholder="" value="<?php echo $date_cutoff; ?>" aria-describedby="date_cutoff-addon" required>
+        </div>
         <div class="invalid-feedback">
           Meal Cutoff Date is required.
         </div>
@@ -176,19 +182,19 @@ echo makeTitle($title, $subtitle, $icons);
       </div>
 
       <div class="col mb-3">
+        <label for="scr_dessert_capacity" class="form-label">SCR Dessert Capacity</label>
+        <input type="number" class="form-control" name="scr_dessert_capacity" id="scr_dessert_capacity" value="<?php echo $capacitySCRDessert; ?>" min=0 required>
+        <div class="invalid-feedback">
+          SCR Dessert Capacity is required.
+        </div>
+      </div>
+
+      <div class="col mb-3">
         <label for="scr_guests" class="form-label">SCR Guests</label>
         <input type="number" class="form-control" name="scr_guests" id="scr_guests" value="<?php echo $capacitySCRGuests; ?>" min=0 required>
         <div id="scr_guestsHelp" class="form-text">Per member</div>
         <div class="invalid-feedback">
           SCR Guests is required.
-        </div>
-      </div>
-
-      <div class="col mb-3">
-        <label for="scr_dessert_capacity" class="form-label">SCR Dessert Capacity</label>
-        <input type="number" class="form-control" name="scr_dessert_capacity" id="scr_dessert_capacity" value="<?php echo $capacitySCRDessert; ?>" min=0 required>
-        <div class="invalid-feedback">
-          SCR Dessert Capacity is required.
         </div>
       </div>
     </div>
@@ -203,6 +209,14 @@ echo makeTitle($title, $subtitle, $icons);
       </div>
 
       <div class="col mb-3">
+        <label for="mcr_dessert_capacity" class="form-label">MCR Desert Capacity</label>
+        <input type="number" class="form-control" name="mcr_dessert_capacity" id="mcr_dessert_capacity" value="<?php echo $capacityMCRDessert; ?>" min=0 required>
+        <div class="invalid-feedback">
+          MCR Dessert Capacity is required.
+        </div>
+      </div>
+
+      <div class="col mb-3">
         <label for="mcr_guests" class="form-label">MCR Guests</label>
         <input type="number" class="form-control" name="mcr_guests" id="mcr_guests" value="<?php echo $capacityMCRGuests; ?>" min=0 required>
         <div id="mcr_guestsHelp" class="form-text">Per member</div>
@@ -210,23 +224,19 @@ echo makeTitle($title, $subtitle, $icons);
           SCR Guests is required.
         </div>
       </div>
-
-      <div class="col mb-3">
-        <label for="mcr_dessert_capacity" class="form-label">MCR Desert Capacity</label>
-        <input type="number" class="form-control" name="mcr_dessert_capacity" id="mcr_dessert_capacity" value="<?php echo $capacityMCRDessert; ?>" min=0 required>
-        <div class="invalid-feedback">
-          MCR Dessert Capacity is required.
-        </div>
-      </div>
     </div>
 
-    <label for="menu" class="form-label mb-3">Menu</label>
-    <input type="text" class="form-control" name="menu" id="menu" value="<?php echo htmlspecialchars($mealObject->menu, ENT_QUOTES); ?>">
+    <div class="mb-3">
+      <label for="menu" class="form-label mb-3">Menu</label>
+      <input type="text" class="form-control" name="menu" id="menu" value="<?php echo htmlspecialchars($mealObject->menu, ENT_QUOTES); ?>">
+    </div>
 
     <hr />
 
-    <label for="notes" class="form-label mb-3">Notes (Private)</label>
-    <input type="text" class="form-control" name="notes" id="notes" value="<?php echo $mealObject->notes; ?>">
+    <div class="mb-3">
+      <label for="notes" class="form-label mb-3">Notes (Private)</label>
+      <input type="text" class="form-control" name="notes" id="notes" value="<?php echo $mealObject->notes; ?>">
+    </div>
 
     <div class="mb-3">
       <label for="type" class="form-label">Photo</label>
@@ -254,7 +264,7 @@ echo makeTitle($title, $subtitle, $icons);
     <div class="divide-y">
       <div>
         <label class="row">
-          <span class="col"><svg width="16" height="16"><use xlink:href="img/icons.svg#graduation-cap"></svg> Domus</span>
+          <span class="col"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#graduation-cap"></svg> Domus</span>
           <span class="col-auto">
             <label class="form-check form-check-single form-switch"><input class="form-check-input" type="checkbox" name="allowed_domus" <?php if ($mealObject->allowed_domus == 1) { echo "checked=\"\""; } ?> value="1"></label>
           </span>
@@ -262,7 +272,7 @@ echo makeTitle($title, $subtitle, $icons);
       </div>
       <div>
         <label class="row">
-          <span class="col"><svg width="16" height="16"><use xlink:href="img/icons.svg#wine-glass"></svg> Wine</span>
+          <span class="col"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#wine-glass"></svg> Wine</span>
           <span class="col-auto">
             <label class="form-check form-check-single form-switch"><input class="form-check-input" type="checkbox" name="allowed_wine" <?php if ($mealObject->allowed_wine == 1) { echo "checked=\"\""; } ?> value="1"></label>
           </span>
@@ -270,7 +280,7 @@ echo makeTitle($title, $subtitle, $icons);
       </div>
       <div>
         <label class="row mb-3">
-          <span class="col"><svg width="16" height="16"><use xlink:href="img/icons.svg#cookie"></svg> Dessert</span>
+          <span class="col"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#cookie"></svg> Dessert</span>
           <span class="col-auto">
             <label class="form-check form-check-single form-switch"><input class="form-check-input" type="checkbox" name="allowed_dessert" <?php if ($mealObject->allowed_dessert == 1) { echo "checked=\"\""; } ?> value="1"></label>
           </span>
@@ -316,7 +326,8 @@ function test(date) {
 
 <script>
 const editor = SUNEDITOR.create(document.getElementById('menu'),{
-	"buttonList": [
+  "height":200,
+  "buttonList": [
 		[
 			"formatBlock",
 			"bold",

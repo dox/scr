@@ -76,6 +76,7 @@ echo makeTitle($title, $subtitle);
       <div class="col mb-3">
         <label for="name" class="form-label">Term name</label>
         <input type="text" class="form-control" name="name" id="name" value="<?php echo $termObject->name; ?>" required>
+        <small id="nameHelp" class="form-text text-muted">e.g. 'Trinity <?php echo date('Y')+1; ?>'</small>
         <div class="invalid-feedback">
           Valid term name is required.
         </div>
@@ -83,7 +84,11 @@ echo makeTitle($title, $subtitle);
       <div class="row">
         <div class="col mb-3">
           <label for="date_start" class="form-label">Term Start Date</label>
-          <input type="text" class="form-control" name="date_start" id="date_start" value="<?php echo date('Y-m-d', strtotime($termObject->date_start)); ?>" required>
+          <div class="input-group">
+            <span class="input-group-text" id="date_start-addon"><svg width="1em" height="1em" class="text-muted"><use xlink:href="img/icons.svg#calendar-plus"/></svg></span>
+            <input type="text" class="form-control" name="date_start" id="date_start" value="<?php echo date('Y-m-d', strtotime($termObject->date_start)); ?>" aria-describedby="date_start" required>
+          </div>
+          <small id="date_startHelp" class="form-text text-muted">Sunday of 1st week</small>
           <div class="invalid-feedback">
             Valid term start date is required.
           </div>
@@ -91,7 +96,11 @@ echo makeTitle($title, $subtitle);
 
         <div class="col mb-3">
           <label for="date_end" class="form-label">Term End Date</label>
-          <input type="text" class="form-control" name="date_end" id="date_end" value="<?php echo date('Y-m-d', strtotime($termObject->date_end)); ?>" required>
+          <div class="input-group">
+            <span class="input-group-text" id="date_end-addon"><svg width="1em" height="1em" class="text-muted"><use xlink:href="img/icons.svg#calendar-plus"/></svg></span>
+            <input type="text" class="form-control" name="date_end" id="date_end" value="<?php echo date('Y-m-d', strtotime($termObject->date_end)); ?>" aria-describedby="date_end" required>
+          </div>
+          <small id="date_endHelp" class="form-text text-muted">Saturday of 8th week</small>
           <div class="invalid-feedback">
             Valid term end date is required.
           </div>

@@ -50,8 +50,6 @@ class meal {
 
     $output .= $this->menuTooltip();
 
-    $output .= "<small class=\"d-block mb-2\">" . $this->total_bookings_this_meal() . "/" . $this->totalCapacity() . " bookings</small>";
-
     if ($_SESSION['admin'] == true) {
       $output .= "<h2 class=\"h5\"><a href=\"" . $mealURL . "\">" . $this->name . "</a></h2>";
     } else {
@@ -71,6 +69,8 @@ class meal {
     $output .= "</ul>";
 
     $output .= "</p>";
+
+    $output .= "<small class=\"d-block\">" . $this->total_bookings_this_meal() . "/" . $this->totalCapacity() . " bookings</small>";
 
     $output .= "</div>";
     $output .= "<div class=\"card-footer bg-white border-0 px-0 py-0\">";

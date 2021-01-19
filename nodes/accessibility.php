@@ -20,7 +20,7 @@ $text = $settingsClass->value('scr_accessibility');
 $title = "Accessibility Statement";
 $subtitle = "This accessibility statement applies to St Edmund Hall's Meal Booking System: <a href=\"http://scr2.seh.ox.ac.uk\">http://scr2.seh.ox.ac.uk</a>";
 if ($_SESSION['admin'] == true) {
-  $icons[] = array("class" => "btn-primary", "name" => "<svg width=\"16\" height=\"16\"><use xlink:href=\"img/icons.svg#journal-text\"/></svg> Edit Content", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#exampleModal\"");
+  $icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#journal-text\"/></svg> Edit Content", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#exampleModal\"");
 }
 
 echo makeTitle($title, $subtitle, $icons);
@@ -44,7 +44,7 @@ echo $text;
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-link text-muted" data-bs-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary"><svg width="16" height="16"><use xlink:href="img/icons.svg#journal-text"/></svg> Update Information</button>
+        <button type="submit" class="btn btn-primary"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#journal-text"/></svg> Update Information</button>
       </div>
       </form>
     </div>

@@ -46,7 +46,7 @@ echo makeTitle($title, $subtitle);
 
       $output .= "<span class=\"float-end\">";
       if ($memberObject->ldap == $scrStewardLDAP) {
-        $output .= "<a href=\"#\" data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" title=\"SCR Steward\" class=\"list-item-actions text-warning\"><svg width=\"16\" height=\"16\"><use xlink:href=\"img/icons.svg#star\"/></svg></a> ";
+        $output .= "<a href=\"#\" data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" title=\"SCR Steward\" class=\"list-item-actions text-warning\"><svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#star\"/></svg></a> ";
       }
       $output .= "<span class=\"text-muted\">" . $memberObject->category . "</span>";
 
@@ -71,7 +71,7 @@ echo makeTitle($title, $subtitle);
 
     $output .= "<span class=\"float-end\">";
     if ($memberObject->ldap == $scrStewardLDAP) {
-      $output .= "<a href=\"#\" data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" title=\"SCR Steward\" class=\"list-item-actions text-warning\"><svg width=\"16\" height=\"16\"><use xlink:href=\"img/icons.svg#star\"/></svg></a> ";
+      $output .= "<a href=\"#\" data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" title=\"SCR Steward\" class=\"list-item-actions text-warning\"><svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#star\"/></svg></a> ";
     }
     $output .= "<span class=\"text-muted\">" . $memberObject->category . "</span>";
 

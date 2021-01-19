@@ -31,7 +31,7 @@ $membersDisabled = $membersClass->allDisabled('scr');
 <?php
 $title = "SCR Members";
 $subtitle = "Members, and their order of precedence.";
-$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"16\" height=\"16\"><use xlink:href=\"img/icons.svg#person-plus\"/></svg> Add New", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#exampleModal\"");
+$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#person-plus\"/></svg> Add New", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#exampleModal\"");
 
 echo makeTitle($title, $subtitle, $icons);
 ?>
@@ -44,7 +44,7 @@ echo makeTitle($title, $subtitle, $icons);
 
     foreach ($membersEnabled AS $member) {
       $memberObject = new member($member['uid']);
-      $handle  = "<svg width=\"16\" height=\"16\" class=\"handle\"><use xlink:href=\"img/icons.svg#grip-vertical\"/></svg>";
+      $handle  = "<svg width=\"1em\" height=\"1em\" class=\"handle\"><use xlink:href=\"img/icons.svg#grip-vertical\"/></svg>";
 
 
       $output  = "<li class=\"list-group-item\" id=\"" . $memberObject->uid . "\">";
@@ -77,7 +77,7 @@ echo makeTitle($title, $subtitle, $icons);
   <?php
   foreach ($membersDisabled AS $member) {
     $memberObject = new member($member['uid']);
-    $handle  = "<svg width=\"16\" height=\"16\" class=\"handle\"><use xlink:href=\"img/icons.svg#grip-vertical\"/></svg>";
+    $handle  = "<svg width=\"1em\" height=\"1em\" class=\"handle\"><use xlink:href=\"img/icons.svg#grip-vertical\"/></svg>";
 
 
     $output  = "<li class=\"list-group-item\" id=\"" . $memberObject->uid . "\">";
@@ -85,7 +85,7 @@ echo makeTitle($title, $subtitle, $icons);
 
     $output .= "<span class=\"float-end\">";
     if ($memberObject->ldap == $scrStewardLDAP) {
-      $output .= "<a href=\"#\" data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" title=\"SCR Steward\" class=\"list-item-actions text-warning\"><svg width=\"16\" height=\"16\"><use xlink:href=\"img/icons.svg#star\"/></svg></a> ";
+      $output .= "<a href=\"#\" data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" title=\"SCR Steward\" class=\"list-item-actions text-warning\"><svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#star\"/></svg></a> ";
     }
     $output .= "<span class=\"text-muted\">" . $memberObject->category . "</span>";
 
@@ -218,7 +218,7 @@ function itterate() {
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-link text-muted" data-bs-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary"><svg width="16" height="16"><use xlink:href="img/icons.svg#person-plus"/></svg> Add Member</button>
+        <button type="submit" class="btn btn-primary"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#person-plus"/></svg> Add Member</button>
         <input type="hidden" name="memberNew" value="true" />
         <input type="hidden" name="precedence" value="999" />
         <input type="hidden" name="type" value="SCR" />

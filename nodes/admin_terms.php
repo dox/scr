@@ -17,7 +17,7 @@ $terms = $termsClass->all();
 <?php
 $title = "Terms";
 $subtitle = "Term dates from <a href=\"https://www.ox.ac.uk/about/facts-and-figures/dates-of-term\">Oxford's website</a>.";
-$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"16\" height=\"16\"><use xlink:href=\"img/icons.svg#calendar-plus\"/></svg> Add New", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#exampleModal\"");
+$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#calendar-plus\"/></svg> Add New", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#exampleModal\"");
 
 echo makeTitle($title, $subtitle, $icons);
 ?>
@@ -62,25 +62,31 @@ echo makeTitle($title, $subtitle, $icons);
           <div class="mb-3">
             <label for="name">Term Name</label>
             <input type="text" class="form-control" name="name" id="name" aria-describedby="termNameHelp">
-            <small id="nameHelp" class="form-text text-muted">Something like 'Trinity 2020'</small>
+            <small id="nameHelp" class="form-text text-muted">e.g. 'Trinity <?php echo date('Y')+1; ?>'</small>
           </div>
 
           <div class="mb-3">
             <label for="date_start">Term Start Date</label>
-            <input type="text" class="form-control" name="date_start" id="date_start" aria-describedby="termStartDate">
+            <div class="input-group">
+              <span class="input-group-text" id="date_start-addon"><svg width="1em" height="1em" class="text-muted"><use xlink:href="img/icons.svg#calendar-plus"/></svg></span>
+              <input type="text" class="form-control" name="date_start" id="date_start" aria-describedby="date_start">
+            </div>
             <small id="date_startHelp" class="form-text text-muted">Sunday of 1st week</small>
           </div>
 
           <div class="mb-3">
             <label for="date_end">Term End Date</label>
-            <input type="text" class="form-control" name="date_end" id="date_end" aria-describedby="termEndDate">
+            <div class="input-group">
+              <span class="input-group-text" id="date_start-addon"><svg width="1em" height="1em" class="text-muted"><use xlink:href="img/icons.svg#calendar-plus"/></svg></span>
+              <input type="text" class="form-control" name="date_end" id="date_end" aria-describedby="date_end">
+            </div>
             <small id="date_endHelp" class="form-text text-muted">Saturday of 8th week</small>
           </div>
 
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-link text-muted" data-bs-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary"><svg width="16" height="16"><use xlink:href="img/icons.svg#calendar-plus"/></svg> Add Term</button>
+        <button type="submit" class="btn btn-primary"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#calendar-plus"/></svg> Add Term</button>
       </div>
       </form>
     </div>

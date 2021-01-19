@@ -36,8 +36,8 @@ $subtitle = $meal->type . ": " . $meal->location . ", " . dateDisplay($meal->dat
 if ($_SESSION['admin'] == true) {
   //$icons[] = array("class" => "btn-warning", "name" => $icon_edit. " Edit Meal", "value" => "a href=\"index.php?n=admin_meal=" . $meal->uid . "\"");
 }
-$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"16\" height=\"16\"><use xlink:href=\"img/icons.svg#person-plus\"/></svg> Add Guest", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#exampleModal\"");
-$icons[] = array("class" => "btn-danger", "name" => "<svg width=\"16\" height=\"16\"><use xlink:href=\"img/icons.svg#trash\"/></svg> Delete Booking", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#staticBackdrop\"");
+$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#person-plus\"/></svg> Add Guest", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#exampleModal\"");
+$icons[] = array("class" => "btn-danger", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#trash\"/></svg> Delete Booking", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#staticBackdrop\"");
 
 echo makeTitle($title, $subtitle, $icons);
 ?>
@@ -47,7 +47,7 @@ echo makeTitle($title, $subtitle, $icons);
         <div class="divide-y">
           <div>
             <label class="row">
-              <span class="col"><svg width="16" height="16"><use xlink:href="img/icons.svg#graduation-cap"></svg> Domus</span>
+              <span class="col"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#graduation-cap"></svg> Domus</span>
               <span class="col-auto">
                 <label class="form-check form-check-single form-switch">
                   <input class="form-check-input" id="domus" type="checkbox" <?php if ($bookingObject->domus == 1) { echo "checked";} ?> onchange="domus(this.id)">
@@ -59,7 +59,7 @@ echo makeTitle($title, $subtitle, $icons);
           </div>
           <div>
             <label class="row">
-              <span class="col"><svg width="16" height="16"><use xlink:href="img/icons.svg#wine-glass"></svg> Wine</span>
+              <span class="col"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#wine-glass"></svg> Wine</span>
               <span class="col-auto">
                 <label class="form-check form-check-single form-switch"><input class="form-check-input" type="checkbox" <?php if ($bookingObject->wine == 1) { echo "checked";} ?>></label>
               </span>
@@ -67,7 +67,7 @@ echo makeTitle($title, $subtitle, $icons);
           </div>
           <div>
             <label class="row">
-              <span class="col"><svg width="16" height="16"><use xlink:href="img/icons.svg#cookie"></svg> Dessert</span>
+              <span class="col"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#cookie"></svg> Dessert</span>
               <span class="col-auto">
                 <label class="form-check form-check-single form-switch"><input class="form-check-input" type="checkbox" <?php if ($bookingObject->dessert == 1) { echo "checked";} ?>></label>
               </span>
@@ -177,7 +177,7 @@ echo makeTitle($title, $subtitle, $icons);
 
           <div>
             <label class="row">
-              <span class="col"><svg width="16" height="16"><use xlink:href="img/icons.svg#graduation-cap"></svg> Domus</span>
+              <span class="col"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#graduation-cap"></svg> Domus</span>
               <span class="col-auto">
                 <label class="form-check form-check-single form-switch">
                   <input class="form-check-input" id="guest_domus" type="checkbox" <?php if ($bookingObject->domus == 1) { echo "checked";} ?> onchange="guestDomus(this.id)">
@@ -189,7 +189,7 @@ echo makeTitle($title, $subtitle, $icons);
           </div>
           <div>
             <label class="row">
-              <span class="col"><svg width="16" height="16"><use xlink:href="img/icons.svg#wine-glass"></svg> Guest Wine</span>
+              <span class="col"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#wine-glass"></svg> Guest Wine</span>
               <span class="col-auto">
                 <label class="form-check form-check-single form-switch">
                   <input class="form-check-input" id="guest_wine" type="checkbox" <?php if ($bookingObject->guest_wine == 1) { echo "checked";} ?>>
@@ -201,7 +201,7 @@ echo makeTitle($title, $subtitle, $icons);
           </div>
           <div>
             <label class="row">
-              <span class="col"><svg width="16" height="16"><use xlink:href="img/icons.svg#cookie"></svg> Guest Dessert</span>
+              <span class="col"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#cookie"></svg> Guest Dessert</span>
               <span class="col-auto">
                 <label class="form-check form-check-single form-switch">
                   <input class="form-check-input" id="guest_dessert" type="checkbox" <?php if ($bookingObject->guest_dessert == 1) { echo "checked";} ?>>
@@ -221,7 +221,7 @@ echo makeTitle($title, $subtitle, $icons);
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-link text-muted" data-bs-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary"><svg width="16" height="16"><use xlink:href="img/icons.svg#person-plus"/></svg> Add Guest</button>
+        <button type="submit" class="btn btn-primary"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#person-plus"/></svg> Add Guest</button>
       </div>
       <input type="hidden" id="bookingUID" name="bookingUID" value="<?php echo $bookingObject->uid; ?>">
       </form>
@@ -250,9 +250,9 @@ echo makeTitle($title, $subtitle, $icons);
         <button type="button" class="btn btn-link link-secondary mr-auto" data-bs-dismiss="modal">Close</button>
         <?php
         if (date('Y-m-d H:i:s') >= date('Y-m-d H:i:s', strtotime($meal->date_cutoff)) && $_SESSION['admin'] != "true") {
-          echo "<a href=\"#\" role=\"button\" class=\"btn btn-danger disabled\"><svg width=\"16\" height=\"16\"><use xlink:href=\"img/icons.svg#trash\"/></svg> Delete</a>";
+          echo "<a href=\"#\" role=\"button\" class=\"btn btn-danger disabled\"><svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#trash\"/></svg> Delete</a>";
         } else {
-          echo "<a href=\"index.php?deleteBookingUID=" . $bookingObject->uid . "\" role=\"button\" class=\"btn btn-danger\" onclck=\"bookingDeleteButton();\"><svg width=\"16\" height=\"16\"><use xlink:href=\"img/icons.svg#trash\"/></svg> Delete</a>";
+          echo "<a href=\"index.php?deleteBookingUID=" . $bookingObject->uid . "\" role=\"button\" class=\"btn btn-danger\" onclck=\"bookingDeleteButton();\"><svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#trash\"/></svg> Delete</a>";
         }
         ?>
       </div>

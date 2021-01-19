@@ -21,7 +21,7 @@ $text = $settingsClass->value('scr_information');
 $title = "SCR Information";
 $subtitle = "Details on dining rights, meal allowances and procedures";
 if ($_SESSION['admin'] == true) {
-  $icons[] = array("class" => "btn-primary", "name" => "<svg width=\"16\" height=\"16\"><use xlink:href=\"img/icons.svg#journal-text\"/></svg> Edit Content", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#exampleModal\"");
+  $icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#journal-text\"/></svg> Edit Content", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#exampleModal\"");
 }
 
 echo makeTitle($title, $subtitle, $icons);
@@ -49,7 +49,7 @@ echo $text;
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-link text-muted" data-bs-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary"><svg width="16" height="16"><use xlink:href="img/icons.svg#journal-text"/></svg> Update Information</button>
+        <button type="submit" class="btn btn-primary"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#journal-text"/></svg> Update Information</button>
       </div>
       </form>
     </div>
