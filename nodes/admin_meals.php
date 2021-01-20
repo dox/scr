@@ -100,7 +100,7 @@ echo makeTitle($title, $subtitle, $icons);
               <option value=""></option>
               <?php
               foreach ($settingsClass->templates() AS $template) {
-                $output = "<option value=\"" . $template['name'] . "\">" . $template['name'] . "</option>";
+                $output = "<option value=\"" . $template['name'] . "\">" . $template['name'] . " - " . $template['description'] . "</option>";
 
                 echo $output;
               }
