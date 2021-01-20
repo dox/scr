@@ -74,7 +74,7 @@ class meal {
 
     $output .= "</p>";
 
-    $output .= "<small class=\"d-block\">" . $this->total_bookings_this_meal() . "/" . $this->totalCapacity() . " bookings</small>";
+    $output .= "<small class=\"d-block\">" . $this->total_bookings_this_meal() . "/" . $this->totalCapacity() . " " . $_SESSION['type'] . " bookings</small>";
 
     $output .= "</div>";
     $output .= "<div class=\"card-footer bg-white border-0 px-0 py-0\">";
@@ -157,7 +157,11 @@ class meal {
     $scrCapacity = $this->scr_capacity;
     $mcrCapacity = $this->mcr_capacity;
 
-    $totalCapacity = $scrCapacity + $mcrCapacity;
+    if ($_SESSION['type'] == "SCR") {
+      $totalCapacity = $scrCapacity;
+    } else {
+      $totalCapacity = $mcrCapacity;
+    }
 
     return $totalCapacity;
   }
@@ -190,7 +194,11 @@ class meal {
 
     $sql .= "SELECT JSON_LENGTH(guests_array) AS totalGuestsPerBooking FROM bookings";
     $sql .= " WHERE meal_uid = '" . $this->uid . "'";
-
+    if ($_SESSION['type'] == "SCR") {
+      $sql .= " AND type = 'SCR'";
+    } else {
+      $sql .= " AND type = 'MCR'";
+    }
     $sql2 = "SELECT count(*) as totalBookings, SUM(x.totalGuestsPerBooking) AS totalGuests FROM (" . $sql . ") AS x";
 
 
