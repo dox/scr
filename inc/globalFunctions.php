@@ -224,7 +224,7 @@ function makeTitle($title = null, $subtitle = nulll, $iconsArray = null) {
 
 	$output .= "<div class=\"pb-3 text-end\">";
 	foreach ($iconsArray AS $icon) {
-		$output .= "<button type=\"button\" class=\"btn m-1 " . $icon['class'] . "\"" . $icon['value'] . ">";
+		$output .= "<button type=\"button\" class=\"btn btn-sm ms-1 " . $icon['class'] . "\"" . $icon['value'] . ">";
 		$output .= $icon['name'];
 		$output .= "</button>";
 	}
