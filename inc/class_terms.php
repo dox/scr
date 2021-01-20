@@ -29,8 +29,10 @@ class terms extends term {
   }
 
   public function arrayWindowOfWeeks() {
-    $weeksBefore = 1;
-    $weeksAfter = 6;
+    global $settingsClass;
+
+    $weeksBefore = $settingsClass->value('meal_weeks_navbar_before');
+    $weeksAfter = $settingsClass->value('meal_weeks_navbar_after');
 
     $i = $weeksBefore;
     do {
