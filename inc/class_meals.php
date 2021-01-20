@@ -5,11 +5,22 @@ class meals extends meal {
 
     $sql  = "SELECT *  FROM " . self::$table_name;
     $sql .= " WHERE template = '0'";
-    $sql .= " ORDER BY date_meal DESC";
+    $sql .= " ORDER BY date_meal DESC LIMIT 1000";
 
     $meals = $db->query($sql)->fetchAll();
 
     return $meals;
+  }
+
+  public function allCount() {
+    global $db;
+
+    $sql  = "SELECT count(*) AS totalMeals FROM " . self::$table_name;
+    $sql .= " WHERE template = '0'";
+
+    $meals = $db->query($sql)->fetchAll()[0];
+
+    return $meals['totalMeals'];
   }
 
   public function allTemplates() {

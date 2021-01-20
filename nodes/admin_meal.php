@@ -12,8 +12,8 @@ $mealObject = new meal($_GET['mealUID']);
 
 
 if (isset($_POST['mealUID'])) {
-  if (!isset($_POST['allowed_domus'])) {
-    $_POST['allowed_domus'] = '0';
+  if (!isset($_POST['domus'])) {
+    $_POST['domus'] = '0';
   }
   if (!isset($_POST['allowed_wine'])) {
     $_POST['allowed_wine'] = '0';
@@ -271,7 +271,7 @@ echo makeTitle($title, $subtitle, $icons);
         <label class="row">
           <span class="col"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#graduation-cap"></svg> Domus</span>
           <span class="col-auto">
-            <label class="form-check form-check-single form-switch"><input class="form-check-input" type="checkbox" name="allowed_domus" <?php if ($mealObject->allowed_domus == 1) { echo "checked=\"\""; } ?> value="1"></label>
+            <label class="form-check form-check-single form-switch"><input class="form-check-input" type="checkbox" name="domus" <?php if ($mealObject->domus == 1) { echo "checked=\"\""; } ?> value="1"></label>
           </span>
         </label>
       </div>
@@ -372,6 +372,7 @@ const editor = SUNEDITOR.create(document.getElementById('menu'),{
 			"fontColor",
 			"hiliteColor",
 			"removeFormat",
+      "align",
 			"horizontalRule",
 			"link",
 			"fullScreen",

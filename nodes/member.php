@@ -221,7 +221,7 @@ include_once('_member_stats.php');
           <hr />
           <div>
             <label class="row">
-              <span class="col"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#graduation-cap"></svg> Default Domus <small>(when available)</small></span>
+              <span class="col"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#graduation-cap"></svg> Always Domus <small>Overrides meal setting</small></span>
               <span class="col-auto">
                 <label class="form-check form-check-single form-switch"><input class="form-check-input" type="checkbox" id="default_domus" name="default_domus" value="1" <?php if ($memberObject->default_domus == "1") { echo " checked";} ?>></label>
               </span>

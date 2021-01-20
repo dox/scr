@@ -64,7 +64,7 @@ echo makeTitle($title, $subtitle, $icons);
   <div class="col-md-7 col-lg-8">
     <h4 class="d-flex justify-content-between align-items-center mb-3">
       <span class="text-muted">Meals</span>
-      <span class="badge bg-secondary rounded-pill"><?php echo count($meals); ?></span>
+      <span class="badge bg-secondary rounded-pill"><?php echo $mealsClass->allCount(); ?></span>
     </h4>
 
     <div class="list-group">

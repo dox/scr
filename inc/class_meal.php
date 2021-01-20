@@ -9,7 +9,7 @@ class meal {
   public $date_meal;
   public $date_cutoff;
   public $location;
-  public $allowed_domus;
+  public $domus;
   public $allowed_wine;
   public $allowed_dessert;
   public $scr_capacity;

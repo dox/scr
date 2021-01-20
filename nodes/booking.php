@@ -50,7 +50,14 @@ echo makeTitle($title, $subtitle, $icons);
               <span class="col"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#graduation-cap"></svg> Domus</span>
               <span class="col-auto">
                 <label class="form-check form-check-single form-switch">
-                  <input class="form-check-input" id="domus" type="checkbox" <?php if ($bookingObject->domus == 1) { echo "checked";} ?> onchange="domus(this.id)">
+                  <?php
+                  if ($meal->domus == 1 && $_SESSION['admin'] != true) {
+                    $domusDisabledCheck = " disabled";
+                  } else {
+                    $domusDisabledCheck = "";
+                  }
+                  ?>
+                  <input class="form-check-input" <?php echo $domusDisabledCheck; ?> id="domus" type="checkbox" <?php if ($bookingObject->domus == 1) { echo "checked";} ?> onchange="domus(this.id)">
                 </label>
               </span>
               <input type="text" class="form-control" id="domus_description" placeholder="Domus reason (required)" hidden>
@@ -61,7 +68,16 @@ echo makeTitle($title, $subtitle, $icons);
             <label class="row">
               <span class="col"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#wine-glass"></svg> Wine</span>
               <span class="col-auto">
-                <label class="form-check form-check-single form-switch"><input class="form-check-input" type="checkbox" <?php if ($bookingObject->wine == 1) { echo "checked";} ?>></label>
+                <label class="form-check form-check-single form-switch">
+                  <?php
+                  if ($meal->allowed_wine == 1) {
+                    $wineDisabledCheck = "";
+                  } else {
+                    $wineDisabledCheck = " disabled";
+                  }
+                  ?>
+                  <input class="form-check-input" <?php echo $wineDisabledCheck; ?> type="checkbox" <?php if ($bookingObject->wine == 1) { echo "checked";} ?>>
+                </label>
               </span>
             </label>
           </div>
@@ -69,7 +85,16 @@ echo makeTitle($title, $subtitle, $icons);
             <label class="row">
               <span class="col"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#cookie"></svg> Dessert</span>
               <span class="col-auto">
-                <label class="form-check form-check-single form-switch"><input class="form-check-input" type="checkbox" <?php if ($bookingObject->dessert == 1) { echo "checked";} ?>></label>
+                <label class="form-check form-check-single form-switch">
+                  <?php
+                  if ($meal->allowed_dessert == 1) {
+                    $dessertDisabledCheck = "";
+                  } else {
+                    $dessertDisabledCheck = " disabled";
+                  }
+                  ?>
+                  <input class="form-check-input" <?php echo $dessertDisabledCheck; ?> type="checkbox" <?php if ($bookingObject->dessert == 1) { echo "checked";} ?>>
+                </label>
               </span>
             </label>
           </div>
@@ -121,10 +146,10 @@ echo makeTitle($title, $subtitle, $icons);
 
         <?php
         if (isset($meal->menu)) {
-          echo "<div class=\"card\">";
+          echo "<div class=\"card text-center\">";
           echo "<div class=\"card-body\">";
           echo "<h4 class=\"card-title text-center\">Menu</h4>";
-          echo "<p class=\"text-center\"><i>" . $meal->location . ", " . dateDisplay($meal->date_meal, true) . "</i></p>";
+          echo "<p><i>" . $meal->location . ", " . dateDisplay($meal->date_meal, true) . "</i></p>";
           echo $meal->menu;
           echo "</div>";
           echo "</div>";
