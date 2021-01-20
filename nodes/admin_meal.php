@@ -38,6 +38,9 @@ if (isset($_GET['add'])) {
 } else {
   $title = $mealObject->name;
   $subtitle = $mealObject->location . " " . dateDisplay($mealObject->date_meal);
+  if ($_SESSION['admin'] == true) {
+    $icons[] = array("class" => "btn-danger", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#trash\"/></svg> Delete Meal", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#deleteMealModal\"");
+  }
   $icons[] = array("class" => "btn-primary", "name" => "Guest List", "value" => "");
   //$icons[] = array("class" => "btn-primary", "name" => "Test2", "value" => "");
 }
@@ -310,6 +313,26 @@ echo makeTitle($title, $subtitle, $icons);
     </div>
   </div>
   </form>
+</div>
+
+
+<!-- Modal -->
+<div class="modal" tabindex="-1" id="deleteMealModal" data-backdrop="static" data-keyboard="false" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Delete Meal</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete this meal?  This will also delete any bookings that have been made for this meal.  WARNING! This cannot be undone!</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-link link-secondary mr-auto" data-bs-dismiss="modal">Close</button>
+        <a href="index.php?n=admin_meals&mealDELETE=<?php echo $mealObject->uid; ?>" role="button" class="btn btn-danger"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#trash"/></svg> Delete</a>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>

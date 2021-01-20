@@ -13,6 +13,12 @@ if (isset($_POST['mealNEW'])) {
  $_GET['add'] = false;
 }
 
+if (isset($_GET['mealDELETE'])) {
+ echo "DELETE!";
+ $mealObject = new meal($_GET['mealDELETE']);
+ $mealObject->delete();
+}
+
 $meals = $mealsClass->all();
 $mealsTemplates = $mealsClass->allTemplates();
 ?>
