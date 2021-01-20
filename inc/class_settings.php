@@ -25,6 +25,7 @@ class settings {
 
     $sql  = "SELECT *  FROM " . self::$table_name;
     $sql .= " WHERE name = '" . $name . "'";
+    $sql .= " OR uid = '" . $name . "'";
 
     $setting = $db->query($sql)->fetchAll();
     $settingValue = $setting[0]['value'];
@@ -36,10 +37,12 @@ class settings {
     global $db;
     global $logsClass;
 
+    $existingSetting = $this->value($array['uid']);
+
     $sql  = "UPDATE " . self::$table_name;
 
     foreach ($array AS $updateItem => $value) {
-      if ($updateItem != 'memberUID') {
+      if ($updateItem != 'uid') {
         $sqlUpdate[] = $updateItem ." = '" . $value . "' ";
       }
     }
@@ -49,7 +52,7 @@ class settings {
     $sql .= " LIMIT 1";
 
     $update = $db->query($sql);
-    $logsClass->create("admin", "Setting [settingUID:" . $array['uid'] . "] updated to '" . $array['value'] . "'");
+    $logsClass->create("admin", "Setting [settingUID:" . $array['uid'] . "] updated from '" . $existingSetting . "' to '" . $array['value'] . "'");
 
     return $update;
   }
