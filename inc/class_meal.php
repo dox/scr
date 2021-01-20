@@ -174,9 +174,11 @@ class meal {
     $sql .= " WHERE meal_uid = '" . $this->uid . "'";
     $sql .= " ORDER BY members.type DESC, members.precedence ASC, members.lastname ASC";
 
+    /*
     $sql  = "SELECT * FROM bookings";
     $sql .= " WHERE meal_uid = '" . $this->uid . "'";
     $sql .= " ORDER BY date ASC";
+    */
 
     $bookings = $db->query($sql)->fetchAll();
 
@@ -186,13 +188,19 @@ class meal {
   public function total_bookings_this_meal() {
     global $db;
 
-    foreach ($this->bookings_this_meal() AS $booking) {
-      if (!empty($booking['guests_array'])) {
-        $guestsArray[] = count(json_decode($booking['guests_array']));
-      }
-    }
+    $sql .= "SELECT JSON_LENGTH(guests_array) AS totalGuestsPerBooking FROM bookings";
+    $sql .= " WHERE meal_uid = '" . $this->uid . "'";
 
-    $totalGuests = count($this->bookings_this_meal()) + array_sum($guestsArray);
+    $sql2 = "SELECT count(*) as totalBookings, SUM(x.totalGuestsPerBooking) AS totalGuests FROM (" . $sql . ") AS x";
+
+
+    $bookings = $db->query($sql2)->fetchAll();
+    //printArray($bookings);
+
+    $memberBookings = $bookings[0]['totalBookings'];
+    $guestBookings = $bookings[0]['totalGuests'];
+
+    $totalGuests = $memberBookings + $guestBookings;
 
     return $totalGuests;
   }
