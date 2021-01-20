@@ -114,7 +114,7 @@ echo makeTitle($title, $subtitle, $icons);
           $totalGuests = count(json_decode($booking['guests_array']));
 
           $memberObject = new member($booking['member_ldap']);
-          echo "<li>" . $memberObject->public_displayName() . " (" . $totalGuests . " guests)</li>";
+          echo "<li>" . $memberObject->public_displayName() . " (" . $totalGuests . autoPluralise(" guest", " guests", $totalGuests) . ")</li>";
         }
         ?>
         </ul>
