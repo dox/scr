@@ -36,8 +36,8 @@ $subtitle = $meal->type . ": " . $meal->location . ", " . dateDisplay($meal->dat
 if ($_SESSION['admin'] == true) {
   //$icons[] = array("class" => "btn-warning", "name" => $icon_edit. " Edit Meal", "value" => "a href=\"index.php?n=admin_meal=" . $meal->uid . "\"");
 }
-$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#person-plus\"/></svg> Add Guest", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#exampleModal\"");
 $icons[] = array("class" => "btn-danger", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#trash\"/></svg> Delete Booking", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#staticBackdrop\"");
+$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#person-plus\"/></svg> Add Guest", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#exampleModal\"");
 
 echo makeTitle($title, $subtitle, $icons);
 ?>
