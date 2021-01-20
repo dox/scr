@@ -144,5 +144,22 @@ class term {
 
     return $update;
   }
+
+  public function delete() {
+    global $db;
+    global $logsClass;
+
+    $termUID = $this->uid;
+    $termName = $this->uid;
+
+    $sql  = "DELETE FROM " . self::$table_name;
+    $sql .= " WHERE uid = '" . $termUID . "' ";
+    $sql .= " LIMIT 1";
+
+    $deleteMeal = $db->query($sql);
+    $logsClass->create("admin", "[termUID:" . $termUID . "] named '" . $termName . "' deleted");
+
+    return $deleteMeal;
+  }
 }
 ?>

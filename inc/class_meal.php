@@ -277,6 +277,28 @@ class meal {
     return $create;
   }
 
+  public function delete() {
+    global $db;
+    global $logsClass;
+
+    $mealUID = $this->uid;
+
+    // delete all bookings
+    $sql  = "DELETE FROM bookings";
+    $sql .= " WHERE meal_uid = '" . $mealUID . "' ";
+
+    $deleteBookings = $db->query($sql);
+
+    $sql  = "DELETE FROM " . self::$table_name;
+    $sql .= " WHERE uid = '" . $mealUID . "' ";
+    $sql .= " LIMIT 1";
+
+    $deleteMeal = $db->query($sql);
+    $logsClass->create("meal", "[mealUID:" . $mealUID . "] deleted and any associated bookings");
+
+    return $deleteMeal;
+  }
+
 
 }
 ?>
