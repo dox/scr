@@ -32,7 +32,7 @@ class member {
       $member['ldap'] = $memberUID;
       $member['title'] = "";
       $member['type'] = "Unknown";
-      $member['firstname'] = $memberUID;
+      $member['firstname'] = "";
       $member['lastname'] = $memberUID;
       $member['precedence'] = "9999";
       $member['email'] = "no-reply@seh.ox.ac.uk";
@@ -191,7 +191,7 @@ class member {
     global $db;
 
     $sql  = "SELECT * FROM bookings, meals";
-    $sql .= " WHERE DATE(meals.date_meal) >= CURDATE()";
+    $sql .= " WHERE meals.date_meal >= NOW()";
     $sql .= " AND bookings.member_ldap = '" . $this->ldap . "'";
     $sql .= " AND bookings.meal_uid = meals.uid ";
     $sql .= " ORDER BY meals.date_meal DESC";
@@ -209,7 +209,7 @@ class member {
     global $db;
 
     $sql  = "SELECT * FROM bookings, meals";
-    $sql .= " WHERE DATE(meals.date_meal) < CURDATE()";
+    $sql .= " WHERE meals.date_meal < NOW()";
     $sql .= " AND bookings.member_ldap = '" . $this->ldap . "'";
     $sql .= " AND bookings.meal_uid = meals.uid ";
     $sql .= " ORDER BY meals.date_meal DESC";
