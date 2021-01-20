@@ -18,7 +18,7 @@ echo makeTitle($title, $subtitle);
           <?php
           $membersClass = new members();
 
-          $members = $membersClass->all();
+          $members = $membersClass->allEnabled();
           foreach ($members AS $member) {
             $memberObject = new member($member['uid']);
 
