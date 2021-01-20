@@ -103,7 +103,7 @@ class booking {
 
     $delete = $db->query($sql);
     $logsClass->create("booking", "[bookingUID:" .  $bookingUID  . "] deleted by " . $_SESSION['username'] . " for [mealUID:" . $mealUID . "]");
-    
+
     return $delete;
   }
 }

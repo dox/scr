@@ -3,13 +3,25 @@ $termObject = new term();
 
 if (isset($_GET['deleteBookingUID'])) {
   $bookingObject = new booking($_GET['deleteBookingUID']);
+  $mealObject = new meal($bookingObject->meal_uid);
   if ($bookingObject->member_ldap == $_SESSION['username']) {
-    echo "DELETE";
-    $bookingObject->delete();
+    if (date('Y-m-d H:i:s') <= date('Y-m-d H:i:s', strtotime($mealObject->date_cutoff)) || $_SESSION['admin'] == true) {
+      $bookingObject->delete();
+    } else {
+      $logsClass->create("booking", "Error attempting to delete [bookingUID:" . $bookingObject->uid . "].  Cutoff passed.");
+    }
   } else {
-    echo "Meal for '" . $bookingObject->member_ldap . "' not deleted.  You do not have permission as " . $_SESSION['username'];
+    if ( $_SESSION['admin'] == true) {
+      $bookingObject->delete();
+    } else {
+      $logsClass->create("booking", "Error attempting to delete [bookingUID:" . $bookingObject->uid . "].  Permission not granted.");
+    }
   }
 }
+
+
+
+
 ?>
 <?php
 $title = "SCR Meal Booking";
