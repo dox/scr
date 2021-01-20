@@ -22,8 +22,11 @@ if (isset($_POST['termUID'])) {
 <?php
 $title = $termObject->name;
 $subtitle = "From " . dateDisplay($termObject->date_start) . ", to " . dateDisplay($termObject->date_end);
+if ($_SESSION['admin'] == true) {
+  $icons[] = array("class" => "btn-danger", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#trash\"/></svg> Delete Term", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#deleteTermModal\"");
 
-echo makeTitle($title, $subtitle);
+}
+echo makeTitle($title, $subtitle, $icons);
 ?>
 <div class="row g-3">
   <div class="col-md-5 col-lg-4 order-md-last">
@@ -115,6 +118,25 @@ echo makeTitle($title, $subtitle);
   </div>
 </div>
 
+
+<!-- Modal -->
+<div class="modal" tabindex="-1" id="deleteTermModal" data-backdrop="static" data-keyboard="false" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Delete Term</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete this Term?  This will not delete any meals/bookings that have been made during this term.  WARNING! This cannot be undone!</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-link link-secondary mr-auto" data-bs-dismiss="modal">Close</button>
+        <a href="index.php?n=admin_terms&termDELETE=<?php echo $termObject->uid; ?>" role="button" class="btn btn-danger"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#trash"/></svg> Delete</a>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script>
 var fp = flatpickr("#date_start", {

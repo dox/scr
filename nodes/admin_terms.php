@@ -11,6 +11,12 @@ if (isset($_POST['name'])) {
   echo $settingsClass->alert("success", $_POST['name'], " term created");
 }
 
+if (isset($_GET['termDELETE'])) {
+ echo "DELETE!";
+ $termClass = new term($_GET['termDELETE']);
+ $termClass->delete();
+}
+
 $terms = $termsClass->all();
 ?>
 
