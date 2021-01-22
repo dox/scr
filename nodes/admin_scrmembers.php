@@ -72,7 +72,7 @@ echo makeTitle($title, $subtitle, $icons);
 </form>
 
 <hr />
-<h2>Disabled Members</h2>
+<h2>Disabled Dining Rights</h2>
 <ul class="list-group">
   <?php
   foreach ($membersDisabled AS $member) {
