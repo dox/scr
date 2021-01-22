@@ -166,9 +166,10 @@ include_once('_member_stats.php');
             <select class="form-select">
               <option>Select up to <?php echo $dietaryOptionsMax; ?> dietary preferences</option>
             </select>
+            <small id="nameHelp" class="form-text text-muted"><?php echo $settingsClass->value('meal_dietary_message'); ?></small>
             <div class="overSelect"></div>
           </div>
-          <div id="checkboxes" name="dietary" id="dietary">
+          <div id="checkboxes" name="dietary" id="dietary" class="mt-2">
             <?php
             $memberDietary = explode(",", $memberObject->dietary);
             foreach ($membersClass->dietaryOptions() AS $dietaryOption) {
