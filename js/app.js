@@ -73,6 +73,47 @@ function addGuest(oFormElement) {
 	return false;
 }
 
+function deleteGuest(this_id) {
+
+  var booking_uid = document.getElementById('bookingUID').value;
+  var mealUID = document.getElementById('mealUID').value;
+  var guest_uid = this_id;
+  var guestsList = document.getElementById('guests_list');
+  var mealGuestList = document.getElementById('meal_guest_list');
+
+  if (window.confirm("Are you sure you want to remove this guest from your booking?")) {
+
+      var xhr = new XMLHttpRequest();
+
+      var formData = new FormData();
+      formData.append("guest_uid", guest_uid);
+      formData.append("booking_uid", booking_uid);
+
+    	xhr.onload = async function() {
+        let url = 'nodes/widgets/_bookingGuestList.php?bookingUID=' + booking_uid;
+        let url2 = 'nodes/widgets/_mealGuestList.php?mealUID=' + mealUID;
+
+        // load the remote part into the guests_list div
+        guestsList.innerHTML = await (await fetch(url)).text();
+        mealGuestList.innerHTML = await (await fetch(url2)).text();
+
+        // Close the Guest Add modal
+        var modalGuestAdd = bootstrap.Modal.getInstance(document.getElementById('modal_guest_add'));
+    	}
+
+    	xhr.onerror = function(){
+    		// failure case
+    		alert (xhr.responseText);
+    	}
+
+    	xhr.open ("POST", "../actions/booking_delete_guest.php", true);
+    	xhr.send (formData);
+
+    	return false;
+	}
+
+}
+
 function displayMenu(this_id) {
   var mealUID = this_id.replace("menuUID-", "");
   var request = new XMLHttpRequest();

@@ -1,9 +1,11 @@
 <?php
 include_once("../../inc/autoload.php");
 
-if (!isset($mealObject)) {
-  $mealObject = new meal($_GET['mealUID']);
+if (!isset($bookingsClass)) {
+  $bookingsClass = new bookings();
 }
+
+$thisMealsBookings = $bookingsClass->bookingsByMealUID($_GET['mealUID']);
 
 ?>
 
@@ -11,18 +13,22 @@ if (!isset($mealObject)) {
 
 <ul>
 <?php
-foreach ($mealObject->bookings_this_meal() AS $booking) {
+foreach ($thisMealsBookings AS $booking) {
   $output = "";
-  $guestsArray = json_decode($booking['guests_array']);
+
+  $bookingObject = new booking($booking['uid']);
+  $memberObject = new member($bookingObject->member_ldap);
+
+  $guestsArray = $bookingObject->guestsArray();
   $totalGuests = count($guestsArray);
 
-  $memberObject = new member($booking['member_ldap']);
   $output .= "<li>" . $memberObject->public_displayName() . " (" . $totalGuests . autoPluralise(" guest", " guests", $totalGuests) . ")</li>";
 
   if ($totalGuests == $totalGuests) {
     $output .= "<ul>";
 
     foreach ($guestsArray AS $guest) {
+      $guest = json_decode($guest);
       $output .= "<li>" . $guest->guest_name . "</li>";
     }
     $output .= "</ul>";

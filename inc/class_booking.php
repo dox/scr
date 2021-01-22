@@ -36,15 +36,20 @@ class booking {
   public function addGuest($newGuestArray = null) {
 	  global $db;
 
-	  $allGuests = $this->guestsArray();
-	  array_push($allGuests, $newGuestArray);
-	  $allGuests = json_encode($allGuests);
+    $guest_uid = "x" . bin2hex(random_bytes(5));
+    $guest['guest_uid'] = $guest_uid;
+    foreach ($newGuestArray AS $key => $value) {
+      $guest[$key] = ($value);
+    }
 
 	  $sql  = "UPDATE " . self::$table_name;
-	  $sql .= " SET guests_array = '" . $allGuests . "' ";
+	  $sql .= " SET guests_array = JSON_SET(COALESCE(guests_array, '{}'), '$." . $guest_uid . "', '" . json_encode($guest) . "')";
 	  $sql .= " WHERE uid = '" . $this->uid . "' LIMIT 1";
 
+    echo $sql;
+
 	  $booking = $db->query($sql);
+    $logsClass->create("booking", "Guest added to [bookingUID:" . $this->uid . "] for [mealUID:" . $this->meal_uid . "]");
 
 	  return $this->guests_array;
   }
@@ -103,6 +108,21 @@ class booking {
 
     $delete = $db->query($sql);
     $logsClass->create("booking", "[bookingUID:" .  $bookingUID  . "] deleted by " . $_SESSION['username'] . " for [mealUID:" . $mealUID . "]");
+
+    return $delete;
+  }
+
+  public function deleteGuest($guest_uid = null) {
+    global $db;
+    global $logsClass;
+
+    $sql  = "UPDATE " . self::$table_name;
+    $sql .= " SET guests_array = JSON_REMOVE(guests_array, '$." . $guest_uid . "')";
+    $sql .= " WHERE uid = '" . $this->uid . "' ";
+    $sql .= " LIMIT 1";
+
+    $delete = $db->query($sql);
+    $logsClass->create("booking", "Guest deleted from [bookingUID:" .  $this->uid  . "] for [mealUID:" . $this->meal_uid . "]");
 
     return $delete;
   }
