@@ -1,5 +1,5 @@
 function bookMealQuick(this_id) {
-  event.preventDefault()
+  event.preventDefault();
 
   var mealUID = this_id.replace("mealUID-", "");
 
@@ -40,11 +40,44 @@ function bookMealQuick(this_id) {
   return false;
 }
 
+function addGuest(oFormElement) {
+  event.preventDefault();
+
+  var xhr = new XMLHttpRequest();
+
+	xhr.onload = async function() {
+    var bookingUID = document.getElementById('bookingUID').value;
+    var mealUID = document.getElementById('mealUID').value;
+    var guestsList = document.getElementById('guests_list');
+    var mealGuestList = document.getElementById('meal_guest_list');
+    let url = 'nodes/widgets/_bookingGuestList.php?bookingUID=' + bookingUID;
+    let url2 = 'nodes/widgets/_mealGuestList.php?mealUID=' + mealUID;
+
+    // load the remote part into the guests_list div
+    guestsList.innerHTML = await (await fetch(url)).text();
+    mealGuestList.innerHTML = await (await fetch(url2)).text();
+
+    // Close the Guest Add modal
+    var modalGuestAdd = bootstrap.Modal.getInstance(document.getElementById('modal_guest_add'));
+    modalGuestAdd.hide();
+	}
+
+	xhr.onerror = function(){
+		// failure case
+		alert (xhr.responseText);
+	}
+
+	xhr.open (oFormElement.method, oFormElement.action, true);
+	xhr.send (new FormData (oFormElement));
+
+	return false;
+}
+
 function displayMenu(this_id) {
   var mealUID = this_id.replace("menuUID-", "");
   var request = new XMLHttpRequest();
 
-  request.open('GET', '/nodes/_menu.php?mealUID=' + mealUID, true);
+  request.open('GET', '/nodes/widgets/_menu.php?mealUID=' + mealUID, true);
 
   request.onload = function() {
     if (request.status >= 200 && request.status < 400) {
@@ -59,7 +92,7 @@ function displayMenu(this_id) {
 
 function applyTemplate() {
   event.preventDefault();
-  
+
   var template_name = document.getElementById('template_name').value;
   var template_start_date = document.getElementById('template_start_date').value;
 

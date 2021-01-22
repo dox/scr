@@ -1,5 +1,5 @@
 <?php
-include_once("../inc/autoload.php");
+include_once("../../inc/autoload.php");
 
 //$_GET['mealUID'] = 7035;
 

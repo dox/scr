@@ -67,7 +67,7 @@ echo makeTitle($title, $subtitle);
 load_home('<?php echo date('Y-m-d', strtotime('this week -1 day', time())); ?>');
 async function load_home(this_id) {
   home.innerHTML = "<p class=\"text-center\"><svg width=\"4em\" height=\"4em\" class=\"text-muted spinning\"><use xlink:href=\"img/icons.svg#spinner\"/></svg></p>";
-  let url = 'nodes/_weekly_meals.php?id=' + this_id;
+  let url = 'nodes/widgets/_weekly_meals.php?id=' + this_id;
 
   home.innerHTML = await (await fetch(url)).text();
 }

@@ -37,7 +37,7 @@ if ($_SESSION['admin'] == true) {
   //$icons[] = array("class" => "btn-warning", "name" => $icon_edit. " Edit Meal", "value" => "a href=\"index.php?n=admin_meal=" . $meal->uid . "\"");
 }
 $icons[] = array("class" => "btn-danger", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#trash\"/></svg> Delete Booking", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#staticBackdrop\"");
-$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#person-plus\"/></svg> Add Guest", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#exampleModal\"");
+$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#person-plus\"/></svg> Add Guest", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#modal_guest_add\"");
 
 echo makeTitle($title, $subtitle, $icons);
 ?>
@@ -102,47 +102,10 @@ echo makeTitle($title, $subtitle, $icons);
 
         <hr />
 
-        <h4 class="d-flex justify-content-between align-items-center mb-3">
-          <span class="text-muted">Your Guests</span>
-          <span class="badge bg-secondary rounded-pill"><?php echo count($bookingObject->guestsArray()); ?></span>
-        </h4>
-        <ul class="list-group mb-3">
-          <?php
-          foreach ($bookingObject->guestsArray() AS $guest) {
-            $deleteIcon = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-x-circle-fill\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z\"/></svg>";
-
-            $output  = "<li class=\"list-group-item d-flex justify-content-between lh-sm\">";
-            $output .= "<div>";
-            $output .= "<h6 class=\"my-0\">" . $guest['guest_name'] . " " . $badge . "</h6>";
-            $output .= "<small class=\"text-muted\">" . $guest['guest_dietary'] . "</small>";
-            if ($guest['guest_domus'] == "on") {
-            	$output .= "<br /><span class=\"badge rounded-pill bg-info text-dark\">Domus</span>
-            	<small class=\"text-muted\">" . $guest['guest_domus_description'] . "</small>";
-            }
-            $output .= "</div>";
-            $output .= "<span class=\"text-muted\">" . $deleteIcon . "</span>";
-            $output .= "</li>";
-
-            echo $output;
-          }
-          ?>
-        </ul>
-
-
-
+        <div id="guests_list"><?php include_once("widgets/_bookingGuestList.php"); ?></div>
       </div>
       <div class="col-md-7 col-lg-8">
-        <h4 class="mb-3">Guest List</h4>
-        <ul>
-        <?php
-        foreach ($meal->bookings_this_meal() AS $booking) {
-          $totalGuests = count(json_decode($booking['guests_array']));
-
-          $memberObject = new member($booking['member_ldap']);
-          echo "<li>" . $memberObject->public_displayName() . " (" . $totalGuests . autoPluralise(" guest", " guests", $totalGuests) . ")</li>";
-        }
-        ?>
-        </ul>
+        <div id="meal_guest_list"><?php include_once("widgets/_mealGuestList.php"); ?></div>
 
         <?php
         if (isset($meal->menu)) {
@@ -159,10 +122,10 @@ echo makeTitle($title, $subtitle, $icons);
     </div>
 
 <!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="modal_guest_add" tabindex="-1" aria-labelledby="modal_guest_add" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
-      <form method="post" action="../actions/booking_add_guest.php" onsubmit="return submitForm(this);">
+      <form method="post" action="../actions/booking_add_guest.php" onsubmit="return addGuest(this);">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLabel">Add Guest</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -206,7 +169,7 @@ echo makeTitle($title, $subtitle, $icons);
               <span class="col"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#graduation-cap"></svg> Domus</span>
               <span class="col-auto">
                 <label class="form-check form-check-single form-switch">
-                  <input class="form-check-input" id="guest_domus" type="checkbox" <?php if ($bookingObject->domus == 1) { echo "checked";} ?> onchange="guestDomus(this.id)">
+                  <input class="form-check-input" id="guest_domus" name="guest_domus" type="checkbox" <?php if ($bookingObject->domus == 1) { echo "checked";} ?> onchange="guestDomus(this.id)">
                 </label>
               </span>
               <input type="text" class="form-control" id="domus_description" placeholder="Domus reason (required)" hidden>
@@ -250,6 +213,7 @@ echo makeTitle($title, $subtitle, $icons);
         <button type="submit" class="btn btn-primary"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#person-plus"/></svg> Add Guest</button>
       </div>
       <input type="hidden" id="bookingUID" name="bookingUID" value="<?php echo $bookingObject->uid; ?>">
+      <input type="hidden" id="mealUID" name="mealUID" value="<?php echo $bookingObject->meal_uid; ?>">
       </form>
     </div>
   </div>

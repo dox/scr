@@ -1,5 +1,5 @@
 <?php
-include_once("../inc/autoload.php");
+include_once("../../inc/autoload.php");
 $termsClass = new terms();
 $currentTerm = new term();
 
