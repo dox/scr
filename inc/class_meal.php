@@ -73,8 +73,14 @@ class meal {
     $output .= "</ul>";
 
     $output .= "</p>";
-
-    $output .= "<small class=\"d-block\">" . $this->total_bookings_this_meal() . "/" . $this->totalCapacity() . " " . $_SESSION['type'] . " bookings</small>";
+    
+    if ($this->total_bookings_this_meal('SCR') > 0 || $this->totalCapacity('SCR') > 0) {
+      $scrCapacity = "(SCR " . $this->total_bookings_this_meal('SCR') . "/" . $this->totalCapacity('SCR') . ")";
+    }
+    if ($this->total_bookings_this_meal('MCR') > 0 || $this->totalCapacity('MCR') > 0) {
+      $mcrCapacity = "(MCR " . $this->total_bookings_this_meal('MCR') . "/" . $this->totalCapacity('MCR') . ")";
+    }
+    $output .= "<small class=\"d-block\">Bookings: " . $scrCapacity . "  " .  $mcrCapacity . "</small>";
 
     $output .= "</div>";
     $output .= "<div class=\"card-footer bg-white border-0 px-0 py-0\">";
@@ -153,14 +159,13 @@ class meal {
     return $output;
   }
 
-  public function totalCapacity() {
-    $scrCapacity = $this->scr_capacity;
-    $mcrCapacity = $this->mcr_capacity;
-
-    if ($_SESSION['type'] == "SCR") {
-      $totalCapacity = $scrCapacity;
+  public function totalCapacity($memberType = null) {
+    if ($memberType == "SCR") {
+      $totalCapacity = $this->scr_capacity;
+    } elseif ($memberType == "MCR") {
+      $totalCapacity = $this->mcr_capacity;
     } else {
-      $totalCapacity = $mcrCapacity;
+      $totalCapacity = $this->scr_capacity + $this->mcr_capacity;
     }
 
     return $totalCapacity;
@@ -189,16 +194,24 @@ class meal {
     return $bookings;
   }
 
-  public function total_bookings_this_meal() {
+  public function total_bookings_this_meal($memberType = null) {
     global $db;
-
-    $sql .= "SELECT JSON_LENGTH(guests_array) AS totalGuestsPerBooking FROM bookings";
-    $sql .= " WHERE meal_uid = '" . $this->uid . "'";
-    if ($_SESSION['type'] == "SCR") {
+    
+    if ($memberType == "SCR") {
+      $sql .= "SELECT JSON_LENGTH(guests_array) AS totalGuestsPerBooking FROM bookings";
+      $sql .= " WHERE meal_uid = '" . $this->uid . "'";
       $sql .= " AND type = 'SCR'";
-    } else {
+    } elseif ($memberType == "MCR") {
+      $sql .= "SELECT JSON_LENGTH(guests_array) AS totalGuestsPerBooking FROM bookings";
+      $sql .= " WHERE meal_uid = '" . $this->uid . "'";
       $sql .= " AND type = 'MCR'";
+    } else {
+      $sql .= "SELECT JSON_LENGTH(guests_array) AS totalGuestsPerBooking FROM bookings";
+      $sql .= " WHERE meal_uid = '" . $this->uid . "'";
     }
+
+    
+    
     $sql2 = "SELECT count(*) as totalBookings, SUM(x.totalGuestsPerBooking) AS totalGuests FROM (" . $sql . ") AS x";
 
 

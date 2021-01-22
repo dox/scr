@@ -55,7 +55,7 @@ class member {
     }
 
     if (!empty($this->lastname)) {
-      $lastname = $this->lastname . " ";
+      $lastname = $this->lastname;
     }
 
     $name = $title . $firstname . $lastname;
