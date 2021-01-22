@@ -17,6 +17,12 @@ $previousMealUIDS = $memberObject->mealUIDS_previous();
 
 $dietaryOptionsMax = $settingsClass->value('meal_dietary_allowed');
 
+if ($_SESSION['admin'] == true) {
+  $disabledCheck = "";
+} else {
+  $disabledCheck = " disabled ";
+}
+
 if (isset($_POST['memberUID'])) {
   if (!isset($_POST['opt_in'])) {
     $_POST['opt_in'] = 0;
@@ -131,7 +137,7 @@ include_once('_member_stats.php');
           <label for="ldap" class="form-label">LDAP Username</label>
           <div class="input-group">
             <span class="input-group-text" onclick="ldapLookup()">@</span>
-            <input type="text" class="form-control" name="ldap" id="ldap" placeholder="LDAP Username" value="<?php echo $memberObject->ldap; ?>" required>
+            <input type="text" class="form-control" name="ldap" id="ldap" placeholder="LDAP Username" value="<?php echo $memberObject->ldap; ?>" <?php echo $disabledCheck; ?>required>
 
             <div class="invalid-feedback">
               LDAP Username is required.
@@ -141,7 +147,7 @@ include_once('_member_stats.php');
 
         <div class="col-md-5">
           <label for="category" class="form-label">Member Category</label>
-          <select class="form-select" name="category" id="category" required>
+          <select class="form-select" name="category" id="category" <?php echo $disabledCheck; ?> required>
             <?php
             foreach ($membersClass->memberCategories() AS $category) {
               if ($category == $memberObject->category) {
@@ -198,7 +204,7 @@ include_once('_member_stats.php');
         </div>
         <div class="col-12">
           <label for="enabled" class="form-label">Enabled/Disabled Status</label>
-          <select class="form-select" name="enabled" id="enabled" required>
+          <select class="form-select" name="enabled" id="enabled" <?php echo $disabledCheck; ?> required>
             <option value="1" <?php if ($memberObject->enabled == "1") { echo " selected"; } ?>>Enabled</option>
             <option value="0" <?php if ($memberObject->enabled == "0") { echo " selected"; } ?>>Disabled</option>
           </select>
@@ -224,7 +230,9 @@ include_once('_member_stats.php');
             <label class="row">
               <span class="col"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#graduation-cap"></svg> Always Domus <small>Overrides meal setting</small></span>
               <span class="col-auto">
-                <label class="form-check form-check-single form-switch"><input class="form-check-input" type="checkbox" id="default_domus" name="default_domus" value="1" <?php if ($memberObject->default_domus == "1") { echo " checked";} ?>></label>
+                <label class="form-check form-check-single form-switch">
+                  <input class="form-check-input" type="checkbox" id="default_domus" name="default_domus" value="1" <?php if ($memberObject->default_domus == "1") { echo " checked";} ?> <?php echo $disabledCheck; ?>>
+                </label>
               </span>
             </label>
           </div>
