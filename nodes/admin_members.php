@@ -24,88 +24,150 @@ if (isset($_POST['precedence'])) {
 
   $logsClass->create("members_update", "Members order updated");
 }
-$membersEnabled = $membersClass->allEnabled('scr');
-$membersDisabled = $membersClass->allDisabled('scr');
+$scrMembersEnabled = $membersClass->allEnabled('scr');
+$scrMembersDisabled = $membersClass->allDisabled('scr');
+$mcrMembersEnabled = $membersClass->allEnabled('mcr');
+$mcrMembersDisabled = $membersClass->allDisabled('mcr');
 
 ?>
 <?php
-$title = "SCR Members";
+$title = "Members";
 $subtitle = "Members, and their order of precedence.";
 $icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#person-plus\"/></svg> Add New", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#exampleModal\"");
 
 echo makeTitle($title, $subtitle, $icons);
 ?>
 
-<form method="post" id="termForm" action="index.php?n=admin_members">
-  <!--<div class="list-group" id="members_list">-->
-  <ul class="list-group" id="members_list">
-    <?php
-    $scrStewardLDAP = $settingsClass->value('member_steward');
-
-    foreach ($membersEnabled AS $member) {
-      $memberObject = new member($member['uid']);
-      $handle  = "<svg width=\"1em\" height=\"1em\" class=\"handle\"><use xlink:href=\"img/icons.svg#grip-vertical\"/></svg>";
-
-
-      $output  = "<li class=\"list-group-item\" id=\"" . $memberObject->uid . "\">";
-      $output .= $handle;
-      $output .= "<a href=\"index.php?n=member&memberUID=" . $memberObject->uid . "\">" . $memberObject->displayName() . "</a>";
-
-      $output .= "<span class=\"float-end\">";
-      $output .= $memberObject->stewardBadge() ." ";
-
-      $output .= $memberObject->adminBadge() ." ";
-
-      $output .= "<span class=\"text-muted\">" . $memberObject->category . "</span>";
-
-      $output .= "</span>";
-      $output .= "</li>";
-
-      echo $output;
-    }
-    ?>
-  </ul>
-
-  <input type="hidden" name="precedence" id="precedence" value="" />
-  <br />
-  <button type="submit" onclick="itterate()" class="btn btn-block btn-primary">Save Order</button>
-</form>
-
-<hr />
-<h2>Disabled Dining Rights</h2>
-<ul class="list-group">
-  <?php
-  foreach ($membersDisabled AS $member) {
-    $memberObject = new member($member['uid']);
-    $handle  = "<svg width=\"1em\" height=\"1em\" class=\"handle\"><use xlink:href=\"img/icons.svg#grip-vertical\"/></svg>";
-
-
-    $output  = "<li class=\"list-group-item\" id=\"" . $memberObject->uid . "\">";
-    $output .= "<a href=\"index.php?n=member&memberUID=" . $memberObject->uid . "\">" . $memberObject->displayName() . "</a>";
-
-    $output .= "<span class=\"float-end\">";
-    if ($memberObject->ldap == $scrStewardLDAP) {
-      $output .= "<a href=\"#\" data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" title=\"SCR Steward\" class=\"list-item-actions text-warning\"><svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#star\"/></svg></a> ";
-    }
-    $output .= "<span class=\"text-muted\">" . $memberObject->category . "</span>";
-
-    $output .= "</span>";
-    $output .= "</li>";
-
-    echo $output;
-  }
-  ?>
+<ul class="nav nav-tabs nav-fill" id="myTab" role="tablist">
+  <li class="nav-item" role="presentation">
+    <a class="nav-link active" id="scr-tab" data-bs-toggle="tab" href="#scr" role="tab" aria-controls="scr" aria-selected="true">SCR (<?php echo count($scrMembersEnabled);?>)</a>
+  </li>
+  <li class="nav-item" role="presentation">
+    <a class="nav-link" id="mcr-tab" data-bs-toggle="tab" href="#mcr" role="tab" aria-controls="mcr" aria-selected="false">MCR (<?php echo count($mcrMembersEnabled);?>)</a>
+  </li>
 </ul>
 
+<div class="tab-content" id="membersContent">
+  <div class="tab-pane fade show active" id="scr" role="tabpanel" aria-labelledby="scr-tab">
+    <form method="post" id="termForm" action="index.php?n=admin_members">
+      <!--<div class="list-group" id="members_list">-->
+      <ul class="list-group" id="scr_members_list">
+        <?php
+        $scrStewardLDAP = $settingsClass->value('member_steward');
+
+        foreach ($scrMembersEnabled AS $member) {
+          $memberObject = new member($member['uid']);
+          $handle  = "<svg width=\"1em\" height=\"1em\" class=\"handle\"><use xlink:href=\"img/icons.svg#grip-vertical\"/></svg>";
+
+
+          $output  = "<li class=\"list-group-item\" id=\"" . $memberObject->uid . "\">";
+          $output .= $handle;
+          $output .= "<a href=\"index.php?n=member&memberUID=" . $memberObject->uid . "\">" . $memberObject->displayName() . "</a>";
+
+          $output .= "<span class=\"float-end\">";
+          $output .= $memberObject->stewardBadge() ." ";
+
+          $output .= $memberObject->adminBadge() ." ";
+
+          $output .= "<span class=\"text-muted\">" . $memberObject->category . "</span>";
+
+          $output .= "</span>";
+          $output .= "</li>";
+
+          echo $output;
+        }
+        ?>
+      </ul>
+
+      <input type="hidden" name="precedence" id="precedence" value="" />
+      <br />
+      <button type="submit" onclick="itterate()" class="btn btn-block btn-primary">Save Order</button>
+    </form>
+
+    <hr />
+    <h2>Disabled Dining Rights</h2>
+    <ul class="list-group">
+      <?php
+      foreach ($scrMembersDisabled AS $member) {
+        $memberObject = new member($member['uid']);
+        $handle  = "<svg width=\"1em\" height=\"1em\" class=\"handle\"><use xlink:href=\"img/icons.svg#grip-vertical\"/></svg>";
+
+
+        $output  = "<li class=\"list-group-item\" id=\"" . $memberObject->uid . "\">";
+        $output .= "<a href=\"index.php?n=member&memberUID=" . $memberObject->uid . "\">" . $memberObject->displayName() . "</a>";
+
+        $output .= "<span class=\"float-end\">";
+        if ($memberObject->ldap == $scrStewardLDAP) {
+          $output .= "<a href=\"#\" data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" title=\"SCR Steward\" class=\"list-item-actions text-warning\"><svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#star\"/></svg></a> ";
+        }
+        $output .= "<span class=\"text-muted\">" . $memberObject->category . "</span>";
+
+        $output .= "</span>";
+        $output .= "</li>";
+
+        echo $output;
+      }
+      ?>
+    </ul>
+  </div>
+  <div class="tab-pane fade" id="mcr" role="tabpanel" aria-labelledby="mcr-tab">
+    <ul class="list-group" id="mcr_members_list">
+      <?php
+      foreach ($mcrMembersEnabled AS $member) {
+        $memberObject = new member($member['uid']);
+
+        $output  = "<li class=\"list-group-item\" id=\"" . $memberObject->uid . "\">";
+        $output .= "<a href=\"index.php?n=member&memberUID=" . $memberObject->uid . "\">" . $memberObject->displayName() . "</a>";
+
+        $output .= "<span class=\"float-end\">";
+        $output .= "<span class=\"text-muted\">" . $memberObject->category . "</span>";
+
+        $output .= "</span>";
+        $output .= "</li>";
+
+        echo $output;
+      }
+      ?>
+    </ul>
+
+    <hr />
+
+    <h2>Disabled Dining Rights</h2>
+    <ul class="list-group">
+      <?php
+      foreach ($mcrMembersDisabled AS $member) {
+        $memberObject = new member($member['uid']);
+
+        $output  = "<li class=\"list-group-item\" id=\"" . $memberObject->uid . "\">";
+        $output .= "<a href=\"index.php?n=member&memberUID=" . $memberObject->uid . "\">" . $memberObject->displayName() . "</a>";
+
+        $output .= "<span class=\"float-end\">";
+        if ($memberObject->ldap == $scrStewardLDAP) {
+          $output .= "<a href=\"#\" data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" title=\"SCR Steward\" class=\"list-item-actions text-warning\"><svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#star\"/></svg></a> ";
+        }
+        $output .= "<span class=\"text-muted\">" . $memberObject->category . "</span>";
+
+        $output .= "</span>";
+        $output .= "</li>";
+
+        echo $output;
+      }
+      ?>
+    </ul>
+  </div>
+</div>
+
+
+
 <script>
-new Sortable(members_list, {
+new Sortable(scr_members_list, {
   handle: '.handle',
   animation: 150,
   ghostClass: 'blue-background-class'
 });
 
 function itterate() {
-  var selection = document.getElementById("members_list").getElementsByClassName("list-group-item");
+  var selection = document.getElementById("scr_members_list").getElementsByClassName("list-group-item");
 
   var arrayMembersUIDs = '';
 
