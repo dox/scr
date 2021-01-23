@@ -3,8 +3,8 @@ include_once("../inc/autoload.php");
 
 admin_gatekeeper();
 
-//$_POST['template_start_date'] = "2021-01-17";
-//$_POST['template_name'] = "template_1";
+$_POST['template_start_date'] = "2021-01-24";
+$_POST['template_name'] = "template_1";
 
 $templateName = $_POST['template_name'];
 $givenStartDate = date('Y-m-d', strtotime($_POST['template_start_date'])); //must be a Sunday!
@@ -35,7 +35,7 @@ if (date('N', strtotime($givenStartDate)) == 7) {
         $newMeal['date_meal'] = $newMealDateTime;
         $newMeal['date_cutoff'] = $newCutOff;
         $newMeal['location'] = $mealObject->location;
-        $newMeal['allowed_domus'] = $mealObject->allowed_domus;
+        $newMeal['domus'] = $mealObject->domus;
         $newMeal['allowed_wine'] = $mealObject->allowed_wine;
         $newMeal['allowed_dessert'] = $mealObject->allowed_dessert;
         $newMeal['scr_capacity'] = $mealObject->scr_capacity;
@@ -44,7 +44,7 @@ if (date('N', strtotime($givenStartDate)) == 7) {
         $newMeal['mcr_guests'] = $mealObject->mcr_guests;
         $newMeal['scr_dessert_capacity'] = $mealObject->scr_dessert_capacity;
         $newMeal['mcr_dessert_capacity'] = $mealObject->mcr_dessert_capacity;
-        $newMeal['menu'] = $mealObject->menu;
+        $newMeal['menu'] = htmlspecialchars($mealObject->menu);
         $newMeal['notes'] = $mealObject->notes;
         $newMeal['photo'] = $mealObject->photo;
 
