@@ -44,7 +44,7 @@ class meal {
     $output .= "<div class=\"card border-light\">";
 
     if (!empty($this->photo)) {
-      $imageURL = "../img/cards/" . $this->photo;
+      $imageURL = "../../img/cards/" . $this->photo;
       if(file_exists($imageURL)) {
         $output .= "<img src=\"" . $imageURL . "\" class=\"card-img-top rounded-top\" alt=\"Meal Image\">";
       }
@@ -73,7 +73,7 @@ class meal {
     $output .= "</ul>";
 
     $output .= "</p>";
-    
+
     if ($this->total_bookings_this_meal('SCR') > 0 || $this->totalCapacity('SCR') > 0) {
       $scrCapacity = "(SCR " . $this->total_bookings_this_meal('SCR') . "/" . $this->totalCapacity('SCR') . ")";
     }
@@ -196,7 +196,7 @@ class meal {
 
   public function total_bookings_this_meal($memberType = null) {
     global $db;
-    
+
     if ($memberType == "SCR") {
       $sql .= "SELECT JSON_LENGTH(guests_array) AS totalGuestsPerBooking FROM bookings";
       $sql .= " WHERE meal_uid = '" . $this->uid . "'";
@@ -210,8 +210,8 @@ class meal {
       $sql .= " WHERE meal_uid = '" . $this->uid . "'";
     }
 
-    
-    
+
+
     $sql2 = "SELECT count(*) as totalBookings, SUM(x.totalGuestsPerBooking) AS totalGuests FROM (" . $sql . ") AS x";
 
 
@@ -292,6 +292,8 @@ class meal {
 
     $sql .= " (" . implode(",", $sqlColumns) . ") ";
     $sql .= " VALUES (" . implode(",", $sqlValues) . ")";
+
+    echo $sql;
 
     $create = $db->query($sql);
 
