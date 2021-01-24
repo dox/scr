@@ -44,6 +44,7 @@
 	            	<a class="dropdown-item" href="index.php?n=admin_meals">Meals</a>
 	            	<a class="dropdown-item" href="index.php?n=admin_terms">Terms</a>
 	            	<a class="dropdown-item" href="index.php?n=admin_logs">Logs</a>
+								<a class="dropdown-item" href="index.php?n=admin_notifications">Notifications</a>
 								<a class="dropdown-item" href="index.php?n=admin_settings">Site Settings</a>
 								<a class="dropdown-item" href="index.php?n=admin_reports">Reports</a>
 	            	<div class="dropdown-divider"></div>
@@ -57,6 +58,12 @@
 
 	</div>
 	</nav>
-	<?php include_once("notifications.php"); ?>
+	<?php
+	$notificationsClass = new notifications();
+	$notifications = $notificationsClass->allCurrentForMember();
+	if (count($notifications)) {
+		include_once("notifications.php");
+	}
+	?>
 
 </header>

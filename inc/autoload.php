@@ -43,6 +43,7 @@ require_once($root . '/inc/globalFunctions.php');
 require_once($root . '/inc/database.php');
 require_once($root . '/inc/class_settings.php');
 require_once($root . '/inc/class_logs.php');
+require_once($root . '/inc/class_notifications.php');
 require_once($root . '/inc/class_term.php');
 require_once($root . '/inc/class_terms.php');
 require_once($root . '/inc/class_member.php');
