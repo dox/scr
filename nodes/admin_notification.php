@@ -39,9 +39,9 @@ echo makeTitle($title, $subtitle, $icons);
         $output  = "<li class=\"list-group-item d-flex justify-content-between lh-sm\">";
         $output .= "<div class=\"text-muted\">";
         $output .= "<h6 class=\"my-0\"><a href=\"index.php?n=admin_meal&mealUID=" . $mealObject->uid . "\" class=\"text-muted\">" . $mealObject->name . "</a></h6>";
-        $output .= "<small class=\"text-muted\">" . $memberObject->displayName() . "</small>";
+        $output .= "<span class=\"text-muted\">" . $memberObject->displayName() . "</span>";
         $output .= "</div>";
-        $output .= "<span class=\"text-muted\">" . dateDisplay($dismissedDate) . "</span>";
+        $output .= "<small class=\"text-muted\">" . dateDisplay($dismissedDate) . " " . timeDisplay($dismissedDate) . "</small>";
 
         $output .= "</li>";
 

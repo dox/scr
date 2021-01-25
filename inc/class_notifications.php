@@ -8,6 +8,8 @@ class notifications {
   public $name;
   public $message;
   public $members_array;
+  public $date_start;
+  public $date_end;
 
   public function all() {
     global $db;
@@ -41,7 +43,7 @@ class notifications {
 
     $sql  = "SELECT * FROM " . self::$table_name;
     $sql .= " WHERE CURDATE() BETWEEN DATE(date_start) AND DATE(date_end)";
-    $sql .= " AND JSON_EXTRACT(members_array, \"$." . $member . "\") IS null";
+    $sql .= " AND JSON_EXTRACT(members_array, '$.\"" . $member . "\"') IS null";
     $sql .= " ORDER BY date_start DESC";
 
     $notifications = $db->query($sql)->fetchAll();
@@ -81,7 +83,6 @@ class notifications {
     $notificationIcon = "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#chat-dots\"/></svg>";
 
     $output  = "<div class=\"alert notificationAlert " . $class . " " . $dismissClass . " fade show\" id=\"" . $array['uid'] . "\" role=\"alert\">";
-    //$output .= "<div class=\"\">";
     $output .= $notificationIcon . " " . $array['message'];
     $output .= $dismissButton;
     $output .= "</div>";
@@ -117,29 +118,13 @@ class notifications {
     global $db;
 
     $sql  = "UPDATE " . self::$table_name;
-    $sql .= " SET members_array = JSON_SET(COALESCE(members_array, '{}'), '$." . $_SESSION['username'] . "', '" . date('Y-m-d H:i:s') . "')";
+    $sql .= " SET members_array = JSON_SET(COALESCE(members_array, '{}'), '$.\"" . $_SESSION['username'] . "\"', '" . date('Y-m-d H:i:s') . "')";
 	  $sql .= " WHERE uid = '" . $notificationUID . "' LIMIT 1";
 
     $update = $db->query($sql);
 
     return $update;
   }
-
-  /*
-  public function updateJSONTEMP($array = null) {
-    global $db;
-
-    $sql  = "UPDATE " . self::$table_name;
-	  $sql .= " SET members_array = JSON_SET(COALESCE(members_array, '{}'), '$." . $array['member_ldap'] . "', '" . $array['status'] . "')";
-	  $sql .= " WHERE uid = '" . $array['notificationUID'] . "' LIMIT 1";
-
-    echo $sql;
-
-    $update = $db->query($sql);
-
-    return $update;
-  }
-  */
 
   public function update($array = null) {
     global $db;
