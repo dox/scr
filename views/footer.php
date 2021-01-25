@@ -8,8 +8,7 @@
       <a class="link-secondary" href="https://github.com/dox/scr">SCR Meal Booking</a>
       <small class="d-block mb-3 text-muted">&copy; 2008-<?php echo date('Y'); ?></small>
     </div>
-    <div class="col-4">
-      <h5>Information</h5>
+    <div class="col-4 text-end">
       <ul class="list-unstyled text-small">
         <li><a class="link-secondary" href="index.php?n=accessibility">Accessibility Statement</a></li>
       </ul>

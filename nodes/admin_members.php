@@ -47,7 +47,7 @@ echo makeTitle($title, $subtitle, $icons);
   </li>
 </ul>
 
-<div class="tab-content" id="membersContent">
+<div class="tab-content mt-3" id="membersContent">
   <div class="tab-pane fade show active" id="scr" role="tabpanel" aria-labelledby="scr-tab">
     <form method="post" id="termForm" action="index.php?n=admin_members">
       <!--<div class="list-group" id="members_list">-->

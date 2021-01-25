@@ -28,7 +28,7 @@ echo makeTitle($title, $subtitle, $icons);
 <div class="row g-3">
   <div class="col-md-5 col-lg-4 order-md-last">
     <h4 class="d-flex justify-content-between align-items-center mb-3">
-      <span class="text-muted">Notification Dismisses</span>
+      <span>Notification Dismisses</span>
       <span class="badge bg-secondary rounded-pill"><?php echo count($members_dismissed_array); ?></span>
     </h4>
     <ul class="list-group mb-3">
@@ -38,8 +38,8 @@ echo makeTitle($title, $subtitle, $icons);
 
         $output  = "<li class=\"list-group-item d-flex justify-content-between lh-sm\">";
         $output .= "<div class=\"text-muted\">";
-        $output .= "<h6 class=\"my-0\"><a href=\"index.php?n=admin_meal&mealUID=" . $mealObject->uid . "\" class=\"text-muted\">" . $mealObject->name . "</a></h6>";
-        $output .= "<span class=\"text-muted\">" . $memberObject->displayName() . "</span>";
+        $output .= "<h6 class=\"my-0\"><a href=\"index.php?n=member&memberUID=" . $memberObject->uid . "\" class=\"text-muted\">" . $memberObject->displayName() . "</a></h6>";
+        //$output .= "<span class=\"text-muted\">" . $memberObject->displayName() . "</span>";
         $output .= "</div>";
         $output .= "<small class=\"text-muted\">" . dateDisplay($dismissedDate) . " " . timeDisplay($dismissedDate) . "</small>";
 

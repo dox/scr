@@ -48,7 +48,7 @@ echo makeTitle($title, $subtitle, $icons);
 <div class="row g-3">
   <div class="col-md-5 col-lg-4 order-md-last">
     <h4 class="d-flex justify-content-between align-items-center mb-3">
-      <span class="text-muted">Diners Signed Up</span>
+      <span>Diners Signed Up</span>
       <span class="badge bg-secondary rounded-pill"><?php echo count($mealObject->bookings_this_meal()); ?></span>
     </h4>
     <ul class="list-group mb-3">

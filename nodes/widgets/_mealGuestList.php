@@ -22,7 +22,11 @@ foreach ($thisMealsBookings AS $booking) {
   $guestsArray = $bookingObject->guestsArray();
   $totalGuests = count($guestsArray);
 
-  $output .= "<li>" . $memberObject->public_displayName() . " (" . $totalGuests . autoPluralise(" guest", " guests", $totalGuests) . ")</li>";
+  if ($totalGuests > 0) {
+    $output .= "<li>" . $memberObject->public_displayName() . " (" . $totalGuests . autoPluralise(" guest", " guests", $totalGuests) . ")</li>";
+  } else {
+    $output .= "<li>" . $memberObject->public_displayName() . "</li>";
+  }
 
   if ($totalGuests == $totalGuests) {
     $output .= "<ul>";

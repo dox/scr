@@ -42,7 +42,7 @@ echo makeTitle($title, $subtitle, $icons);
     $output  = "<a href=\"index.php?n=admin_term&termUID=" . $termObject->uid . "\" class=\"list-group-item " . $class . " list-group-item-action\">";
     $output .= "<div class=\"d-flex w-100 justify-content-between\">";
     $output .= "<h5 class=\"mb-1\">" . $termObject->name . "</h5>";
-    $output .= "<small class=\"text-muted\">" . "<span class=\"badge bg-primary rounded-pill\">" . $termObject->weeksInTerm() . " weeks</span> " . $log['ip'] . "</small>";
+    $output .= "<small class=\"text-muted\">" . "<span class=\"badge bg-primary rounded-pill\">" . count($termObject->mealsThisTerm()) . " meals</span> " . $log['ip'] . "</small>";
     //$output .= "<p id=\"" . $term['uid'] . "\" onclick=\"dismiss(this.id);\">dismiss this box</p>";
     //$output .= "<span class=\"badge bg-primary rounded-pill\">" . $log['type'] . "</span>";
     $output .= "</div>";

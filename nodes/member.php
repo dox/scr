@@ -56,7 +56,7 @@ include_once('_member_stats.php');
 <div class="row g-3">
   <div class="col-md-5 col-lg-4 order-md-last">
     <h4 class="d-flex justify-content-between align-items-center mb-3">
-      <span class="text-muted">Upcoming Meals</span>
+      <span>Upcoming Meals</span>
       <span class="badge bg-secondary rounded-pill"><?php echo count($upcomingMealUIDS); ?></span>
     </h4>
     <ul class="list-group mb-3">
@@ -72,7 +72,7 @@ include_once('_member_stats.php');
     <hr />
 
     <h4 class="d-flex justify-content-between align-items-center mb-3">
-      <span class="text-muted">Recent Meals</span>
+      <span>Recent Meals</span>
       <span class="badge bg-secondary rounded-pill"><?php echo count($previousMealUIDS); ?></span>
     </h4>
     <ul class="list-group mb-3">
@@ -232,7 +232,7 @@ include_once('_member_stats.php');
           <hr />
           <div>
             <label class="row">
-              <span class="col"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#graduation-cap"></svg> Always Domus <small>Overrides meal setting</small></span>
+              <span class="col"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#graduation-cap"></svg> Always Domus <small>(Overrides meal setting)</small></span>
               <span class="col-auto">
                 <label class="form-check form-check-single form-switch">
                   <input class="form-check-input" type="checkbox" id="default_domus" name="default_domus" value="1" <?php if ($memberObject->default_domus == "1") { echo " checked";} ?> <?php echo $disabledCheck; ?>>
@@ -258,10 +258,8 @@ include_once('_member_stats.php');
           </div>
         </div>
 
-        <hr class="my-4">
-
         <input type="hidden" name="memberUID" id="memberUID" value="<?php echo $memberObject->uid;?>">
-        <button class="btn btn-primary btn-lg btn-block" type="submit">Update Member Details</button>
+        <button class="btn btn-primary  btn-block" type="submit">Update Member Details</button>
       </div>
     </form>
   </div>

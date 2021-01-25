@@ -35,7 +35,7 @@ echo makeTitle($title, $subtitle, $icons);
   <div class="col-md-5 col-lg-4 order-md-last">
     <div class="divide-y">
       <h4 class="d-flex justify-content-between align-items-center mb-3">
-        <span class="text-muted">Templates</span>
+        <span>Templates</span>
         <span class="badge bg-secondary rounded-pill"><?php echo count($mealsTemplates); ?></span>
       </h4>
 
@@ -63,7 +63,7 @@ echo makeTitle($title, $subtitle, $icons);
   </div>
   <div class="col-md-7 col-lg-8">
     <h4 class="d-flex justify-content-between align-items-center mb-3">
-      <span class="text-muted">Meals</span>
+      <span>Meals</span>
       <span class="badge bg-secondary rounded-pill"><?php echo $mealsClass->allCount(); ?></span>
     </h4>
 

@@ -161,5 +161,16 @@ class term {
 
     return $deleteMeal;
   }
+
+  public function mealsThisTerm() {
+    global $db;
+
+    $sql  = "SELECT * FROM meals";
+    $sql .= " WHERE DATE(date_meal) >= '" . $this->date_start . "' AND DATE(date_meal) <= '" . $this->date_end . "'";
+
+    $meals = $db->query($sql)->fetchAll();
+
+    return $meals;
+  }
 }
 ?>

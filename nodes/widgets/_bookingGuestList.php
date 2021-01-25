@@ -8,7 +8,7 @@ if (!isset($bookingObject)) {
 ?>
 
 <h4 class="d-flex justify-content-between align-items-center mb-3">
-  <span class="text-muted">Your Guests</span>
+  <span>Your Guests</span>
   <span class="badge bg-secondary rounded-pill"><?php echo count($bookingObject->guestsArray()); ?></span>
 </h4>
 <ul class="list-group mb-3" id="guests_list">

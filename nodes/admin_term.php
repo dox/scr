@@ -29,7 +29,7 @@ echo makeTitle($title, $subtitle, $icons);
 <div class="row g-3">
   <div class="col-md-5 col-lg-4 order-md-last">
     <h4 class="d-flex justify-content-between align-items-center mb-3">
-      <span class="text-muted">Meals</span>
+      <span>Meals</span>
       <span class="badge bg-secondary rounded-pill"><?php echo count($meals); ?></span>
     </h4>
     <ul class="list-group mb-3">
@@ -50,7 +50,7 @@ echo makeTitle($title, $subtitle, $icons);
       ?>
     </ul>
     <h4 class="d-flex justify-content-between align-items-center mb-3">
-      <span class="text-muted">Meals Post-Term (Vacation)</span>
+      <span>Meals Post-Term (Vacation)</span>
       <span class="badge bg-secondary rounded-pill"><?php echo count($mealsAfterTerm); ?></span>
     </h4>
     <ul class="list-group mb-3">
