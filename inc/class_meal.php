@@ -263,7 +263,7 @@ class meal {
     $sql  = "UPDATE " . self::$table_name;
 
     foreach ($array AS $updateItem => $value) {
-      if ($updateItem != 'mealUID') {
+      if ($updateItem != 'mealUID' && $value != '<p><br></p>') {
         $value = str_replace("'", "\'", $value);
         $sqlUpdate[] = $updateItem ." = '" . $value . "' ";
       }
@@ -284,7 +284,7 @@ class meal {
     $sql  = "INSERT INTO " . self::$table_name;
 
     foreach ($array AS $updateItem => $value) {
-      if ($updateItem != 'mealNEW') {
+      if ($updateItem != 'mealNEW' && $value != '<p><br></p>') {
         $sqlColumns[] = $updateItem;
         $sqlValues[] = "'" . $value . "' ";
       }
