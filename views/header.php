@@ -43,10 +43,10 @@
 								<a class="dropdown-item" href="index.php?n=admin_members">Members</a>
 	            	<a class="dropdown-item" href="index.php?n=admin_meals">Meals</a>
 	            	<a class="dropdown-item" href="index.php?n=admin_terms">Terms</a>
-	            	<a class="dropdown-item" href="index.php?n=admin_logs">Logs</a>
 								<a class="dropdown-item" href="index.php?n=admin_notifications">Notifications</a>
-								<a class="dropdown-item" href="index.php?n=admin_settings">Site Settings</a>
 								<a class="dropdown-item" href="index.php?n=admin_reports">Reports</a>
+								<a class="dropdown-item" href="index.php?n=admin_settings">Site Settings</a>
+								<a class="dropdown-item" href="index.php?n=admin_logs">Logs</a>
 	            	<div class="dropdown-divider"></div>
 							<?php } ?>
 	            <a class="dropdown-item" href="logon.php?logout=true">Logout</a>
