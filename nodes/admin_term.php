@@ -42,7 +42,7 @@ echo makeTitle($title, $subtitle, $icons);
         $output .= "<h6 class=\"my-0\"><a href=\"index.php?n=admin_meal&mealUID=" . $mealObject->uid . "\" class=\"text-muted\">" . $mealObject->name . "</a></h6>";
         $output .= "<small class=\"text-muted\">" . dateDisplay($mealObject->date_meal) . " " . date('H:i', strtotime($mealObject->date_meal)) . "</small>";
         $output .= "</div>";
-        $output .= "<span class=\"text-muted\">" . count(json_decode($booking['guests_array'])) . autoPluralise(" guest", " guests", count(json_decode($booking['guests_array']))) . "</span>";
+        $output .= "<span class=\"text-muted\">" . $mealObject->total_bookings_this_meal() . autoPluralise(" booking", " bookings", $mealObject->total_bookings_this_meal()) . "</span>";
         $output .= "</li>";
 
         echo $output;
