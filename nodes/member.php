@@ -206,7 +206,19 @@ include_once('_member_stats.php');
             Please enter a valid email address for shipping updates.
           </div>
         </div>
-        <div class="mb-3">
+
+        <div class="col-6 mb-3">
+          <label for="enabled" class="form-label">Member Type</label>
+          <select class="form-select" name="type" id="type" <?php echo $disabledCheck; ?> required>
+            <option value="SCR" <?php if ($memberObject->type == "SCR") { echo " selected"; } ?>>SCR</option>
+            <option value="MCR" <?php if ($memberObject->type == "MCR") { echo " selected"; } ?>>MCR</option>
+          </select>
+          <div class="invalid-feedback">
+            Status is required.
+          </div>
+        </div>
+
+        <div class="col-6 mb-3">
           <label for="enabled" class="form-label">Enabled/Disabled Status</label>
           <select class="form-select" name="enabled" id="enabled" <?php echo $disabledCheck; ?> required>
             <option value="1" <?php if ($memberObject->enabled == "1") { echo " selected"; } ?>>Enabled</option>
@@ -216,6 +228,10 @@ include_once('_member_stats.php');
             Status is required.
           </div>
         </div>
+
+
+
+
 
         <hr class="my-4">
 
