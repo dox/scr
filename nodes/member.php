@@ -138,14 +138,18 @@ include_once('_member_stats.php');
           <div class="input-group">
             <span class="input-group-text" onclick="ldapLookup()">@</span>
             <input type="text" class="form-control" name="ldap" id="ldap" placeholder="LDAP Username" value="<?php echo $memberObject->ldap; ?>" <?php echo $disabledCheck; ?>required>
-
             <div class="invalid-feedback">
               LDAP Username is required.
             </div>
           </div>
+          <?php
+          if (isset($memberObject->date_lastlogon)) {
+            echo "<small class=\"form-text text-muted\">Last logon: " . $memberObject->date_lastlogon . " " . timeDisplay($memberObject->date_lastlogon) . "</small>";
+          }
+          ?>
         </div>
 
-        <div class="col-md-5 mb-3">
+        <div class="col-5 mb-3">
           <label for="category" class="form-label">Member Category</label>
           <select class="form-select" name="category" id="category" <?php echo $disabledCheck; ?> required>
             <?php

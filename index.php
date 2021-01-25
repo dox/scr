@@ -32,6 +32,7 @@ if (isset($_POST['inputUsername']) && isset($_POST['inputPassword'])) {
     } else {
 			$memberObject = new member($memberLookup['uid']);
 
+			$UPDATEUSER['date_lastlogon'] = date('Y-m-d H:i:s');
       // EXISTING user, fill our their missing details
       $UPDATEUSER['memberUID'] = $memberLookup['uid'];
       if (empty($memberLookup['firstname'])) {
@@ -44,9 +45,7 @@ if (isset($_POST['inputUsername']) && isset($_POST['inputPassword'])) {
         $UPDATEUSER['email'] = $ldapUser[0]['mail'][0];
       }
 
-      if (count($UPDATEUSER) > 1) {
-        $memberObject->update($UPDATEUSER);
-      }
+			$memberObject->update($UPDATEUSER);
     }
 
 		// build the $_SESSION array

@@ -17,6 +17,7 @@ class member {
   public $default_domus;
   public $default_wine;
   public $default_dessert;
+  public $date_lastlogon;
 
   function __construct($memberUID = null) {
     global $db;
