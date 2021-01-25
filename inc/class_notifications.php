@@ -13,7 +13,7 @@ class notifications {
     global $db;
 
     $sql  = "SELECT *  FROM " . self::$table_name;
-    $sql .= " ORDER BY date DESC";
+    $sql .= " ORDER BY date_start ASC";
 
     $notifications = $db->query($sql)->fetchAll();
 
@@ -40,8 +40,9 @@ class notifications {
     }
 
     $sql  = "SELECT * FROM " . self::$table_name;
-    $sql .= " WHERE JSON_EXTRACT(members_array, \"$." . $member . "\") IS null";
-    $sql .= " ORDER BY date ASC";
+    $sql .= " WHERE CURDATE() BETWEEN DATE(date_start) AND DATE(date_end)";
+    $sql .= " AND JSON_EXTRACT(members_array, \"$." . $member . "\") IS null";
+    $sql .= " ORDER BY date_start DESC";
 
     $notifications = $db->query($sql)->fetchAll();
 
@@ -88,17 +89,28 @@ class notifications {
     return $output;
   }
 
-  public function create($type = "unknown", $description = null) {
+  public function create($array = null) {
     global $db;
-
-    $description = escape($description);
+    global $logsClass;
 
     $sql  = "INSERT INTO " . self::$table_name;
-    $sql .= " (ip, type, username, description) ";
-    $sql .= " VALUES ('" . ip2long($_SERVER['REMOTE_ADDR']) . "', '" . $type . "', '" . $_SESSION['username'] . "', '" . $description . "')";
 
-    $logs = $db->query($sql);
+    foreach ($array AS $updateItem => $value) {
+      if ($updateItem != 'notificationADD') {
+        $sqlColumns[] = $updateItem;
+        $sqlValues[] = "'" . $value . "' ";
+      }
+    }
 
+    $sql .= " (" . implode(",", $sqlColumns) . ") ";
+    $sql .= " VALUES (" . implode(",", $sqlValues) . ")";
+
+    echo $sql;
+
+    $create = $db->query($sql);
+    $logsClass->create("admin", "[notificationUID:" . $create->lastInsertID() . "] created");
+
+    return $create;
   }
 
   public function markAsRead($notificationUID = null) {
@@ -113,6 +125,7 @@ class notifications {
     return $update;
   }
 
+  /*
   public function updateJSONTEMP($array = null) {
     global $db;
 
@@ -125,6 +138,43 @@ class notifications {
     $update = $db->query($sql);
 
     return $update;
+  }
+  */
+
+  public function update($array = null) {
+    global $db;
+    global $logsClass;
+
+    $sql  = "UPDATE " . self::$table_name;
+
+    foreach ($array AS $updateItem => $value) {
+      if ($updateItem != 'notificationUID') {
+        $sqlUpdate[] = $updateItem ." = '" . $value . "' ";
+      }
+    }
+
+    $sql .= " SET " . implode(", ", $sqlUpdate);
+    $sql .= " WHERE uid = '" . $array['notificationUID'] . "' ";
+    $sql .= " LIMIT 1";
+
+    $update = $db->query($sql);
+    $logsClass->create("admin", "[notificationUID:" . $array['notificationUID'] . "] updated");
+
+    return $update;
+  }
+
+  public function delete($uid = null) {
+    global $db;
+    global $logsClass;
+
+    $sql  = "DELETE FROM " . self::$table_name;
+    $sql .= " WHERE uid = '" . $uid . "' ";
+    $sql .= " LIMIT 1";
+
+    $deleteNotification = $db->query($sql);
+    $logsClass->create("admin", "[notificationUID:" . $uid . "] deleted");
+
+    return $deleteNotification;
   }
 
 }
