@@ -38,11 +38,8 @@ if (isset($_GET['add'])) {
 } else {
   $title = $mealObject->name;
   $subtitle = $mealObject->location . " " . dateDisplay($mealObject->date_meal);
-  if ($_SESSION['admin'] == true) {
-    $icons[] = array("class" => "btn-danger", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#trash\"/></svg> Delete Meal", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#deleteMealModal\"");
-  }
-  $icons[] = array("class" => "btn-primary", "name" => "Guest List", "value" => "");
-  //$icons[] = array("class" => "btn-primary", "name" => "Test2", "value" => "");
+  $icons[] = array("class" => "btn-danger", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#trash\"/></svg> Delete Meal", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#deleteMealModal\"");
+  $icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#trash\"/></svg> Guest List", "value" => "onclick=\"window.open('guestlist.php?mealUID=" . $mealObject->uid . "')\"");
 }
 
 

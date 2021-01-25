@@ -22,10 +22,8 @@ if (isset($_POST['termUID'])) {
 <?php
 $title = $termObject->name;
 $subtitle = "From " . dateDisplay($termObject->date_start) . ", to " . dateDisplay($termObject->date_end);
-if ($_SESSION['admin'] == true) {
-  $icons[] = array("class" => "btn-danger", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#trash\"/></svg> Delete Term", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#deleteTermModal\"");
+$icons[] = array("class" => "btn-danger", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#trash\"/></svg> Delete Term", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#deleteTermModal\"");
 
-}
 echo makeTitle($title, $subtitle, $icons);
 ?>
 <div class="row g-3">
