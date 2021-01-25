@@ -1,25 +1,6 @@
 <?php
-
-
 if (count($notifications) > 0) {
-  $output  = "<nav class=\"navbar navbar-expand-lg navbar-light\" style=\"background-color: #e3f2fd;\">";
-
-  foreach ($notifications AS $notification) {
-    $notificationIcon = "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#chat-dots\"/></svg>";
-
-    $output .= "<div class=\"container text-center\">";
-    $output .= "<div class=\"\" id=\"test\">";
-    $output .= $notificationIcon . " " . $notification['message'];
-    $output .= "</div>";
-    $output .= "</div>";
-  }
-  $output .= "</nav>";
-
-  //echo $output;
-}
-
-if (count($notifications) > 0) {
-  $output  = "<div class=\"container\">";
+  $output  = "<div class=\"container d-print-none\">";
 
   foreach ($notifications AS $notification) {
     $output .= $notificationsClass->display($notification);

@@ -9,7 +9,7 @@ foreach ($mealsClass->mealTypes() AS $type) {
 arsort($totalBookings);
 $totalBookings = array_slice($totalBookings, 0, 4, true);
 ?>
-<div class="row row-deck row-cards">
+<div class="row row-deck row-cards mb-3">
   <?php
   foreach ($totalBookings AS $typeName => $total) {
     $output  = "<div class=\"col-sm-6 col-lg-3\">";
@@ -32,3 +32,4 @@ $totalBookings = array_slice($totalBookings, 0, 4, true);
 
   }
   ?>
+</div>

@@ -96,7 +96,7 @@ include_once('_member_stats.php');
     <h4 class="d-flex mb-3">Personal Information</h4>
     <form method="post" id="memberUpdate" action="<?php echo $_SERVER['REQUEST_URI']; ?>" class="needs-validation" novalidate>
       <div class="row g-3">
-        <div class="col-md-2">
+        <div class="col-md-2 mb-3">
           <label for="title" class="form-label">Title</label>
           <select class="form-select" name="title" id="title" required>
             <?php
@@ -117,7 +117,7 @@ include_once('_member_stats.php');
           </div>
         </div>
 
-        <div class="col-sm-5">
+        <div class="col-sm-5 mb-3">
           <label for="firstname" class="form-label">First name</label>
           <input type="text" class="form-control" name="firstname" id="firstname" placeholder="" value="<?php echo $memberObject->firstname; ?>" required>
           <div class="invalid-feedback">
@@ -125,7 +125,7 @@ include_once('_member_stats.php');
           </div>
         </div>
 
-        <div class="col-sm-5">
+        <div class="col-sm-5 mb-3">
           <label for="lastname" class="form-label">Last name</label>
           <input type="text" class="form-control" name="lastname" id="lastname" placeholder="" value="<?php echo $memberObject->lastname; ?>" required>
           <div class="invalid-feedback">
@@ -133,7 +133,7 @@ include_once('_member_stats.php');
           </div>
         </div>
 
-        <div class="col-7">
+        <div class="col-7 mb-3">
           <label for="ldap" class="form-label">LDAP Username</label>
           <div class="input-group">
             <span class="input-group-text" onclick="ldapLookup()">@</span>
@@ -145,7 +145,7 @@ include_once('_member_stats.php');
           </div>
         </div>
 
-        <div class="col-md-5">
+        <div class="col-md-5 mb-3">
           <label for="category" class="form-label">Member Category</label>
           <select class="form-select" name="category" id="category" <?php echo $disabledCheck; ?> required>
             <?php
@@ -166,7 +166,7 @@ include_once('_member_stats.php');
           </div>
         </div>
 
-        <div class="col-12">
+        <div class="mb-3">
           <label for="dietary" class="form-label">Dietary Information</label>
           <div class="selectBox" onclick="showCheckboxes()">
             <select class="form-select">
@@ -195,14 +195,14 @@ include_once('_member_stats.php');
           </div>
         </div>
 
-        <div class="col-12">
+        <div class="mb-3">
           <label for="email" class="form-label">Email <span class="text-muted">(Optional)</span></label>
           <input type="email" class="form-control" name="email" id="email" placeholder="" value="<?php echo $memberObject->email; ?>">
           <div class="invalid-feedback">
             Please enter a valid email address for shipping updates.
           </div>
         </div>
-        <div class="col-12">
+        <div class="mb-3">
           <label for="enabled" class="form-label">Enabled/Disabled Status</label>
           <select class="form-select" name="enabled" id="enabled" <?php echo $disabledCheck; ?> required>
             <option value="1" <?php if ($memberObject->enabled == "1") { echo " selected"; } ?>>Enabled</option>
@@ -258,8 +258,8 @@ include_once('_member_stats.php');
 
         <input type="hidden" name="memberUID" id="memberUID" value="<?php echo $memberObject->uid;?>">
         <button class="btn btn-primary btn-lg btn-block" type="submit">Update Member Details</button>
-      </form>
-    </div>
+      </div>
+    </form>
   </div>
 </div>
 
