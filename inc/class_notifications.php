@@ -91,8 +91,7 @@ class notifications {
   }
 
   public function create($array = null) {
-    global $db;
-    global $logsClass;
+    global $db, $logsClass, $settingsClass;
 
     $sql  = "INSERT INTO " . self::$table_name;
 
@@ -109,6 +108,7 @@ class notifications {
     echo $sql;
 
     $create = $db->query($sql);
+    echo $settingsClass->alert("success", "<strong>Success!</strong> Notification successfully creted");
     $logsClass->create("admin", "[notificationUID:" . $create->lastInsertID() . "] created");
 
     return $create;
@@ -127,8 +127,7 @@ class notifications {
   }
 
   public function update($array = null) {
-    global $db;
-    global $logsClass;
+    global $db, $logsClass, $settingsClass;
 
     $sql  = "UPDATE " . self::$table_name;
 
@@ -143,20 +142,21 @@ class notifications {
     $sql .= " LIMIT 1";
 
     $update = $db->query($sql);
+    echo $settingsClass->alert("success", "<strong>Success!</strong> Notification successfully updated");
     $logsClass->create("admin", "[notificationUID:" . $array['notificationUID'] . "] updated");
 
     return $update;
   }
 
   public function delete($uid = null) {
-    global $db;
-    global $logsClass;
+    global $db, $logsClass, $settingsClass;
 
     $sql  = "DELETE FROM " . self::$table_name;
     $sql .= " WHERE uid = '" . $uid . "' ";
     $sql .= " LIMIT 1";
 
     $deleteNotification = $db->query($sql);
+    echo $settingsClass->alert("success", "<strong>Success!</strong> Notification successfully deleted");
     $logsClass->create("admin", "[notificationUID:" . $uid . "] deleted");
 
     return $deleteNotification;

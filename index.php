@@ -91,6 +91,9 @@ if ($_SESSION['logon'] != true) {
   <link href="css/bootstrap.min.css" rel="stylesheet">
   <link href="css/app.css" rel="stylesheet">
 
+	<script src="js/bootstrap.bundle.min.js"></script>
+	<script src="js/app.js"></script>
+
 	<!-- Favicons -->
 	<link rel="apple-touch-icon" sizes="180x180" href="/img/favicons/apple-touch-icon.png">
 	<link rel="icon" type="image/png" sizes="32x32" href="/img/favicons/favicon-32x32.png">
@@ -99,9 +102,6 @@ if ($_SESSION['logon'] != true) {
 	<link rel="mask-icon" href="/img/favicons/safari-pinned-tab.svg" color="#5bbad5">
   <link rel="icon" href="/img/favicons/favicon.ico">
   <meta name="theme-color" content="#7952b3">
-
-  <script src="js/bootstrap.bundle.min.js"></script>
-	<script src="js/app.js"></script>
 </head>
 
 <body>

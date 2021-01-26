@@ -34,8 +34,7 @@ class settings {
   }
 
   public function update($array = null) {
-    global $db;
-    global $logsClass;
+    global $db, $logsClass;
 
     $existingSetting = $this->value($array['uid']);
 
@@ -52,6 +51,7 @@ class settings {
     $sql .= " LIMIT 1";
 
     $update = $db->query($sql);
+    echo $this->alert("success", "<strong>Success!</strong> Setting successfully updated");
     $logsClass->create("admin", "Setting [settingUID:" . $array['uid'] . "] updated from '" . $existingSetting . "' to '" . $array['value'] . "'");
 
     return $update;
@@ -74,6 +74,7 @@ class settings {
     $sql .= " VALUES (" . implode(",", $sqlValues) . ")";
 
     $create = $db->query($sql);
+    echo $this->alert("success", "<strong>Success!</strong> Setting successfully created");
     $logsClass->create("admin", "Setting [settingUID:" . $create->lastInsertID() . "] created with '" . $array['value'] . "'");
 
 
@@ -99,12 +100,20 @@ class settings {
 		  $class = "alert-secondary";
 	  }
 
-	  $output  = "<div class=\"container\">";
-	  $output .= "<div class=\"alert " . $class . " alert-dismissible show\" role=\"alert\">";
+	  $output  = "<div id=\"alert-temporary\" class=\"alert alert-temporary " . $class . " alert-dismissible show\" role=\"alert\">";
 	  $output .= "<strong>" . $title . "</strong> " . $description;
 	  $output .= "<button type=\"button\" class=\"btn-close\" data-dismiss=\"alert\" aria-label=\"Close\"></button>";
 	  $output .= "</div>";
-	  $output .= "</div>";
+
+    $output .= "<script>";
+    $output .= "var temporaryAlert = document.getElementById('alert-temporary');";
+    $output .= "new bootstrap.Alert(temporaryAlert);";
+    $output .= "var alert = bootstrap.Alert.getInstance(temporaryAlert);";
+    $output .= "setTimeout(";
+    $output .= "  function() {";
+    $output .= "    alert.close();";
+    $output .= "}, 5000);";
+    $output .= "</script>";
 
 	  return $output;
   }

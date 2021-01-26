@@ -9,6 +9,7 @@ $membersClass = new members();
 if (isset($_POST['memberNew'])) {
  $memberObject = new member();
  $memberObject->create($_POST);
+
  $membersClass = new members();
 }
 

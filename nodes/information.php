@@ -13,7 +13,8 @@ if (isset($_POST['contentInfo'])) {
 
   $db->query($sql);
 
-  echo $settingsClass->alert("success", "SCR Information Updated");
+  echo $settingsClass->alert("success", "<strong>Success!</strong> SCR Information successfully updated");
+
 }
 
 $text = $settingsClass->value('scr_information');

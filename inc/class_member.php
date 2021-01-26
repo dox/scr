@@ -142,8 +142,7 @@ class member {
   }
 
   public function create($array = null) {
-	   global $db;
-     global $logsClass;
+	   global $db, $logsClass, $settingsClass;
 
     $sql  = "INSERT INTO " . self::$table_name;
 
@@ -158,14 +157,14 @@ class member {
     $sql .= " VALUES (" . implode(",", $sqlValues) . ")";
 
     $create = $db->query($sql);
+    echo $settingsClass->alert("success", "<strong>Success!</strong> Memer successfully created");
     $logsClass->create("admin", "Member [memberUID:" . $create->lastInsertID() . "] created");
 
     return $create;
   }
 
   public function update($array = null) {
-    global $db;
-    global $logsClass;
+    global $db, $logsClass, $settingsClass;
 
     $sql  = "UPDATE " . self::$table_name;
 
@@ -183,6 +182,7 @@ class member {
     $sql .= " LIMIT 1";
 
     $update = $db->query($sql);
+    echo $settingsClass->alert("success", "<strong>Success!</strong> Member successfully updated");
     $logsClass->create("members_update", "Member [memberUID:" . $array['memberUID'] . "] updated");
 
     return $update;

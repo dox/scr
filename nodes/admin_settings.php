@@ -4,13 +4,11 @@ admin_gatekeeper();
 //check if creating new setting
 if (isset($_POST['name'])) {
   $settingsClass->create($_POST);
-  echo $settingsClass->alert("success", $_POST['name'], " setting created");
 }
 
 //check if updating existing setting
 if (isset($_POST['uid'])) {
   $settingsClass->update($_POST);
-  echo $settingsClass->alert("success", "UID: " . $_POST['uid'], " setting updated");
 }
 
 $settings = $settingsClass->all();

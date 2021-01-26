@@ -102,8 +102,7 @@ class term {
   }
 
   public function create($array = null) {
-	   global $db;
-     global $logsClass;
+	   global $db, $logsClass, $settingsClass;
 
     $sql  = "INSERT INTO " . self::$table_name;
 
@@ -118,14 +117,14 @@ class term {
     $sql .= " VALUES (" . implode(",", $sqlValues) . ")";
 
     $create = $db->query($sql);
+    echo $settingsClass->alert("success", "<strong>Success!</strong> Term successfully created");
     $logsClass->create("admin", "Term [uid:" . $create->lastInsertID() . "] created");
 
     return $create;
   }
 
   public function update($array = null) {
-    global $db;
-    global $logsClass;
+    global $db, $logsClass, $settingsClass;
 
     $sql  = "UPDATE " . self::$table_name;
 
@@ -140,14 +139,14 @@ class term {
     $sql .= " LIMIT 1";
 
     $update = $db->query($sql);
+    echo $settingsClass->alert("success", "<strong>Success!</strong> Term successfully updated");
     $logsClass->create("admin", "Term [termUID:" . $this->uid . "] updated");
 
     return $update;
   }
 
   public function delete() {
-    global $db;
-    global $logsClass;
+    global $db, $logsClass, $settingsClass;
 
     $termUID = $this->uid;
     $termName = $this->uid;
@@ -157,6 +156,7 @@ class term {
     $sql .= " LIMIT 1";
 
     $deleteMeal = $db->query($sql);
+    echo $settingsClass->alert("success", "<strong>Success!</strong> Term successfully deleted");
     $logsClass->create("admin", "[termUID:" . $termUID . "] named '" . $termName . "' deleted");
 
     return $deleteMeal;
@@ -171,6 +171,17 @@ class term {
     $meals = $db->query($sql)->fetchAll();
 
     return $meals;
+  }
+
+  public function total_mealsThisTerm() {
+    global $db;
+
+    $sql  = "SELECT COUNT(*) AS totalMeals FROM meals";
+    $sql .= " WHERE DATE(date_meal) >= '" . $this->date_start . "' AND DATE(date_meal) <= '" . $this->date_end . "'";
+
+    $mealsCount = $db->query($sql)->fetchAll()[0];
+
+    return $mealsCount['totalMeals'];
   }
 }
 ?>

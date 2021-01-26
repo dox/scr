@@ -198,19 +198,17 @@ class meal {
     global $db;
 
     if ($memberType == "SCR") {
-      $sql .= "SELECT JSON_LENGTH(guests_array) AS totalGuestsPerBooking FROM bookings";
+      $sql  = "SELECT JSON_LENGTH(guests_array) AS totalGuestsPerBooking FROM bookings";
       $sql .= " WHERE meal_uid = '" . $this->uid . "'";
       $sql .= " AND type = 'SCR'";
     } elseif ($memberType == "MCR") {
-      $sql .= "SELECT JSON_LENGTH(guests_array) AS totalGuestsPerBooking FROM bookings";
+      $sql  = "SELECT JSON_LENGTH(guests_array) AS totalGuestsPerBooking FROM bookings";
       $sql .= " WHERE meal_uid = '" . $this->uid . "'";
       $sql .= " AND type = 'MCR'";
     } else {
-      $sql .= "SELECT JSON_LENGTH(guests_array) AS totalGuestsPerBooking FROM bookings";
+      $sql  = "SELECT JSON_LENGTH(guests_array) AS totalGuestsPerBooking FROM bookings";
       $sql .= " WHERE meal_uid = '" . $this->uid . "'";
     }
-
-
 
     $sql2 = "SELECT count(*) as totalBookings, SUM(x.totalGuestsPerBooking) AS totalGuests FROM (" . $sql . ") AS x";
 
@@ -258,7 +256,7 @@ class meal {
   }
 
   public function update($array = null) {
-    global $db;
+    global $db, $logsClass, $settingsClass;
 
     $sql  = "UPDATE " . self::$table_name;
 
@@ -274,12 +272,14 @@ class meal {
     $sql .= " LIMIT 1";
 
     $update = $db->query($sql);
+    echo $settingsClass->alert("success", "<strong>Success!</strong> Meal successfully updated");
+    $logsClass->create("meal", "[mealUID:" . $this->uid . "] updated");
 
     return $update;
   }
 
   public function create($array = null) {
-	global $db;
+    global $db, $logsClass, $settingsClass;
 
     $sql  = "INSERT INTO " . self::$table_name;
 
@@ -293,16 +293,15 @@ class meal {
     $sql .= " (" . implode(",", $sqlColumns) . ") ";
     $sql .= " VALUES (" . implode(",", $sqlValues) . ")";
 
-    echo $sql;
-
     $create = $db->query($sql);
+    echo $settingsClass->alert("success", "<strong>Success!</strong> Meal successfully created");
+    $logsClass->create("meal", "[mealUID:" . $create->lastInsertID() . "] created");
 
     return $create;
   }
 
   public function delete() {
-    global $db;
-    global $logsClass;
+    global $db, $logsClass, $settingsClass;
 
     $mealUID = $this->uid;
 
@@ -317,11 +316,10 @@ class meal {
     $sql .= " LIMIT 1";
 
     $deleteMeal = $db->query($sql);
-    $logsClass->create("meal", "[mealUID:" . $mealUID . "] deleted and any associated bookings");
+    echo $settingsClass->alert("success", "<strong>Success!</strong> Meal successfully deleted");
+    $logsClass->create("meal", "[mealUID:" . $mealUID . "] (and any associated bookings) deleted");
 
     return $deleteMeal;
   }
-
-
 }
 ?>

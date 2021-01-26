@@ -14,7 +14,6 @@ if (isset($_POST['mealNEW'])) {
 }
 
 if (isset($_GET['mealDELETE'])) {
- echo "DELETE!";
  $mealObject = new meal($_GET['mealDELETE']);
  $mealObject->delete();
 }

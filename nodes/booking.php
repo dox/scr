@@ -15,7 +15,6 @@ $dietaryOptionsMax = $settingsClass->value('meal_dietary_allowed');
 if (!empty($_POST['guest_name'])) {
   $bookingObject->update($_POST);
   $bookingObject = new booking($_GET['bookingUID']);
-  echo $settingsClass->alert("success", $_POST['name'], " booking updated");
 }
 
 //$bookingsThisMeal = $bookingsClass->bookings_this_meal($meal->uid);
@@ -98,6 +97,7 @@ echo makeTitle($title, $subtitle, $icons);
               </span>
             </label>
           </div>
+          <button type="button" class="btn btn-sm w-100 btn-primary">Update Preferences (not working yet!)</button>
         </div>
 
         <hr />

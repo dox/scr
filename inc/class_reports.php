@@ -34,7 +34,7 @@ class reports {
   }
 
   public function update($array = null) {
-    global $db;
+    global $db, $logsClass, $settingsClass;
 
     $sql  = "UPDATE " . self::$table_name;
 
@@ -49,6 +49,8 @@ class reports {
     $sql .= " LIMIT 1";
 
     $update = $db->query($sql);
+    echo $settingsClass->alert("success", "<strong>Success!</strong> Report successfully updated");
+    $logsClass->create("admin", "[reportUID:" . $array['uid'] . "] created");
 
     return $update;
   }
@@ -62,7 +64,9 @@ class reports {
     $sql .= " (ip, type, username, description) ";
     $sql .= " VALUES ('" . ip2long($_SERVER['REMOTE_ADDR']) . "', '" . $type . "', '" . $_SESSION['username'] . "', '" . $description . "')";
 
-    $logs = $db->query($sql);
+    $report = $db->query($sql);
+    echo $settingsClass->alert("success", "<strong>Success!</strong> Report successfully created");
+    $logsClass->create("meal", "[reportUID:" . $report->lastInsertID() . "] created");
 
   }
 }

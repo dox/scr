@@ -40,6 +40,7 @@ if (isset($_POST['memberUID'])) {
     $_POST['dietary'] = null;
   }
   $memberObject->update($_POST);
+
   $memberObject = new member($memberUID);
 }
 ?>

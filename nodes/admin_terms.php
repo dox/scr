@@ -9,12 +9,14 @@ $termsClass = new terms();
 if (isset($_POST['name'])) {
   $termsClass->create($_POST);
   echo $settingsClass->alert("success", $_POST['name'], " term created");
+  echo $settingsClass->alert("warning", "<strong>Success!</strong> Term successfully deleted");
 }
 
 if (isset($_GET['termDELETE'])) {
  echo "DELETE!";
  $termClass = new term($_GET['termDELETE']);
  $termClass->delete();
+ echo $settingsClass->alert("warning", "<strong>Success!</strong> Term successfully deleted");
 }
 
 $terms = $termsClass->all();
@@ -42,7 +44,7 @@ echo makeTitle($title, $subtitle, $icons);
     $output  = "<a href=\"index.php?n=admin_term&termUID=" . $termObject->uid . "\" class=\"list-group-item " . $class . " list-group-item-action\">";
     $output .= "<div class=\"d-flex w-100 justify-content-between\">";
     $output .= "<h5 class=\"mb-1\">" . $termObject->name . "</h5>";
-    $output .= "<small class=\"text-muted\">" . "<span class=\"badge bg-primary rounded-pill\">" . count($termObject->mealsThisTerm()) . " meals</span> " . $log['ip'] . "</small>";
+    $output .= "<small class=\"text-muted\">" . "<span class=\"badge bg-primary rounded-pill\">" . $termObject->total_mealsThisTerm() . " meals</span> " . $log['ip'] . "</small>";
     //$output .= "<p id=\"" . $term['uid'] . "\" onclick=\"dismiss(this.id);\">dismiss this box</p>";
     //$output .= "<span class=\"badge bg-primary rounded-pill\">" . $log['type'] . "</span>";
     $output .= "</div>";

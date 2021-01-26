@@ -8,6 +8,8 @@ class booking {
   public $meal_uid;
   public $member_ldap;
   public $guests_array; // json encoded array
+  public $domus;
+  public $domus_reason;
   public $wine;
   public $dessert;
 
@@ -34,7 +36,7 @@ class booking {
   }
 
   public function addGuest($newGuestArray = null) {
-	  global $db;
+	  global $db, $logsClass;
 
     $guest_uid = "x" . bin2hex(random_bytes(5));
     $guest['guest_uid'] = $guest_uid;
@@ -46,8 +48,6 @@ class booking {
 	  $sql .= " SET guests_array = JSON_SET(COALESCE(guests_array, '{}'), '$." . $guest_uid . "', '" . json_encode($guest) . "')";
 	  $sql .= " WHERE uid = '" . $this->uid . "' LIMIT 1";
 
-    echo $sql;
-
 	  $booking = $db->query($sql);
     $logsClass->create("booking", "Guest added to [bookingUID:" . $this->uid . "] for [mealUID:" . $this->meal_uid . "]");
 
@@ -55,8 +55,7 @@ class booking {
   }
 
   public function create($array = null) {
-    global $db;
-    global $logsClass;
+    global $db, $logsClass;
 
     $sql  = "INSERT INTO " . self::$table_name;
 
@@ -69,13 +68,14 @@ class booking {
     $sql .= " VALUES (" . implode(",", $sqlValues) . ")";
 
     $create = $db->query($sql);
+//    echo $settingsClass->alert("success", "<strong>Success!</strong> Booking successfully created");
     $logsClass->create("booking", "[bookingUID:" . $create->lastInsertID() . "] made for " . $_SESSION['username'] . " for [mealUID:" . $array['meal_uid'] . "]");
 
     return $create;
   }
 
   public function update($array = null) {
-	 global $db;
+    global $db, $logsClass, $settingsClass;
 
     $sql  = "UPDATE " . self::$table_name;
 
@@ -90,14 +90,14 @@ class booking {
     $sql .= " LIMIT 1";
 
     $update = $db->query($sql);
+    echo $settingsClass->alert("success", "<strong>Success!</strong> Booking successfully updated");
     $logsClass->create("booking", "[bookingUID:" .  $this->uid  . "] updated by " . $_SESSION['username'] . " for [mealUID:" . $array['meal_uid'] . "]");
 
     return $update;
   }
 
   public function delete() {
-    global $db;
-    global $logsClass;
+    global $db, $logsClass, $settingsClass;
 
     $bookingUID = $this->uid;
     $mealUID = $this->meal_uid;
@@ -108,6 +108,7 @@ class booking {
 
     $delete = $db->query($sql);
     $logsClass->create("booking", "[bookingUID:" .  $bookingUID  . "] deleted by " . $_SESSION['username'] . " for [mealUID:" . $mealUID . "]");
+    echo $settingsClass->alert("success", "<strong>Success!</strong> Booking successfully deleted");
 
     return $delete;
   }
