@@ -131,6 +131,11 @@ echo makeTitle($title, $subtitle, $icons);
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
+        <?php
+        if (date('Y-m-d H:i:s') >= date('Y-m-d H:i:s', strtotime($meal->date_cutoff)) && $_SESSION['admin'] != "true") {
+          echo "<p>The deadline for making changes to this booking has passed.  Please contact the Bursary for further assistance.</p>";
+        } else {
+        ?>
           <div class="form-group">
             <label for="name">Guest Name</label>
             <input type="text" class="form-control" name="guest_name" id="guest_name" aria-describedby="termNameHelp">
@@ -205,11 +210,18 @@ echo makeTitle($title, $subtitle, $icons);
               <small id="domus_descriptionHelp" class="form-text text-muted" hidden>A brief description of why your booking is Domus</small>
             </label>
           </div>
-
+        <?php } ?>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-link text-muted" data-bs-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#person-plus"/></svg> Add Guest</button>
+        <?php
+        if (date('Y-m-d H:i:s') >= date('Y-m-d H:i:s', strtotime($meal->date_cutoff)) && $_SESSION['admin'] != "true") {
+          echo "<button type=\"submit\" class=\"btn btn-primary disabled\"><svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#person-plus\"/></svg> Add Guest</button>";
+        } else {
+          //echo "<a href=\"index.php?deleteBookingUID=" . $bookingObject->uid . "\" role=\"button\" class=\"btn btn-danger\" onclck=\"bookingDeleteButton();\"><svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#trash\"/></svg> Delete</a>";
+          echo "<button type=\"submit\" class=\"btn btn-primary\"><svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#person-plus\"/></svg> Add Guest</button>";
+        }
+        ?>
       </div>
       <input type="hidden" id="bookingUID" name="bookingUID" value="<?php echo $bookingObject->uid; ?>">
       <input type="hidden" id="mealUID" name="mealUID" value="<?php echo $bookingObject->meal_uid; ?>">

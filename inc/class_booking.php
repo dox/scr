@@ -68,7 +68,7 @@ class booking {
     $sql .= " VALUES (" . implode(",", $sqlValues) . ")";
 
     $create = $db->query($sql);
-//    echo $settingsClass->alert("success", "<strong>Success!</strong> Booking successfully created");
+//    echo $settingsClass->alert("success", "Success!". "Booking successfully created");
     $logsClass->create("booking", "[bookingUID:" . $create->lastInsertID() . "] made for " . $_SESSION['username'] . " for [mealUID:" . $array['meal_uid'] . "]");
 
     return $create;
@@ -90,7 +90,7 @@ class booking {
     $sql .= " LIMIT 1";
 
     $update = $db->query($sql);
-    echo $settingsClass->alert("success", "<strong>Success!</strong> Booking successfully updated");
+    echo $settingsClass->alert("success", "Success!", "Booking successfully updated");
     $logsClass->create("booking", "[bookingUID:" .  $this->uid  . "] updated by " . $_SESSION['username'] . " for [mealUID:" . $array['meal_uid'] . "]");
 
     return $update;
@@ -108,7 +108,7 @@ class booking {
 
     $delete = $db->query($sql);
     $logsClass->create("booking", "[bookingUID:" .  $bookingUID  . "] deleted by " . $_SESSION['username'] . " for [mealUID:" . $mealUID . "]");
-    echo $settingsClass->alert("success", "<strong>Success!</strong> Booking successfully deleted");
+    echo $settingsClass->alert("success", "Success!", "Booking successfully deleted");
 
     return $delete;
   }

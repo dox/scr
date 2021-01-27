@@ -49,7 +49,7 @@ class reports {
     $sql .= " LIMIT 1";
 
     $update = $db->query($sql);
-    echo $settingsClass->alert("success", "<strong>Success!</strong> Report successfully updated");
+    echo $settingsClass->alert("success", "Success!", "Report successfully updated");
     $logsClass->create("admin", "[reportUID:" . $array['uid'] . "] created");
 
     return $update;
@@ -65,7 +65,7 @@ class reports {
     $sql .= " VALUES ('" . ip2long($_SERVER['REMOTE_ADDR']) . "', '" . $type . "', '" . $_SESSION['username'] . "', '" . $description . "')";
 
     $report = $db->query($sql);
-    echo $settingsClass->alert("success", "<strong>Success!</strong> Report successfully created");
+    echo $settingsClass->alert("success", "Success!", "Report successfully created");
     $logsClass->create("meal", "[reportUID:" . $report->lastInsertID() . "] created");
 
   }

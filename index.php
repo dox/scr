@@ -28,7 +28,7 @@ if (isset($_POST['inputUsername']) && isset($_POST['inputPassword'])) {
       $NEWUSER['email'] = $ldapUser[0]['mail'][0];
       $NEWUSER['enabled'] = "1";
 
-      $memberObject->create($NEWUSER);
+      $memberObject->create($NEWUSER, false);
     } else {
 			$memberObject = new member($memberLookup['uid']);
 
@@ -45,7 +45,7 @@ if (isset($_POST['inputUsername']) && isset($_POST['inputPassword'])) {
         $UPDATEUSER['email'] = $ldapUser[0]['mail'][0];
       }
 
-			$memberObject->update($UPDATEUSER);
+			$memberObject->update($UPDATEUSER, false);
     }
 
 		// build the $_SESSION array

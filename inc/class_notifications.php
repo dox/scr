@@ -108,7 +108,7 @@ class notifications {
     echo $sql;
 
     $create = $db->query($sql);
-    echo $settingsClass->alert("success", "<strong>Success!</strong> Notification successfully creted");
+    echo $settingsClass->alert("success", "Success!", "Notification successfully creted");
     $logsClass->create("admin", "[notificationUID:" . $create->lastInsertID() . "] created");
 
     return $create;
@@ -142,7 +142,7 @@ class notifications {
     $sql .= " LIMIT 1";
 
     $update = $db->query($sql);
-    echo $settingsClass->alert("success", "<strong>Success!</strong> Notification successfully updated");
+    echo $settingsClass->alert("success", "Success!", "Notification successfully updated");
     $logsClass->create("admin", "[notificationUID:" . $array['notificationUID'] . "] updated");
 
     return $update;
@@ -156,7 +156,7 @@ class notifications {
     $sql .= " LIMIT 1";
 
     $deleteNotification = $db->query($sql);
-    echo $settingsClass->alert("success", "<strong>Success!</strong> Notification successfully deleted");
+    echo $settingsClass->alert("success", "Success!", "Notification successfully deleted");
     $logsClass->create("admin", "[notificationUID:" . $uid . "] deleted");
 
     return $deleteNotification;

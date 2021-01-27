@@ -272,7 +272,7 @@ class meal {
     $sql .= " LIMIT 1";
 
     $update = $db->query($sql);
-    echo $settingsClass->alert("success", "<strong>Success!</strong> Meal successfully updated");
+    echo $settingsClass->alert("success", "Success!", "Meal successfully updated");
     $logsClass->create("meal", "[mealUID:" . $this->uid . "] updated");
 
     return $update;
@@ -294,7 +294,7 @@ class meal {
     $sql .= " VALUES (" . implode(",", $sqlValues) . ")";
 
     $create = $db->query($sql);
-    echo $settingsClass->alert("success", "<strong>Success!</strong> Meal successfully created");
+    echo $settingsClass->alert("success", "Success!", "Meal successfully created");
     $logsClass->create("meal", "[mealUID:" . $create->lastInsertID() . "] created");
 
     return $create;
@@ -316,7 +316,7 @@ class meal {
     $sql .= " LIMIT 1";
 
     $deleteMeal = $db->query($sql);
-    echo $settingsClass->alert("success", "<strong>Success!</strong> Meal successfully deleted");
+    echo $settingsClass->alert("success", "Success!", "Meal successfully deleted");
     $logsClass->create("meal", "[mealUID:" . $mealUID . "] (and any associated bookings) deleted");
 
     return $deleteMeal;

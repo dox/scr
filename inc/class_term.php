@@ -117,7 +117,7 @@ class term {
     $sql .= " VALUES (" . implode(",", $sqlValues) . ")";
 
     $create = $db->query($sql);
-    echo $settingsClass->alert("success", "<strong>Success!</strong> Term successfully created");
+    echo $settingsClass->alert("success", "Success!", "Term successfully created");
     $logsClass->create("admin", "Term [uid:" . $create->lastInsertID() . "] created");
 
     return $create;
@@ -139,7 +139,7 @@ class term {
     $sql .= " LIMIT 1";
 
     $update = $db->query($sql);
-    echo $settingsClass->alert("success", "<strong>Success!</strong> Term successfully updated");
+    echo $settingsClass->alert("success", "Success!", "Term successfully updated");
     $logsClass->create("admin", "Term [termUID:" . $this->uid . "] updated");
 
     return $update;
@@ -156,7 +156,7 @@ class term {
     $sql .= " LIMIT 1";
 
     $deleteMeal = $db->query($sql);
-    echo $settingsClass->alert("success", "<strong>Success!</strong> Term successfully deleted");
+    echo $settingsClass->alert("success", "Success!". "Term successfully deleted");
     $logsClass->create("admin", "[termUID:" . $termUID . "] named '" . $termName . "' deleted");
 
     return $deleteMeal;

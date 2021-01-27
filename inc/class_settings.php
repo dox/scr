@@ -100,13 +100,15 @@ class settings {
 		  $class = "alert-secondary";
 	  }
 
-	  $output  = "<div id=\"alert-temporary\" class=\"alert alert-temporary " . $class . " alert-dismissible show\" role=\"alert\">";
+    $alert_uid = "alert-" . bin2hex(random_bytes(5));
+
+	  $output  = "<div id=\"" . $alert_uid . "\" class=\"alert " . $class . " alert-dismissible show\" role=\"alert\">";
 	  $output .= "<strong>" . $title . "</strong> " . $description;
 	  $output .= "<button type=\"button\" class=\"btn-close\" data-dismiss=\"alert\" aria-label=\"Close\"></button>";
 	  $output .= "</div>";
 
     $output .= "<script>";
-    $output .= "var temporaryAlert = document.getElementById('alert-temporary');";
+    $output .= "var temporaryAlert = document.getElementById('" . $alert_uid . "');";
     $output .= "new bootstrap.Alert(temporaryAlert);";
     $output .= "var alert = bootstrap.Alert.getInstance(temporaryAlert);";
     $output .= "setTimeout(";
