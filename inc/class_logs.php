@@ -86,6 +86,34 @@ class logs {
 			}
 		}
 	}
+
+  public function list_group_item($log = null) {
+    //$string = 'Some text [mealUID:123] here';
+    $string = $log['description'];
+    $patternArray['/\[mealUID:([0-9]+)\]/'] = "<code><a href=\"index.php?n=admin_meal&mealUID=$1\" class=\"text-decoration-none\">[mealUID:$1]</a></code>";
+    $patternArray['/\[memberUID:([0-9]+)\]/'] = "<code><a href=\"index.php?n=member&memberUID=$1\" class=\"text-decoration-none\">[memberUID:$1]</a></code>";
+    //$patternArray['/\[bookingUID:([0-9]+)\]/'] = "<code><a href=\"index.php?n=booking&bookingUID=$1\" class=\"text-decoration-none\">[bookingUID:$1]</a></code>";
+    $patternArray['/\[notificationUID:([0-9]+)\]/'] = "<code><a href=\"index.php?n=admin_notification&notificationUID=$1\" class=\"text-decoration-none\">[notificationUID:$1]</a></code>";
+
+    foreach ($patternArray AS $pattern => $replace) {
+      //echo $pattern . $replace;
+      $log['description'] = preg_replace($pattern, $replace, $log['description']);
+    }
+
+    $preg_string = preg_replace($pattern, $replace, $string);
+
+    $output  = "<div class=\"list-group-item list-group-item-action filterRow\">";
+    $output .= "<div class=\"d-flex w-100 justify-content-between\">";
+    $output .= "<h5 class=\"mb-1 filterDescription\">" . $log['username'] . " - " . $log['description'] . "</h5>";
+    $output .= "<small class=\"text-muted\">" . dateDisplay($log['date']) . " " . date('H:i:s', strtotime($log['date'])) . "</small>";
+    //$output .= "<span class=\"badge bg-primary rounded-pill\">" . $log['type'] . "</span>";
+    $output .= "</div>";
+    //$output .= "<p class=\"mb-1\">" . $log['description'] . "</p>";
+    $output .= "<small class=\"text-muted\"><span class=\"badge bg-primary rounded-pill\">" . $log['type'] . "</span> " . $log['ip'] . "</small>";
+    $output .= "</div>";
+
+    return $output;
+  }
 }
 
 $logsClass = new logs();

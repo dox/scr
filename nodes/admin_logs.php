@@ -52,18 +52,12 @@ echo makeTitle($title, $subtitle);
 
 <div id="myTable" class="list-group">
   <?php
-  foreach ($logs AS $log) {
-    $output  = "<a href=\"#\" class=\"list-group-item list-group-item-action filterRow\">";
-    $output .= "<div class=\"d-flex w-100 justify-content-between\">";
-    $output .= "<h5 class=\"mb-1 filterDescription\">" . $log['username'] . " - " . $log['description'] . "</h5>";
-    $output .= "<small class=\"text-muted\">" . dateDisplay($log['date']) . " " . date('H:i:s', strtotime($log['date'])) . "</small>";
-    //$output .= "<span class=\"badge bg-primary rounded-pill\">" . $log['type'] . "</span>";
-    $output .= "</div>";
-    //$output .= "<p class=\"mb-1\">" . $log['description'] . "</p>";
-    $output .= "<small class=\"text-muted\"><span class=\"badge bg-primary rounded-pill\">" . $log['type'] . "</span> " . $log['ip'] . "</small>";
-    $output .= "</a>";
+  
 
-    echo $output;
+  foreach ($logs AS $log) {
+    echo $logsClass->list_group_item($log);
+
+    //echo $output;
   }
   ?>
 </div>
