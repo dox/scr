@@ -4,14 +4,17 @@ class bookings extends booking {
 
   }
 
-  
-
-  public function bookingsByMealUID($mealUID = null) {
+  public function bookingsUIDsByMealUID($mealUID = null) {
     global $db;
 
-    $sql  = "SELECT *  FROM " . self::$table_name;
+    $sql  = "SELECT * FROM " . self::$table_name;
     $sql .= " WHERE meal_uid = '" . $mealUID . "'";
     $sql .= " ORDER BY uid ASC";
+
+    $sql  = "SELECT bookings.uid AS uid FROM " . self::$table_name;
+    $sql .= " LEFT JOIN members ON bookings.member_ldap = members.ldap";
+    $sql .= " WHERE meal_uid = '" . $mealUID . "'";
+    $sql .= " ORDER BY members.type DESC, members.precedence ASC, members.lastname ASC";
 
     $bookings = $db->query($sql)->fetchAll();
 

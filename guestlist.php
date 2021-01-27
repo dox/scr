@@ -4,8 +4,8 @@ include_once("inc/autoload.php");
 admin_gatekeeper();
 
 $mealObject = new meal($_GET['mealUID']);
-
-printArray($mealObject);
+$bookingsClass = new bookings();
+//printArray($mealObject);
 
 ?>
 <!DOCTYPE html>
@@ -78,11 +78,11 @@ printArray($mealObject);
     <h4 class="d-flex justify-content-between align-items-center mb-3">Guest List</h4>
     <div class="list-group">
       <?php
-      printArray($mealObject->bookings_this_meal());
-      foreach ($mealObject->bookings_this_meal() AS $booking) {
+      $thisMealsBookingsUIDs = $bookingsClass->bookingsUIDsByMealUID($_GET['mealUID']);
+      foreach ($thisMealsBookingsUIDs AS $booking) {
         $bookingObject = new booking($booking['uid']);
-        $memberObject = new member($booking['member_ldap']);
-        $guestsArray = json_decode($booking['guests_array']);
+        $memberObject = new member($bookingObject->member_ldap);
+        $guestsArray = json_decode($bookingObject->guests_array);
         //printArray($bookingObject);
 
         $icons = array();

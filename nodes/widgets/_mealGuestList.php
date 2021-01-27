@@ -5,15 +5,14 @@ if (!isset($bookingsClass)) {
   $bookingsClass = new bookings();
 }
 
-$thisMealsBookings = $bookingsClass->bookingsByMealUID($_GET['mealUID']);
-
+$thisMealsBookingsUIDs = $bookingsClass->bookingsUIDsByMealUID($_GET['mealUID']);
 ?>
 
 <h4 class="mb-3">Guest List</h4>
 
 <ul>
 <?php
-foreach ($thisMealsBookings AS $booking) {
+foreach ($thisMealsBookingsUIDs AS $booking) {
   $output = "";
 
   $bookingObject = new booking($booking['uid']);
