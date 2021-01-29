@@ -244,22 +244,23 @@ if (isset($bookingByMember)) {
       </div>
       <div class="modal-body">
         <?php
-        if (date('Y-m-d H:i:s') >= date('Y-m-d H:i:s', strtotime($mealObject->date_cutoff)) && $_SESSION['admin'] != "true") {
-          echo "<p>The deadline for making changes to this booking has passed.  Please contact the Bursary for further assistance.</p>";
+        if (!$mealObject->check_member_ok()) {
+          $message = "<p>Your account is currently disabled.  You cannot make changes to this booking.  Please contact the Bursary for further assistance.</p>";
+          $buttonStatus = "disabled";
+        } elseif (!$mealObject->check_cutoff_ok() && $_SESSION['admin'] != "true") {
+          $message = "<p>The deadline for making changes to this booking has passed.  Please contact the Bursary for further assistance.</p>";
+          $buttonStatus = "disabled";
         } else {
-          echo "<p>Are you sure you want to delete this meal booking?  This will also delete any guests you have booked for this meal.</p>";
+          $message = "<p>Are you sure you want to delete this meal booking?  This will also delete any guests you have booked for this meal.</p>";
+          $buttonStatus = "";
         }
+
+        echo $message;
         ?>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-link link-secondary mr-auto" data-bs-dismiss="modal">Close</button>
-        <?php
-        if (date('Y-m-d H:i:s') >= date('Y-m-d H:i:s', strtotime($mealObject->date_cutoff)) && $_SESSION['admin'] != "true") {
-          echo "<a href=\"#\" role=\"button\" class=\"btn btn-danger disabled\"><svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#trash\"/></svg> Delete</a>";
-        } else {
-          echo "<a href=\"index.php?deleteBookingUID=" . $bookingObject->uid . "\" role=\"button\" class=\"btn btn-danger\" onclck=\"bookingDeleteButton();\"><svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#trash\"/></svg> Delete</a>";
-        }
-        ?>
+        <a href="index.php?deleteBookingUID=<?php echo $bookingObject->uid; ?>" role="button" class="btn btn-danger <?php echo $buttonStatus; ?>" onclck="bookingDeleteButton();"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#trash"/></svg> Delete</a>
       </div>
     </div>
   </div>
