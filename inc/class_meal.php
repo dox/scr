@@ -150,32 +150,12 @@ class meal {
       }
 
       // check for member status (enabled/disabled)
-      if ($this->check_cutoff_ok()) {
-        // meal cutoff fine
-      } else {
-        // meal cutoff passed
-        if ($_SESSION['admin'] == true) {
-          // allow admin override
-          $bookingLink = "#";
-          $bookingClass = "btn-secondary";
-          $bookingOnClick = "onclick=\"bookMealQuick(this.id)\"";
-          $bookingDisplayText = "Deadline Passed";
-        } else {
-          // prevent users from booking
-          $bookingLink = "#";
-          $bookingClass = "btn-secondary disabled";
-          $bookingOnClick = "";
-          $bookingDisplayText = "Deadline Passed";
-        }
-      }
-
-      // check for member disabled
       if ($this->check_member_ok()) {
         // member status fine
       } else {
         // member disabled
         $bookingLink = "#";
-        $bookingClass = "btn-secondary";
+        $bookingClass = "btn-secondary disabled";
         $bookingOnClick = "";
         $bookingDisplayText = "Your account is disabled";
       }

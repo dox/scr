@@ -43,5 +43,33 @@ class bookings extends booking {
       return false;
     }
   }
+
+  public function booking_uids_future_by_member($memberldap = null) {
+    global $db;
+
+    $sql  = "SELECT bookings.uid AS uid FROM " . self::$table_name;
+    $sql .= " LEFT JOIN meals ON bookings.meal_uid = meals.uid";
+    $sql .= " WHERE meals.date_meal > NOW()";
+    $sql .= " AND member_ldap = '" . $memberldap . "'";
+    $sql .= " ORDER BY meals.date_meal ASC";
+
+    $bookings = $db->query($sql)->fetchAll();
+
+    return $bookings;
+  }
+
+  public function booking_uids_past_by_member($memberldap = null) {
+    global $db;
+
+    $sql  = "SELECT bookings.uid AS uid FROM " . self::$table_name;
+    $sql .= " LEFT JOIN meals ON bookings.meal_uid = meals.uid";
+    $sql .= " WHERE meals.date_meal < NOW()";
+    $sql .= " AND member_ldap = '" . $memberldap . "'";
+    $sql .= " ORDER BY meals.date_meal ASC";
+
+    $bookings = $db->query($sql)->fetchAll();
+
+    return $bookings;
+  }
 }
 ?>

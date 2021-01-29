@@ -127,5 +127,33 @@ class booking {
 
     return $delete;
   }
+
+  public function display_aside() {
+    global $settingsClass;
+
+    $meal = new meal($this->meal_uid);
+
+    if (date('Y-m-d', strtotime($meal->date_meal)) == date('Y-m-d')) {
+      $class = "text-success";
+    } else {
+      $class = "text-muted";
+    }
+
+    if ($_SESSION['username'] == $this->member_ldap) {
+      $url = "index.php?n=booking&mealUID=" . $meal->uid;
+    } else {
+      $url = "index.php?n=admin_meal&mealUID=" . $meal->uid;
+    }
+
+    $output  = "<li class=\"list-group-item d-flex justify-content-between lh-sm\">";
+    $output .= "<div class=\"" . $class . "\">";
+    $output .= "<h6 class=\"my-0\"><a href=\"" . $url . "\" class=\"" . $class . "\">" . $meal->name . "</a></h6>";
+    $output .= "<small class=\"" . $class . "\">" . $meal->location . "</small>";
+    $output .= "</div>";
+    $output .= "<span class=\"" . $class . "\">" . dateDisplay($meal->date_meal) . "</span>";
+    $output .= "</li>";
+
+    return $output;
+  }
 }
 ?>

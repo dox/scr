@@ -10,6 +10,7 @@ if (isset($_GET['memberUID'])) {
   $memberUID = $_SESSION['username'];
 }
 
+$bookingsClass = new bookings();
 $membersClass = new members();
 $memberObject = new member($memberUID);
 $upcomingMealUIDS = $memberObject->mealUIDS_upcoming();
@@ -62,10 +63,10 @@ include_once('_member_stats.php');
     </h4>
     <ul class="list-group mb-3">
       <?php
-      foreach ($upcomingMealUIDS AS $mealUID) {
-        $mealObject = new meal($mealUID);
-
-        echo $mealObject->display_mealAside();
+      $futureBookings = $bookingsClass->booking_uids_future_by_member($memberObject->ldap);
+      foreach ($futureBookings AS $booking) {
+        $bookingObject = new booking($booking['uid']);
+        echo $bookingObject->display_aside();
       }
       ?>
     </ul>
@@ -78,13 +79,15 @@ include_once('_member_stats.php');
     </h4>
     <ul class="list-group mb-3">
       <?php
+      $pastBookings = $bookingsClass->booking_uids_past_by_member($memberObject->ldap);
       $i = 0;
       $mealsToDisplay = $settingsClass->value('member_previous_meals_displayed');
-      do {
-        $mealObject = new meal($previousMealUIDS[$i]);
 
-        if (isset($mealObject->uid)) {
-          echo $mealObject->display_mealAside();
+      do {
+        $bookingObject = new booking($pastBookings[$i]['uid']);
+
+        if (isset($bookingObject->uid)) {
+          echo $bookingObject->display_aside();
         }
 
         $i++;
