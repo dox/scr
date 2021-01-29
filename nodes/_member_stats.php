@@ -12,7 +12,7 @@ $totalBookings = array_slice($totalBookings, 0, 4, true);
 <div class="row row-deck row-cards mb-3">
   <?php
   foreach ($totalBookings AS $typeName => $total) {
-    $output  = "<div class=\"col-sm-6 col-lg-3\">";
+    $output  = "<div class=\"col-6 col-sm-6 col-lg-3 mb-3\">";
     $output .= "<div class=\"card\">";
     $output .= "<div class=\"card-body\">";
     $output .= "<div class=\"subheader\">" . $typeName . " bookings</div>";
