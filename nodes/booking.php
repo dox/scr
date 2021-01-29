@@ -1,14 +1,18 @@
 <?php
-$termsClass = new terms();
-$membersClass = new members();
-
-$meal = new meal($_GET['mealUID']);
-$checkTerm = $termsClass->checkIsInTerm($meal->date_meal);
-$term = new term($checkTerm[0]['uid']);
+$mealObject = new meal($_GET['mealUID']);
 
 $bookingsClass = new bookings();
-$bookingByMember = $bookingsClass->bookingForMealByMember($meal->uid, $_SESSION['username']);
+$bookingByMember = $bookingsClass->bookingForMealByMember($mealObject->uid, $_SESSION['username']);
+
 $bookingObject = new booking($bookingByMember['uid']);
+
+$termsClass = new terms();
+$checkTerm = $termsClass->checkIsInTerm($mealObject->date_meal);
+$term = new term($checkTerm[0]['uid']);
+
+$membersClass = new members();
+
+
 
 $dietaryOptionsMax = $settingsClass->value('meal_dietary_allowed');
 
@@ -17,7 +21,7 @@ if (!empty($_POST['guest_name'])) {
   $bookingObject = new booking($_GET['bookingUID']);
 }
 
-//$bookingsThisMeal = $bookingsClass->bookings_this_meal($meal->uid);
+//$bookingsThisMeal = $bookingsClass->bookings_this_meal($mealObject->uid);
 
 /*
 $arr = array(
@@ -30,17 +34,17 @@ printArray($arr);
 ?>
 
 <?php
-$title = "Week " . $term->whichWeek($meal->date_meal) . " " . $meal->name;
-$subtitle = $meal->type . ": " . $meal->location . ", " . dateDisplay($meal->date_meal, true);
-if ($_SESSION['admin'] == true) {
-  //$icons[] = array("class" => "btn-warning", "name" => $icon_edit. " Edit Meal", "value" => "a href=\"index.php?n=admin_meal=" . $meal->uid . "\"");
+$title = "Week " . $term->whichWeek($mealObject->date_meal) . " " . $mealObject->name;
+$subtitle = $mealObject->type . ": " . $mealObject->location . ", " . dateDisplay($mealObject->date_meal, true);
+if (isset($bookingByMember)) {
+  $icons[] = array("class" => "btn-danger", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#trash\"/></svg> Delete Booking", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#staticBackdrop\"");
+  $icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#person-plus\"/></svg> Add Guest", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#modal_guest_add\"");
 }
-$icons[] = array("class" => "btn-danger", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#trash\"/></svg> Delete Booking", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#staticBackdrop\"");
-$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#person-plus\"/></svg> Add Guest", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#modal_guest_add\"");
 
 echo makeTitle($title, $subtitle, $icons);
-?>
 
+if (isset($bookingByMember)) {
+?>
 <div class="row g-3">
       <div class="col-md-5 col-lg-4 order-md-last">
         <div class="divide-y">
@@ -50,7 +54,7 @@ echo makeTitle($title, $subtitle, $icons);
               <span class="col-auto">
                 <label class="form-check form-check-single form-switch">
                   <?php
-                  if ($meal->domus == 1 && $_SESSION['admin'] != true) {
+                  if ($mealObject->domus == 1 && $_SESSION['admin'] != true) {
                     $domusDisabledCheck = " disabled";
                   } else {
                     $domusDisabledCheck = "";
@@ -69,7 +73,7 @@ echo makeTitle($title, $subtitle, $icons);
               <span class="col-auto">
                 <label class="form-check form-check-single form-switch">
                   <?php
-                  if ($meal->allowed_wine == 1) {
+                  if ($mealObject->allowed_wine == 1) {
                     $wineDisabledCheck = "";
                   } else {
                     $wineDisabledCheck = " disabled";
@@ -86,7 +90,7 @@ echo makeTitle($title, $subtitle, $icons);
               <span class="col-auto">
                 <label class="form-check form-check-single form-switch">
                   <?php
-                  if ($meal->allowed_dessert == 1) {
+                  if ($mealObject->allowed_dessert == 1) {
                     $dessertDisabledCheck = "";
                   } else {
                     $dessertDisabledCheck = " disabled";
@@ -108,12 +112,12 @@ echo makeTitle($title, $subtitle, $icons);
         <div id="meal_guest_list"><?php include_once("widgets/_mealGuestList.php"); ?></div>
 
         <?php
-        if (isset($meal->menu)) {
+        if (isset($mealObject->menu)) {
           echo "<div class=\"card text-center\">";
           echo "<div class=\"card-body\">";
           echo "<h4 class=\"card-title text-center\">Menu</h4>";
-          echo "<p><i>" . $meal->location . ", " . dateDisplay($meal->date_meal, true) . "</i></p>";
-          echo $meal->menu;
+          echo "<p><i>" . $mealObject->location . ", " . dateDisplay($mealObject->date_meal, true) . "</i></p>";
+          echo $mealObject->menu;
           echo "</div>";
           echo "</div>";
         }
@@ -132,7 +136,7 @@ echo makeTitle($title, $subtitle, $icons);
       </div>
       <div class="modal-body">
         <?php
-        if (date('Y-m-d H:i:s') >= date('Y-m-d H:i:s', strtotime($meal->date_cutoff)) && $_SESSION['admin'] != "true") {
+        if (date('Y-m-d H:i:s') >= date('Y-m-d H:i:s', strtotime($mealObject->date_cutoff)) && $_SESSION['admin'] != "true") {
           echo "<p>The deadline for making changes to this booking has passed.  Please contact the Bursary for further assistance.</p>";
         } else {
         ?>
@@ -215,7 +219,7 @@ echo makeTitle($title, $subtitle, $icons);
       <div class="modal-footer">
         <button type="button" class="btn btn-link text-muted" data-bs-dismiss="modal">Close</button>
         <?php
-        if (date('Y-m-d H:i:s') >= date('Y-m-d H:i:s', strtotime($meal->date_cutoff)) && $_SESSION['admin'] != "true") {
+        if (date('Y-m-d H:i:s') >= date('Y-m-d H:i:s', strtotime($mealObject->date_cutoff)) && $_SESSION['admin'] != "true") {
           echo "<button type=\"submit\" class=\"btn btn-primary disabled\"><svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#person-plus\"/></svg> Add Guest</button>";
         } else {
           //echo "<a href=\"index.php?deleteBookingUID=" . $bookingObject->uid . "\" role=\"button\" class=\"btn btn-danger\" onclck=\"bookingDeleteButton();\"><svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#trash\"/></svg> Delete</a>";
@@ -240,7 +244,7 @@ echo makeTitle($title, $subtitle, $icons);
       </div>
       <div class="modal-body">
         <?php
-        if (date('Y-m-d H:i:s') >= date('Y-m-d H:i:s', strtotime($meal->date_cutoff)) && $_SESSION['admin'] != "true") {
+        if (date('Y-m-d H:i:s') >= date('Y-m-d H:i:s', strtotime($mealObject->date_cutoff)) && $_SESSION['admin'] != "true") {
           echo "<p>The deadline for making changes to this booking has passed.  Please contact the Bursary for further assistance.</p>";
         } else {
           echo "<p>Are you sure you want to delete this meal booking?  This will also delete any guests you have booked for this meal.</p>";
@@ -250,7 +254,7 @@ echo makeTitle($title, $subtitle, $icons);
       <div class="modal-footer">
         <button type="button" class="btn btn-link link-secondary mr-auto" data-bs-dismiss="modal">Close</button>
         <?php
-        if (date('Y-m-d H:i:s') >= date('Y-m-d H:i:s', strtotime($meal->date_cutoff)) && $_SESSION['admin'] != "true") {
+        if (date('Y-m-d H:i:s') >= date('Y-m-d H:i:s', strtotime($mealObject->date_cutoff)) && $_SESSION['admin'] != "true") {
           echo "<a href=\"#\" role=\"button\" class=\"btn btn-danger disabled\"><svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#trash\"/></svg> Delete</a>";
         } else {
           echo "<a href=\"index.php?deleteBookingUID=" . $bookingObject->uid . "\" role=\"button\" class=\"btn btn-danger\" onclck=\"bookingDeleteButton();\"><svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#trash\"/></svg> Delete</a>";
@@ -264,3 +268,12 @@ echo makeTitle($title, $subtitle, $icons);
 <script>
 checkMaxCheckboxes(<?php echo $dietaryOptionsMax; ?>);
 </script>
+<?php
+} else {
+  $output  = "You have not made a booking for this meal.";
+  $output .= "";
+  $output .= "";
+
+  echo $output;
+}
+?>

@@ -27,7 +27,7 @@ class bookings extends booking {
     $sql  = "SELECT *  FROM " . self::$table_name;
     $sql .= " WHERE meal_uid = '" . $mealUID . "'";
     $sql .= " AND member_ldap = '" . $username . "'";
-    $sql .= " ORDER BY uid ASC";
+    $sql .= " LIMIT 1";
 
     $bookingThisMeal = $db->query($sql)->fetchAll();
 

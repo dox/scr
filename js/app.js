@@ -4,12 +4,10 @@ function bookMealQuick(this_id) {
   var mealUID = this_id.replace("mealUID-", "");
 
   var buttonClicked = document.getElementById(this_id);
-  //var totalBookings = document.getElementById('capacityUID-' + mealUID);
   var formData = new FormData();
 
   formData.append("meal_uid", mealUID);
 
-  //https://javascript.info/xmlhttprequest GREAT documentation!
   var request = new XMLHttpRequest();
 
   request.open("POST", "../actions/booking_create.php", true);
@@ -20,25 +18,30 @@ function bookMealQuick(this_id) {
     if (request.status != 200) { // analyze HTTP status of the response
       alert("Something went wrong.  Please refresh this page and try again.");
       alert(`Error ${request.status}: ${request.statusText}`); // e.g. 404: Not Found
-    } else { // show the result
-      //alert(this.responseText);
+    } else {
+      // check if the booking was made
+      var error_check = request.responseText.includes("Error");
 
-      buttonClicked.className = 'btn btn-sm rounded-0 rounded-bottom btn-success';
-      buttonClicked.removeAttribute("onclick");
-      buttonClicked.href = "index.php?n=booking&mealUID=" + mealUID;
-      //totalBookings.innerHTML = parseInt(totalBookings.innerHTML, 10)+1;
-      buttonClicked.innerText = 'Manage Booking';
-
-      //alert(`Done, got ${request.response.length} bytes`); // response is the server response
+      // if the booking had an error, alert
+      if (error_check == true) {
+        alert(this.responseText);
+      } else {
+        // booking made, update the booking button
+        buttonClicked.className = 'btn btn-sm rounded-0 rounded-bottom btn-success';
+        buttonClicked.removeAttribute("onclick");
+        buttonClicked.href = "index.php?n=booking&mealUID=" + mealUID;
+        //totalBookings.innerHTML = parseInt(totalBookings.innerHTML, 10)+1;
+        buttonClicked.innerText = 'Manage Booking';
+      }
     }
-  };
+  }
 
   request.onerror = function() {
     alert("Request failed");
   };
 
   return false;
-}
+};
 
 function addGuest(oFormElement) {
   event.preventDefault();

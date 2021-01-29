@@ -37,9 +37,12 @@ $bookingArray = array(
 	'dessert' => $dessertValue
 );
 
-$booking = $bookingObject->create($bookingArray);
+$mealBookableCheck = $mealObject->check_meal_bookable();
 
-//quit();
-echo "Booking made";
+if ($mealBookableCheck == true) {
+	$booking = $bookingObject->create($bookingArray);
+} else {
+	echo "Error: An error occured when making this booking.  Please refresh the page and try again.  If the problem persists, please contact the Bursary.";
+}
 
 ?>

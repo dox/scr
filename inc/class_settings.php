@@ -110,10 +110,10 @@ class settings {
     $output .= "<script>";
     $output .= "var temporaryAlert = document.getElementById('" . $alert_uid . "');";
     $output .= "new bootstrap.Alert(temporaryAlert);";
-    $output .= "var alert = bootstrap.Alert.getInstance(temporaryAlert);";
+    $output .= "var alertTemp = bootstrap.Alert.getInstance(temporaryAlert);";
     $output .= "setTimeout(";
     $output .= "  function() {";
-    $output .= "    alert.close();";
+    $output .= "    alertTemp.close();";
     $output .= "}, 5000);";
     $output .= "</script>";
 

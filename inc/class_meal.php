@@ -110,13 +110,18 @@ class meal {
       $bookingDisplayText = "Book Meal";
 
       // check for meal capacity
-      if ($this->total_bookings_this_meal() >= $this->totalCapacity()) {
+      if ($this->check_capacity_ok()) {
+        // meal capacity fine
+      } else {
+        // meal capacity reached
         if ($_SESSION['admin'] == true) {
+          // allow admin override
           $bookingLink = "#";
           $bookingClass = "btn-warning";
           $bookingOnClick = "onclick=\"bookMealQuick(this.id)\"";
           $bookingDisplayText = "Capacity Reached";
         } else {
+          // prevent users from booking
           $bookingLink = "#";
           $bookingClass = "btn-warning disabled";
           $bookingOnClick = "";
@@ -125,13 +130,38 @@ class meal {
       }
 
       // check for meal cutoff expiry date
-      if (date('Y-m-d H:i:s') >= date('Y-m-d H:i:s', strtotime($this->date_cutoff))) {
+      if ($this->check_cutoff_ok()) {
+        // meal cutoff fine
+      } else {
+        // meal cutoff passed
         if ($_SESSION['admin'] == true) {
+          // allow admin override
           $bookingLink = "#";
           $bookingClass = "btn-secondary";
           $bookingOnClick = "onclick=\"bookMealQuick(this.id)\"";
           $bookingDisplayText = "Deadline Passed";
         } else {
+          // prevent users from booking
+          $bookingLink = "#";
+          $bookingClass = "btn-secondary disabled";
+          $bookingOnClick = "";
+          $bookingDisplayText = "Deadline Passed";
+        }
+      }
+
+      // check for member status (enabled/disabled)
+      if ($this->check_cutoff_ok()) {
+        // meal cutoff fine
+      } else {
+        // meal cutoff passed
+        if ($_SESSION['admin'] == true) {
+          // allow admin override
+          $bookingLink = "#";
+          $bookingClass = "btn-secondary";
+          $bookingOnClick = "onclick=\"bookMealQuick(this.id)\"";
+          $bookingDisplayText = "Deadline Passed";
+        } else {
+          // prevent users from booking
           $bookingLink = "#";
           $bookingClass = "btn-secondary disabled";
           $bookingOnClick = "";
@@ -140,11 +170,14 @@ class meal {
       }
 
       // check for member disabled
-      if ($_SESSION['enabled'] != true) {
-          $bookingLink = "#";
-          $bookingClass = "btn-secondary";
-          $bookingOnClick = "";
-          $bookingDisplayText = "Your account is disabled";
+      if ($this->check_member_ok()) {
+        // member status fine
+      } else {
+        // member disabled
+        $bookingLink = "#";
+        $bookingClass = "btn-secondary";
+        $bookingOnClick = "";
+        $bookingDisplayText = "Your account is disabled";
       }
     }
 
@@ -320,6 +353,56 @@ class meal {
     $logsClass->create("meal", "[mealUID:" . $mealUID . "] (and any associated bookings) deleted");
 
     return $deleteMeal;
+  }
+
+  public function check_capacity_ok() {
+    $mealCapacity = $this->totalCapacity();
+    $currentBookingsCount = $this->total_bookings_this_meal();
+
+    if ($currentBookingsCount < $mealCapacity) {
+      $capacityStatus = true;
+    } else {
+      $capacityStatus = false;
+    }
+
+    return $capacityStatus;
+  }
+
+  public function check_cutoff_ok() {
+    $mealCutoffDateTime = date('Y-m-d H:i:s', strtotime($this->date_cutoff));
+    $nowDateTime = date('Y-m-d H:i:s');
+
+    if ($nowDateTime < $mealCutoffDateTime) {
+      $cutoffStatus = true;
+    } else {
+      $cutoffStatus = false;
+    }
+
+    return $cutoffStatus;
+  }
+
+  public function check_member_ok() {
+    $currentMemberStatus = $_SESSION['enabled'];
+
+    if ($currentMemberStatus == 1) {
+      $memberStatus = true;
+    } else {
+      $memberStatus = false;
+    }
+
+    return $memberStatus;
+  }
+
+  public function check_meal_bookable() {
+    $check_capacity = $this->check_capacity_ok();
+    $check_cutoff   = $this->check_cutoff_ok();
+    $check_member   = $this->check_member_ok();
+
+    if ($check_capacity && $check_cutoff && $check_member) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }
 ?>
