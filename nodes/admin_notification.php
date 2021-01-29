@@ -111,7 +111,7 @@ echo makeTitle($title, $subtitle, $icons);
         <label class="row">
           <span class="col">Dismissible</span>
           <span class="col-auto">
-            <label class="form-check form-check-single form-switch"><input class="form-check-input" type="checkbox" id="Dismissible" name="Dismissible" <?php if ($notification['dismissible'] == 1) { echo "checked=\"\""; } ?> value="1"></label>
+            <label class="form-check form-check-single form-switch"><input class="form-check-input" type="checkbox" id="dismissible" name="dismissible" <?php if ($notification['dismissible'] == 1) { echo "checked=\"\""; } ?> value="1"></label>
           </span>
         </label>
       </div>
