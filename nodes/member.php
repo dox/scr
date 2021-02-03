@@ -13,8 +13,8 @@ if (isset($_GET['memberUID'])) {
 $bookingsClass = new bookings();
 $membersClass = new members();
 $memberObject = new member($memberUID);
-$upcomingMealUIDS = $memberObject->mealUIDS_upcoming();
-$previousMealUIDS = $memberObject->mealUIDS_previous();
+$upcomingMealUIDS = $memberObject->bookingUIDS_upcoming();
+$previousMealUIDS = $memberObject->bookingUIDS_previous();
 
 $dietaryOptionsMax = $settingsClass->value('meal_dietary_allowed');
 
@@ -66,7 +66,7 @@ include_once('_member_stats.php');
       $futureBookings = $bookingsClass->booking_uids_future_by_member($memberObject->ldap);
       foreach ($futureBookings AS $booking) {
         $bookingObject = new booking($booking['uid']);
-        echo $bookingObject->display_aside();
+        echo $bookingObject->displayListGroupItem();
       }
       ?>
     </ul>
@@ -79,15 +79,16 @@ include_once('_member_stats.php');
     </h4>
     <ul class="list-group mb-3">
       <?php
-      $pastBookings = $bookingsClass->booking_uids_past_by_member($memberObject->ldap);
+      //$pastBookings = $bookingsClass->booking_uids_past_by_member($memberObject->ldap);
       $i = 0;
       $mealsToDisplay = $settingsClass->value('member_previous_meals_displayed');
-
+      
       do {
-        $bookingObject = new booking($pastBookings[$i]['uid']);
+
+        $bookingObject = new booking($previousMealUIDS[$i]);
 
         if (isset($bookingObject->uid)) {
-          echo $bookingObject->display_aside();
+          echo $bookingObject->displayListGroupItem();
         }
 
         $i++;
@@ -100,7 +101,7 @@ include_once('_member_stats.php');
     <h4 class="d-flex mb-3">Personal Information</h4>
     <form method="post" id="memberUpdate" action="<?php echo $_SERVER['REQUEST_URI']; ?>" class="needs-validation" novalidate>
       <div class="row g-3">
-        <div class="col-md-2 mb-3">
+        <div class="col-lg-2 col-md-4 col-sm-4 col-4 mb-3">
           <label for="title" class="form-label">Title</label>
           <select class="form-select" name="title" id="title" required>
             <?php
@@ -121,7 +122,7 @@ include_once('_member_stats.php');
           </div>
         </div>
 
-        <div class="col-sm-5 mb-3">
+        <div class="col-lg-5 col-md-8 col-sm-8 col-8 mb-3">
           <label for="firstname" class="form-label">First name</label>
           <input type="text" class="form-control" name="firstname" id="firstname" placeholder="" value="<?php echo $memberObject->firstname; ?>" required>
           <div class="invalid-feedback">
@@ -129,7 +130,7 @@ include_once('_member_stats.php');
           </div>
         </div>
 
-        <div class="col-sm-5 mb-3">
+        <div class="col-lg-5 mb-3">
           <label for="lastname" class="form-label">Last name</label>
           <input type="text" class="form-control" name="lastname" id="lastname" placeholder="" value="<?php echo $memberObject->lastname; ?>" required>
           <div class="invalid-feedback">
@@ -137,7 +138,7 @@ include_once('_member_stats.php');
           </div>
         </div>
 
-        <div class="col-7 mb-3">
+        <div class="col-lg-7 mb-3">
           <label for="ldap" class="form-label">LDAP Username</label>
           <div class="input-group">
             <span class="input-group-text" onclick="ldapLookup()">@</span>
@@ -153,7 +154,7 @@ include_once('_member_stats.php');
           ?>
         </div>
 
-        <div class="col-5 mb-3">
+        <div class="col-lg-5 mb-3">
           <label for="category" class="form-label">Member Category</label>
           <select class="form-select" name="category" id="category" <?php echo $disabledCheck; ?> required>
             <?php

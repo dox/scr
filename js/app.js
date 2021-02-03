@@ -53,7 +53,7 @@ function addGuest(oFormElement) {
     var mealUID = document.getElementById('mealUID').value;
     var guestsList = document.getElementById('guests_list');
     var mealGuestList = document.getElementById('meal_guest_list');
-    let url = 'nodes/widgets/_bookingGuestList.php?bookingUID=' + bookingUID;
+    let url = 'nodes/widgets/_bookingGuestList.php?bookingUID=' + bookingUID + '&mealUID=' + mealUID;
     let url2 = 'nodes/widgets/_mealGuestList.php?mealUID=' + mealUID;
 
     // load the remote part into the guests_list div
@@ -93,7 +93,7 @@ function deleteGuest(this_id) {
       formData.append("booking_uid", booking_uid);
 
     	xhr.onload = async function() {
-        let url = 'nodes/widgets/_bookingGuestList.php?bookingUID=' + booking_uid;
+        let url = 'nodes/widgets/_bookingGuestList.php?bookingUID=' + booking_uid + '&mealUID=' + mealUID;
         let url2 = 'nodes/widgets/_mealGuestList.php?mealUID=' + mealUID;
 
         // load the remote part into the guests_list div

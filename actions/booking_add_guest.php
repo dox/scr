@@ -21,7 +21,7 @@ $newGuest = array(
 	'guest_dessert' => $guestDessert
 );
 
-$allGuests = $bookingObject->addGuest($newGuest);
+$bookingObject->addGuest($newGuest);
 
 //$logsClass->create("booking", $guestName . " added as guest to booking UID " . $bookingUID);
 ?>

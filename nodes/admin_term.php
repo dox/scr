@@ -37,15 +37,7 @@ echo makeTitle($title, $subtitle, $icons);
       foreach ($meals AS $meal) {
         $mealObject = new meal($meal['uid']);
 
-        $output  = "<li class=\"list-group-item d-flex justify-content-between lh-sm\">";
-        $output .= "<div class=\"text-muted\">";
-        $output .= "<h6 class=\"my-0\"><a href=\"index.php?n=admin_meal&mealUID=" . $mealObject->uid . "\" class=\"text-muted\">" . $mealObject->name . "</a></h6>";
-        $output .= "<small class=\"text-muted\">" . dateDisplay($mealObject->date_meal) . " " . date('H:i', strtotime($mealObject->date_meal)) . "</small>";
-        $output .= "</div>";
-        $output .= "<span class=\"text-muted\">" . $mealObject->total_bookings_this_meal() . autoPluralise(" booking", " bookings", $mealObject->total_bookings_this_meal()) . "</span>";
-        $output .= "</li>";
-
-        echo $output;
+        echo $mealObject->displayListGroupItem();
       }
       ?>
     </ul>
@@ -58,15 +50,7 @@ echo makeTitle($title, $subtitle, $icons);
       foreach ($mealsAfterTerm AS $meal) {
         $mealObject = new meal($meal['uid']);
 
-        $output  = "<li class=\"list-group-item d-flex justify-content-between lh-sm\">";
-        $output .= "<div class=\"text-muted\">";
-        $output .= "<h6 class=\"my-0\"><a href=\"index.php?n=admin_meal&mealUID=" . $mealObject->uid . "\" class=\"text-muted\">" . $mealObject->name . "</a></h6>";
-        $output .= "<small class=\"text-muted\">" . dateDisplay($mealObject->date_meal) . " " . date('H:i', strtotime($mealObject->date_meal)) . "</small>";
-        $output .= "</div>";
-        $output .= "<span class=\"text-muted\">" . count(json_decode($booking['guests_array'])) . autoPluralise(" guest", " guests", count(json_decode($booking['guests_array']))) . "</span>";
-        $output .= "</li>";
-
-        echo $output;
+        echo $mealObject->displayListGroupItem();
       }
       ?>
     </ul>
@@ -126,7 +110,8 @@ echo makeTitle($title, $subtitle, $icons);
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <p>Are you sure you want to delete this Term?  This will not delete any meals/bookings that have been made during this term.  WARNING! This cannot be undone!</p>
+        <p>Are you sure you want to delete this Term?  This will not delete any meals (or bookings) that have been made during this term.</p>
+        <p class="text-danger"><strong>WARNING!</strong> This action cannot be undone!</p>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-link link-secondary mr-auto" data-bs-dismiss="modal">Close</button>

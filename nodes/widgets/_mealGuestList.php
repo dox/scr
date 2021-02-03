@@ -15,10 +15,10 @@ $thisMealsBookingsUIDs = $bookingsClass->bookingsUIDsByMealUID($_GET['mealUID'])
 foreach ($thisMealsBookingsUIDs AS $booking) {
   $output = "";
 
-  $bookingObject = new booking($booking['uid']);
-  $memberObject = new member($bookingObject->member_ldap);
+  $guestBookingObject = new booking($booking['uid']);
+  $memberObject = new member($guestBookingObject->member_ldap);
 
-  $guestsArray = $bookingObject->guestsArray();
+  $guestsArray = $guestBookingObject->guestsArray();
   $totalGuests = count($guestsArray);
 
   if ($totalGuests > 0) {

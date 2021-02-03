@@ -42,7 +42,11 @@ $mealBookableCheck = $mealObject->check_meal_bookable();
 if ($mealBookableCheck == true) {
 	$booking = $bookingObject->create($bookingArray);
 } else {
-	echo "Error: An error occured when making this booking.  Please refresh the page and try again.  If the problem persists, please contact the Bursary.";
+	if ($_SESSION['admin'] == true) {
+		$booking = $bookingObject->create($bookingArray);
+	} else {
+		echo "Error: An error occured when making this booking.  Please refresh the page and try again.  If the problem persists, please contact the Bursary.";
+	}
 }
 
 ?>

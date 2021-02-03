@@ -225,7 +225,6 @@ class meal {
 
     $sql2 = "SELECT count(*) as totalBookings, SUM(x.totalGuestsPerBooking) AS totalGuests FROM (" . $sql . ") AS x";
 
-
     $bookings = $db->query($sql2)->fetchAll();
     //printArray($bookings);
 
@@ -248,7 +247,7 @@ class meal {
     return $output;
   }
 
-  public function display_mealAside() {
+  public function displayListGroupItem() {
     global $settingsClass;
 
     if (date('Y-m-d', strtotime($this->date_meal)) == date('Y-m-d')) {
@@ -259,10 +258,10 @@ class meal {
 
     $output  = "<li class=\"list-group-item d-flex justify-content-between lh-sm\">";
     $output .= "<div class=\"" . $class . "\">";
-    $output .= "<h6 class=\"my-0\"><a href=\"index.php?n=booking&mealUID=" . $this->uid . "\" class=\"" . $class . "\">" . $this->name . "</a></h6>";
-    $output .= "<small class=\"" . $class . "\">" . $this->location . "</small>";
+    $output .= "<h6 class=\"my-0\"><a href=\"index.php?n=admin_meal&mealUID=" . $this->uid . "\" class=\"text-muted\">" . $this->name . "</a></h6>";
+    $output .= "<small class=\"text-muted\">" . dateDisplay($this->date_meal) . " " . date('H:i', strtotime($this->date_meal)) . "</small>";
     $output .= "</div>";
-    $output .= "<span class=\"" . $class . "\">" . dateDisplay($this->date_meal) . "</span>";
+    $output .= "<span class=\"text-muted\">" . $this->total_bookings_this_meal() . autoPluralise(" booking", " bookings", $this->total_bookings_this_meal()) . "</span>";
     $output .= "</li>";
 
     return $output;

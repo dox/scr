@@ -133,7 +133,8 @@ echo makeTitle($title, $subtitle, $icons);
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <p>Are you sure you want to delete this notification?  WARNING! This cannot be undone!</p>
+        <p>Are you sure you want to delete this notification?</p>
+        <p class="text-danger"><strong>WARNING!</strong> This action cannot be undone!</p>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-link link-secondary mr-auto" data-bs-dismiss="modal">Close</button>

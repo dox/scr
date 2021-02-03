@@ -1,10 +1,10 @@
 <?php
+$bookingsClass = new bookings();
 $mealObject = new meal($_GET['mealUID']);
 
-$bookingsClass = new bookings();
 $bookingByMember = $bookingsClass->bookingForMealByMember($mealObject->uid, $_SESSION['username']);
-
 $bookingObject = new booking($bookingByMember['uid']);
+
 
 $termsClass = new terms();
 $checkTerm = $termsClass->checkIsInTerm($mealObject->date_meal);
@@ -230,6 +230,7 @@ if (isset($bookingByMember)) {
       <input type="hidden" id="bookingUID" name="bookingUID" value="<?php echo $bookingObject->uid; ?>">
       <input type="hidden" id="mealUID" name="mealUID" value="<?php echo $bookingObject->meal_uid; ?>">
       </form>
+      <?php echo $bookingObject->uid; ?>
     </div>
   </div>
 </div>

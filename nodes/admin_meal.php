@@ -56,12 +56,14 @@ echo makeTitle($title, $subtitle, $icons);
       foreach ($mealObject->bookings_this_meal() AS $booking) {
         $memberObject = new member($booking['member_ldap']);
 
+        $guests = (array)json_decode($booking['guests_array']);
+
         $output  = "<li class=\"list-group-item d-flex justify-content-between lh-sm\">";
         $output .= "<div class=\"text-muted\">";
-        $output .= "<h6 class=\"my-0\"><a href=\"index.php?n=booking&memberLDAP=" . $booking['member_ldap'] . "&mealUID=" . $booking['meal_uid'] . "\" class=\"text-muted\">" . $memberObject->displayName() . "</a></h6>";
+        $output .= "<h6 class=\"my-0\"><a href=\"index.php?n=member&memberUID=" . $memberObject->uid . "\" class=\"text-muted\">" . $memberObject->displayName() . "</a></h6>";
         $output .= "<small class=\"text-muted\">" . dateDisplay($booking['date']) . " " . date('H:i:s', strtotime($booking['date'])) . "</small>";
         $output .= "</div>";
-        $output .= "<span class=\"text-muted\">" . count(json_decode($booking['guests_array'])) . autoPluralise(" guest", " guests", count(json_decode($booking['guests_array']))) . "</span>";
+        $output .= "<span class=\"text-muted\">" . count($guests) . autoPluralise(" guest", " guests", count($guests)) . "</span>";
         $output .= "</li>";
 
         echo $output;
@@ -228,15 +230,18 @@ echo makeTitle($title, $subtitle, $icons);
       </div>
     </div>
 
-    <div class="mb-3">
-      <label for="menu" class="form-label mb-3">Menu</label>
-      <input type="text" class="form-control" name="menu" id="menu" value="<?php echo htmlspecialchars($mealObject->menu, ENT_QUOTES); ?>">
+    <div class="row mb-3">
+      <div class="col">
+        <label for="menu" class="form-label">Menu</label>
+        <input type="text" class="form-control" name="menu" id="menu" value="<?php echo htmlspecialchars($mealObject->menu, ENT_QUOTES); ?>">
+      </div>
     </div>
+
 
     <hr />
 
     <div class="mb-3">
-      <label for="notes" class="form-label mb-3">Notes (Private)</label>
+      <label for="notes" class="form-label">Notes (Private)</label>
       <input type="text" class="form-control" name="notes" id="notes" value="<?php echo $mealObject->notes; ?>">
     </div>
 
@@ -266,7 +271,7 @@ echo makeTitle($title, $subtitle, $icons);
     <div class="divide-y">
       <div>
         <label class="row">
-          <span class="col"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#graduation-cap"></svg> Domus</span>
+          <span class="col"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#graduation-cap"></svg> Domus (for all members)</span>
           <span class="col-auto">
             <label class="form-check form-check-single form-switch"><input class="form-check-input" type="checkbox" name="domus" <?php if ($mealObject->domus == 1) { echo "checked=\"\""; } ?> value="1"></label>
           </span>
@@ -274,7 +279,7 @@ echo makeTitle($title, $subtitle, $icons);
       </div>
       <div>
         <label class="row">
-          <span class="col"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#wine-glass"></svg> Wine</span>
+          <span class="col"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#wine-glass"></svg> Wine Available</span>
           <span class="col-auto">
             <label class="form-check form-check-single form-switch"><input class="form-check-input" type="checkbox" name="allowed_wine" <?php if ($mealObject->allowed_wine == 1) { echo "checked=\"\""; } ?> value="1"></label>
           </span>
@@ -282,7 +287,7 @@ echo makeTitle($title, $subtitle, $icons);
       </div>
       <div>
         <label class="row mb-3">
-          <span class="col"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#cookie"></svg> Dessert</span>
+          <span class="col"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#cookie"></svg> Dessert Available</span>
           <span class="col-auto">
             <label class="form-check form-check-single form-switch"><input class="form-check-input" type="checkbox" name="allowed_dessert" <?php if ($mealObject->allowed_dessert == 1) { echo "checked=\"\""; } ?> value="1"></label>
           </span>
@@ -322,7 +327,8 @@ echo makeTitle($title, $subtitle, $icons);
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <p>Are you sure you want to delete this meal?  This will also delete any bookings that have been made for this meal.  WARNING! This cannot be undone!</p>
+        <p>Are you sure you want to delete this meal?  This will also delete all associated bookings (members will not be notified).</p>
+        <p class="text-danger"><strong>WARNING!</strong> This action cannot be undone!</p>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-link link-secondary mr-auto" data-bs-dismiss="modal">Close</button>

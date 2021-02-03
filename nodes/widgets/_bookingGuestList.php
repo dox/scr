@@ -2,7 +2,11 @@
 include_once("../../inc/autoload.php");
 
 if (!isset($bookingObject)) {
-  $bookingObject = new booking($_GET['bookingUID']);
+  $bookingsClass = new bookings();
+  $mealObject = new meal($_GET['mealUID']);
+
+  $bookingByMember = $bookingsClass->bookingForMealByMember($mealObject->uid, $_SESSION['username']);
+  $bookingObject = new booking($bookingByMember['uid']);
 }
 
 ?>

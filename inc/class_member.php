@@ -186,43 +186,43 @@ class member {
     $update = $db->query($sql);
     if ($displayAlert == true) {
       echo $settingsClass->alert("success", "Success!", "Member successfully updated");
+      $logsClass->create("members_update", "Member [memberUID:" . $array['memberUID'] . "] updated");
     }
-    $logsClass->create("members_update", "Member [memberUID:" . $array['memberUID'] . "] updated");
 
     return $update;
   }
 
-  public function mealUIDS_upcoming() {
+  public function bookingUIDS_upcoming() {
     global $db;
 
-    $sql  = "SELECT * FROM bookings, meals";
+    $sql  = "SELECT bookings.uid AS uid FROM bookings";
+    $sql .= " LEFT JOIN meals ON bookings.meal_uid = meals.uid";
     $sql .= " WHERE meals.date_meal >= NOW()";
     $sql .= " AND bookings.member_ldap = '" . $this->ldap . "'";
-    $sql .= " AND bookings.meal_uid = meals.uid ";
     $sql .= " ORDER BY meals.date_meal DESC";
 
     $bookings = $db->query($sql)->fetchAll();
 
     foreach ($bookings AS $booking) {
-      $bookingUIDSarray[] = $booking['meal_uid'];
+      $bookingUIDSarray[] = $booking['uid'];
     }
 
     return $bookingUIDSarray;
   }
 
-  public function mealUIDS_previous() {
+  public function bookingUIDS_previous() {
     global $db;
 
-    $sql  = "SELECT * FROM bookings, meals";
+    $sql  = "SELECT bookings.uid AS uid FROM bookings";
+    $sql .= " LEFT JOIN meals ON bookings.meal_uid = meals.uid";
     $sql .= " WHERE meals.date_meal < NOW()";
     $sql .= " AND bookings.member_ldap = '" . $this->ldap . "'";
-    $sql .= " AND bookings.meal_uid = meals.uid ";
     $sql .= " ORDER BY meals.date_meal DESC";
 
     $bookings = $db->query($sql)->fetchAll();
 
     foreach ($bookings AS $booking) {
-      $bookingUIDSarray[] = $booking['meal_uid'];
+      $bookingUIDSarray[] = $booking['uid'];
     }
 
     return $bookingUIDSarray;
