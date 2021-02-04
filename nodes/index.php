@@ -46,12 +46,13 @@ echo makeTitle($title, $subtitle);
 
     if ($week == date('Y-m-d', strtotime('this week -1 day', time()))) {
       $class = "active";
+      $name = "<strong>" . $name . "</strong>";
     } else {
       $class = "";
     }
 
-    $output  = "<li class=\"nav-item\" role=\"presentation\">";
-    $output .= "<a class=\"nav-link " . $class . "\" id=\"" . $week . "\" data-toggle=\"tab\" href=\"#\" onclick=\"load_home(this.id)\" role=\"tab\" aria-controls=\"week-" . $week . "\" aria-selected=\"true\">" . $name . "</a>";
+    $output  = "<li class=\"nav-item\" id=\"" . $week . "-tab\" role=\"presentation\">";
+    $output .= "<a class=\"nav-link " . $class . "\" id=\"" . $week . "\" data-toggle=\"tab\" href=\"#\" onclick=\"load_home(this.id)\" role=\"tab\" aria-controls=\"week-" . $week . "\">" . $name . "</a>";
     $output .= "</li>";
 
     echo $output;
@@ -60,12 +61,25 @@ echo makeTitle($title, $subtitle);
 </ul>
 
 <div class="tab-content" id="myTabContent">
-  <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="week-1"><p class="text-center"><svg width="4em" height="4em" class="text-muted spinning"><use xlink:href="img/icons.svg#spinner"/></svg></p></div>
+  <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="week-1">
+    <p class="text-center">
+      <svg width="4em" height="4em" class="text-muted spinning">
+        <use xlink:href="img/icons.svg#spinner"/>
+      </svg>
+    </p>
+  </div>
 </div>
 
 <script>
+function testFunc(this_id) {
+  alert(this_id);
+}
 load_home('<?php echo date('Y-m-d', strtotime('this week -1 day', time())); ?>');
 async function load_home(this_id) {
+  var triggerEl = document.getElementById(this_id);
+  var tabTrigger = new bootstrap.Tab(triggerEl);
+  tabTrigger.show();
+
   home.innerHTML = "<p class=\"text-center\"><svg width=\"4em\" height=\"4em\" class=\"text-muted spinning\"><use xlink:href=\"img/icons.svg#spinner\"/></svg></p>";
   let url = 'nodes/widgets/_weekly_meals.php?id=' + this_id;
 

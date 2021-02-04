@@ -81,13 +81,14 @@
 			<?php
 			if (isset($_SESSION['logon_error'])) {
 				echo "<div class=\"alert alert-primary\" role=\"alert\">";
-				echo $_SESSION['logon_error'] . " <a href=\"" . reset_url . "\" class=\"alert-link\">Forgot your password?</a>";
+				echo "<p>" . $_SESSION['logon_error'] . "</p>";
+				echo "<p><a href=\"" . reset_url . "\" class=\"alert-link\">Forgot your password?</a></p>";
 				echo "</div>";
 			}
 			?>
 	    <form method="post" id="loginSubmit" action="index.php">
 	      <div class="mb-4 text-center">
-					<svg width="76" height="64">
+					<svg width="76" height="64" >
 						<use xlink:href="img/icons.svg#chough-regular"/>
 					</svg>
 	        <h1 class="h3 mb-3 font-weight-normal">SCR Meal Booking</h1>
@@ -97,7 +98,13 @@
 	      <label for="inputPassword" class="visually-hidden">Password</label>
 	      <input type="password" id="inputPassword" name="inputPassword" class="form-control" placeholder="Password" required>
 	      <button class="btn btn-lg btn-primary w-100" type="submit">Log In</button>
-	      <p class="mt-5 mb-3  text-center"><a class="text-white" href="<?php echo reset_url; ?>">Forgot your password?</a></p>
+				<?php
+				if (!empty(reset_url)) {
+					echo "<p class=\"mt-5 mb-3  text-center\">";
+					echo "<a class=\"text-white\" href=\"" . reset_url . "\">Forgot your password?</a>";
+					echo "</p>";
+				}
+				?>
 	    </form>
 	  </main>
 		<footer class="mt-auto text-white-50">

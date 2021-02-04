@@ -64,14 +64,13 @@ if (isset($_POST['inputUsername']) && isset($_POST['inputPassword'])) {
 		$logsClass->create("logon_success", $_SESSION['username'] . " logon succesful");
 	} else {
 		// Username or password is incorrect.
-		session_destroy();
+		//session_destroy();
 		$_SESSION['logon_error'] = "Incorrect username/password";
 
 		$logsClass->create("logon_fail", $_POST['inputUsername'] . " logon failed");
 	}
 }
 if ($_SESSION['logon'] != true) {
-	session_destroy();
 	header("Location: http://scr2.seh.ox.ac.uk/logon.php");
 	exit;
 }
