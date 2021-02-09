@@ -9,6 +9,14 @@ DEFINE("db_password", "password");
 DEFINE("reset_url", "https://some.domain/reset"); // where you want to redirect users to reset their LDAP password
 DEFINE("support_email", "help@some.domain");
 
+DEFINE("navbar_addon", array(
+  'calendar' => array(
+    'name'    => 'Some Link',
+    'icon'    => '<svg width="1em" height="1em" class="text-muted"><use xlink:href="img/icons.svg#calendar-plus"/></svg>',
+    'url'     => 'https://www.google.com'
+  )
+));
+
 # LDAP OPTIONS
 define("LDAP_ENABLE", true);
 define("LDAP_SERVER", "server");

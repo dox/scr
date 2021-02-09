@@ -104,6 +104,14 @@ echo makeTitle($title, $subtitle, $icons);
     <li class="list-group-item list-group-item-action">
       <div class="d-flex w-100 justify-content-between">
       <span><svg width="2em" height="2em">
+        <use xlink:href="img/icons.svg#person-secret"/>
+      </svg> Impersonate</span>
+      <small>[person-secret]</small>
+    </div>
+    </li>
+    <li class="list-group-item list-group-item-action">
+      <div class="d-flex w-100 justify-content-between">
+      <span><svg width="2em" height="2em">
         <use xlink:href="img/icons.svg#list-stars"/>
       </svg> Meals List</span>
       <small>[list-stars]</small>

@@ -20,11 +20,22 @@
 						<use xlink:href="img/icons.svg#person"/>
 					</svg> Your Profile</a>
 	      </li>
-	      <li class="nav-item d-print-none"><a class="nav-link" aria-current="page" href="index.php?n=information">
+				<li class="nav-item d-print-none"><a class="nav-link" aria-current="page" href="index.php?n=information">
 					<svg width="1em" height="1em" class="text-muted">
 						<use xlink:href="img/icons.svg#journal-text"/>
 					</svg> SCR Information</a>
 	      </li>
+				<?php
+				foreach (navbar_addon AS $navbarAddOn => $value) {
+					$output  = "<li class=\"nav-item d-print-none\">";
+					$output .= "<a class=\"nav-link\" aria-current=\"page\" href=\"" . $value['url'] . "\">";
+					$output .= $value['icon'];
+					$output .= " " . $value['name'];
+					$output .= "</li>";
+
+					echo $output;
+				}
+				?>
 	    </ul>
 			<?php
 			if ($_SESSION['impersonating'] == true) {
