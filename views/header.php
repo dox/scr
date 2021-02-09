@@ -26,14 +26,21 @@
 					</svg> SCR Information</a>
 	      </li>
 	    </ul>
+			<?php
+			if ($_SESSION['impersonating'] == true) {
+				$impersonateClass = "";
+			} else {
+				$impersonateClass = "visually-hidden";
+			}
+			echo "<div id=\"impersonating_header_button\" class=\"float-end " . $impersonateClass . "\">";
+			echo "<a href=\"index.php?n=admin_impersonate\" class=\"btn btn-sm btn-warning\">IMPERSONATING</a>";
+			echo "</div>";
+			?>
 	    <div class="d-flex">
 	      <ul class="navbar-nav mr-auto">
 	        <li class="nav-item dropdown">
 	          <a class="nav-link dropdown-toggle" href="#" id="navbarAvatarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-	            <?php
-							if ($_SESSION['impersonating'] == true) {
-									echo "<button class=\"btn btn-sm btn-warning\">IMPERSONATING</button> ";
-							}
+							<?php
 							echo $_SESSION['username'];
 							?>
 	          </a>

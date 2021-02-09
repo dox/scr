@@ -303,6 +303,7 @@ function checkMaxCheckboxes(maxAllowed = 2) {
 function impersonate(oFormElement) {
   var impersonateDropdown = document.getElementById('impersonate_ldap');
   var buttonClicked = document.getElementById('impersonate_submit_button');
+  var impersonateHeaderButton = document.getElementById('impersonating_header_button');
 
   submitForm(oFormElement);
 
@@ -312,15 +313,15 @@ function impersonate(oFormElement) {
     buttonClicked.innerHTML = "Impersonate";
     buttonClicked.value = "";
     impersonateDropdown.disabled = false;
+    impersonateHeaderButton.classList.add("visually-hidden");
   } else {
     buttonClicked.classList.remove("btn-primary");
     buttonClicked.classList.add("btn-warning");
     buttonClicked.innerHTML = "Stop Impersonating";
     buttonClicked.value = "stop";
     impersonateDropdown.disabled = true;
+    impersonateHeaderButton.classList.remove("visually-hidden");
   }
-
-  //alert("Please click on 'Home'");
 
   return false;
 }

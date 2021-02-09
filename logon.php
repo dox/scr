@@ -88,7 +88,7 @@
 			?>
 	    <form method="post" id="loginSubmit" action="index.php">
 	      <div class="mb-4 text-center">
-					<svg width="76" height="64" >
+					<svg width="76" height="64">
 						<use xlink:href="img/icons.svg#chough-regular"/>
 					</svg>
 	        <h1 class="h3 mb-3 font-weight-normal">SCR Meal Booking</h1>
