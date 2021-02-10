@@ -53,7 +53,7 @@ class reports {
 
     $logArray['category'] = "admin";
     $logArray['result'] = "success";
-    $logArray['description'] = "[reportUID:" . $array['uid'] . "] created";
+    $logArray['description'] = "[reportUID:" . $array['reportUID'] . "] created";
     $logsClass->create($logArray);
 
     return $update;

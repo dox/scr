@@ -105,8 +105,6 @@ class notifications {
     $sql .= " (" . implode(",", $sqlColumns) . ") ";
     $sql .= " VALUES (" . implode(",", $sqlValues) . ")";
 
-    echo $sql;
-
     $create = $db->query($sql);
     echo $settingsClass->alert("success", "Success!", "Notification successfully creted");
 

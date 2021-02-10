@@ -8,15 +8,11 @@ $termsClass = new terms();
 
 if (isset($_POST['name'])) {
   $termsClass->create($_POST);
-  echo $settingsClass->alert("success", $_POST['name'], " term created");
-  echo $settingsClass->alert("warning", "<strong>Success!</strong> Term successfully deleted");
 }
 
 if (isset($_GET['termDELETE'])) {
- echo "DELETE!";
  $termClass = new term($_GET['termDELETE']);
  $termClass->delete();
- echo $settingsClass->alert("warning", "<strong>Success!</strong> Term successfully deleted");
 }
 
 $terms = $termsClass->all();

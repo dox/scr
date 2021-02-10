@@ -157,7 +157,7 @@ class term {
     global $db, $logsClass, $settingsClass;
 
     $termUID = $this->uid;
-    $termName = $this->uid;
+    $termName = $this->name;
 
     $sql  = "DELETE FROM " . self::$table_name;
     $sql .= " WHERE uid = '" . $termUID . "' ";

@@ -23,7 +23,10 @@ if (isset($_POST['precedence'])) {
     $i++;
   } while ($i < count($precedenceArray));
 
-  $logsClass->create("members_update", "Members order updated");
+  $logArray['category'] = "admin";
+  $logArray['result'] = "success";
+  $logArray['description'] = "Members order updated";
+  $logsClass->create($logArray);
 }
 $scrMembersEnabled = $membersClass->allEnabled('scr');
 $scrMembersDisabled = $membersClass->allDisabled('scr');

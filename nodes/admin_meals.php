@@ -6,7 +6,6 @@ admin_gatekeeper();
 $mealsClass = new meals();
 
 if (isset($_POST['mealNEW'])) {
- echo "ADD NEW!";
  $mealObject = new meal();
  $mealObject->create($_POST);
  $mealObject = new meal($_GET['mealUID']);
