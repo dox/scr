@@ -68,7 +68,7 @@ echo makeTitle($title, $subtitle, $icons);
       </form>
     </div>
   </div>
-
+</div>
 
 
 <script>

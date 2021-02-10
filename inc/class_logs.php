@@ -108,11 +108,11 @@ class logs {
 
     //$preg_string = preg_replace($pattern, $replace, $string);
 
-    $output  = "<tr class=\"table-" . $array['result'] . "\">";
+    $output  = "<tr class=\"table-" . $array['result'] . " filterRow\">";
     $output .= "<td>" . dateDisplay($array['date']) . " " . timeDisplay($array['date']) . "</td>";
     $output .= "<td>" . $array['ip'] . "</td>";
     $output .= "<td>" . $array['username'] . "</td>";
-    $output .= "<td class=\"text-truncate\">" . $array['description'] . $this->displayCategoryBadge($array['category']) . "</td>";
+    $output .= "<td class=\"filterDescription\">" . $array['description'] . $this->displayCategoryBadge($array['category']) . "</td>";
     //$output .= "<td class=\"text-truncate\">Description</td>";
     $output .= "</tr>";
 
@@ -120,7 +120,7 @@ class logs {
   }
 
   public function displayTable() {
-    $output  = "<table class=\"table\">";
+    $output  = "<table id=\"myTable\" class=\"table\">";
     $output .= "<thead>";
     $output .= "<td>" . "Date" . "</td>";
     $output .= "<td>" . "IP" . "</td>";
