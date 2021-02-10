@@ -14,7 +14,7 @@
   <meta name="author" content="Andrew Breakspear">
   <title>SCR Meal Booking</title>
 
-  <link rel="canonical" href="https://v5.getbootstrap.com/docs/5.0/examples/cover/">
+	<link rel="canonical" href="<?php echo siteURL(); ?>">
 
   <!-- Bootstrap core CSS -->
 	<link href="css/bootstrap.min.css" rel="stylesheet">

@@ -171,6 +171,12 @@ function ordinal($number) {
 	}
 }
 
+function siteURL() {
+	$actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
+
+	return $actual_link;
+}
+
 function admin_gatekeeper() {
 	if ($_SESSION['admin'] != true) {
 		global $logsClass;
@@ -184,7 +190,7 @@ function admin_gatekeeper() {
 		echo $output;
 
 
-		header("Location: " . $_SERVER["SERVER_NAME"] . "/logon.php");
+		header("Location: " . siteURL() . "/logon.php");
 	  exit;
 	}
 }

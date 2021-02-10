@@ -71,7 +71,7 @@ if (isset($_POST['inputUsername']) && isset($_POST['inputPassword'])) {
 	}
 }
 if ($_SESSION['logon'] != true) {
-	header("Location: http://scr2.seh.ox.ac.uk/logon.php");
+	header("Location: " . siteURL() . "/logon.php");
 	exit;
 }
 ?>
@@ -80,11 +80,11 @@ if ($_SESSION['logon'] != true) {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="">
+	<meta name="description" content="SCR Meal Booking system for St Edmund Hall">
   <meta name="author" content="Andrew Breakspear">
   <title>St Edmund Hall: Meal Booking</title>
 
-  <link rel="canonical" href="https://scr2.seh.ox.ac.uk/">
+  <link rel="canonical" href="<?php echo siteURL(); ?>">
 
   <!-- Bootstrap core CSS -->
   <link href="css/bootstrap.min.css" rel="stylesheet">
