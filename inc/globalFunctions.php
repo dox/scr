@@ -180,7 +180,11 @@ function siteURL() {
 function admin_gatekeeper() {
 	if ($_SESSION['admin'] != true) {
 		global $logsClass;
-		$logsClass->create("view_fail", "Page view for " . $_SERVER['REQUEST_URI'] . " failed");
+
+		$logArray['category'] = "admin";
+    $logArray['result'] = "danger";
+    $logArray['description'] = "Page view for " . $_SERVER['REQUEST_URI'] . " failed";
+    $logsClass->create($logArray);
 
 		$output  = "<div class=\"text-center mt-4\">";
 		$output .= "<svg width=\"48\" height=\"48\"><use xlink:href=\"img/icons.svg#x-circle\"/></svg>";

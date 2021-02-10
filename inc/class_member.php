@@ -128,8 +128,7 @@ class member {
   }
 
   public function updateMemberPrecendece($memberUID = null, $order = null) {
-    global $db;
-    global $logsClass;
+    global $db, $logsClass;
 
     $sql  = "UPDATE " . self::$table_name;
     $sql .= " SET precedence = '" . $order . "' ";
@@ -160,7 +159,11 @@ class member {
     if ($displayAlert == true) {
       echo $settingsClass->alert("success", "Success!", "Memer successfully created");
     }
-    $logsClass->create("admin", "Member [memberUID:" . $create->lastInsertID() . "] created");
+
+    $logArray['category'] = "member";
+    $logArray['result'] = "success";
+    $logArray['description'] = "[memberUID:" . $create->lastInsertID() . "] created";
+    $logsClass->create($logArray);
 
     return $create;
   }
@@ -186,7 +189,11 @@ class member {
     $update = $db->query($sql);
     if ($displayAlert == true) {
       echo $settingsClass->alert("success", "Success!", "Member successfully updated");
-      $logsClass->create("members_update", "Member [memberUID:" . $array['memberUID'] . "] updated");
+
+      $logArray['category'] = "member";
+      $logArray['result'] = "success";
+      $logArray['description'] = "[memberUID:" . $array['memberUID'] . "] updated";
+      $logsClass->create($logArray);
     }
 
     return $update;

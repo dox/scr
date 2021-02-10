@@ -109,7 +109,11 @@ class notifications {
 
     $create = $db->query($sql);
     echo $settingsClass->alert("success", "Success!", "Notification successfully creted");
-    $logsClass->create("admin", "[notificationUID:" . $create->lastInsertID() . "] created");
+
+    $logArray['category'] = "notification";
+    $logArray['result'] = "success";
+    $logArray['description'] = "[notificationUID:" . $create->lastInsertID() . "] created";
+    $logsClass->create($logArray);
 
     return $create;
   }
@@ -143,7 +147,11 @@ class notifications {
 
     $update = $db->query($sql);
     echo $settingsClass->alert("success", "Success!", "Notification successfully updated");
-    $logsClass->create("admin", "[notificationUID:" . $array['notificationUID'] . "] updated");
+
+    $logArray['category'] = "notification";
+    $logArray['result'] = "success";
+    $logArray['description'] = "[notificationUID:" . $array['notificationUID'] . "] updated";
+    $logsClass->create($logArray);
 
     return $update;
   }
@@ -157,7 +165,11 @@ class notifications {
 
     $deleteNotification = $db->query($sql);
     echo $settingsClass->alert("success", "Success!", "Notification successfully deleted");
-    $logsClass->create("admin", "[notificationUID:" . $uid . "] deleted");
+
+    $logArray['category'] = "notification";
+    $logArray['result'] = "success";
+    $logArray['description'] = "[notificationUID:" . $uid . "] deleted";
+    $logsClass->create($logArray);
 
     return $deleteNotification;
   }

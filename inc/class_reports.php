@@ -50,7 +50,11 @@ class reports {
 
     $update = $db->query($sql);
     echo $settingsClass->alert("success", "Success!", "Report successfully updated");
-    $logsClass->create("admin", "[reportUID:" . $array['uid'] . "] created");
+
+    $logArray['category'] = "admin";
+    $logArray['result'] = "success";
+    $logArray['description'] = "[reportUID:" . $array['uid'] . "] created";
+    $logsClass->create($logArray);
 
     return $update;
   }
@@ -66,10 +70,12 @@ class reports {
 
     $report = $db->query($sql);
     echo $settingsClass->alert("success", "Success!", "Report successfully created");
-    $logsClass->create("meal", "[reportUID:" . $report->lastInsertID() . "] created");
+
+    $logArray['category'] = "admin";
+    $logArray['result'] = "success";
+    $logArray['description'] = "[reportUID:" . $report->lastInsertID() . "] created";
+    $logsClass->create($logArray);
 
   }
 }
-
-$logsClass = new logs();
 ?>

@@ -118,7 +118,11 @@ class term {
 
     $create = $db->query($sql);
     echo $settingsClass->alert("success", "Success!", "Term successfully created");
-    $logsClass->create("admin", "Term [uid:" . $create->lastInsertID() . "] created");
+
+    $logArray['category'] = "admin";
+    $logArray['result'] = "success";
+    $logArray['description'] = "[termUID:" . $create->lastInsertID() . "] created";
+    $logsClass->create($logArray);
 
     return $create;
   }
@@ -140,7 +144,11 @@ class term {
 
     $update = $db->query($sql);
     echo $settingsClass->alert("success", "Success!", "Term successfully updated");
-    $logsClass->create("admin", "Term [termUID:" . $this->uid . "] updated");
+
+    $logArray['category'] = "admin";
+    $logArray['result'] = "success";
+    $logArray['description'] = "[termUID:" . $this->uid . "] updated";
+    $logsClass->create($logArray);
 
     return $update;
   }
@@ -157,7 +165,11 @@ class term {
 
     $deleteMeal = $db->query($sql);
     echo $settingsClass->alert("success", "Success!". "Term successfully deleted");
-    $logsClass->create("admin", "[termUID:" . $termUID . "] named '" . $termName . "' deleted");
+
+    $logArray['category'] = "admin";
+    $logArray['result'] = "success";
+    $logArray['description'] = "[termUID:" . $termUID . "] named '" . $termName . "' deleted";
+    $logsClass->create($logArray);
 
     return $deleteMeal;
   }

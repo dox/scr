@@ -285,7 +285,11 @@ class meal {
 
     $update = $db->query($sql);
     echo $settingsClass->alert("success", "Success!", "Meal successfully updated");
-    $logsClass->create("meal", "[mealUID:" . $this->uid . "] updated");
+
+    $logArray['category'] = "meal";
+    $logArray['result'] = "success";
+    $logArray['description'] = "[mealUID:" . $this->uid . "] updated";
+    $logsClass->create($logArray);
 
     return $update;
   }
@@ -307,7 +311,11 @@ class meal {
 
     $create = $db->query($sql);
     echo $settingsClass->alert("success", "Success!", "Meal successfully created");
-    $logsClass->create("meal", "[mealUID:" . $create->lastInsertID() . "] created");
+
+    $logArray['category'] = "meal";
+    $logArray['result'] = "success";
+    $logArray['description'] = "[mealUID:" . $create->lastInsertID() . "] created";
+    $logsClass->create($logArray);
 
     return $create;
   }
@@ -329,7 +337,11 @@ class meal {
 
     $deleteMeal = $db->query($sql);
     echo $settingsClass->alert("success", "Success!", "Meal successfully deleted");
-    $logsClass->create("meal", "[mealUID:" . $mealUID . "] (and any associated bookings) deleted");
+
+    $logArray['category'] = "meal";
+    $logArray['result'] = "success";
+    $logArray['description'] = "[mealUID:" . $mealUID . "] (and any associated bookings) deleted";
+    $logsClass->create($logArray);
 
     return $deleteMeal;
   }

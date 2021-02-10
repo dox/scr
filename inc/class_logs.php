@@ -6,7 +6,8 @@ class logs {
   public $ip;
   public $username;
   public $date;
-  public $type;
+  public $result;
+  public $category;
   public $description;
 
   public function all() {
@@ -15,7 +16,7 @@ class logs {
 
     $maximumLogsAge = date('Y-m-d', strtotime('-' . $settingsClass->value('logs_retention') . ' days'));
 
-    $sql  = "SELECT uid, INET_NTOA(ip) AS ip, username, date, type, description  FROM " . self::$table_name;
+    $sql  = "SELECT uid, INET_NTOA(ip) AS ip, username, date, result, category, description  FROM " . self::$table_name;
     $sql .= " WHERE DATE(date) > '" . $maximumLogsAge . "' ";
     $sql .= " ORDER BY date DESC";
 
@@ -24,12 +25,12 @@ class logs {
     return $logs;
   }
 
-  public function allByTypeByDay($type = null, $date = null) {
+  public function allByCategoryByDay($category = null, $date = null) {
     global $db;
 
-    $sql  = "SELECT uid, INET_NTOA(ip) AS ip, username, date, type, description  FROM " . self::$table_name;
+    $sql  = "SELECT uid, INET_NTOA(ip) AS ip, username, date, category, result, description  FROM " . self::$table_name;
     $sql .= " WHERE DATE(date) = '" . $date . "'";
-    $sql .= " AND type = '" . $type . "'";
+    $sql .= " AND category = '" . $category . "'";
     $sql .= " ORDER BY date DESC";
 
     $logs = $db->query($sql)->fetchAll();
@@ -37,32 +38,37 @@ class logs {
     return $logs;
   }
 
-  public function create($type = "unknown", $description = null) {
+  public function create($array = null) {
     global $db;
 
-    $description = escape($description);
+    $array['description'] = str_replace("'" , "\'", $array['description']);
 
     $sql  = "INSERT INTO " . self::$table_name;
-    $sql .= " (ip, type, username, description) ";
-    $sql .= " VALUES ('" . ip2long($_SERVER['REMOTE_ADDR']) . "', '" . $type . "', '" . $_SESSION['username'] . "', '" . $description . "')";
+    $sql .= " (ip, username, category, result, description) ";
+    $sql .= " VALUES (";
+    $sql .= "'" . ip2long($_SERVER['REMOTE_ADDR']) . "', ";
+    $sql .= "'" . $_SESSION['username'] . "', ";
+    $sql .= "'" . $array['category'] . "', ";
+    $sql .= "'" . $array['result'] . "', ";
+    $sql .= "'" . $array['description'] . "'";
+    $sql .= ")";
 
     $logs = $db->query($sql);
-
   }
 
-  public function types() {
+  public function categories() {
     global $db;
     global $settingsClass;
 
     $maximumLogsAge = date('Y-m-d', strtotime('-' . $settingsClass->value('logs_retention') . ' days'));
 
-    $sql  = "SELECT type  FROM " . self::$table_name;
+    $sql  = "SELECT category FROM " . self::$table_name;
     $sql .= " WHERE DATE(date) > '" . $maximumLogsAge . "' ";
-    $sql .= " GROUP BY type";
+    $sql .= " GROUP BY category";
 
-    $types = $db->query($sql)->fetchAll();
+    $categories = $db->query($sql)->fetchAll();
 
-    return $types;
+    return $categories;
   }
 
   public function purge() {
@@ -71,7 +77,7 @@ class logs {
 
     $logs_retention = $settingsClass->value('logs_retention');
 
-		$sql = "SELECT * FROM " . self::$table_name . " WHERE type = 'purge' AND DATE(date) = '" . date('Y-m-d') . "' LIMIT 1";
+		$sql = "SELECT * FROM " . self::$table_name . " WHERE category = 'purge' AND DATE(date) = '" . date('Y-m-d') . "' LIMIT 1";
 		$lastPurge = $db->query($sql)->fetchAll();
 
 		if (empty($lastPurge)) {
@@ -87,30 +93,68 @@ class logs {
 		}
 	}
 
-  public function list_group_item($log = null) {
-    //$string = 'Some text [mealUID:123] here';
-    $string = $log['description'];
+  private function displayRow($array = null) {
+    $string = $array['description'];
     $patternArray['/\[mealUID:([0-9]+)\]/'] = "<code><a href=\"index.php?n=admin_meal&mealUID=$1\" class=\"text-decoration-none\">[mealUID:$1]</a></code>";
     $patternArray['/\[memberUID:([0-9]+)\]/'] = "<code><a href=\"index.php?n=member&memberUID=$1\" class=\"text-decoration-none\">[memberUID:$1]</a></code>";
     //$patternArray['/\[bookingUID:([0-9]+)\]/'] = "<code><a href=\"index.php?n=booking&bookingUID=$1\" class=\"text-decoration-none\">[bookingUID:$1]</a></code>";
     $patternArray['/\[notificationUID:([0-9]+)\]/'] = "<code><a href=\"index.php?n=admin_notification&notificationUID=$1\" class=\"text-decoration-none\">[notificationUID:$1]</a></code>";
+    $patternArray['/\[settingUID:([0-9]+)\]/'] = "<code><a href=\"index.php?n=admin_notification&notificationUID=$1\" class=\"text-decoration-none\">[settingUID:$1]</a></code>";
 
     foreach ($patternArray AS $pattern => $replace) {
       //echo $pattern . $replace;
-      $log['description'] = preg_replace($pattern, $replace, $log['description']);
+      $array['description'] = preg_replace($pattern, $replace, $array['description']);
     }
 
-    $preg_string = preg_replace($pattern, $replace, $string);
+    //$preg_string = preg_replace($pattern, $replace, $string);
 
-    $output  = "<div class=\"list-group-item list-group-item-action filterRow\">";
-    $output .= "<div class=\"d-flex w-100 justify-content-between\">";
-    $output .= "<h5 class=\"mb-1 filterDescription\">" . $log['username'] . " - " . $log['description'] . "</h5>";
-    $output .= "<small class=\"text-muted\">" . dateDisplay($log['date']) . " " . date('H:i:s', strtotime($log['date'])) . "</small>";
-    //$output .= "<span class=\"badge bg-primary rounded-pill\">" . $log['type'] . "</span>";
-    $output .= "</div>";
-    //$output .= "<p class=\"mb-1\">" . $log['description'] . "</p>";
-    $output .= "<small class=\"text-muted\"><span class=\"badge bg-primary rounded-pill\">" . $log['type'] . "</span> " . $log['ip'] . "</small>";
-    $output .= "</div>";
+    $output  = "<tr class=\"table-" . $array['result'] . "\">";
+    $output .= "<td>" . dateDisplay($array['date']) . " " . timeDisplay($array['date']) . "</td>";
+    $output .= "<td>" . $array['ip'] . "</td>";
+    $output .= "<td>" . $array['username'] . "</td>";
+    $output .= "<td class=\"text-truncate\">" . $array['description'] . $this->displayCategoryBadge($array['category']) . "</td>";
+    //$output .= "<td class=\"text-truncate\">Description</td>";
+    $output .= "</tr>";
+
+    return $output;
+  }
+
+  public function displayTable() {
+    $output  = "<table class=\"table\">";
+    $output .= "<thead>";
+    $output .= "<td>" . "Date" . "</td>";
+    $output .= "<td>" . "IP" . "</td>";
+    $output .= "<td>" . "Username" . "</td>";
+    $output .= "<td>" . "Description" . "</td>";
+    $output .= "</thead>";
+
+    $output .= "<tbody>";
+
+    foreach ($this->all() AS $log) {
+      $output .= $this->displayRow($log);
+    }
+
+    $output .= "</tbody>";
+    $output .= "</table>";
+
+    return $output;
+  }
+
+  private function displayCategoryBadge($category = null) {
+    // admin, member, booking,
+    if ($category == "admin") {
+      $class = "bg-primary";
+    } elseif ($category == "member") {
+      $class = "bg-success";
+    } elseif ($category == "booking") {
+      $class = "bg-primary";
+    } elseif ($category == "logon") {
+      $class = "bg-primary";
+    } else {
+      $class = "bg-dark";
+    }
+
+    $output = "<span class=\"badge rounded-pill " . $class . " float-end\">" . $category . "</span>";
 
     return $output;
   }

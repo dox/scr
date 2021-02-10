@@ -49,7 +49,11 @@ class booking {
 	  $sql .= " WHERE uid = '" . $this->uid . "' LIMIT 1";
 
 	  $booking = $db->query($sql);
-    $logsClass->create("booking", "Guest added to [bookingUID:" . $this->uid . "] for [mealUID:" . $this->meal_uid . "]");
+
+    $logArray['category'] = "booking";
+    $logArray['result'] = "success";
+    $logArray['description'] = "Guest added to [bookingUID:" . $this->uid . "] for [mealUID:" . $this->meal_uid . "]";
+    $logsClass->create($logArray);
 
 	  return $this->guests_array;
   }
@@ -68,8 +72,11 @@ class booking {
     $sql .= " VALUES (" . implode(",", $sqlValues) . ")";
 
     $create = $db->query($sql);
-//    echo $settingsClass->alert("success", "Success!". "Booking successfully created");
-    $logsClass->create("booking", "[bookingUID:" . $create->lastInsertID() . "] made for " . $_SESSION['username'] . " for [mealUID:" . $array['meal_uid'] . "]");
+
+    $logArray['category'] = "booking";
+    $logArray['result'] = "success";
+    $logArray['description'] = "[bookingUID:" . $create->lastInsertID() . "] made for " . $_SESSION['username'] . " for [mealUID:" . $array['meal_uid'] . "]";
+    $logsClass->create($logArray);
 
     return $create;
   }
@@ -91,7 +98,11 @@ class booking {
 
     $update = $db->query($sql);
     echo $settingsClass->alert("success", "Success!", "Booking successfully updated");
-    $logsClass->create("booking", "[bookingUID:" .  $this->uid  . "] updated by " . $_SESSION['username'] . " for [mealUID:" . $array['meal_uid'] . "]");
+
+    $logArray['category'] = "booking";
+    $logArray['result'] = "success";
+    $logArray['description'] = "[bookingUID:" .  $this->uid  . "] updated by " . $_SESSION['username'] . " for [mealUID:" . $array['meal_uid'] . "]";
+    $logsClass->create($logArray);
 
     return $update;
   }
@@ -107,8 +118,12 @@ class booking {
     $sql .= " LIMIT 1";
 
     $delete = $db->query($sql);
-    $logsClass->create("booking", "[bookingUID:" .  $bookingUID  . "] deleted by " . $_SESSION['username'] . " for [mealUID:" . $mealUID . "]");
     echo $settingsClass->alert("success", "Success!", "Booking successfully deleted");
+
+    $logArray['category'] = "booking";
+    $logArray['result'] = "success";
+    $logArray['description'] = "[bookingUID:" .  $bookingUID  . "] deleted by " . $_SESSION['username'] . " for [mealUID:" . $mealUID . "]";
+    $logsClass->create($logArray);
 
     return $delete;
   }
@@ -123,7 +138,11 @@ class booking {
     $sql .= " LIMIT 1";
 
     $delete = $db->query($sql);
-    $logsClass->create("booking", "Guest deleted from [bookingUID:" .  $this->uid  . "] for [mealUID:" . $this->meal_uid . "]");
+
+    $logArray['category'] = "booking";
+    $logArray['result'] = "success";
+    $logArray['description'] = "Guest deleted from [bookingUID:" .  $this->uid  . "] for [mealUID:" . $this->meal_uid . "]";
+    $logsClass->create($logArray);
 
     return $delete;
   }

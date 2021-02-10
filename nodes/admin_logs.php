@@ -6,16 +6,16 @@ admin_gatekeeper();
 <?php
 $logsClass->purge();
 $logs = $logsClass->all();
-$logsTypes = $logsClass->types();
+$logsCategories = $logsClass->categories();
 $logsDisplay = $settingsClass->value('logs_display');
 
 $i=$logsDisplay;
 do {
-  foreach ($logsTypes AS $logType) {
+  foreach ($logsCategories AS $logCategory) {
     $lookupDate = date('Y-m-d', strtotime('-' . $i . ' days'));
-    $logsByTypeByDay = $logsClass->allByTypeByDay($logType['type'], $lookupDate);
+    $logsByCategoryByDay = $logsClass->allByCategoryByDay($logCategory['category'], $lookupDate);
 
-    $logsArray[$logType['type']][$lookupDate] = count($logsByTypeByDay);
+    $logsArray[$logCategory['category']][$lookupDate] = count($logsByCategoryByDay);
     $datesArray[$lookupDate] = "'" . $lookupDate . "'";
   }
   $i--;
@@ -52,10 +52,11 @@ echo makeTitle($title, $subtitle);
 
 <div id="myTable" class="list-group">
   <?php
-  
+  echo $logsClass->displayTable();
+
 
   foreach ($logs AS $log) {
-    echo $logsClass->list_group_item($log);
+    //echo $logsClass->list_group_item($log);
 
     //echo $output;
   }

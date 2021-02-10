@@ -52,14 +52,17 @@ class settings {
 
     $update = $db->query($sql);
     echo $this->alert("success", "<strong>Success!</strong> Setting successfully updated");
-    $logsClass->create("admin", "Setting [settingUID:" . $array['uid'] . "] updated from '" . $existingSetting . "' to '" . $array['value'] . "'");
+
+    $logArray['category'] = "admin";
+    $logArray['result'] = "success";
+    $logArray['description'] = "[settingUID:" . $array['uid'] . "] updated from " . $existingSetting . " to " . $array['value'] . "";
+    $logsClass->create($logArray);
 
     return $update;
   }
 
   public function create($array = null) {
-	global $db;
-  global $logsClass;
+	global $db, $logsClass;
 
     $sql  = "INSERT INTO " . self::$table_name;
 
@@ -75,8 +78,11 @@ class settings {
 
     $create = $db->query($sql);
     echo $this->alert("success", "<strong>Success!</strong> Setting successfully created");
-    $logsClass->create("admin", "Setting [settingUID:" . $create->lastInsertID() . "] created with '" . $array['value'] . "'");
 
+    $logArray['category'] = "admin";
+    $logArray['result'] = "success";
+    $logArray['description'] = "Setting [settingUID:" . $create->lastInsertID() . "] created with '" . $array['value'] . "'";
+    $logsClass->create($logArray);
 
     return $create;
   }

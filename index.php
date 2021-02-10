@@ -61,13 +61,19 @@ if (isset($_POST['inputUsername']) && isset($_POST['inputPassword'])) {
 			$_SESSION['admin'] = false;
 		}
 
-		$logsClass->create("logon_success", $_SESSION['username'] . " logon succesful");
+		$logArray['category'] = "logon";
+    $logArray['result'] = "success";
+    $logArray['description'] = $_SESSION['username'] . " logon succesful";
+    $logsClass->create($logArray);
 	} else {
 		// Username or password is incorrect.
 		//session_destroy();
 		$_SESSION['logon_error'] = "Incorrect username/password";
 
-		$logsClass->create("logon_fail", $_POST['inputUsername'] . " logon failed");
+		$logArray['category'] = "logon";
+    $logArray['result'] = "warning";
+    $logArray['description'] = $_POST['inputUsername'] . " logon failed";
+    $logsClass->create($logArray);
 	}
 }
 if ($_SESSION['logon'] != true) {
