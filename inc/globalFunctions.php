@@ -184,7 +184,7 @@ function admin_gatekeeper() {
 		echo $output;
 
 
-		header("Location: http://scr2.seh.ox.ac.uk/logon.php");
+		header("Location: " . $_SERVER["SERVER_NAME"] . "/logon.php");
 	  exit;
 	}
 }
