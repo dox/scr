@@ -16,7 +16,11 @@ if ($_SESSION['admin'] == true) {
   }
 
   $bestGuessLDAP = $ldapUser['samaccountname'][0];
-  $logsClass->create("ldap", "LDAP lookup permitted for " . escape($_POST['firstname']) . "/" . escape($_POST['sn']));
+
+  $logArray['category'] = "ldap";
+  $logArray['result'] = "success";
+  $logArray['description'] = "LDAP lookup permitted for " . escape($_POST['firstname']) . "/" . escape($_POST['sn']);
+  $logsClass->create($logArray);
 
   if (empty($bestGuessLDAP)) {
     echo "Unknown - please try a different firstname/lastname.";
@@ -24,7 +28,11 @@ if ($_SESSION['admin'] == true) {
     echo $bestGuessLDAP;
   }
 } else {
-  $logsClass->create("ldap", "LDAP lookup for denied for " . escape($_POST['firstname']) . "/" . escape($_POST['sn']));
+  $logArray['category'] = "ldap";
+  $logArray['result'] = "warning";
+  $logArray['description'] = "LDAP lookup denied for " . escape($_POST['firstname']) . "/" . escape($_POST['sn']);
+  $logsClass->create($logArray);
+
   echo "Unknown - you do not have permission to perform LDAP lookups.";
 }
 

@@ -150,6 +150,8 @@ class logs {
       $class = "bg-primary";
     } elseif ($category == "logon") {
       $class = "bg-primary";
+    } elseif ($category == "ldap") {
+      $class = "bg-light text-dark";
     } else {
       $class = "bg-dark";
     }
