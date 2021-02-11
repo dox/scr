@@ -14,7 +14,7 @@ class reports {
 
 
     $sql  = "SELECT * FROM " . self::$table_name;
-    $sql .= " ORDER BY name DESC";
+    $sql .= " ORDER BY name ASC";
 
     $reports = $db->query($sql)->fetchAll();
 
@@ -76,6 +76,49 @@ class reports {
     $logArray['description'] = "[reportUID:" . $report->lastInsertID() . "] created";
     $logsClass->create($logArray);
 
+  }
+
+  private function displayRow($array = null) {
+    $dropdownButton  = "<div class=\"dropdown float-end\">";
+    $dropdownButton .= "<button class=\"btn btn-sm btn-primary dropdown-toggle\" type=\"button\" id=\"dropdownMenuButton1\" data-bs-toggle=\"dropdown\" aria-expanded=\"false\">";
+    $dropdownButton .= "Dropdown button";
+    $dropdownButton .= "</button>";
+    $dropdownButton .= "<ul class=\"dropdown-menu\" aria-labelledby=\"dropdownMenuButton1\">";
+    $dropdownButton .= "<li><a class=\"dropdown-item\" href=\"report.php?reportUID=" . $array['uid'] . "\">Run Now</a></li>";
+    $dropdownButton .= "<li><a class=\"dropdown-item\" href=\"index.php?n=admin_report&reportUID=" . $array['uid'] . "\">Edit</a></li>";
+    $dropdownButton .= "</ul>";
+    $dropdownButton .= "</div>";
+
+    $output  = "<tr>";
+    //$output .= "<td>" . dateDisplay($array['date']) . " " . timeDisplay($array['date']) . "</td>";
+    $output .= "<td><a href=\"index.php?n=admin_report&reportUID=" . $array['uid'] . "\">" . $array['name'] . "</a></td>";
+    $output .= "<td>" . $array['type'] . "</td>";
+    $output .= "<td>" . $array['type'] . "</td>";
+    $output .= "<td>" . $dropdownButton . "</td>";
+    $output .= "</tr>";
+
+    return $output;
+  }
+
+  public function displayTable() {
+    $output  = "<table id=\"myTable\" class=\"table\">";
+    $output .= "<thead>";
+    $output .= "<th>" . "Name" . "</th>";
+    $output .= "<th>" . "Type" . "</th>";
+    $output .= "<th>" . "Last Run" . "</th>";
+    $output .= "<th>" . "Action" . "</th>";
+    $output .= "</thead>";
+
+    $output .= "<tbody>";
+
+    foreach ($this->all() AS $report) {
+      $output .= $this->displayRow($report);
+    }
+
+    $output .= "</tbody>";
+    $output .= "</table>";
+
+    return $output;
   }
 }
 ?>

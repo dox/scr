@@ -11,26 +11,9 @@ $subtitle = "Some text here</a>.";
 //$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"16\" height=\"16\"><use xlink:href=\"img/icons.svg#calendar-plus\"/></svg> Add New", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#exampleModal\"");
 
 echo makeTitle($title, $subtitle, $icons);
+
+echo $reportsClass->displayTable();
 ?>
-
-<div class="list-group">
-  <?php
-  foreach ($reports AS $report) {
-    $output  = "<a href=\"index.php?n=admin_report&reportUID=" . $report['uid'] . "\" class=\"list-group-item list-group-item-action\">";
-    $output .= "<div class=\"d-flex w-100 justify-content-between\">";
-    $output .= "<h5 class=\"mb-1\">" . $report['name'] . "</h5>";
-    $output .= "<small class=\"text-muted\">" . "<span class=\"badge bg-primary rounded-pill\">" . $report['type'] . "</span></small>";
-    //$output .= "<p id=\"" . $term['uid'] . "\" onclick=\"dismiss(this.id);\">dismiss this box</p>";
-    //$output .= "<span class=\"badge bg-primary rounded-pill\">" . $log['type'] . "</span>";
-    $output .= "</div>";
-    //$output .= "<p class=\"mb-1\">" . $log['description'] . "</p>";
-    $output .= "<small class=\"text-muted\">" . $report['value'] . "</small>";
-    $output .= "</a>";
-
-    echo $output;
-  }
-  ?>
-</div>
 
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
