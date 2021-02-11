@@ -77,11 +77,26 @@
 	</div>
 	</nav>
 	<?php
+	if (debug) {
+		$output  = "<nav class=\"navbar navbar-expand-lg navbar-light bg-warning\">";
+		$output .= "<div class=\"container\">";
+		$output .= "<div class=\"navbar-text\">";
+		$output .= "<strong>Warning!</strong> This site is in <code>debug mode</code>.  It is for testing purposes only!";
+		$output .= "</div>";
+		$output .= "<span class=\"float-end\">IP: " . $_SERVER['REMOTE_ADDR'] . "</span>";
+		$output .= "</div>";
+		$output .= "</nav>";
+
+		echo $output;
+	}
+
+
 	$notificationsClass = new notifications();
 	$notifications = $notificationsClass->allCurrentForMember();
 	if (count($notifications)) {
 		include_once("notifications.php");
 	}
 	?>
+
 
 </header>

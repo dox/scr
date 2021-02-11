@@ -60,6 +60,15 @@
 
 		<main class="form-signin">
 			<?php
+
+			if (debug) {
+				$output  = "<div class=\"alert alert-warning\" role=\"alert\">";
+				$output .= "<strong>Warning!</strong> This site is in <code>debug mode</code>.  It is for testing purposes only!";
+				$output .= "</div>";
+
+				echo $output;
+			}
+
 			if (isset($_SESSION['logon_error'])) {
 				echo "<div class=\"alert alert-primary\" role=\"alert\">";
 				echo "<p>" . $_SESSION['logon_error'] . "</p>";
@@ -69,7 +78,7 @@
 			?>
 	    <form method="post" id="loginSubmit" action="index.php">
 	      <div class="mb-4 text-center">
-					<svg width="76" height="64">
+					<svg width="76" height="64" <?php if(debug) { echo "class=\"text-warning\"";}?>>
 						<use xlink:href="img/icons.svg#chough-regular"/>
 					</svg>
 	        <h1 class="h3 mb-3 font-weight-normal">SCR Meal Booking</h1>
