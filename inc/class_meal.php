@@ -95,7 +95,7 @@ class meal {
 
   private function bookingButton() {
     $bookingsClass = new bookings();
-    $bookingsThisMeal = $this->total_bookings_this_meal();
+    $bookingsThisMeal = $this->total_bookings_this_meal($_SESSION['type']);
 
     if ($bookingsClass->bookingExistCheck($this->uid, $_SESSION['username'])) {
       // Booking exists for users - show the manage button
@@ -347,8 +347,8 @@ class meal {
   }
 
   public function check_capacity_ok() {
-    $mealCapacity = $this->totalCapacity();
-    $currentBookingsCount = $this->total_bookings_this_meal();
+    $mealCapacity = $this->totalCapacity($_SESSION['type']);
+    $currentBookingsCount = $this->total_bookings_this_meal($_SESSION['type']);
 
     if ($currentBookingsCount < $mealCapacity) {
       $capacityStatus = true;
@@ -394,6 +394,16 @@ class meal {
     } else {
       return false;
     }
+  }
+
+  public function getTotalGuestsAllowed() {
+    if ($_SESSION['type'] == "SCR") {
+      $returnNumber = $this->scr_guests;
+    } elseif($_SESSION['type'] == "MCR") {
+      $returnNumber = $this->mcr_guests;
+    }
+
+    return $returnNumber;
   }
 }
 ?>

@@ -183,22 +183,26 @@ function guestDomus(this_id) {
 
   if (domusCheckBox.checked == true) {
     domusDescriptionDiv.classList.remove("visually-hidden");
+    domusDescriptionInput.required = true;
   } else {
     domusDescriptionDiv.classList.add("visually-hidden");
 	  domusDescriptionInput.value = "";
+    domusDescriptionInput.required = false;
   }
 }
 
-function domus(this_id) {
+function domusCheckbox(this_id) {
   var domusCheckBox = document.getElementById(this_id);
-  var domusDescriptionInput = document.getElementById('domus_description');
-  var domusDescriptionHelp = document.getElementById('domus_descriptionHelp');
+  var domusDescriptionInput = document.getElementById('domus_reason');
+  var domusDescriptionHelp = document.getElementById('domus_reasonHelp');
 
   if (domusCheckBox.checked == true) {
     domusDescriptionInput.hidden = false;
+    domusDescriptionInput.required = true;
     domusDescriptionHelp.hidden = false;
   } else {
     domusDescriptionInput.hidden = true;
+    domusDescriptionInput.required = false;
     domusDescriptionHelp.hidden = true;
 	  domusDescriptionInput.value = "";
   }
