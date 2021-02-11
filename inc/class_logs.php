@@ -109,10 +109,10 @@ class logs {
     //$preg_string = preg_replace($pattern, $replace, $string);
 
     $output  = "<tr class=\"table-" . $array['result'] . " filterRow\">";
-    $output .= "<td>" . dateDisplay($array['date']) . " " . timeDisplay($array['date']) . "</td>";
+    $output .= "<td>" . date('Y-m-d H:i:s', strtotime($array['date'])) . "</td>";
     $output .= "<td>" . $array['ip'] . "</td>";
     $output .= "<td>" . $array['username'] . "</td>";
-    $output .= "<td class=\"filterDescription\">" . $array['description'] . $this->displayCategoryBadge($array['category']) . "</td>";
+    $output .= "<td style=\"word-wrap: break-word;max-width: 500px;\" class=\"filterDescription\">" . $array['description'] . $this->displayCategoryBadge($array['category']) . "</td>";
     //$output .= "<td class=\"text-truncate\">Description</td>";
     $output .= "</tr>";
 
@@ -122,10 +122,10 @@ class logs {
   public function displayTable() {
     $output  = "<table id=\"myTable\" class=\"table\">";
     $output .= "<thead>";
-    $output .= "<td>" . "Date" . "</td>";
-    $output .= "<td>" . "IP" . "</td>";
-    $output .= "<td>" . "Username" . "</td>";
-    $output .= "<td>" . "Description" . "</td>";
+    $output .= "<th>" . "Date" . "</th>";
+    $output .= "<th>" . "IP" . "</th>";
+    $output .= "<th>" . "Username" . "</th>";
+    $output .= "<th>" . "Description" . "</th>";
     $output .= "</thead>";
 
     $output .= "<tbody>";
