@@ -10,7 +10,7 @@ if (isset($_POST['contentInfo'])) {
   $sql .= " WHERE name = 'scr_accessibility'";
   $sql .= " LIMIT 1";
 
-  echo $settingsClass->alert("success", "<strong>Success!</strong> SCR Accessibility Statement successfully updated");
+  echo $settingsClass->alert("success", "Success!", "SCR Accessibility Statement successfully updated");
 }
 
 $text = $settingsClass->value('scr_accessibility');
