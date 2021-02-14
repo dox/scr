@@ -221,14 +221,6 @@ echo makeTitle($title, $subtitle, $icons);
       <small>[chat-dots]</small>
     </div>
     </li>
-    <li class="list-group-item list-group-item-action">
-      <div class="d-flex w-100 justify-content-between">
-      <span><svg width="2em" height="2em" class="spinning">
-        <use xlink:href="img/icons.svg#spinner"/>
-      </svg> Spinner</span>
-      <small>[spinner]</small>
-    </div>
-    </li>
   </ul>
 </div>
 

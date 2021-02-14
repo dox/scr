@@ -141,7 +141,7 @@ class member {
   }
 
   public function create($array = null, $displayAlert = true) {
-	   global $db, $logsClass, $settingsClass;
+	  global $db, $logsClass, $settingsClass;
 
     $sql  = "INSERT INTO " . self::$table_name;
 

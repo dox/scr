@@ -80,7 +80,7 @@ async function load_home(this_id) {
   var tabTrigger = new bootstrap.Tab(triggerEl);
   tabTrigger.show();
 
-  home.innerHTML = "<p class=\"text-center\"><svg width=\"4em\" height=\"4em\" class=\"text-muted spinning\"><use xlink:href=\"img/icons.svg#spinner\"/></svg></p>";
+  home.innerHTML = "<div class=\"text-center\"><div class=\"spinner-border\" role=\"status\"><span class=\"visually-hidden\">Loading...</span></div></div>";
   let url = 'nodes/widgets/_weekly_meals.php?id=' + this_id;
 
   home.innerHTML = await (await fetch(url)).text();
