@@ -2,7 +2,7 @@
 <footer class="pt-4 my-md-5 pt-md-5 border-top">
   <div class="row">
     <div class="col-6">
-      <svg width="1.2em" height="1em" class="text-muted">
+      <svg width="1em" height="1em" class="text-muted">
 				<use xlink:href="img/icons.svg#chough-regular"/>
 			</svg>
       <a class="link-secondary" href="https://github.com/dox/scr">SCR Meal Booking</a>

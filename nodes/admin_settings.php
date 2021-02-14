@@ -63,7 +63,7 @@ echo makeTitle($title, $subtitle, $icons);
   <ul class="list-group">
     <li class="list-group-item list-group-item-action">
       <div class="d-flex w-100 justify-content-between">
-      <span><svg width="2.4em" height="2em">
+      <span><svg width="2em" height="2em">
         <use xlink:href="img/icons.svg#chough-regular"/>
       </svg> Chough (default logo)</span>
       <small>[chough-regular]</small>
