@@ -16,7 +16,7 @@ if (isset($_POST['contentInfo'])) {
 $text = $settingsClass->value('scr_accessibility');
 
 $title = "Accessibility Statement";
-$subtitle = "This accessibility statement applies to St Edmund Hall's Meal Booking System: <a href=\"http://scr2.seh.ox.ac.uk\">http://scr2.seh.ox.ac.uk</a>";
+$subtitle = "This accessibility statement applies to the SCR Meal Booking System: <a href=\"" . siteURL() . "\">" . siteURL() . "</a>";
 if ($_SESSION['admin'] == true) {
   $icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#journal-text\"/></svg> Edit Content", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#exampleModal\"");
 }
