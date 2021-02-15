@@ -59,171 +59,52 @@ echo makeTitle($title, $subtitle, $icons);
 
 <h2 class="m-3">Icons Availabe in <code>./img/icon.svg</code></h2>
 
-<div>
-  <ul class="list-group">
-    <li class="list-group-item list-group-item-action">
-      <div class="d-flex w-100 justify-content-between">
-      <span><svg width="2em" height="2em">
-        <use xlink:href="img/icons.svg#chough-regular"/>
-      </svg> Chough (default logo)</span>
-      <small>[chough-regular]</small>
-    </div>
-    </li>
-    <li class="list-group-item list-group-item-action">
-      <div class="d-flex w-100 justify-content-between">
-      <span><svg width="2em" height="2em">
-        <use xlink:href="img/icons.svg#house-door"/>
-      </svg> Home</span>
-      <small>[house-door]</small>
-    </div>
-    </li>
-    <li class="list-group-item list-group-item-action">
-      <div class="d-flex w-100 justify-content-between">
-      <span><svg width="2em" height="2em">
-        <use xlink:href="img/icons.svg#person"/>
-      </svg> Member(s)</span>
-      <small>[person]</small>
-    </div>
-    </li>
-    <li class="list-group-item list-group-item-action">
-      <div class="d-flex w-100 justify-content-between">
-      <span><svg width="2em" height="2em">
-        <use xlink:href="img/icons.svg#person-plus"/>
-      </svg> Member Add</span>
-      <small>[person-plus]</small>
-    </div>
-    </li>
-    <li class="list-group-item list-group-item-action">
-      <div class="d-flex w-100 justify-content-between">
-      <span><svg width="2em" height="2em">
-        <use xlink:href="img/icons.svg#person-check"/>
-      </svg> Member added</span>
-      <small>[person-check]</small>
-    </div>
-    </li>
-    <li class="list-group-item list-group-item-action">
-      <div class="d-flex w-100 justify-content-between">
-      <span><svg width="2em" height="2em">
-        <use xlink:href="img/icons.svg#person-secret"/>
-      </svg> Impersonate</span>
-      <small>[person-secret]</small>
-    </div>
-    </li>
-    <li class="list-group-item list-group-item-action">
-      <div class="d-flex w-100 justify-content-between">
-      <span><svg width="2em" height="2em">
-        <use xlink:href="img/icons.svg#list-stars"/>
-      </svg> Meals List</span>
-      <small>[list-stars]</small>
-    </div>
-    </li>
-    <li class="list-group-item list-group-item-action">
-      <div class="d-flex w-100 justify-content-between">
-      <span><svg width="2em" height="2em">
-        <use xlink:href="img/icons.svg#journal-text"/>
-      </svg> Information</span>
-      <small>[journal-text]</small>
-    </div>
-    </li>
-    <li class="list-group-item list-group-item-action">
-      <div class="d-flex w-100 justify-content-between">
-      <span><svg width="2em" height="2em">
-        <use xlink:href="img/icons.svg#grip-vertical"/>
-      </svg> Gripper for re-orderable lists</span>
-      <small>[grip-vertical]</small>
-    </div>
-    </li>
-    <li class="list-group-item list-group-item-action">
-      <div class="d-flex w-100 justify-content-between">
-      <span><svg width="2em" height="2em">
-        <use xlink:href="img/icons.svg#sliders"/>
-      </svg> Edit/Settings</span>
-      <small>[sliders]</small>
-    </div>
-    </li>
-    <li class="list-group-item list-group-item-action">
-      <div class="d-flex w-100 justify-content-between">
-      <span><svg width="2em" height="2em">
-        <use xlink:href="img/icons.svg#trash"/>
-      </svg> Delete</span>
-      <small>[trash]</small>
-    </div>
-    </li>
-    <li class="list-group-item list-group-item-action">
-      <div class="d-flex w-100 justify-content-between">
-      <span><svg width="2em" height="2em">
-        <use xlink:href="img/icons.svg#calendar-plus"/>
-      </svg> Date Add</span>
-      <small>[calendar-plus]</small>
-    </div>
-    </li>
-    <li class="list-group-item list-group-item-action">
-      <div class="d-flex w-100 justify-content-between">
-      <span><svg width="2em" height="2em">
-        <use xlink:href="img/icons.svg#plus-circle"/>
-      </svg> Meal Add</span>
-      <small>[plus-circle]</small>
-    </div>
-    </li>
-    <li class="list-group-item list-group-item-action">
-      <div class="d-flex w-100 justify-content-between">
-      <span><svg width="2em" height="2em">
-        <use xlink:href="img/icons.svg#wine-glass"/>
-      </svg> Wine</span>
-      <small>[wine-glass]</small>
-    </div>
-    </li>
-    <li class="list-group-item list-group-item-action">
-      <div class="d-flex w-100 justify-content-between">
-      <span><svg width="2em" height="2em">
-        <use xlink:href="img/icons.svg#graduation-cap"/>
-      </svg> Domus</span>
-      <small>[graduation-cap]</small>
-    </div>
-    </li>
-    <li class="list-group-item list-group-item-action">
-      <div class="d-flex w-100 justify-content-between">
-      <span><svg width="2em" height="2em">
-        <use xlink:href="img/icons.svg#cookie"/>
-      </svg> Dessert</span>
-      <small>[cookie]</small>
-    </div>
-    </li>
-    <li class="list-group-item list-group-item-action">
-      <div class="d-flex w-100 justify-content-between">
-      <span><svg width="2em" height="2em">
-        <use xlink:href="img/icons.svg#x-circle"/>
-      </svg> Access Denied</span>
-      <small>[x-circle]</small>
-    </div>
-    </li>
-    <li class="list-group-item list-group-item-action">
-      <div class="d-flex w-100 justify-content-between">
-      <span><svg width="2em" height="2em">
-        <use xlink:href="img/icons.svg#search"/>
-      </svg> Search</span>
-      <small>[search]</small>
-    </div>
-    </li>
-    <li class="list-group-item list-group-item-action">
-      <div class="d-flex w-100 justify-content-between">
-      <span><svg width="2em" height="2em">
-        <use xlink:href="img/icons.svg#info-circle"/>
-      </svg> Information</span>
-      <small>[info-circle]</small>
-    </div>
-    </li>
-    <li class="list-group-item list-group-item-action">
-      <div class="d-flex w-100 justify-content-between">
-      <span><svg width="2em" height="2em">
-        <use xlink:href="img/icons.svg#chat-dots"/>
-      </svg> Notifications</span>
-      <small>[chat-dots]</small>
-    </div>
-    </li>
-  </ul>
-</div>
 
+<?php
+$iconsArray = array(
+  "chough-regular" => "Chough (default logo)",
+  "chough-new" => "Chough (new logo)",
+  "chef-hat" => "Chef Hat",
+  "house-door" => "Home",
+  "person" => "Member(s)",
+  "person-plus" => "Member Add",
+  "person-check" => "Member Added",
+  "person-secret" => "Impersonate",
+  "list-stars" => "Meals List",
+  "journal-text" => "Information",
+  "grip-vertical" => "Gripper for re-orderable lists",
+  "sliders" => "Edit/Settings",
+  "trash" => "Delete",
+  "calendar-plus" => "Date Add",
+  "plus-circle" => "Meal Add",
+  "wine-glass" => "Wine",
+  "graduation-cap" => "Domus",
+  "cookie" => "Dessert",
+  "x-circle" => "Access Denied",
+  "search" => "Search",
+  "info-circle" => "Information",
+  "chat-dots" => "Notifications",
+  "calendar-plus" => "Date Add"
+);
+
+
+
+echo "<ul class=\"list-group\">";
+foreach ($iconsArray AS $icon => $name) {
+  $output  = "<li class=\"list-group-item list-group-item-action\">";
+  $output .= "<div class=\"d-flex w-100 justify-content-between\">";
+  $output .= "<span><svg width=\"2em\" height=\"2em\">";
+  $output .= "<use xlink:href=\"img/icons.svg#" . $icon . "\"/>";
+  $output .= "</svg> " . $name . "</span>";
+  $output .= "<small>[" . $icon . "]</small>";
+  $output .= "</div>";
+  $output .= "</li>";
+
+  echo $output;
+}
+
+echo "</ul>";
+?>
 
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
