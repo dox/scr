@@ -95,6 +95,7 @@ include_once('_member_stats.php');
       } while($i <= $mealsToDisplay);
       ?>
     </ul>
+    <a href="report.php?reportUID=3&memberUID=<?php echo $memberObject->uid; ?>" class="text-muted float-end">Export all meal bookings</a>
   </div>
 
   <div class="col-md-7 col-lg-8">

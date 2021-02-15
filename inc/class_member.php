@@ -235,6 +235,23 @@ class member {
     return $bookingUIDSarray;
   }
 
+  public function getAllBookingUIDS() {
+    global $db;
+
+    $sql  = "SELECT bookings.uid AS uid FROM bookings";
+    $sql .= " LEFT JOIN meals ON bookings.meal_uid = meals.uid";
+    $sql .= " WHERE bookings.member_ldap = '" . $this->ldap . "'";
+    $sql .= " ORDER BY meals.date_meal DESC";
+
+    $bookings = $db->query($sql)->fetchAll();
+
+    foreach ($bookings AS $booking) {
+      $bookingUIDSarray[] = $booking['uid'];
+    }
+
+    return $bookingUIDSarray;
+  }
+
   public function count_allBookings($type = null) {
     global $db;
 
