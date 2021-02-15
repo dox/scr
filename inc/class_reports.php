@@ -5,9 +5,9 @@ class reports {
   public $uid;
   public $type;
   public $name;
+  public $file;
   public $description;
-  public $columns;
-  public $query;
+  public $date_lastrun;
 
   public function all() {
     global $db;
@@ -93,7 +93,7 @@ class reports {
     //$output .= "<td>" . dateDisplay($array['date']) . " " . timeDisplay($array['date']) . "</td>";
     $output .= "<td><a href=\"index.php?n=admin_report&reportUID=" . $array['uid'] . "\">" . $array['name'] . "</a></td>";
     $output .= "<td>" . $array['type'] . "</td>";
-    $output .= "<td>" . $array['type'] . "</td>";
+    $output .= "<td>" . $array['date_lastrun'] . "</td>";
     $output .= "<td>" . $dropdownButton . "</td>";
     $output .= "</tr>";
 
@@ -119,6 +119,19 @@ class reports {
     $output .= "</table>";
 
     return $output;
+  }
+
+  public function update_lastrun($reportUID = null) {
+    global $db;
+
+    $sql  = "UPDATE " . self::$table_name;
+    $sql .= " SET date_lastrun = '" . date('Y-m-d H:i:s') . "'";
+    $sql .= "WHERE uid = '" . $reportUID . "'";
+
+    $update = $db->query($sql);
+
+    return true;
+
   }
 }
 ?>
