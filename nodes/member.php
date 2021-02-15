@@ -82,7 +82,7 @@ include_once('_member_stats.php');
       //$pastBookings = $bookingsClass->booking_uids_past_by_member($memberObject->ldap);
       $i = 0;
       $mealsToDisplay = $settingsClass->value('member_previous_meals_displayed');
-      
+
       do {
 
         $bookingObject = new booking($previousMealUIDS[$i]);
@@ -149,7 +149,7 @@ include_once('_member_stats.php');
           </div>
           <?php
           if (isset($memberObject->date_lastlogon)) {
-            echo "<small class=\"form-text text-muted\">Last logon: " . $memberObject->date_lastlogon . " " . timeDisplay($memberObject->date_lastlogon) . "</small>";
+            echo "<small class=\"form-text text-muted\">Last logon: " . dateDisplay($memberObject->date_lastlogon) . " " . timeDisplay($memberObject->date_lastlogon) . "</small>";
           }
           ?>
         </div>
