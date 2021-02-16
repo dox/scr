@@ -7,6 +7,7 @@ if (isset($_POST['reportUID'])) {
 }
 
 $report = $reportsClass->one($_GET['reportUID']);
+$reportLogs = $logsClass->allWhereMatch("[reportUID:" . $report['uid'] . "]");
 ?>
 <?php
 $title = $report['name'];
@@ -18,19 +19,17 @@ echo makeTitle($title, $subtitle);
   <div class="col-md-5 col-lg-4 order-md-last">
     <h4 class="d-flex justify-content-between align-items-center mb-3">
       <span class="text-muted">Report Logs</span>
-      <span class="badge bg-secondary rounded-pill"><?php echo count($meals); ?></span>
+      <span class="badge bg-secondary rounded-pill"><?php echo count($reportLogs); ?></span>
     </h4>
     <ul class="list-group mb-3">
       <?php
       foreach ($reportLogs AS $log) {
-        $mealObject = new meal($meal['uid']);
-
         $output  = "<li class=\"list-group-item d-flex justify-content-between lh-sm\">";
         $output .= "<div class=\"text-muted\">";
-        $output .= "<h6 class=\"my-0\"><a href=\"index.php?n=admin_meal&mealUID=" . $mealObject->uid . "\" class=\"text-muted\">" . $mealObject->name . "</a></h6>";
-        $output .= "<small class=\"text-muted\">" . dateDisplay($mealObject->date_meal) . " " . date('H:i', strtotime($mealObject->date_meal)) . "</small>";
+        $output .= "<h6 class=\"my-0\"><a href=\"index.php?n=admin_logs\" class=\"text-muted\">" . $log['description'] . "</a></h6>";
+        $output .= "<small class=\"text-muted\">" . dateDisplay($log['date']) . " " . timeDisplay($log['date']) . "</small>";
         $output .= "</div>";
-        $output .= "<span class=\"text-muted\">" . count(json_decode($booking['guests_array'])) . autoPluralise(" guest", " guests", count(json_decode($booking['guests_array']))) . "</span>";
+        $output .= "<span class=\"text-muted\">" . $log['username'] . "</span>";
         $output .= "</li>";
 
         echo $output;

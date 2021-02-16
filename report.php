@@ -10,11 +10,6 @@ $node = "reports/" . $report['file'];
 if (file_exists($node)) {
   $reportsClass->update_lastrun($report['uid']);
 
-  $logArray['category'] = "report";
-  $logArray['result'] = "success";
-  $logArray['description'] = "[reportUID:" . $report['uid'] . "] run";
-  $logsClass->create($logArray);
-
   if ($report['type'] == "CSV") {
     // output headers so that the file is downloaded rather than displayed
     header('Content-Type: text/csv; charset=utf-8');

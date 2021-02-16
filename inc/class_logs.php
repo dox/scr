@@ -25,6 +25,22 @@ class logs {
     return $logs;
   }
 
+  public function allWhereMatch($string = null) {
+    global $db;
+    global $settingsClass;
+
+    $maximumLogsAge = date('Y-m-d', strtotime('-' . $settingsClass->value('logs_retention') . ' days'));
+
+    $sql  = "SELECT uid, INET_NTOA(ip) AS ip, username, date, result, category, description  FROM " . self::$table_name;
+    $sql .= " WHERE DATE(date) > '" . $maximumLogsAge . "' ";
+    $sql .= " AND description LIKE '%" . $string . "%' ";
+    $sql .= " ORDER BY date DESC";
+
+    $logs = $db->query($sql)->fetchAll();
+
+    return $logs;
+  }
+
   public function allByCategoryByDay($category = null, $date = null) {
     global $db;
 
@@ -100,6 +116,7 @@ class logs {
     //$patternArray['/\[bookingUID:([0-9]+)\]/'] = "<code><a href=\"index.php?n=booking&bookingUID=$1\" class=\"text-decoration-none\">[bookingUID:$1]</a></code>";
     $patternArray['/\[notificationUID:([0-9]+)\]/'] = "<code><a href=\"index.php?n=admin_notification&notificationUID=$1\" class=\"text-decoration-none\">[notificationUID:$1]</a></code>";
     $patternArray['/\[settingUID:([0-9]+)\]/'] = "<code><a href=\"index.php?n=admin_notification&notificationUID=$1\" class=\"text-decoration-none\">[settingUID:$1]</a></code>";
+    $patternArray['/\[reportUID:([0-9]+)\]/'] = "<code><a href=\"index.php?n=admin_report&reportUID=$1\" class=\"text-decoration-none\">[reportUID:$1]</a></code>";
 
     foreach ($patternArray AS $pattern => $replace) {
       //echo $pattern . $replace;

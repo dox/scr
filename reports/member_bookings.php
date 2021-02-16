@@ -101,4 +101,9 @@ foreach ($csvOUTPUT AS $row) {
   //printArray($report);
 
 }
+
+$logArray['category'] = "report";
+$logArray['result'] = "success";
+$logArray['description'] = "[reportUID:" . $report['uid'] . "] run for [memberUID:" . $memberObject->uid . "]";
+$logsClass->create($logArray);
 ?>

@@ -33,7 +33,19 @@
       <p class="lead">Users that have accessed the system</p>
     </div>
     <div class="bg-dark shadow-sm mx-auto text-light" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;">
-    å</div>
+      <?php
+      $sql  = "SELECT * FROM members WHERE date_lastlogon > '2020-02-01' ORDER BY date_lastlogon DESC";
+      $members = $db->query($sql)->fetchAll();
+
+      $output = "<ul class=\"list-unstyled\">";
+      foreach ($members AS $member) {
+        $output .= "<li>[" . $member['type'] . "] " . $member['lastname'] . ", ". $member['firstname'] . "</li>";
+      }
+      $output .= "</ul>";
+
+      echo $output;
+      ?>
+    </div>
   </div>
   <div class="col-6 text-center overflow-hidden">
     <div class="my-3 py-3">
@@ -43,3 +55,10 @@
     <div class="bg-primary shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;"></div>
   </div>
 </div>
+
+<?php
+$logArray['category'] = "report";
+$logArray['result'] = "success";
+$logArray['description'] = "[reportUID:" . $report['uid'] . "] run";
+$logsClass->create($logArray);
+?>
