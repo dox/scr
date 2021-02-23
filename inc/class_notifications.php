@@ -182,8 +182,6 @@ class notifications {
     $sql .= " WHERE uid = '" . $notificationUID . "' ";
     $sql .= " LIMIT 1";
 
-    echo $sql;
-
     $delete = $db->query($sql);
 
     $logArray['category'] = "notification";
