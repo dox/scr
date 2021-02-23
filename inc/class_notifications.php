@@ -172,5 +172,27 @@ class notifications {
     return $deleteNotification;
   }
 
+  public function deleteDismiss($notificationUID = null, $memberLDAP = null) {
+    global $db, $logsClass;
+
+    $memberObject = new member($memberLDAP);
+
+    $sql  = "UPDATE " . self::$table_name;
+    $sql .= " SET members_array = JSON_REMOVE(members_array, '$." . $memberObject->ldap . "')";
+    $sql .= " WHERE uid = '" . $notificationUID . "' ";
+    $sql .= " LIMIT 1";
+
+    echo $sql;
+
+    $delete = $db->query($sql);
+
+    $logArray['category'] = "notification";
+    $logArray['result'] = "success";
+    $logArray['description'] = "Notifcation dismissal deleted from [notificationUID:" .  $notificationUID  . "] for [memberUID:" . $memberObject->uid . "]";
+    $logsClass->create($logArray);
+
+    return $delete;
+  }
+
 }
 ?>

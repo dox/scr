@@ -12,8 +12,16 @@ if (isset($_POST['notificationUID'])) {
   }
   $notificationsClass->update($_POST);
 }
-
 $notification = $notificationsClass->one($_GET['notificationUID']);
+
+
+if (isset($_GET['deleteDismiss'])) {
+  $notificationUID = $notification['uid'];
+  $memberLDAP = $_GET['deleteDismiss'];
+
+  $notificationsClass->deleteDismiss($notificationUID, $memberLDAP);
+  $notification = $notificationsClass->one($_GET['notificationUID']);
+}
 
 $members_dismissed_array = json_decode($notification['members_array']);
 ?>
@@ -36,9 +44,11 @@ echo makeTitle($title, $subtitle, $icons);
       foreach ($members_dismissed_array AS $member => $dismissedDate) {
         $memberObject = new member($member);
 
+        $deleteIcon = "<a href=\"index.php?n=admin_notification&notificationUID=" . $notification['uid'] . "&deleteDismiss=" . $member . "\"><svg width=\"1em\" height=\"1em\" class=\"text-muted me-1\"><use xlink:href=\"img/icons.svg#x-circle\"/></svg></a>";
+
         $output  = "<li class=\"list-group-item d-flex justify-content-between lh-sm\">";
         $output .= "<div class=\"text-muted\">";
-        $output .= "<h6 class=\"my-0\"><a href=\"index.php?n=member&memberUID=" . $memberObject->uid . "\" class=\"text-muted\">" . $memberObject->displayName() . "</a></h6>";
+        $output .= "<h6 class=\"my-0\">" . $deleteIcon . "<a href=\"index.php?n=member&memberUID=" . $memberObject->uid . "\" class=\"text-muted\">" . $memberObject->displayName() . "</a></h6>";
         //$output .= "<span class=\"text-muted\">" . $memberObject->displayName() . "</span>";
         $output .= "</div>";
         $output .= "<small class=\"text-muted\">" . dateDisplay($dismissedDate) . " " . timeDisplay($dismissedDate) . "</small>";
