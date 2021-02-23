@@ -12,7 +12,6 @@
 
 	<style>
 	body {
-	  text-shadow: 0 .05rem .1rem rgba(0, 0, 0, .5);
 	  box-shadow: inset 0 0 5rem rgba(0, 0, 0, .9);
 	  background: url('/img/cover.jpg') no-repeat center center fixed;
 	  -webkit-background-size: cover;
@@ -70,7 +69,7 @@
 			}
 
 			if (isset($_SESSION['logon_error'])) {
-				echo "<div class=\"alert alert-primary\" role=\"alert\">";
+				echo "<div class=\"alert alert-warning\" role=\"alert\">";
 				echo "<p>" . $_SESSION['logon_error'] . "</p>";
 				echo "<p><a href=\"" . reset_url . "\" class=\"alert-link\">Forgot your password?</a></p>";
 				echo "</div>";
