@@ -48,7 +48,7 @@ echo makeTitle($title, $subtitle);
 
 <canvas id="canvas2"></canvas>
 
-<input type="text" id="myInput" class="form-control mt-3 mb-3" onkeyup="myFunction()" placeholder="Filter Logs...">
+<input type="text" id="logs_fiter_input" class="form-control mt-3 mb-3" onkeyup="tableFilter()" placeholder="Filter Logs...">
 
 <div id="myTable" class="list-group">
   <?php
@@ -65,61 +65,45 @@ echo makeTitle($title, $subtitle);
 
 <script>
 var barChartData = {
-			labels: [<?php echo implode(", ", $datesArray); ?>],
-			datasets: [
-        <?php echo implode(",", $graphData); ?>]
+	labels: [<?php echo implode(", ", $datesArray); ?>],
+	datasets: [<?php echo implode(",", $graphData); ?>]
+};
 
-		};
-		window.onload = function() {
-			var ctx = document.getElementById('canvas2').getContext('2d');
-			window.myBar = new Chart(ctx, {
-				type: 'bar',
-				data: barChartData,
-				options: {
-					tooltips: {
-						mode: 'index',
-						intersect: false
-					},
-					responsive: true,
-					scales: {
-						xAxes: [{
-							stacked: true,
-						}],
-						yAxes: [{
-							stacked: true,
-              scaleLabel: {
-    						display: true,
-    						labelString: 'Total Logs'
-    					}
-						}]
-					}
-				}
-			});
-		};
+window.onload = function() {
+	var ctx = document.getElementById('canvas2').getContext('2d');
+	window.myBar = new Chart(ctx, {
+		type: 'bar',
+		data: barChartData,
+		options: {
+			tooltips: {
+				mode: 'index',
+				intersect: false
+			},
+			responsive: true,
+			scales: {
+				xAxes: [{
+					stacked: true,
+			  }],
+				yAxes: [{
+					stacked: true,
+          scaleLabel: {
+  					display: true,
+  					labelString: 'Total Logs'
+  				}
+				}]
+			}
+		}
+	});
+};
 
-</script>
-
-
-<script>
-function myFunction() {
-  // Declare variables
-  var input, filter, table, tr, td, i, txtValue;
-  input = document.getElementById("myInput");
-  filter = input.value.toUpperCase();
-  table = document.getElementById("myTable");
-  tr = table.getElementsByClassName("filterRow");
-
-  // Loop through all table rows, and hide those who don't match the search query
-  for (i = 0; i < tr.length; i++) {
-    td = tr[i].getElementsByClassName("filterDescription")[0];
-    if (td) {
-      txtValue = td.textContent || td.innerText;
-      if (txtValue.toUpperCase().indexOf(filter) > -1) {
-        tr[i].style.display = "";
-      } else {
-        tr[i].style.display = "none";
-      }
-    }
-  }
+function tableFilter() {
+  const input = document.getElementById("logs_fiter_input");
+  const inputStr = input.value.toUpperCase();
+  document.querySelectorAll('#logsTable tr:not(.header)').forEach((tr) => {
+    const anyMatch = [...tr.children]
+      .some(td => td.textContent.toUpperCase().includes(inputStr));
+    if (anyMatch) tr.style.removeProperty('display');
+    else tr.style.display = 'none';
+  });
 }
 </script>

@@ -137,13 +137,13 @@ class logs {
   }
 
   public function displayTable() {
-    $output  = "<table id=\"myTable\" class=\"table\">";
-    $output .= "<thead>";
+    $output  = "<table id=\"logsTable\" class=\"table\">";
+    $output .= "<tr class=\"header\">";
     $output .= "<th>" . "Date" . "</th>";
     $output .= "<th>" . "IP" . "</th>";
     $output .= "<th>" . "Username" . "</th>";
     $output .= "<th>" . "Description" . "</th>";
-    $output .= "</thead>";
+    $output .= "</tr>";
 
     $output .= "<tbody>";
 
