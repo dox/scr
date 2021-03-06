@@ -78,7 +78,7 @@
 	    <form method="post" id="loginSubmit" action="index.php">
 	      <div class="mb-4 text-center">
 					<svg width="5em" height="5em" <?php if(debug) { echo "class=\"text-warning\"";}?>>
-						<use xlink:href="img/icons.svg#chough-regular"/>
+						<use xlink:href="img/icons.svg#chough-new"/>
 					</svg>
 	        <h1 class="h3 mb-3 font-weight-normal">SCR Meal Booking</h1>
 	      </div>

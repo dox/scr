@@ -3,7 +3,7 @@
   <div class="row">
     <div class="col-6">
       <svg width="1em" height="1em" class="text-muted">
-				<use xlink:href="img/icons.svg#chough-regular"/>
+				<use xlink:href="img/icons.svg#chough-new"/>
 			</svg>
       <a class="link-secondary" href="https://github.com/dox/scr">SCR Meal Booking</a>
       <small class="d-block mb-3 text-muted">&copy; 2008-<?php echo date('Y'); ?></small>
