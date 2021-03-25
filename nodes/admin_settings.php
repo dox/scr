@@ -62,8 +62,7 @@ echo makeTitle($title, $subtitle, $icons);
 
 <?php
 $iconsArray = array(
-  "chough-regular" => "Chough (default logo)",
-  "chough-new" => "Chough (new logo)",
+  "chough" => "Chough",
   "chough-modern" => "Chough (new logo modern version)",
   "chef-hat" => "Chef Hat",
   "house-door" => "Home",
