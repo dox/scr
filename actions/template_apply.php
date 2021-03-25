@@ -3,8 +3,8 @@ include_once("../inc/autoload.php");
 
 admin_gatekeeper();
 
-$_POST['template_start_date'] = "2021-01-24";
-$_POST['template_name'] = "template_1";
+//$_POST['template_start_date'] = "2021-01-24";
+//$_POST['template_name'] = "template_1";
 
 $templateName = $_POST['template_name'];
 $givenStartDate = date('Y-m-d', strtotime($_POST['template_start_date'])); //must be a Sunday!
