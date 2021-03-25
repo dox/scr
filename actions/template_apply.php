@@ -62,10 +62,18 @@ if (date('N', strtotime($givenStartDate)) == 7) {
 
     $i++;
   } while ($i < 7);
-  $logsClass->create("admin", "Template '" . $templateName . "' applied to week commencing '" . $givenStartDate . "'");
+
+  $logArray['category'] = "meal";
+  $logArray['result'] = "success";
+  $logArray['description'] = "Template '" . $templateName . "' applied to week commencing '" . $givenStartDate . "'";
+  $logsClass->create($logArray);
 } else {
   echo "Supplied date isn't a Sunday!";
-  $logsClass->create("admin", "Error!  Template '" . $templateName . "' failed to apply to week commencing '" . $givenStartDate . "'");
+
+  $logArray['category'] = "meal";
+  $logArray['result'] = "error";
+  $logArray['description'] = "Template '" . $templateName . "' failed to apply to week commencing '" . $givenStartDate . "' as this date isn't a Sunday";
+  $logsClass->create($logArray);
 }
 
 ?>
