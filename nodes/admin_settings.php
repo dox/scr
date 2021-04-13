@@ -28,15 +28,23 @@ echo makeTitle($title, $subtitle, $icons);
 <div class="accordion" id="accordionExample">
   <?php
   foreach ($settings AS $setting) {
+    if (isset($_GET['settingUID']) && $_GET['settingUID'] == $setting['uid']) {
+      $headingShow = "accordion-button show";
+      $settingShow = "accordion-collapse show";
+    } else {
+      $headingShow = "accordion-button collapsed";
+      $settingShow = "accordion-collapse collapse";
+    }
+
     $itemName = "collapse-" . $setting['uid'];
 
     $output  = "<div class=\"accordion-item\">";
       $output .= "<h2 class=\"accordion-header\" id=\"" . $setting['uid'] . "\">";
-      $output .= "<button class=\"accordion-button collapsed\" type=\"button\" data-bs-toggle=\"collapse\" data-bs-target=\"#" . $itemName . "\" aria-expanded=\"true\" aria-controls=\"" . $itemName . "\">";
+      $output .= "<button class=\"" . $headingShow . "\" type=\"button\" data-bs-toggle=\"collapse\" data-bs-target=\"#" . $itemName . "\" aria-expanded=\"true\" aria-controls=\"" . $itemName . "\">";
       $output .= "<strong>" . $setting['name'] . "</strong>: " . $setting['description'];
       $output .= "</button></h2>";
 
-      $output .= "<div id=\"" . $itemName . "\" class=\"accordion-collapse collapse\" aria-labelledby=\"" . $setting['uid'] . "\" data-bs-parent=\"#accordionExample\">";
+      $output .= "<div id=\"" . $itemName . "\" class=\"" . $settingShow . "\" aria-labelledby=\"" . $setting['uid'] . "\" data-bs-parent=\"#accordionExample\">";
         $output .= "<div class=\"accordion-body\">";
 
         $output .= "<form method=\"post\" id=\"form-" .  $setting['uid'] . "\" action=\"" . $_SERVER['REQUEST_URI'] . "\" class=\"needs-validation\" novalidate>";
