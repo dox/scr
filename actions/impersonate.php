@@ -15,7 +15,7 @@ if (isset($_POST['impersonate_ldap'])) {
 
   $logArray['category'] = "admin";
   $logArray['result'] = "info";
-  $logArray['description'] = $_SESSION['username'] . " impersonating " . $_POST['impersonate_ldap'];
+  $logArray['description'] = $_SESSION['username_original'] . " impersonating " . $_POST['impersonate_ldap'];
   $logsClass->create($logArray);
 }
 
@@ -25,7 +25,7 @@ if ($_POST['impersonate_submit_button'] == "stop") {
   $logArray['result'] = "info";
   $logArray['description'] = $_SESSION['username_original'] . " no longer impersonating " . $_SESSION['username'];
   $logsClass->create($logArray);
-  
+
   $_SESSION['username'] = $_SESSION['username_original'];
   $_SESSION['type'] = $_SESSION['type_original'];
   unset($_SESSION['username_original']);
