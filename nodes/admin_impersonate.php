@@ -28,7 +28,9 @@ echo makeTitle($title, $subtitle);
               $selectStatus = "";
             }
 
-            echo "<option " . $selectStatus . " value=\"" . $memberObject->ldap . "\">" . $memberObject->displayName() . "</option>";
+            if ($_SESSION['username'] != $memberObject->ldap) {
+              echo "<option " . $selectStatus . " value=\"" . $memberObject->ldap . "\">" . $memberObject->displayName() . "</option>";
+            }
           }
           ?>
         </select>
