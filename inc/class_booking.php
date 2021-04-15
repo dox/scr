@@ -159,7 +159,7 @@ class booking {
     }
 
     $output  = "<li class=\"list-group-item d-flex justify-content-between lh-sm\">";
-    $output .= "<div class=\"" . $class . " d-inline-block text-truncate\">";
+    $output .= "<div class=\"" . $class . " d-inline-block text-truncate\" style=\"max-width: 73%;\">";
     $output .= "<h6 class=\"my-0\">";
 
     // if admin, link to the meal itself, otherwise, link to the booking for the user
