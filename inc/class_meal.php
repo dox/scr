@@ -302,7 +302,7 @@ class meal {
     foreach ($array AS $updateItem => $value) {
       if ($updateItem != 'mealNEW' && $value != '<p><br></p>') {
         $sqlColumns[] = $updateItem;
-        $sqlValues[] = "'" . $value . "' ";
+        $sqlValues[] = "'" . escape($value) . "' ";
       }
     }
 
