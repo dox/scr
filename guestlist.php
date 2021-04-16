@@ -16,8 +16,8 @@ $bookingsClass = new bookings();
 
 <body>
   <div class="container">
-    <h1 class="display-1 text-center"><?php echo $mealObject->name; ?></h1>
-    <h1 class="display-6 text-center"><?php echo $mealObject->location; ?> <small class="text-muted"><?php echo dateDisplay($mealObject->date_meal, true); ?></small></h1>
+    <h1 class="text-center"><?php echo $mealObject->name; ?></h1>
+    <h2 class="text-center"><?php echo $mealObject->location; ?> <small class="text-muted"><?php echo dateDisplay($mealObject->date_meal, true); ?></small></h2>
 
     <div class="row row-deck row-cards mb-3">
       <div class="col-sm-6 col-lg-3">
@@ -95,6 +95,7 @@ $bookingsClass = new bookings();
         if (!empty($guestsArray)) {
           //$output .= "<ul>";
           foreach ($guestsArray AS $guest) {
+            $guest = json_decode($guest);
             if ($guest->guest_domus == "on") {
               $guestIcons[] = "<svg width=\"2em\" height=\"2em\" class=\"ms-1 me-1\"><use xlink:href=\"img/icons.svg#graduation-cap\"/></svg>";
             } else {
@@ -118,7 +119,7 @@ $bookingsClass = new bookings();
 
             //$output .= "<li>" . $guest->guest_name . implode(", ", $guestIcons) ."</li>";
             if (!empty($guest->guest_dietary)) {
-              //$output .= "<small class=\"text-muted\">" . implode(", ", $guest->guest_dietary) . "</small>";
+              $output .= "<small class=\"text-muted\">" . implode(", ", $guest->guest_dietary) . "</small>";
             }
           }
           $output .= "</ul>";
