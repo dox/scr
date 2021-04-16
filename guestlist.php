@@ -88,6 +88,10 @@ $bookingsClass = new bookings();
         $output .= "<small>" . implode("", $icons) . "</small>";
         $output .= "</div>";
 
+        if (!empty($memberObject->dietary)) {
+          $output .= $memberObject->dietary;
+        }
+
         if (!empty($guestsArray)) {
           //$output .= "<ul>";
           foreach ($guestsArray AS $guest) {
