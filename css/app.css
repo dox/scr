@@ -6,7 +6,8 @@ body {
   color: #232e3c;
   background-color: #f4f6fa;
   -webkit-text-size-adjust: 100%;
-  -webkit-tap-highlight-color: transparent
+  -webkit-tap-highlight-color: transparent;
+  overflow-y: scroll; /* Show vertical scrollbar */
 }
 
 [tabindex="-1"]:focus:not(:focus-visible) {
