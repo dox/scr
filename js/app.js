@@ -304,32 +304,6 @@ function checkMaxCheckboxes(maxAllowed = 2) {
   }
 }
 
-function impersonate(oFormElement) {
-  var impersonateDropdown = document.getElementById('impersonate_ldap');
-  var buttonClicked = document.getElementById('impersonate_submit_button');
-  var impersonateHeaderButton = document.getElementById('impersonating_header_button');
-
-  submitForm(oFormElement);
-
-  if (buttonClicked.value == "stop") {
-    buttonClicked.classList.remove("btn-warning");
-    buttonClicked.classList.add("btn-primary");
-    buttonClicked.innerHTML = "Impersonate";
-    buttonClicked.value = "";
-    impersonateDropdown.disabled = false;
-    impersonateHeaderButton.classList.add("visually-hidden");
-  } else {
-    buttonClicked.classList.remove("btn-primary");
-    buttonClicked.classList.add("btn-warning");
-    buttonClicked.innerHTML = "Stop Impersonating";
-    buttonClicked.value = "stop";
-    impersonateDropdown.disabled = true;
-    impersonateHeaderButton.classList.remove("visually-hidden");
-  }
-
-  return false;
-}
-
 // setup all tooltips
 //var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
 //var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
