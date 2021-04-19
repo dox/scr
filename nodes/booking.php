@@ -169,6 +169,7 @@ if (isset($bookingByMember)) {
           echo "<p>The deadline for making changes to this booking has passed.  Please contact the Bursary for further assistance.</p>";
         } elseif (count($bookingObject->guestsArray()) >= $mealObject->getTotalGuestsAllowed() && $_SESSION['admin'] != "true") {
           echo "<p>You have added the maximum number of guests permitted for this meal.</p>";
+          $buttonAddDisable = "disabled";
         } else {
         ?>
           <div class="form-group">
@@ -254,7 +255,7 @@ if (isset($bookingByMember)) {
           echo "<button type=\"submit\" class=\"btn btn-primary disabled\"><svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#person-plus\"/></svg> Add Guest</button>";
         } else {
           //echo "<a href=\"index.php?deleteBookingUID=" . $bookingObject->uid . "\" role=\"button\" class=\"btn btn-danger\" onclck=\"bookingDeleteButton();\"><svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#trash\"/></svg> Delete</a>";
-          echo "<button type=\"submit\" class=\"btn btn-primary\"><svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#person-plus\"/></svg> Add Guest</button>";
+          echo "<button type=\"submit\" class=\"btn btn-primary " . $buttonAddDisable . "\"><svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#person-plus\"/></svg> Add Guest</button>";
         }
         ?>
       </div>
