@@ -20,7 +20,7 @@ $bookingsClass = new bookings();
     <h2 class="text-center"><?php echo $mealObject->location; ?> <small class="text-muted"><?php echo dateDisplay($mealObject->date_meal, true); ?></small></h2>
 
     <div class="row row-deck row-cards mb-3">
-      <div class="col-sm-6 col-lg-3">
+      <div class="col-3">
         <div class="card">
           <div class="card-body">
             <div class="subheader">SCR Diners</div>
@@ -28,7 +28,7 @@ $bookingsClass = new bookings();
           </div>
         </div>
       </div>
-      <div class="col-sm-6 col-lg-3">
+      <div class="col-3">
         <div class="card">
           <div class="card-body">
             <div class="subheader">MCR Diners</div>
@@ -36,19 +36,19 @@ $bookingsClass = new bookings();
           </div>
         </div>
       </div>
-      <div class="col-sm-6 col-lg-3">
+      <div class="col-3">
         <div class="card">
           <div class="card-body">
             <div class="subheader">SCR Dessert</div>
-            <div class="h1 mb-3">test</div>
+            <div class="h1 mb-3">?</div>
           </div>
         </div>
       </div>
-      <div class="col-sm-6 col-lg-3">
+      <div class="col-3">
         <div class="card">
           <div class="card-body">
             <div class="subheader">MCR Dessert</div>
-            <div class="h1 mb-3">test</div>
+            <div class="h1 mb-3">?</div>
           </div>
         </div>
       </div>
