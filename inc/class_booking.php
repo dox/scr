@@ -101,7 +101,7 @@ class booking {
 
     $logArray['category'] = "booking";
     $logArray['result'] = "success";
-    $logArray['description'] = "[bookingUID:" .  $this->uid  . "] updated by " . $_SESSION['username'] . " for [mealUID:" . $array['meal_uid'] . "]";
+    $logArray['description'] = "[bookingUID:" .  $this->uid  . "] updated by " . $_SESSION['username'] . " for [mealUID:" . $this->meal_uid . "]";
     $logsClass->create($logArray);
 
     return $update;
