@@ -306,10 +306,10 @@ echo makeTitle($title, $subtitle, $icons);
       <?php
       if (isset($_GET['add'])) {
         echo "<input type=\"hidden\" name=\"mealNEW\" id=\"mealNEW\">";
-        echo "<button class=\"btn btn-primary btn-lg w-100\" type=\"submit\">Add New Meal</button>";
+        echo "<button class=\"btn btn-primary w-100\" type=\"submit\">Add New Meal</button>";
       } else {
         echo "<input type=\"hidden\" name=\"mealUID\" id=\"mealUID\" value=\"" . $mealObject->uid . "\">";
-        echo "<button class=\"btn btn-primary btn-lg w-100\" type=\"submit\">Update Meal Details</button>";
+        echo "<button class=\"btn btn-primary w-100\" type=\"submit\">Update Meal Details</button>";
       }
       ?>
     </div>

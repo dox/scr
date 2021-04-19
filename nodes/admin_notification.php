@@ -37,7 +37,7 @@ echo makeTitle($title, $subtitle, $icons);
   <div class="col-md-5 col-lg-4 order-md-last">
     <h4 class="d-flex justify-content-between align-items-center mb-3">
       <span>Notification Dismisses</span>
-      <span class="badge bg-secondary rounded-pill"><?php echo count($members_dismissed_array); ?></span>
+      <span class="badge bg-secondary rounded-pill"><?php echo count((array)$members_dismissed_array); ?></span>
     </h4>
     <ul class="list-group mb-3">
       <?php
@@ -91,7 +91,7 @@ echo makeTitle($title, $subtitle, $icons);
       <div class="row">
         <div class="col-6">
           <div class="mb-3">
-            <label for="date_start">Notification Start Date</label>
+            <label for="date_start" class="form-label">Notification Start Date</label>
             <div class="input-group">
               <span class="input-group-text" id="date_start-addon"><svg width="1em" height="1em" class="text-muted"><use xlink:href="img/icons.svg#calendar-plus"/></svg></span>
               <input type="text" class="form-control" name="date_start" id="date_start" value="<?php echo $notification['date_start']; ?>" aria-describedby="date_start">
@@ -100,7 +100,7 @@ echo makeTitle($title, $subtitle, $icons);
         </div>
         <div class="col-6">
           <div class="mb-3">
-            <label for="date_end">Notification End Date</label>
+            <label for="date_end" class="form-label">Notification End Date</label>
             <div class="input-group">
               <span class="input-group-text" id="date_end-addon"><svg width="1em" height="1em" class="text-muted"><use xlink:href="img/icons.svg#calendar-plus"/></svg></span>
               <input type="text" class="form-control" name="date_end" id="date_end" value="<?php echo $notification['date_end']; ?>" aria-describedby="date_end">
@@ -129,7 +129,7 @@ echo makeTitle($title, $subtitle, $icons);
       <hr class="my-4">
 
       <input type="hidden" name="notificationUID" id="notificationUID" value="<?php echo $notification['uid']; ?>">
-      <button class="btn btn-primary btn-lg w-100" type="submit">Update Notification</button>
+      <button class="btn btn-primary w-100" type="submit">Update Notification</button>
     </form>
   </div>
 </div>
