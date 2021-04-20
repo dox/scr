@@ -72,13 +72,13 @@ $bookingsClass = new bookings();
           $displayName = $memberObject->displayName();
         }
 
-        if ($booking['domus'] == "1") {
+        if ($bookingObject->domus == "1") {
           $icons[] = "<svg width=\"2em\" height=\"2em\" class=\"ms-1 me-1\"><use xlink:href=\"img/icons.svg#graduation-cap\"/></svg>";
         }
-        if ($booking['wine'] == "1") {
+        if ($bookingObject->wine == "1") {
           $icons[] = "<svg width=\"2em\" height=\"2em\" class=\"ms-1 me-1\"><use xlink:href=\"img/icons.svg#wine-glass\"/></svg>";
         }
-        if ($booking['dessert'] == "1") {
+        if ($bookingObject->dessert == "1") {
           $icons[] = "<svg width=\"2em\" height=\"2em\" class=\"ms-1 me-1\"><use xlink:href=\"img/icons.svg#cookie\"/></svg>";
         }
 
