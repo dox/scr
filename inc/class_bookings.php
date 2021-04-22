@@ -14,7 +14,7 @@ class bookings extends booking {
     $sql  = "SELECT bookings.uid AS uid FROM " . self::$table_name;
     $sql .= " LEFT JOIN members ON bookings.member_ldap = members.ldap";
     $sql .= " WHERE meal_uid = '" . $mealUID . "'";
-    $sql .= " ORDER BY members.type DESC, members.precedence ASC, members.lastname ASC";
+    $sql .= " ORDER BY members.type DESC, -members.precedence DESC, members.lastname ASC";
 
     $bookings = $db->query($sql)->fetchAll();
 

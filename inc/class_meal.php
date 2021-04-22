@@ -194,7 +194,7 @@ class meal {
     $sql  = "SELECT * FROM bookings";
     $sql .= " LEFT JOIN members ON bookings.member_ldap = members.ldap";
     $sql .= " WHERE meal_uid = '" . $this->uid . "'";
-    $sql .= " ORDER BY members.type DESC, members.precedence ASC, members.lastname ASC";
+    $sql .= " ORDER BY members.type DESC, -members.precedence DESC, members.lastname ASC";
 
     /*
     $sql  = "SELECT * FROM bookings";
