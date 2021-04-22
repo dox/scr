@@ -23,7 +23,7 @@ class members extends member {
       $sql .= " WHERE type = type";
     }
     $sql .= " AND enabled = 1";
-    $sql .= " ORDER BY precedence ASC, lastname ASC, firstname ASC";
+    $sql .= " ORDER BY -precedence DESC, lastname ASC, firstname ASC";
 
     $terms = $db->query($sql)->fetchAll();
 
@@ -42,7 +42,7 @@ class members extends member {
       $sql .= " WHERE type = type";
     }
     $sql .= " AND enabled = 0";
-    $sql .= " ORDER BY precedence ASC, lastname ASC, firstname ASC";
+    $sql .= " ORDER BY -precedence DESC, lastname ASC, firstname ASC";
 
     $terms = $db->query($sql)->fetchAll();
 

@@ -24,7 +24,6 @@ if (isset($_POST['inputUsername']) && isset($_POST['inputPassword'])) {
       $NEWUSER['lastname'] = $ldapUser[0]['sn'][0];
       $NEWUSER['category'] = "MCR";
       $NEWUSER['type'] = "MCR";
-      $NEWUSER['precedence'] = "0";
       $NEWUSER['email'] = $ldapUser[0]['mail'][0];
       $NEWUSER['enabled'] = "1";
 
