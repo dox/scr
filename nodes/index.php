@@ -8,19 +8,22 @@ if (isset($_GET['deleteBookingUID'])) {
     if (date('Y-m-d H:i:s') <= date('Y-m-d H:i:s', strtotime($mealObject->date_cutoff)) || $_SESSION['admin'] == true) {
       $bookingObject->delete();
     } else {
-      $logsClass->create("booking", "Error attempting to delete [bookingUID:" . $bookingObject->uid . "].  Cutoff passed.");
+      $logArray['category'] = "booking";
+      $logArray['result'] = "danger";
+      $logArray['description'] = "Error attempting to delete [bookingUID:" . $bookingObject->uid . "]. Cutoff passed.";
+      $logsClass->create($logArray);
     }
   } else {
     if ( $_SESSION['admin'] == true) {
       $bookingObject->delete();
     } else {
-      $logsClass->create("booking", "Error attempting to delete [bookingUID:" . $bookingObject->uid . "].  Permission not granted.");
+      $logArray['category'] = "booking";
+      $logArray['result'] = "danger";
+      $logArray['description'] = "Error attempting to delete [bookingUID:" . $bookingObject->uid . "]. Permission not granted.";
+      $logsClass->create($logArray);
     }
   }
 }
-
-
-
 
 ?>
 <?php
