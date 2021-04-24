@@ -40,7 +40,7 @@ $bookingsClass = new bookings();
         <div class="card">
           <div class="card-body">
             <div class="subheader">SCR Dessert</div>
-            <div class="h1 mb-3">?</div>
+            <div class="h1 mb-3"><?php echo $mealObject->total_dessert_bookings_this_meal('SCR'); ?></div>
           </div>
         </div>
       </div>
@@ -48,7 +48,7 @@ $bookingsClass = new bookings();
         <div class="card">
           <div class="card-body">
             <div class="subheader">MCR Dessert</div>
-            <div class="h1 mb-3">?</div>
+            <div class="h1 mb-3"><?php echo $mealObject->total_dessert_bookings_this_meal('MCR'); ?></div>
           </div>
         </div>
       </div>
@@ -96,6 +96,7 @@ $bookingsClass = new bookings();
           //$output .= "<ul>";
           foreach ($guestsArray AS $guest) {
             $guest = json_decode($guest);
+            $guestIcons = array();
             if ($guest->guest_domus == "on") {
               $guestIcons[] = "<svg width=\"2em\" height=\"2em\" class=\"ms-1 me-1\"><use xlink:href=\"img/icons.svg#graduation-cap\"/></svg>";
             } else {

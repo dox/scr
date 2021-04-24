@@ -236,6 +236,68 @@ class meal {
     return $totalGuests;
   }
 
+  public function total_dessert_bookings_this_meal($memberType = null) {
+    global $db;
+
+    $membersDessert = 0;
+    $guestsDessert = 0;
+
+    if ($memberType == "SCR") {
+      $sql  = "SELECT COUNT(*) AS totalDessert FROM bookings";
+      $sql .= " WHERE meal_uid = '" . $this->uid . "'";
+      $sql .= " AND dessert = '1'";
+      $sql .= " AND type = 'SCR'";
+
+      $sqlGuests  = "SELECT guests_array FROM bookings";
+      $sqlGuests .= " WHERE meal_uid = '" . $this->uid . "'";
+      $sqlGuests .= " AND guests_array IS NOT NULL";
+      $sqlGuests .= " AND type = 'SCR'";
+    } elseif ($memberType == "MCR") {
+      $sql  = "SELECT COUNT(*) AS totalDessert FROM bookings";
+      $sql .= " WHERE meal_uid = '" . $this->uid . "'";
+      $sql .= " AND dessert = '1'";
+      $sql .= " AND type = 'MCR'";
+
+      $sqlGuests  = "SELECT guests_array FROM bookings";
+      $sqlGuests .= " WHERE meal_uid = '" . $this->uid . "'";
+      $sqlGuests .= " AND guests_array IS NOT NULL";
+      $sqlGuests .= " AND type = 'MCR'";
+    } else {
+      $sql  = "SELECT COUNT(*) AS totalDessert FROM bookings";
+      $sql .= " WHERE meal_uid = '" . $this->uid . "'";
+      $sql .= " AND dessert = '1'";
+
+      $sqlGuests  = "SELECT guests_array FROM bookings";
+      $sqlGuests .= " WHERE meal_uid = '" . $this->uid . "'";
+      $sqlGuests .= " AND guests_array IS NOT NULL";
+    }
+
+    $members_array = $db->query($sql)->fetchAll();
+    $membersDessert = $members_array[0]['totalDessert'];
+
+    $guests_array = $db->query($sqlGuests)->fetchAll();
+    $guests_array = $guests_array[0]['guests_array'];
+
+    if (!empty($guests_array)) {
+    	$guests_array = json_decode($guests_array, true);
+    } else {
+	    $guests_array = array();
+    }
+
+    foreach ($guests_array AS $guest) {
+      $guest = json_decode($guest);
+      if ($guest->guest_dessert == 'on') {
+        $guestsDessert ++;
+      }
+    }
+
+    $guests_array = $db->query($sql)->fetchAll();
+
+    $totalDessert = $membersDessert + $guestsDessert;
+
+    return $totalDessert;
+  }
+
   public function menuTooltip() {
     if (!empty($this->menu)) {
 
