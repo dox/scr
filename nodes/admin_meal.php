@@ -329,16 +329,28 @@ echo makeTitle($title, $subtitle, $icons);
       <div class="modal-body">
         <p>Are you sure you want to delete this meal?  This will also delete all associated bookings (members will not be notified).</p>
         <p class="text-danger"><strong>WARNING!</strong> This action cannot be undone!</p>
+        <input type="text" class="form-control" id="delete_confirm" placeholder="Type 'DELETE' to confirm" onkeyup="deleteMealInputCheck()">
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-link link-secondary mr-auto" data-bs-dismiss="modal">Close</button>
-        <a href="index.php?n=admin_meals&mealDELETE=<?php echo $mealObject->uid; ?>" role="button" class="btn btn-danger"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#trash"/></svg> Delete</a>
+        <a href="index.php?n=admin_meals&mealDELETE=<?php echo $mealObject->uid; ?>" role="button" id="delete_meal_button" class="btn btn-danger disabled"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#trash"/></svg> Delete</a>
       </div>
     </div>
   </div>
 </div>
 
 <script>
+function deleteMealInputCheck() {
+  var input = document.getElementById("delete_confirm").value;
+  var delete_button = document.getElementById("delete_meal_button");
+
+  if (input == 'DELETE') {
+    delete_button.classList.remove("disabled");
+  } else {
+    delete_button.classList.add("disabled");
+  }
+}
+
 var fp = flatpickr("#date_meal", {
   enableTime: true,
   time_24hr: true,
