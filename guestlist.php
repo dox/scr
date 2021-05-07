@@ -60,8 +60,9 @@ $bookingsClass = new bookings();
       foreach ($thisMealsBookingsUIDs AS $booking) {
         $bookingObject = new booking($booking['uid']);
         $memberObject = new member($bookingObject->member_ldap);
-        $guestsArray = json_decode($bookingObject->guests_array);
-        //printArray($bookingObject);
+        $guestsArray = $bookingObject->guestsArray();
+
+        //printArray($guestsArray);
 
         $icons = array();
         $guestIcons = array();

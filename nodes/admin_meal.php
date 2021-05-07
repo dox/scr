@@ -63,7 +63,11 @@ echo makeTitle($title, $subtitle, $icons);
         $output .= "<h6 class=\"my-0\"><a href=\"index.php?n=member&memberUID=" . $memberObject->uid . "\" class=\"text-muted\">" . $memberObject->displayName() . "</a></h6>";
         $output .= "<small class=\"text-muted\">" . dateDisplay($booking['date']) . " " . date('H:i:s', strtotime($booking['date'])) . "</small>";
         $output .= "</div>";
-        $output .= "<span class=\"text-muted\">" . count($guests) . autoPluralise(" guest", " guests", count($guests)) . "</span>";
+
+        if (count($guests) > 0) {
+          $output .= "<span class=\"text-muted\">+" . count($guests) . autoPluralise(" guest", " guests", count($guests)) . "</span>";
+        }
+
         $output .= "</li>";
 
         echo $output;
