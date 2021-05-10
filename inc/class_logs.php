@@ -88,24 +88,24 @@ class logs {
   }
 
   public function purge() {
-		global $db;
-    global $settingsClass;
+		global $db, $settingsClass;
 
     $logs_retention = $settingsClass->value('logs_retention');
 
-		$sql = "SELECT * FROM " . self::$table_name . " WHERE category = 'purge' AND DATE(date) = '" . date('Y-m-d') . "' LIMIT 1";
-		$lastPurge = $db->query($sql)->fetchAll();
+    //fetch COUNT of how many logs we need to delete
+		$sql = "SELECT COUNT(*) AS totalLogs FROM " . self::$table_name . " WHERE DATE(date) < '" . date('Y-m-d', strtotime('-' . $logs_retention . ' days')) . "'";
+		$logsToDelete = $db->query($sql)->fetchAll()[0]['totalLogs'];
 
-		if (empty($lastPurge)) {
-			$sql = "SELECT * FROM " . self::$table_name . " WHERE DATE(date) < '" . date('Y-m-d', strtotime('-' . $logs_retention . ' days')) . "'";
-			$logsToDelete = $db->query($sql)->fetchAll();
+    // if there are logs to delete, delete them!
+		if ($logsToDelete > 0) {
+			$sql = "DELETE FROM " . self::$table_name . " WHERE DATE(date) < '" . date('Y-m-d', strtotime('-' . $logs_retention . ' days')) . "'";
+      $db->query($sql);
 
-			if (count($logsToDelete) > 0) {
-				$sql = "DELETE FROM " . self::$table_name . " WHERE DATE(date) < '" . date('Y-m-d', strtotime('-' . $logs_retention . ' days')) . "'";
-				$logsToDelete = $db->query($sql);
-
-        $this->create("purge", count($logsToDelete) . " log(s) purged");
-			}
+      //log that we did this
+      $logArray['category'] = "admin";
+      $logArray['result'] = "success";
+      $logArray['description'] = $logsToDelete . autoPluralise(" log", " logs", $logsToDelete) . " purged";
+      $this->create($logArray);
 		}
 	}
 
