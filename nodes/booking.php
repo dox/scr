@@ -85,7 +85,7 @@ if (isset($bookingByMember)) {
           $checked = "";
         }
 
-        $output .= "<input class=\"form-check-input needs-validation\" novalidate id=\"domus\" name=\"domus\" type=\"checkbox\"" . $checked . " value=\"1\" onchange=\"domusCheckbox(this.id)\">";
+        $output .= "<input class=\"form-check-input needs-validation\"" . $domusDisabledCheck . "novalidate id=\"domus\" name=\"domus\" type=\"checkbox\"" . $checked . " value=\"1\" onchange=\"domusCheckbox(this.id)\">";
         $output .= "</label>";
         $output .= "</span>";
         $output .= "<input type=\"text\" class=\"form-control\" id=\"domus_reason\" name=\"domus_reason\" placeholder=\"Domus reason (required)\" hidden>";
