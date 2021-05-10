@@ -10,6 +10,29 @@ class logs {
   public $category;
   public $description;
 
+  public function categoryColour($category = null) {
+    $unknownColour = "rgba(0, 0, 0, 0.4)";
+    //$randomColour = "rgba(" . rand(0,255) . ", " . rand(0,255) . ", " . rand(0,255) . ", 0.2)";
+
+    $coloursArray = array(
+      "admin" => "rgba(255, 235, 0, 0.2)",
+      "booking" => "rgba(255, 99, 132, 0.2)",
+      "ldap" => "rgba(118, 42, 145, 0.2)",
+      "logon" => "rgba(54, 162, 3, 0.2)",
+      "meal" => "rgba(254, 77, 17, 0.2)",
+      "member" => "rgba(54, 162, 235, 0.2)",
+      "notification" => "rgba(29, 143, 177, 0.2)",
+      "report" => "rgba(252, 40, 37, 0.2)",
+      "view" => "rgba(60, 162, 3, 0.3)"
+    );
+
+    if (isset($coloursArray[$category])) {
+      return $coloursArray[$category];
+    } else {
+      return $unknownColour;
+    }
+  }
+
   public function all() {
     global $db;
     global $settingsClass;
@@ -158,17 +181,14 @@ class logs {
   }
 
   private function displayCategoryBadge($category = null) {
-    // admin, member, booking,
-    if ($category == "admin") {
+    if (in_array($category, array("admin", "ldap", "meal", "report"))) {
       $class = "bg-primary";
-    } elseif ($category == "member") {
+    } elseif (in_array($category, array("member", "view"))) {
+      $class = "bg-warning";
+    } elseif (in_array($category, array("booking", "notification"))) {
+      $class = "bg-info";
+    } elseif (in_array($category, array("logon"))) {
       $class = "bg-success";
-    } elseif ($category == "booking") {
-      $class = "bg-primary";
-    } elseif ($category == "logon") {
-      $class = "bg-primary";
-    } elseif ($category == "ldap") {
-      $class = "bg-light text-dark";
     } else {
       $class = "bg-dark";
     }

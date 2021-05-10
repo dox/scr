@@ -22,18 +22,12 @@ do {
 } while ($i >= 0);
 
 foreach ($logsArray AS $logType => $totalsArray) {
-  $logsColour = $settingsClass->value('logs_colour_' . $logType);
-
-  if (!isset($logsColour)) {
-    $logsColour = "rgba(" . rand(0,255) . ", " . rand(0,255) . ", " . rand(0,255) . ", 0.2)";
-  }
-
   $output  = "{";
   $output .= "label: '" . $logType . "',";
-  $output .= "backgroundColor: '" . $logsColour . "',";
-  $output .= "data: [" . implode(",", $totalsArray) . "]";
-  //$output .= "borderColor: ['" . $logsColour . "'],";
-  //$output .= "borderWidth: 1";
+  $output .= "backgroundColor: '" . $logsClass->categoryColour($logType) . "',";
+  $output .= "data: [" . implode(",", $totalsArray) . "],";
+  $output .= "borderColor: ['" . $logsClass->categoryColour($logType) . "'],";
+  $output .= "borderWidth: 1";
   $output .= "}";
 
   $graphData[] = $output;
@@ -53,13 +47,6 @@ echo makeTitle($title, $subtitle);
 <div id="myTable" class="list-group">
   <?php
   echo $logsClass->displayTable();
-
-
-  foreach ($logs AS $log) {
-    //echo $logsClass->list_group_item($log);
-
-    //echo $output;
-  }
   ?>
 </div>
 
