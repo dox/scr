@@ -62,7 +62,7 @@ if (isset($_POST['inputUsername']) && isset($_POST['inputPassword'])) {
 
 		$logArray['category'] = "logon";
     $logArray['result'] = "success";
-    $logArray['description'] = $_SESSION['username'] . " logon succesful";
+    $logArray['description'] = "[memberUID:" . $memberObject->uid . "] (" . $memberObject->displayName() . ") logon succesful";
     $logsClass->create($logArray);
 	} else {
 		// Username or password is incorrect.
