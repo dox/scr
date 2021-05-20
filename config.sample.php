@@ -1,6 +1,8 @@
 <?php
 DEFINE("debug", false);
 
+DEFINE("site_name", "SCR Meal Booking");
+
 DEFINE("db_host", "localhost");
 DEFINE("db_name", "database");
 DEFINE("db_username", "username");
