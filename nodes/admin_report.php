@@ -59,12 +59,20 @@ echo makeTitle($title, $subtitle);
         </div>
       </div>
 
-
-
-      <div class="col mb-3">
-        <label for="file" class="form-label">File</label>
-        <input type="text" class="form-control" name="file" id="file" value="<?php echo $report['file']; ?>">
+      <div class="row">
+        <div class="col-3 mb-3">
+          <label for="admin_only" class="form-label">Admin Only</label>
+          <select class="form-select" name="admin_only" id="admin_only" required>
+            <option value="1" <?php if ($report['admin_only'] == "1") { echo " selected"; } ?>>Admin Only</option>
+            <option value="0" <?php if ($report['admin_only'] == "0") { echo " selected"; } ?>>Member Access</option>
+          </select>
+        </div>
+        <div class="col-9 mb-3">
+          <label for="file" class="form-label">File</label>
+          <input type="text" class="form-control" name="file" id="file" value="<?php echo $report['file']; ?>">
+        </div>
       </div>
+
       <div class="col mb-3">
         <label for="description" class="form-label">Description</label>
         <textarea class="form-control" name="description" id="description"><?php echo $report['description']; ?></textarea>

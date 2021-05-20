@@ -4,6 +4,7 @@ class reports {
 
   public $uid;
   public $type;
+  public $admin_only;
   public $name;
   public $file;
   public $description;
@@ -11,7 +12,6 @@ class reports {
 
   public function all() {
     global $db;
-
 
     $sql  = "SELECT * FROM " . self::$table_name;
     $sql .= " ORDER BY name ASC";
@@ -93,6 +93,7 @@ class reports {
     //$output .= "<td>" . dateDisplay($array['date']) . " " . timeDisplay($array['date']) . "</td>";
     $output .= "<td><a href=\"index.php?n=admin_report&reportUID=" . $array['uid'] . "\">" . $array['name'] . "</a></td>";
     $output .= "<td>" . $array['type'] . "</td>";
+    $output .= "<td>" . $this->accessBadge($array['admin_only']) . "</td>";
     $output .= "<td>" . $array['date_lastrun'] . "</td>";
     $output .= "<td>" . $dropdownButton . "</td>";
     $output .= "</tr>";
@@ -105,6 +106,7 @@ class reports {
     $output .= "<thead>";
     $output .= "<th>" . "Name" . "</th>";
     $output .= "<th>" . "Type" . "</th>";
+    $output .= "<th>" . "Access" . "</th>";
     $output .= "<th>" . "Last Run" . "</th>";
     $output .= "<th>" . "Action" . "</th>";
     $output .= "</thead>";
@@ -119,6 +121,23 @@ class reports {
     $output .= "</table>";
 
     return $output;
+  }
+
+  public function accessBadge($access = null) {
+    if ($access == 1) {
+      $badgeClass = "bg-danger";
+      $badgeTitle = "ADMIN";
+    } elseif ($access == 0) {
+      $badgeClass = "bg-info";
+      $badgeTitle = "USER";
+    } else {
+      $badgeClass = "bg-secondary";
+      $badgeTitle = "UNKNOWN";
+    }
+
+    $badge = "<span class=\"badge " . $badgeClass . "\" >" . $badgeTitle . "</span>";
+
+    return $badge;
   }
 
   public function update_lastrun($reportUID = null) {
