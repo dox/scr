@@ -1,4 +1,12 @@
 <?php
+$memberObject = new member($_GET['memberUID']);
+$bookings = $memberObject->getAllBookingUIDS();
+
+if ($_SESSION['admin'] != true) {
+  if (strtoupper($_SESSION['username']) != strtoupper($memberObject->ldap)) {
+    admin_gatekeeper();
+  }
+}
 // CSV columns to include
 $columns = array(
   "booking_uid",
@@ -19,8 +27,7 @@ $columns = array(
   "member_category"
 );
 
-$memberObject = new member($_GET['memberUID']);
-$bookings = $memberObject->getAllBookingUIDS();
+
 
 foreach ($bookings AS $bookingUID) {
   $bookingRow = null;
