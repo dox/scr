@@ -138,6 +138,10 @@ $bookingsClass = new bookings();
       }
       ?>
     </div>
+
+    <div class="row mt-3 float-end">
+      <p><em>Guest List generated on <?php echo dateDisplay(date('r'), true) . " " . timeDisplay(date('r'), true) . " by " . $_SESSION['username']; ?></em></p>
+    </div>
   </div>
 </body>
 </html>
