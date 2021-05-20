@@ -80,7 +80,7 @@
 					<svg width="5em" height="5em" <?php if(debug) { echo "class=\"text-warning\"";}?>>
 						<use xlink:href="img/icons.svg#chough"/>
 					</svg>
-	        <h1 class="h3 mb-3 font-weight-normal">SCR Meal Booking</h1>
+	        <h1 class="h3 mb-3 font-weight-normal"><?php echo site_name;?></h1>
 	      </div>
 	      <label for="inputUsername" class="visually-hidden">Username</label>
 	      <input type="text" id="inputUsername" name="inputUsername" class="form-control" placeholder="Username" required autofocus>
@@ -97,7 +97,7 @@
 	    </form>
 	  </main>
 		<footer class="mt-auto text-white-50">
-			<p><a href="https://github.com/dox/scr" class="text-white">SCR Meal Booking</a> developed by <a href="https://github.com/dox" class="text-white">Andrew Breakspear</a>.</p>
+			<p><a href="https://github.com/dox/scr" class="text-white"><?php echo site_name;?></a> developed by <a href="https://github.com/dox" class="text-white">Andrew Breakspear</a>.</p>
 		</footer>
     <?php
 			$_SESSION['logon_error'] = null;
