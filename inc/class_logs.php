@@ -10,20 +10,20 @@ class logs {
   public $category;
   public $description;
 
-  public function categoryColour($category = null) {
+  public function categoryColour($category = null, $alpha = "0.3") {
     $unknownColour = "rgba(0, 0, 0, 0.4)";
     //$randomColour = "rgba(" . rand(0,255) . ", " . rand(0,255) . ", " . rand(0,255) . ", 0.2)";
 
     $coloursArray = array(
-      "admin" => "rgba(255, 235, 0, 0.2)",
-      "booking" => "rgba(255, 99, 132, 0.2)",
-      "ldap" => "rgba(118, 42, 145, 0.2)",
-      "logon" => "rgba(54, 162, 3, 0.2)",
-      "meal" => "rgba(254, 77, 17, 0.2)",
-      "member" => "rgba(54, 162, 235, 0.2)",
-      "notification" => "rgba(29, 143, 177, 0.2)",
-      "report" => "rgba(252, 40, 37, 0.2)",
-      "view" => "rgba(60, 162, 3, 0.3)"
+      "admin" => "rgba(255, 235, 0, " . $alpha . ")",
+      "booking" => "rgba(255, 99, 132, " . $alpha . ")",
+      "ldap" => "rgba(118, 42, 145, " . $alpha . ")",
+      "logon" => "rgba(54, 162, 3, " . $alpha . ")",
+      "meal" => "rgba(254, 77, 17, " . $alpha . ")",
+      "member" => "rgba(54, 162, 235, " . $alpha . ")",
+      "notification" => "rgba(29, 143, 177, " . $alpha . ")",
+      "report" => "rgba(252, 40, 37, " . $alpha . ")",
+      "view" => "rgba(60, 162, 3, " . $alpha . ")"
     );
 
     if (isset($coloursArray[$category])) {
