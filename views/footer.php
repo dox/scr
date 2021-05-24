@@ -5,7 +5,7 @@
       <svg width="1em" height="1em" class="text-muted">
 				<use xlink:href="img/icons.svg#chough"/>
 			</svg>
-      <a class="link-secondary" href="https://github.com/dox/scr">SCR Meal Booking</a>
+      <a class="link-secondary" href="https://github.com/dox/scr"><?php echo site_name; ?></a>
       <small class="d-block mb-3 text-muted">&copy; 2008-<?php echo date('Y'); ?></small>
     </div>
     <div class="col-6 text-end">

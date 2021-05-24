@@ -1,6 +1,4 @@
 <?php
-admin_gatekeeper();
-
 // CSV columns to include
 $columns = array(
   "booking_uid",

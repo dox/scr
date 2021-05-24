@@ -1,10 +1,14 @@
 <?php
 include_once("inc/autoload.php");
 
-admin_gatekeeper();
-
 $reportsClass = new reports();
 $report = $reportsClass->one($_GET['reportUID']);
+
+if ($report['admin_only'] == 0) {
+  // allow the user to access this report
+} else {
+  admin_gatekeeper();
+}
 
 $node = "reports/" . $report['file'];
 if (file_exists($node)) {

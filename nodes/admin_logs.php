@@ -1,7 +1,7 @@
 <?php
 admin_gatekeeper();
 ?>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.2.1/chart.min.js" integrity="sha512-tOcHADT+YGCQqH7YO99uJdko6L8Qk5oudLN6sCeI4BQnpENq6riR6x9Im+SGzhXpgooKBRkPsget4EOoH5jNCw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 <?php
 $logsClass->purge();
@@ -24,9 +24,9 @@ do {
 foreach ($logsArray AS $logType => $totalsArray) {
   $output  = "{";
   $output .= "label: '" . $logType . "',";
-  $output .= "backgroundColor: '" . $logsClass->categoryColour($logType) . "',";
   $output .= "data: [" . implode(",", $totalsArray) . "],";
-  $output .= "borderColor: ['" . $logsClass->categoryColour($logType) . "'],";
+  $output .= "backgroundColor: '" . $logsClass->categoryColour($logType) . "',";
+  $output .= "borderColor: ['" . $logsClass->categoryColour($logType, "0.6") . "'],";
   $output .= "borderWidth: 1";
   $output .= "}";
 
@@ -39,8 +39,7 @@ $subtitle = "Admin/User logs for the last " . $logsDisplay . " days";
 
 echo makeTitle($title, $subtitle);
 ?>
-
-<canvas id="canvas2"></canvas>
+<canvas id="logsChart" width="400" height="150"></canvas>
 
 <input type="text" id="logs_fiter_input" class="form-control mt-3 mb-3" onkeyup="tableFilter()" placeholder="Filter Logs...">
 
@@ -50,38 +49,27 @@ echo makeTitle($title, $subtitle);
   ?>
 </div>
 
-<script>
-var barChartData = {
-	labels: [<?php echo implode(", ", $datesArray); ?>],
-	datasets: [<?php echo implode(",", $graphData); ?>]
-};
 
-window.onload = function() {
-	var ctx = document.getElementById('canvas2').getContext('2d');
-	window.myBar = new Chart(ctx, {
-		type: 'bar',
-		data: barChartData,
-		options: {
-			tooltips: {
-				mode: 'index',
-				intersect: false
-			},
-			responsive: true,
-			scales: {
-				xAxes: [{
-					stacked: true,
-			  }],
-				yAxes: [{
-					stacked: true,
-          scaleLabel: {
-  					display: true,
-  					labelString: 'Total Logs'
-  				}
-				}]
-			}
-		}
-	});
-};
+<script>
+var ctx = document.getElementById('logsChart');
+var myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: [<?php echo implode(", ", $datesArray); ?>],
+        datasets: [<?php echo implode(",", $graphData); ?>]
+    },
+    options: {
+        scales: {
+          x: {
+                stacked: true
+            },
+            y: {
+              stacked: true,
+                beginAtZero: true
+            }
+        }
+    }
+});
 
 function tableFilter() {
   const input = document.getElementById("logs_fiter_input");
