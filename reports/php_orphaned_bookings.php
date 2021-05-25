@@ -10,7 +10,7 @@ $membersClass = new members();
 $sql = "SELECT count(*) AS bookingsCount, member_ldap FROM bookings WHERE member_ldap NOT IN(SELECT ldap FROM members) GROUP BY member_ldap ORDER BY bookingsCount DESC;";
 $orphanedBookings = $db->query($sql)->fetchAll();
 
-$members = $membersClass->allEnabled('all');
+$members = $membersClass->all();
 ?>
 <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center bg-light">
   <div class="p-lg-5 mx-auto my-5">
