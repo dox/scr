@@ -1,8 +1,6 @@
 <?php
 include_once("../inc/autoload.php");
 
-admin_gatekeeper();
-
 // impersonate
 if (isset($_POST['impersonate_ldap'])) {
   $memberObject = new member($_POST['impersonate_ldap']);
@@ -12,6 +10,16 @@ if (isset($_POST['impersonate_ldap'])) {
   $_SESSION['type'] = $memberObject->type;
   $_SESSION['username'] = $memberObject->ldap;
   $_SESSION['impersonating'] = "true";
+
+  if ($_POST['maintainAdminAccess'] == "true") {
+    $_SESSION['admin'] = "1";
+  } else {
+    if ($memberObject->isAdmin() == true) {
+      $_SESSION['admin'] = "1";
+    } else {
+      $_SESSION['admin'] = "0";
+    }
+  }
 
   $logArray['category'] = "admin";
   $logArray['result'] = "info";
@@ -23,6 +31,7 @@ if (isset($_POST['impersonate_ldap'])) {
 if ($_POST['impersonate_submit_button'] == "stop") {
   $logArray['category'] = "admin";
   $logArray['result'] = "info";
+  $_SESSION['admin'] = "1";
   $logArray['description'] = $_SESSION['username_original'] . " no longer impersonating " . $_SESSION['username'];
   $logsClass->create($logArray);
 
