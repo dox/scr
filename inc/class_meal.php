@@ -66,10 +66,6 @@ class meal {
     $output .= "<li>" . $this->type . ", " . $this->location . "</li>";
     $output .= "<li>" . timeDisplay($this->date_meal) . "</li>";
 
-    if (!empty($this->notes)) {
-      $output .= "<li>" . $this->notes . "</li>";
-    }
-
     $output .= "</ul>";
 
     $output .= "</p>";
