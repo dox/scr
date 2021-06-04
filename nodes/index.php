@@ -3,24 +3,27 @@ $termObject = new term();
 
 if (isset($_GET['deleteBookingUID'])) {
   $bookingObject = new booking($_GET['deleteBookingUID']);
-  $mealObject = new meal($bookingObject->meal_uid);
-  if ($bookingObject->member_ldap == $_SESSION['username']) {
-    if (date('Y-m-d H:i:s') <= date('Y-m-d H:i:s', strtotime($mealObject->date_cutoff)) || $_SESSION['admin'] == true) {
-      $bookingObject->delete();
+
+  if (isset($bookingObject->uid)) {
+    $mealObject = new meal($bookingObject->meal_uid);
+    if ($bookingObject->member_ldap == $_SESSION['username']) {
+      if (date('Y-m-d H:i:s') <= date('Y-m-d H:i:s', strtotime($mealObject->date_cutoff)) || $_SESSION['admin'] == true) {
+        $bookingObject->delete();
+      } else {
+        $logArray['category'] = "booking";
+        $logArray['result'] = "danger";
+        $logArray['description'] = "Error attempting to delete [bookingUID:" . $bookingObject->uid . "]. Cutoff passed.";
+        $logsClass->create($logArray);
+      }
     } else {
-      $logArray['category'] = "booking";
-      $logArray['result'] = "danger";
-      $logArray['description'] = "Error attempting to delete [bookingUID:" . $bookingObject->uid . "]. Cutoff passed.";
-      $logsClass->create($logArray);
-    }
-  } else {
-    if ( $_SESSION['admin'] == true) {
-      $bookingObject->delete();
-    } else {
-      $logArray['category'] = "booking";
-      $logArray['result'] = "danger";
-      $logArray['description'] = "Error attempting to delete [bookingUID:" . $bookingObject->uid . "]. Permission not granted.";
-      $logsClass->create($logArray);
+      if ( $_SESSION['admin'] == true) {
+        $bookingObject->delete();
+      } else {
+        $logArray['category'] = "booking";
+        $logArray['result'] = "danger";
+        $logArray['description'] = "Error attempting to delete [bookingUID:" . $bookingObject->uid . "] . " . $_SESSION['username'] . " not permitted to delete booking for " . $bookingObject->member_ldap;
+        $logsClass->create($logArray);
+      }
     }
   }
 }
