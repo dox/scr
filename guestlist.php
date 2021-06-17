@@ -74,13 +74,19 @@ $bookingsClass = new bookings();
         }
 
         if ($bookingObject->domus == "1") {
-          $icons[] = "<svg width=\"2em\" height=\"2em\" class=\"ms-1 me-1\"><use xlink:href=\"img/icons.svg#graduation-cap\"/></svg>";
+          $icons[] = "<svg width=\"2em\" height=\"2em\" class=\"mx-1\"><use xlink:href=\"img/icons.svg#graduation-cap\"/></svg>";
+        } else {
+          $icons[] = "<svg width=\"2em\" height=\"2em\" class=\"mx-1\"><use xlink:href=\"img/icons.svg#blank\"/></svg>";
         }
         if ($bookingObject->wine == "1") {
-          $icons[] = "<svg width=\"2em\" height=\"2em\" class=\"ms-1 me-1\"><use xlink:href=\"img/icons.svg#wine-glass\"/></svg>";
+          $icons[] = "<svg width=\"2em\" height=\"2em\" class=\"mx-1\"><use xlink:href=\"img/icons.svg#wine-glass\"/></svg>";
+        } else {
+          $icons[] = "<svg width=\"2em\" height=\"2em\" class=\"mx-1\"><use xlink:href=\"img/icons.svg#blank\"/></svg>";
         }
         if ($bookingObject->dessert == "1") {
-          $icons[] = "<svg width=\"2em\" height=\"2em\" class=\"ms-1 me-1\"><use xlink:href=\"img/icons.svg#cookie\"/></svg>";
+          $icons[] = "<svg width=\"2em\" height=\"2em\" class=\"mx-1\"><use xlink:href=\"img/icons.svg#cookie\"/></svg>";
+        } else {
+          $icons[] = "<svg width=\"2em\" height=\"2em\" class=\"mx-1\"><use xlink:href=\"img/icons.svg#blank\"/></svg>";
         }
 
         $output  = "<a href=\"#\" class=\"list-group-item list-group-item-action\" aria-current=\"true\">";

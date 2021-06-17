@@ -92,7 +92,8 @@ $iconsArray = array(
   "search" => "Search",
   "info-circle" => "Information",
   "chat-dots" => "Notifications",
-  "calendar-plus" => "Date Add"
+  "calendar-plus" => "Date Add",
+  "blank" => "Blank"
 );
 
 
