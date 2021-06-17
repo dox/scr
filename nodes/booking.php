@@ -79,13 +79,17 @@ if (isset($bookingByMember)) {
           $domusDisabledCheck = " disabled";
         }
 
+        if (date('Y-m-d H:i:s') >= date('Y-m-d H:i:s', strtotime($mealObject->date_cutoff)) && $_SESSION['admin'] != "1") {
+          $domusDisabledCheck = " disabled";
+        }
+
         if ($bookingObject->domus == 1) {
           $checked = "checked";
         } else {
           $checked = "";
         }
 
-        $output .= "<input class=\"form-check-input needs-validation\"" . $domusDisabledCheck . "novalidate id=\"domus\" name=\"domus\" type=\"checkbox\"" . $checked . " value=\"1\" onchange=\"domusCheckbox(this.id)\">";
+        $output .= "<input class=\"form-check-input needs-validation\"" . $domusDisabledCheck . " novalidate id=\"domus\" name=\"domus\" type=\"checkbox\"" . $checked . " value=\"1\" onchange=\"domusCheckbox(this.id)\">";
         $output .= "</label>";
         $output .= "</span>";
         $output .= "<input type=\"text\" class=\"form-control\" id=\"domus_reason\" name=\"domus_reason\" placeholder=\"Domus reason (required)\" hidden>";
@@ -107,6 +111,9 @@ if (isset($bookingByMember)) {
                 } else {
                   $wineDisabledCheck = " disabled";
                 }
+                if (date('Y-m-d H:i:s') >= date('Y-m-d H:i:s', strtotime($mealObject->date_cutoff)) && $_SESSION['admin'] != "1") {
+                  $wineDisabledCheck = " disabled";
+                }
                 ?>
                 <input class="form-check-input" <?php echo $wineDisabledCheck; ?> id="wine" name="wine" value="1" type="checkbox" <?php if ($bookingObject->wine == 1) { echo "checked";} ?>>
               </label>
@@ -122,6 +129,10 @@ if (isset($bookingByMember)) {
                 if ($mealObject->allowed_dessert == 1) {
                   $dessertDisabledCheck = "";
                 } else {
+                  $dessertDisabledCheck = " disabled";
+                }
+
+                if (date('Y-m-d H:i:s') >= date('Y-m-d H:i:s', strtotime($mealObject->date_cutoff)) && $_SESSION['admin'] != "1") {
                   $dessertDisabledCheck = " disabled";
                 }
                 ?>
@@ -251,7 +262,7 @@ if (isset($bookingByMember)) {
       <div class="modal-footer">
         <button type="button" class="btn btn-link text-muted" data-bs-dismiss="modal">Close</button>
         <?php
-        if (date('Y-m-d H:i:s') >= date('Y-m-d H:i:s', strtotime($mealObject->date_cutoff)) && $_SESSION['admin'] != "true") {
+        if (date('Y-m-d H:i:s') >= date('Y-m-d H:i:s', strtotime($mealObject->date_cutoff)) && $_SESSION['admin'] != "1") {
           echo "<button type=\"submit\" class=\"btn btn-primary disabled\"><svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#person-plus\"/></svg> Add Guest</button>";
         } else {
           //echo "<a href=\"index.php?deleteBookingUID=" . $bookingObject->uid . "\" role=\"button\" class=\"btn btn-danger\" onclck=\"bookingDeleteButton();\"><svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#trash\"/></svg> Delete</a>";
@@ -279,7 +290,7 @@ if (isset($bookingByMember)) {
         if (!$mealObject->check_member_ok()) {
           $message = "<p>Your account is currently disabled.  You cannot make changes to this booking.  Please contact the Bursary for further assistance.</p>";
           $buttonStatus = "disabled";
-        } elseif (!$mealObject->check_cutoff_ok() && $_SESSION['admin'] != "true") {
+        } elseif (!$mealObject->check_cutoff_ok() && $_SESSION['admin'] != "1") {
           $message = "<p>The deadline for making changes to this booking has passed.  Please contact the Bursary for further assistance.</p>";
           $buttonStatus = "disabled";
         } else {
