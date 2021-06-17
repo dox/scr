@@ -43,16 +43,36 @@ function bookMealQuick(this_id) {
   return false;
 };
 
-function addGuest(oFormElement) {
-  event.preventDefault();
+function addGuest(this_id) {
+  var bookingUID = document.getElementById('bookingUID').value;
+  var mealUID = document.getElementById('mealUID').value;
+  var guestName = document.getElementById('guest_name').value;
+  var guestDietary = [];
+  var guestDietaryCheckboxes = document.querySelectorAll('input[name=guest_dietary]:checked');
+  var guestDomus = document.getElementById('guest_domus').checked;
+  var guestDomusDescription = document.getElementById('guest_domus_description').value;
+  var guestWine = document.getElementById('guest_wine').checked;
+  var guestDessert = document.getElementById('guest_dessert').checked;
+
+  var guestsList = document.getElementById('guests_list');
+  var mealGuestList = document.getElementById('meal_guest_list');
+
+  for (var i = 0; i < guestDietaryCheckboxes.length; i++) {
+    guestDietary.push(guestDietaryCheckboxes[i].value)
+  }
 
   var xhr = new XMLHttpRequest();
 
-	xhr.onload = async function() {
-    var bookingUID = document.getElementById('bookingUID').value;
-    var mealUID = document.getElementById('mealUID').value;
-    var guestsList = document.getElementById('guests_list');
-    var mealGuestList = document.getElementById('meal_guest_list');
+  var formData = new FormData();
+  formData.append("bookingUID", bookingUID);
+  formData.append("guest_name", guestName);
+  formData.append("guest_dietary", guestDietary);
+  formData.append("guest_domus", guestDomus);
+  formData.append("guest_domus_description", guestDomusDescription);
+  formData.append("guest_wine", guestWine);
+  formData.append("guest_dessert", guestDessert);
+
+  xhr.onload = async function() {
     let url = 'nodes/widgets/_bookingGuestList.php?bookingUID=' + bookingUID + '&mealUID=' + mealUID;
     let url2 = 'nodes/widgets/_mealGuestList.php?mealUID=' + mealUID;
 
@@ -61,19 +81,73 @@ function addGuest(oFormElement) {
     mealGuestList.innerHTML = await (await fetch(url2)).text();
 
     // Close the Guest Add modal
-    var modalGuestAdd = bootstrap.Modal.getInstance(document.getElementById('modal_guest_add'));
+    var modalGuestAdd = bootstrap.Modal.getInstance(document.getElementById('modalGuestAdd'));
     modalGuestAdd.hide();
-	}
+  }
 
-	xhr.onerror = function(){
-		// failure case
-		alert (xhr.responseText);
-	}
+  xhr.onerror = function(){
+    // failure case
+    alert (xhr.responseText);
+  }
 
-	xhr.open (oFormElement.method, oFormElement.action, true);
-	xhr.send (new FormData (oFormElement));
+  xhr.open ("POST", "../actions/booking_add_guest.php", true);
+  xhr.send (formData);
 
-	return false;
+  return false;
+}
+
+function editGuest(this_id) {
+  var bookingUID = document.getElementById('bookingUID').value;
+  var mealUID = document.getElementById('mealUID').value;
+  var guest_uid = this_id;
+  var guestName = document.getElementById('guest_name').value;
+  var guestDietary = [];
+  var guestDietaryCheckboxes = document.querySelectorAll('input[name=guest_dietary]:checked');
+  var guestDomus = document.getElementById('guest_domus').checked;
+  var guestDomusDescription = document.getElementById('guest_domus_description').value;
+  var guestWine = document.getElementById('guest_wine').checked;
+  var guestDessert = document.getElementById('guest_dessert').checked;
+  var guestsList = document.getElementById('guests_list');
+  var mealGuestList = document.getElementById('meal_guest_list');
+
+  for (var i = 0; i < guestDietaryCheckboxes.length; i++) {
+    guestDietary.push(guestDietaryCheckboxes[i].value)
+  }
+
+  var xhr = new XMLHttpRequest();
+
+  var formData = new FormData();
+  formData.append("bookingUID", bookingUID);
+  formData.append("guest_uid", guest_uid);
+  formData.append("guest_name", guestName);
+  formData.append("guest_dietary", guestDietary);
+  formData.append("guest_domus", guestDomus);
+  formData.append("guest_domus_description", guestDomusDescription);
+  formData.append("guest_wine", guestWine);
+  formData.append("guest_dessert", guestDessert);
+
+  xhr.onload = async function() {
+    let url = 'nodes/widgets/_bookingGuestList.php?bookingUID=' + bookingUID + '&mealUID=' + mealUID;
+    let url2 = 'nodes/widgets/_mealGuestList.php?mealUID=' + mealUID;
+
+    // load the remote part into the guests_list div
+    guestsList.innerHTML = await (await fetch(url)).text();
+    mealGuestList.innerHTML = await (await fetch(url2)).text();
+
+    // Close the Guest Add modal
+    var modalGuestAdd = bootstrap.Modal.getInstance(document.getElementById('modalGuestAdd'));
+    modalGuestAdd.hide();
+  }
+
+  xhr.onerror = function(){
+    // failure case
+    alert (xhr.responseText);
+  }
+
+  xhr.open ("POST", "../actions/booking_edit_guest.php", true);
+  xhr.send (formData);
+
+  return false;
 }
 
 function deleteGuest(this_id) {
@@ -101,7 +175,8 @@ function deleteGuest(this_id) {
         mealGuestList.innerHTML = await (await fetch(url2)).text();
 
         // Close the Guest Add modal
-        var modalGuestAdd = bootstrap.Modal.getInstance(document.getElementById('modal_guest_add'));
+        var modalGuestAdd = bootstrap.Modal.getInstance(document.getElementById('modalGuestAdd'));
+        modalGuestAdd.hide();
     	}
 
     	xhr.onerror = function(){
@@ -122,6 +197,41 @@ function displayMenu(this_id) {
   var request = new XMLHttpRequest();
 
   request.open('GET', '/nodes/widgets/_menu.php?mealUID=' + mealUID, true);
+
+  request.onload = function() {
+    if (request.status >= 200 && request.status < 400) {
+      var resp = request.responseText;
+
+      menuContentDiv.innerHTML = resp;
+    }
+  };
+
+  request.send();
+}
+
+function editGuestModal(e) {
+  var bookingUID = e.id.replace("bookingUID-", "");
+  var guestUID = e.dataset.guestuid;
+  var request = new XMLHttpRequest();
+
+  request.open('GET', '/nodes/widgets/_guestAddEdit.php?bookingUID=' + bookingUID + '&guestUID=' + guestUID, true);
+
+  request.onload = function() {
+    if (request.status >= 200 && request.status < 400) {
+      var resp = request.responseText;
+
+      menuContentDiv.innerHTML = resp;
+    }
+  };
+
+  request.send();
+}
+
+function addGuestModal(e) {
+  var bookingUID = e;
+  var request = new XMLHttpRequest();
+
+  request.open('GET', '/nodes/widgets/_guestAddEdit.php?bookingUID=' + bookingUID, true);
 
   request.onload = function() {
     if (request.status >= 200 && request.status < 400) {
@@ -272,6 +382,7 @@ function ldapLookup() {
 var expanded = false;
 
 function showCheckboxes() {
+  checkMaxCheckboxes(2);
   var checkboxes = document.getElementById("checkboxes");
   if (!expanded) {
     checkboxes.style.display = "block";

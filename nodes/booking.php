@@ -26,27 +26,10 @@ $term = new term($checkTerm[0]['uid']);
 
 $membersClass = new members();
 
-
-
-$dietaryOptionsMax = $settingsClass->value('meal_dietary_allowed');
-
 if (isset($_POST['guest_name'])) {
   $bookingObject->update($_POST);
   $bookingObject = new booking($_GET['bookingUID']);
 }
-
-
-
-//$bookingsThisMeal = $bookingsClass->bookings_this_meal($mealObject->uid);
-
-/*
-$arr = array(
-  array('name'=>'John Smith', 'dietary' => 'No fish'),
-  array('name'=>'Jane Doe', 'dietary' => 'No pork')
-);
-echo json_encode($arr);
-printArray($arr);
-*/
 ?>
 
 <?php
@@ -54,7 +37,7 @@ $title = "Week " . $term->whichWeek($mealObject->date_meal) . " " . $mealObject-
 $subtitle = $mealObject->type . ": " . $mealObject->location . ", " . dateDisplay($mealObject->date_meal, true);
 if (isset($bookingByMember)) {
   $icons[] = array("class" => "btn-danger", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#trash\"/></svg> Delete Booking", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#staticBackdrop\"");
-  $icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#person-plus\"/></svg> Add Guest", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#modal_guest_add\"");
+  $icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#person-plus\"/></svg> Add Guest", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#modalGuestAdd\" onclick=\"addGuestModal('" . $bookingObject->uid . "')\"");
 }
 
 echo makeTitle($title, $subtitle, $icons);
@@ -73,20 +56,14 @@ if (isset($bookingByMember)) {
         $output .= "<span class=\"col-auto\">";
         $output .= "<label class=\"form-check form-check-single form-switch\">";
 
-        if ($mealObject->domus == 1 || $_SESSION['admin'] == true) {
+        $domusDisabledCheck = " disabled";
+        if ($mealObject->domus == 1 || $mealObject->check_meal_bookable(true)) {
           $domusDisabledCheck = "";
-        } else {
-          $domusDisabledCheck = " disabled";
         }
 
-        if (date('Y-m-d H:i:s') >= date('Y-m-d H:i:s', strtotime($mealObject->date_cutoff)) && $_SESSION['admin'] != "1") {
-          $domusDisabledCheck = " disabled";
-        }
-
+        $checked = "";
         if ($bookingObject->domus == 1) {
           $checked = "checked";
-        } else {
-          $checked = "";
         }
 
         $output .= "<input class=\"form-check-input needs-validation\"" . $domusDisabledCheck . " novalidate id=\"domus\" name=\"domus\" type=\"checkbox\"" . $checked . " value=\"1\" onchange=\"domusCheckbox(this.id)\">";
@@ -106,12 +83,9 @@ if (isset($bookingByMember)) {
             <span class="col-auto">
               <label class="form-check form-check-single form-switch">
                 <?php
-                if ($mealObject->allowed_wine == 1) {
+                if ($mealObject->allowed_wine == 1 && $mealObject->check_meal_bookable(true)) {
                   $wineDisabledCheck = "";
                 } else {
-                  $wineDisabledCheck = " disabled";
-                }
-                if (date('Y-m-d H:i:s') >= date('Y-m-d H:i:s', strtotime($mealObject->date_cutoff)) && $_SESSION['admin'] != "1") {
                   $wineDisabledCheck = " disabled";
                 }
                 ?>
@@ -126,13 +100,9 @@ if (isset($bookingByMember)) {
             <span class="col-auto">
               <label class="form-check form-check-single form-switch">
                 <?php
-                if ($mealObject->allowed_dessert == 1) {
+                if ($mealObject->allowed_dessert == 1 && $mealObject->check_meal_bookable(true)) {
                   $dessertDisabledCheck = "";
                 } else {
-                  $dessertDisabledCheck = " disabled";
-                }
-
-                if (date('Y-m-d H:i:s') >= date('Y-m-d H:i:s', strtotime($mealObject->date_cutoff)) && $_SESSION['admin'] != "1") {
                   $dessertDisabledCheck = " disabled";
                 }
                 ?>
@@ -165,117 +135,7 @@ if (isset($bookingByMember)) {
     </div>
   </form>
 
-<!-- Modal -->
-<div class="modal fade" id="modal_guest_add" tabindex="-1" aria-labelledby="modal_guest_add" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <form method="post" class="needs-validation" action="../actions/booking_add_guest.php" onsubmit="return addGuest(this);">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Add Guest</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <?php
-        if (date('Y-m-d H:i:s') >= date('Y-m-d H:i:s', strtotime($mealObject->date_cutoff)) && $_SESSION['admin'] != "true") {
-          echo "<p>The deadline for making changes to this booking has passed.  Please contact the Bursary for further assistance.</p>";
-        } elseif (count($bookingObject->guestsArray()) >= $mealObject->getTotalGuestsAllowed() && $_SESSION['admin'] != "true") {
-          echo "<p>You have added the maximum number of guests permitted for this meal.</p>";
-          $buttonAddDisable = "disabled";
-        } else {
-        ?>
-          <div class="form-group">
-            <label for="name">Guest Name</label>
-            <input type="text" class="form-control" name="guest_name" id="guest_name" aria-describedby="termNameHelp" required>
-            <small id="nameHelp" class="form-text text-muted">This name will show on the sign-up list</small>
-          </div>
 
-          <div class="mb-3">
-            <label for="dietary" class="form-label">Guest's Dietary Information</label>
-            <div class="selectBox" onclick="showCheckboxes()">
-              <select class="form-select">
-                <option>Select up to <?php echo $dietaryOptionsMax; ?> dietary preferences</option>
-              </select>
-              <small id="nameHelp" class="form-text text-muted"><?php echo $settingsClass->value('meal_dietary_message'); ?></small>
-              <div class="overSelect"></div>
-            </div>
-            <div id="checkboxes" class="mt-2">
-              <?php
-              $memberDietary = explode(",", $memberObject->dietary);
-              foreach ($membersClass->dietaryOptions() AS $dietaryOption) {
-                $output  = "<div class=\"form-check\">";
-                $output .= "<input class=\"form-check-input dietaryOptionsMax\" type=\"checkbox\" onclick=\"checkMaxCheckboxes(" . $dietaryOptionsMax . ")\" name=\"guest_dietary[]\" id=\"guest_dietary\" value=\"" . $dietaryOption . "\">";
-                $output .= "<label class=\"form-check-label\" for=\"" . $dietaryOption . "\">" . $dietaryOption . "</label>";
-                $output .= "</div>";
-
-                echo $output;
-              }
-              ?>
-            </div>
-          </div>
-
-
-          <hr />
-
-          <div>
-            <label class="row">
-              <span class="col"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#graduation-cap"></svg> Domus</span>
-              <span class="col-auto">
-                <label class="form-check form-check-single form-switch">
-                  <input class="form-check-input" id="guest_domus" name="guest_domus" type="checkbox" <?php if ($bookingObject->domus == 1) { echo "checked";} ?> onchange="guestDomus(this.id)">
-                </label>
-              </span>
-
-              <div class="form-group guest_domus_descriptionDiv visually-hidden">
-                <label for="date_start">Domus Description</label>
-                <input type="text" class="form-control needs-validation" name="guest_domus_description" id="guest_domus_description" aria-describedby="domus_description" placeholder="Domus reason (required)">
-                <small id="guest_domus_descriptionHelp" class="form-text text-muted">A brief description of why this guest is Domus</small>
-              </div>
-
-            </label>
-          </div>
-          <div>
-            <label class="row">
-              <span class="col"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#wine-glass"></svg> Guest Wine</span>
-              <span class="col-auto">
-                <label class="form-check form-check-single form-switch">
-                  <input class="form-check-input" id="guest_wine" name="guest_wine" type="checkbox" <?php echo $wineDisabledCheck; if ($bookingObject->guest_wine == 1) { echo "checked";} ?>>
-                </label>
-              </span>
-              <input type="text" class="form-control" id="domus_description" placeholder="Domus reason (required)" hidden>
-              <small id="domus_descriptionHelp" class="form-text text-muted" hidden>A brief description of why your booking is Domus</small>
-            </label>
-          </div>
-          <div>
-            <label class="row">
-              <span class="col"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#cookie"></svg> Guest Dessert</span>
-              <span class="col-auto">
-                <label class="form-check form-check-single form-switch">
-                  <input class="form-check-input" id="guest_dessert" name="guest_dessert" type="checkbox" <?php echo $dessertDisabledCheck; if ($bookingObject->guest_dessert == 1) { echo "checked";} ?>>
-                </label>
-              </span>
-              <input type="text" class="form-control" id="domus_description" name="guest_domus_description" placeholder="Domus reason (required)" hidden>
-              <small id="domus_descriptionHelp" class="form-text text-muted" hidden>A brief description of why your booking is Domus</small>
-            </label>
-          </div>
-        <?php } ?>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-link text-muted" data-bs-dismiss="modal">Close</button>
-        <?php
-        if (date('Y-m-d H:i:s') >= date('Y-m-d H:i:s', strtotime($mealObject->date_cutoff)) && $_SESSION['admin'] != "1") {
-          echo "<button type=\"submit\" class=\"btn btn-primary disabled\"><svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#person-plus\"/></svg> Add Guest</button>";
-        } else {
-          //echo "<a href=\"index.php?deleteBookingUID=" . $bookingObject->uid . "\" role=\"button\" class=\"btn btn-danger\" onclck=\"bookingDeleteButton();\"><svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#trash\"/></svg> Delete</a>";
-          echo "<button type=\"submit\" class=\"btn btn-primary " . $buttonAddDisable . "\"><svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#person-plus\"/></svg> Add Guest</button>";
-        }
-        ?>
-      </div>
-      <input type="hidden" id="bookingUID" name="bookingUID" value="<?php echo $bookingObject->uid; ?>">
-      <input type="hidden" id="mealUID" name="mealUID" value="<?php echo $bookingObject->meal_uid; ?>">
-      </form>
-    </div>
-  </div>
-</div>
 
 <!-- Modal -->
 <div class="modal" tabindex="-1" id="staticBackdrop" data-backdrop="static" data-keyboard="false" aria-hidden="true">
@@ -310,7 +170,6 @@ if (isset($bookingByMember)) {
 </div>
 
 <script>
-checkMaxCheckboxes(<?php echo $dietaryOptionsMax; ?>);
 
 // Example starter JavaScript for disabling form submissions if there are invalid fields
 (function () {
@@ -342,3 +201,16 @@ checkMaxCheckboxes(<?php echo $dietaryOptionsMax; ?>);
   echo $output;
 }
 ?>
+
+
+<div class="modal fade" id="modalGuestAdd" tabindex="-1" aria-labelledby="modalGuestAdd" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Add/Modify Guest Booking</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div id="menuContentDiv"></div>
+    </div>
+  </div>
+</div>

@@ -58,6 +58,31 @@ class booking {
 	  return $this->guests_array;
   }
 
+  public function updateGuest($newGuestArray = null) {
+	  global $db, $logsClass;
+
+    foreach ($newGuestArray AS $key => $value) {
+      $guest[$key] = ($value);
+    }
+
+    $sql  = "UPDATE bookings ";
+    $sql .= "SET guests_array = JSON_SET(guests_array, '$." . $guest['guest_uid'] . "', '" . json_encode($guest) . "') ";
+    $sql .= "WHERE uid = " . $this->uid . " ";
+    $sql .= "LIMIT 1";
+
+    echo $sql;
+
+	  $booking = $db->query($sql);
+
+    $logArray['category'] = "booking";
+    $logArray['result'] = "success";
+    $logArray['description'] = "Guest updated for [bookingUID:" . $this->uid . "] for [mealUID:" . $this->meal_uid . "]";
+    $logArray['description'] = $sql;
+    $logsClass->create($logArray);
+
+	  return $this->guests_array;
+  }
+
   public function create($array = null) {
     global $db, $logsClass;
 

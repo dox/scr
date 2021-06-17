@@ -437,16 +437,24 @@ class meal {
     return $memberStatus;
   }
 
-  public function check_meal_bookable() {
+  public function check_meal_bookable($factorInAdminAccess = false) {
     $check_capacity = $this->check_capacity_ok();
     $check_cutoff   = $this->check_cutoff_ok();
     $check_member   = $this->check_member_ok();
 
     if ($check_capacity && $check_cutoff && $check_member) {
-      return true;
+      $return = true;
     } else {
-      return false;
+      $return = false;
     }
+
+    if ($factorInAdminAccess == true) {
+      if ($_SESSION['admin'] == 1) {
+        $return = true;
+      }
+    }
+
+    return $return;
   }
 
   public function getTotalGuestsAllowed() {
