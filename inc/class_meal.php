@@ -272,24 +272,19 @@ class meal {
     $membersDessert = $members_array[0]['totalDessert'];
 
     $guests_array = $db->query($sqlGuests)->fetchAll();
-    $guests_array = $guests_array[0]['guests_array'];
 
-    if (!empty($guests_array)) {
-    	$guests_array = json_decode($guests_array, true);
-    } else {
-	    $guests_array = array();
-    }
-
+    $totalGuestDessert = 0;
     foreach ($guests_array AS $guest) {
-      $guest = json_decode($guest);
-      if ($guest->guest_dessert == 'on') {
-        $guestsDessert ++;
+      $guests = json_decode($guest['guests_array']);
+      foreach ($guests AS $guest) {
+        $guest = json_decode($guest);
+        if ($guest->guest_dessert == "on") {
+          $totalGuestDessert ++;
+        }
       }
     }
 
-    $guests_array = $db->query($sql)->fetchAll();
-
-    $totalDessert = $membersDessert + $guestsDessert;
+    $totalDessert = $membersDessert + $totalGuestDessert;
 
     return $totalDessert;
   }
