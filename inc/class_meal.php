@@ -39,7 +39,7 @@ class meal {
   public function mealCard() {
     $mealURL = "index.php?n=admin_meal&mealUID=" . $this->uid;
 
-    $output  = "<div class=\"col-12 mb-3\">";
+    $output  = "<div class=\"col mb-3\">";
     $output .= "<div class=\"blog-card\">";
     $output .= "<div class=\"card border-light\">";
 
