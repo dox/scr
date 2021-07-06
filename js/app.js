@@ -57,6 +57,12 @@ function addGuest(this_id) {
   var guestsList = document.getElementById('guests_list');
   var mealGuestList = document.getElementById('meal_guest_list');
 
+  // if guest is domus, demand a description
+  if (guestDomus == true && guestDomusDescription.length <= 0) {
+    alert ("Please enter a reason why this guest is domus");
+    return;
+  }
+
   for (var i = 0; i < guestDietaryCheckboxes.length; i++) {
     guestDietary.push(guestDietaryCheckboxes[i].value)
   }
