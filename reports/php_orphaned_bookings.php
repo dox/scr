@@ -10,19 +10,27 @@ $membersClass = new members();
 $sql = "SELECT count(*) AS bookingsCount, member_ldap FROM bookings WHERE member_ldap NOT IN(SELECT ldap FROM members) GROUP BY member_ldap ORDER BY bookingsCount DESC;";
 $orphanedBookings = $db->query($sql)->fetchAll();
 
+$totalOrphanedMembers = count($orphanedBookings);
+$totalOrphanedBookings = 0;
+foreach ($orphanedBookings AS $booking) {
+  $totalOrphanedBookings = $totalOrphanedBookings + $booking['bookingsCount'];
+}
+
 $members = $membersClass->all();
+
+
 ?>
 <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center bg-light">
   <div class="p-lg-5 mx-auto my-5">
     <h1 class="display-4 fw-normal">Orphaned Bookings</h1>
-    <p class="lead fw-normal">Bookings that do not belong to a known member</p>
+    <p class="lead fw-normal"><?php echo number_format($totalOrphanedBookings); ?> bookings that belong to <?php echo number_format($totalOrphanedMembers); ?> unknown members</p>
   </div>
 </div>
 
 <table class="table">
   <thead>
     <tr>
-      <th scope="col">Count</th>
+      <th scope="col">Bookings</th>
       <th scope="col">Booking LDAP</th>
       <th scope="col">Action</th>
     </tr>
