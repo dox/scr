@@ -27,10 +27,12 @@ class booking {
   }
 
   public function guestsArray() {
+
+    
     if (!empty($this->guests_array)) {
     	$guestsArray = json_decode($this->guests_array, true);
     } else {
-	    $guestsArray = array();
+	    //$guestsArray = array();
     }
     return $guestsArray;
   }
@@ -45,14 +47,14 @@ class booking {
     }
 
 	  $sql  = "UPDATE " . self::$table_name;
-	  $sql .= " SET guests_array = JSON_SET(COALESCE(guests_array, '{}'), '$." . $guest_uid . "', '" . json_encode($guest) . "')";
+	  $sql .= " SET guests_array = JSON_SET(COALESCE(guests_array, '{}'), '$." . $guest_uid . "', '" . json_encode($guest, JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES) . "')";
 	  $sql .= " WHERE uid = '" . $this->uid . "' LIMIT 1";
 
 	  $booking = $db->query($sql);
 
     $logArray['category'] = "booking";
     $logArray['result'] = "success";
-    $logArray['description'] = "Guest added to [bookingUID:" . $this->uid . "] for [mealUID:" . $this->meal_uid . "]";
+    $logArray['description'] = "Guest '" . $newGuestArray['guest_name'] . "' added to [bookingUID:" . $this->uid . "] for [mealUID:" . $this->meal_uid . "]";
     $logsClass->create($logArray);
 
 	  return $this->guests_array;
@@ -66,7 +68,7 @@ class booking {
     }
 
     $sql  = "UPDATE bookings ";
-    $sql .= "SET guests_array = JSON_SET(guests_array, '$." . $guest['guest_uid'] . "', '" . json_encode($guest) . "') ";
+    $sql .= "SET guests_array = JSON_SET(guests_array, '$." . $guest['guest_uid'] . "', '" . json_encode($guest, JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES) . "') ";
     $sql .= "WHERE uid = " . $this->uid . " ";
     $sql .= "LIMIT 1";
 
