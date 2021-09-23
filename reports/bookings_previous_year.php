@@ -18,8 +18,7 @@ $columns = array(
   "member_category"
 );
 
-$sql  = "SELECT * FROM bookings WHERE DATE(date) BETWEEN '2021-08-01' AND '2021-09-23'";
-//$sql  = "SELECT * FROM bookings ORDER BY date DESC LIMIT 10";
+$sql  = "SELECT * FROM bookings WHERE date > DATE_SUB(NOW(),INTERVAL 1 YEAR) ORDER BY date DESC";
 
 $bookings = $db->query($sql)->fetchAll();
 
@@ -30,7 +29,7 @@ foreach ($bookings AS $booking) {
   $memberObject = new member($booking['member_ldap']);
   $mealObject = new meal($booking['meal_uid']);
 
-  $bookingGuests = json_decode($bookingObject->guests_array);
+  $bookingGuests = $bookingObject->guestsArray();
 
   $bookingRow['booking_uid'] = $bookingObject->uid;
   $bookingRow['booking_domus'] = $bookingObject->domus;
