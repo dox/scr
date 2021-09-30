@@ -2,6 +2,6 @@
   "identifier" : "8A6637DE-DF8A-4F85-A22D-D2D665769954",
   "remotePath" : "\/var\/www\/scr2.seh.ox.ac.uk\/public_html",
   "remoteURL" : "http:\/\/scr2.seh.ox.ac.uk",
-  "server" : "HYDROGEN2",
+  "server" : "HYDROGEN",
   "usesPublishing" : true
 }

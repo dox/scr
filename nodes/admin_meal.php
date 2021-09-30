@@ -238,7 +238,7 @@ echo makeTitle($title, $subtitle, $icons);
     <div class="row mb-3">
       <div class="col">
         <label for="menu" class="form-label">Menu</label>
-        <input type="text" class="form-control" name="menu" id="menu" value="<?php echo htmlspecialchars($mealObject->menu, ENT_QUOTES); ?>">
+        <textarea rows="4" class="form-control" name="menu" id="menu"><?php echo $mealObject->menu; ?></textarea>
       </div>
     </div>
 
@@ -377,31 +377,4 @@ function test(date) {
   var date = '<?php echo date('Y-m-d', strtotime(selectedDates)); ?>';
   return date;
 }
-</script>
-
-<script>
-const editor = SUNEDITOR.create(document.getElementById('menu'),{
-  "height":200,
-  "buttonList": [
-		[
-			"formatBlock",
-			"bold",
-			"underline",
-			"italic",
-			"strike",
-			"fontColor",
-			"hiliteColor",
-			"removeFormat",
-      "align",
-			"horizontalRule",
-			"link",
-			"fullScreen",
-			"codeView",
-		]
-	]
-});
-
-window.addEventListener("click", function(event) {
-  document.getElementById('menu').value = editor.getContents();
-});
 </script>
