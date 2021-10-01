@@ -2,6 +2,7 @@
 // CSV columns to include
 $columns = array(
   "booking_uid",
+  "booking_date",
   "booking_domus",
   "booking_domus_reason",
   "booking_wine",
@@ -32,6 +33,7 @@ foreach ($bookings AS $booking) {
   $bookingGuests = $bookingObject->guestsArray();
 
   $bookingRow['booking_uid'] = $bookingObject->uid;
+  $bookingRow['booking_date'] = $bookingObject->date;
   $bookingRow['booking_domus'] = $bookingObject->domus;
   $bookingRow['booking_domus_reason'] = $bookingObject->domus_reason;
   $bookingRow['booking_wine'] = $bookingObject->wine;
@@ -52,6 +54,7 @@ foreach ($bookings AS $booking) {
     $bookingRowGuest = null;
 
     $bookingRowGuest['booking_uid'] = $bookingObject->uid;
+    $bookingRow['booking_date'] = $bookingObject->date;
     $bookingRowGuest['booking_domus'] = onToOne($guest->guest_domus);
     $bookingRowGuest['booking_domus_reason'] = $guest->guest_domus_description;
     $bookingRowGuest['booking_wine'] = onToOne($bookingObject->wine);
