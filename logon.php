@@ -105,3 +105,16 @@
 	</div>
 </body>
 </html>
+
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script src="https://help.seh.ox.ac.uk/assets/chat/chat.min.js"></script>
+<script>
+$(function() {
+  new ZammadChat({
+	title: 'Need IT Support?',
+	background: '#6b7889',
+	fontSize: '12px',
+	chatId: 1
+  });
+});
+</script>
