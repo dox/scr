@@ -6,6 +6,7 @@ $bookingByMember = $bookingsClass->bookingForMealByMember($mealObject->uid, $_SE
 $bookingObject = new booking($bookingByMember['uid']);
 
 if (isset($_POST['bookingUID'])) {
+  
   if (empty($_POST['domus'])) {
     $_POST['domus'] = 0;
   }
@@ -15,6 +16,8 @@ if (isset($_POST['bookingUID'])) {
   if (empty($_POST['dessert'])) {
     $_POST['dessert'] = 0;
   }
+  
+  printArray($_POST);
 
   $bookingObject->update($_POST);
   $bookingObject = new booking($_POST['bookingUID']);
@@ -69,7 +72,7 @@ if (isset($bookingByMember)) {
         $output .= "<input class=\"form-check-input needs-validation\"" . $domusDisabledCheck . " novalidate id=\"domus\" name=\"domus\" type=\"checkbox\"" . $checked . " value=\"1\" onchange=\"domusCheckbox(this.id)\">";
         $output .= "</label>";
         $output .= "</span>";
-        $output .= "<input type=\"text\" class=\"form-control\" id=\"domus_reason\" name=\"domus_reason\" placeholder=\"Domus reason (required)\" hidden required>";
+        $output .= "<input type=\"text\" class=\"form-control\" id=\"domus_reason\" name=\"domus_reason\" placeholder=\"Domus reason (required)\" hidden >";
         $output .= "<small id=\"domus_reasonHelp\" class=\"form-text text-muted mb-3\" hidden>A brief description of why your booking is Domus</small>";
         $output .= "</label>";
         $output .= "</div>";
