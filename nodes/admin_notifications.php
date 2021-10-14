@@ -1,5 +1,5 @@
-<link rel="stylesheet" href="css/flatpickr.min.css">
-<script src="js/flatpickr.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 <?php
 admin_gatekeeper();
@@ -22,7 +22,7 @@ $notifications = $notificationsClass->all();
 
 <?php
 $title = "Notifications";
-$subtitle = "Some text here</a>.";
+$subtitle = "Messages that appear to all users at the top of the page";
 $icons[] = array("class" => "btn-primary", "name" => "<svg width=\"16\" height=\"16\"><use xlink:href=\"img/icons.svg#chat-dots\"/></svg> Add New", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#notficationAddModal\"");
 
 echo makeTitle($title, $subtitle, $icons);
