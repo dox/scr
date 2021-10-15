@@ -9,7 +9,7 @@ $wineValue = "0";
 $dessertValue = "0";
 
 if ($mealObject->domus == 1 || $memberObject->default_domus == 1) {
-	$chargeToValue = "Domus (College Hospitality)";
+	$chargeToValue = "Domus";
 	$domusReason = "Meal auto-marked as Domus";
 } else {
 	$chargeToValue = "Battels";
