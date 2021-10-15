@@ -17,7 +17,7 @@ $settings = $settingsClass->all();
 
 <?php
 $title = "Site Settings";
-$subtitle = "Customise the behaviour, display and configuration of this site.";
+$subtitle = "Customise the behaviour, display and configuration of this site";
 $icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#sliders\"/></svg> Add New", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#exampleModal\"");
 
 echo makeTitle($title, $subtitle, $icons);

@@ -8,7 +8,7 @@ class booking {
   public $meal_uid;
   public $member_ldap;
   public $guests_array; // json encoded array
-  public $domus;
+  public $charge_to;
   public $domus_reason;
   public $wine;
   public $dessert;
@@ -43,7 +43,7 @@ class booking {
     $guest_uid = "x" . bin2hex(random_bytes(5));
     $guest['guest_uid'] = $guest_uid;
     foreach ($newGuestArray AS $key => $value) {
-      $guest[$key] = ($value);
+      $guest[$key] = htmlspecialchars($value, ENT_QUOTES);
     }
 
 	  $sql  = "UPDATE " . self::$table_name;

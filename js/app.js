@@ -49,8 +49,8 @@ function addGuest(this_id) {
   var guestName = document.getElementById('guest_name').value;
   var guestDietary = [];
   var guestDietaryCheckboxes = document.querySelectorAll('input[name=guest_dietary]:checked');
-  var guestDomus = document.getElementById('guest_domus').checked;
-  var guestDomusDescription = document.getElementById('guest_domus_description').value;
+  var guestChargeTo = document.getElementById('guest_charge_to').value;
+  var guestDomusReason = document.getElementById('guest_domus_reason').value;
   var guestWine = document.getElementById('guest_wine').checked;
   var guestDessert = document.getElementById('guest_dessert').checked;
 
@@ -58,10 +58,7 @@ function addGuest(this_id) {
   var mealGuestList = document.getElementById('meal_guest_list');
 
   // if guest is domus, demand a description
-  if (guestDomus == true && guestDomusDescription.length <= 0) {
-    alert ("Please enter a reason why this guest is domus");
-    return;
-  }
+  
 
   for (var i = 0; i < guestDietaryCheckboxes.length; i++) {
     guestDietary.push(guestDietaryCheckboxes[i].value)
@@ -73,8 +70,8 @@ function addGuest(this_id) {
   formData.append("bookingUID", bookingUID);
   formData.append("guest_name", guestName);
   formData.append("guest_dietary", guestDietary);
-  formData.append("guest_domus", guestDomus);
-  formData.append("guest_domus_description", guestDomusDescription);
+  formData.append("guest_charge_to", guestChargeTo);
+  formData.append("guest_domus_reason", guestDomusReason);
   formData.append("guest_wine", guestWine);
   formData.append("guest_dessert", guestDessert);
 
@@ -109,8 +106,8 @@ function editGuest(this_id) {
   var guestName = document.getElementById('guest_name').value;
   var guestDietary = [];
   var guestDietaryCheckboxes = document.querySelectorAll('input[name=guest_dietary]:checked');
-  var guestDomus = document.getElementById('guest_domus').checked;
-  var guestDomusDescription = document.getElementById('guest_domus_description').value;
+  var guestChargeTo = document.getElementById('guest_charge_to').value;
+  var guestDomusReason = document.getElementById('guest_domus_reason').value;
   var guestWine = document.getElementById('guest_wine').checked;
   var guestDessert = document.getElementById('guest_dessert').checked;
   var guestsList = document.getElementById('guests_list');
@@ -127,8 +124,8 @@ function editGuest(this_id) {
   formData.append("guest_uid", guest_uid);
   formData.append("guest_name", guestName);
   formData.append("guest_dietary", guestDietary);
-  formData.append("guest_domus", guestDomus);
-  formData.append("guest_domus_description", guestDomusDescription);
+  formData.append("guest_charge_to", guestChargeTo);
+  formData.append("guest_domus_reason", guestDomusReason);
   formData.append("guest_wine", guestWine);
   formData.append("guest_dessert", guestDessert);
 
@@ -227,6 +224,28 @@ function editGuestModal(e) {
       var resp = request.responseText;
 
       menuContentDiv.innerHTML = resp;
+      
+      const guest_element = document.getElementById("guest_charge_to");
+      const guest_domus_reason = document.getElementById("guest_domus_reason");
+      
+      // show/hide the domus_reason box
+      guest_element.addEventListener("change", (e) => {
+        const value = e.target.value;
+        const text = guest_element.options[guest_element.selectedIndex].text;
+       
+        if (value == "College Hospitality" || value == "Entertainment Allowance") {
+          // Domus/Entertainment sleected
+          // show the domus_reason text box
+          guest_domus_reason.required = true;
+          guest_domus_reason.className = 'form-control mb-3';
+        } else {
+          // Battels selected
+          // hide the domus_reason text box
+          guest_domus_reason.value = "";
+          guest_domus_reason.required = false;
+          guest_domus_reason.className = 'form-control mb-3 visually-hidden';
+        }
+      });
     }
   };
 
@@ -244,6 +263,29 @@ function addGuestModal(e) {
       var resp = request.responseText;
 
       menuContentDiv.innerHTML = resp;
+      
+      const guest_element = document.getElementById("guest_charge_to");
+      const guest_domus_reason = document.getElementById("guest_domus_reason");
+      
+      // show/hide the domus_reason box
+      guest_element.addEventListener("change", (e) => {
+        const value = e.target.value;
+        const text = guest_element.options[guest_element.selectedIndex].text;
+       
+        if (value == "College Hospitality" || value == "Entertainment Allowance") {
+          // Domus/Entertainment sleected
+          // show the domus_reason text box
+          guest_domus_reason.required = true;
+          guest_domus_reason.className = 'form-control mb-3';
+        } else {
+          // Battels selected
+          // hide the domus_reason text box
+          guest_domus_reason.value = "";
+          guest_domus_reason.required = false;
+          guest_domus_reason.className = 'form-control mb-3 visually-hidden';
+        }
+      });
+      
     }
   };
 
@@ -289,39 +331,6 @@ function bookingDeleteButton() {
   if (window.confirm("Are you sure you want to run delete this meal booking?  This will also remove all of your guests from this booking.")) {
 			location.href = 'index.php';
 	}
-}
-
-
-function guestDomus(this_id) {
-  var domusCheckBox = document.getElementById(this_id);
-  var domusDescriptionDiv = document.getElementsByClassName('guest_domus_descriptionDiv')[0];
-  var domusDescriptionInput = document.getElementById('guest_domus_description');
-
-  if (domusCheckBox.checked == true) {
-    domusDescriptionDiv.classList.remove("visually-hidden");
-    domusDescriptionInput.required = true;
-  } else {
-    domusDescriptionDiv.classList.add("visually-hidden");
-	  domusDescriptionInput.value = "";
-    domusDescriptionInput.required = false;
-  }
-}
-
-function domusCheckbox(this_id) {
-  var domusCheckBox = document.getElementById(this_id);
-  var domusDescriptionInput = document.getElementById('domus_reason');
-  var domusDescriptionHelp = document.getElementById('domus_reasonHelp');
-
-  if (domusCheckBox.checked == true) {
-    domusDescriptionInput.hidden = false;
-    domusDescriptionInput.required = true;
-    domusDescriptionHelp.hidden = false;
-  } else {
-    domusDescriptionInput.hidden = true;
-    domusDescriptionInput.required = false;
-    domusDescriptionHelp.hidden = true;
-	  domusDescriptionInput.value = "";
-  }
 }
 
 function submitForm(oFormElement) {

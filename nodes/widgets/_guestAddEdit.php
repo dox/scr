@@ -1,11 +1,11 @@
 <?php
 include_once("../../inc/autoload.php");
+
 $membersClass = new members;
 $bookingObject = new booking($_GET['bookingUID']);
 $mealObject = new meal($bookingObject->meal_uid);
 
 $dietaryOptionsMax = $settingsClass->value('meal_dietary_allowed');
-
 
 // check if we're adding a new guest, or modifying an existing guest
 if (isset($_GET['guestUID'])) {
@@ -27,15 +27,14 @@ if (isset($_GET['guestUID'])) {
   $title = "Add Guest";
   $memberObject->dietary = array();
 }
-//echo $title;
 ?>
 
 <div class="modal-body">
   <?php
-  if ($mealObject->check_meal_bookable(true) && count($bookingObject->guestsArray()) < $mealObject->getTotalGuestsAllowed()) {
+  if ($mealObject->check_meal_bookable(true)) {
   ?>
-    <form method="post" class="needs-validation" action="../actions/booking_add_guest.php" onsubmit="return addGuest(this);">
-      <div class="form-group">
+    <form method="post" class="needs-validation" action="../actions/booking_add_guest.php">
+      <div class="form-group mb-3">
         <label for="name">Guest Name</label>
         <input type="text" class="form-control" name="guest_name" id="guest_name" aria-describedby="termNameHelp" value="<?php echo $guestObject->guest_name; ?>" required>
         <small id="nameHelp" class="form-text text-muted">This name will show on the sign-up list</small>
@@ -74,30 +73,35 @@ if (isset($_GET['guestUID'])) {
 
       <div>
         <label class="row">
-          <?php
-          $domusDisabledCheck = " disabled";
-          if ($mealObject->domus == 1 || $mealObject->check_meal_bookable(true)) {
-            $domusDisabledCheck = "";
-          }
-
-          $domusChecked = "";
-          $domusCheckedReason = "visually-hidden";
-          if ($guestObject->guest_domus == "on") {
-            $domusChecked = "checked";
-            $domusCheckedReason = "";
-          }
-          ?>
-          <span class="col"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#graduation-cap"></svg> Domus</span>
-          <span class="col-auto">
-            <label class="form-check form-check-single form-switch">
-              <input class="form-check-input" id="guest_domus" name="guest_domus" type="checkbox" <?php echo $domusChecked; ?> onchange="guestDomus(this.id)" <?php echo $domusDisabledCheck; ?>>
-            </label>
-          </span>
-
-          <div class="form-group guest_domus_descriptionDiv <?php echo $domusCheckedReason; ?>">
-            <label for="date_start">Domus Description</label>
-            <input type="text" class="form-control needs-validation" name="guest_domus_description" id="guest_domus_description" aria-describedby="guest_domus_description" placeholder="Domus reason (required)" value="<?php echo $guestObject->guest_domus_description; ?>">
-            <small id="guest_domus_descriptionHelp" class="form-text text-muted">A brief description of why this guest is Domus</small>
+          <div>
+            <label for="guest_charge_to" class="form-label">Charge Guest Booking To</label>
+            <select class="form-select mb-3" id="guest_charge_to" name="guest_charge_to" aria-label="Charge To">
+              <?php
+              $chargeToOptions = explode(",", $settingsClass->value('booking_guest_charge-to'));
+              
+              foreach ($chargeToOptions AS $chargeToOption) {
+                $selected = "";
+                
+                if ($guestObject->guest_charge_to == $chargeToOption) {
+                  $selected = " selected";
+                }
+                
+                $output = "<option " . $selected . " value=\"" . $chargeToOption . "\">" . $chargeToOption . "</option>";
+                
+                echo $output;
+              }
+              
+              // show/hide the domus_reason text box:
+              if ($guestObject->guest_charge_to == "Battels" || $mode == "add") {
+                $domusVisual = " visually-hidden";
+              } else {
+                $domusVisual = "";
+              }
+              ?>
+            </select>
+            
+            
+            <input class="form-control mb-3 <?php echo $domusVisual; ?>" type="text" id="guest_domus_reason" name="guest_domus_reason" placeholder="Description (required)" aria-label="Charge Guest To Description" value="<?php echo $guestObject->guest_domus_reason; ?>" <?php if ($guestObject->guest_charge_to <> "Battels") { echo " required";} ?>>
           </div>
 
         </label>
@@ -121,8 +125,6 @@ if (isset($_GET['guestUID'])) {
               <input class="form-check-input" id="guest_wine" name="guest_wine" type="checkbox" <?php echo $checked ?> <?php echo $wineDisabledCheck; ?>>
             </label>
           </span>
-          <input type="text" class="form-control" id="domus_description" placeholder="Domus reason (required)" hidden>
-          <small id="domus_descriptionHelp" class="form-text text-muted" hidden>A brief description of why your booking is Domus</small>
         </label>
       </div>
       <div>
@@ -144,8 +146,6 @@ if (isset($_GET['guestUID'])) {
               <input class="form-check-input" id="guest_dessert" name="guest_dessert" type="checkbox" <?php echo $checked; ?> <?php echo $dessertDisabledCheck; ?>>
             </label>
           </span>
-          <input type="text" class="form-control" id="domus_description" name="guest_domus_description" placeholder="Domus reason (required)" hidden>
-          <small id="domus_descriptionHelp" class="form-text text-muted" hidden>A brief description of why your booking is Domus</small>
         </label>
       </div>
 
@@ -155,9 +155,10 @@ if (isset($_GET['guestUID'])) {
 
   <?php } else {
     $buttonDeleteDisable = "disabled";
-    if (date('Y-m-d H:i:s') >= date('Y-m-d H:i:s', strtotime($mealObject->date_cutoff))) {
+    
+    if (!$mealObject->check_cutoff_ok(true)) {
       echo "<p>The deadline for making changes to this booking has passed.  Please contact the Bursary for further assistance.</p>";
-    } elseif (count($bookingObject->guestsArray()) >= $mealObject->getTotalGuestsAllowed()) {
+    } elseif ($mealObject->check_capacity_ok()) {
       echo "<p>You have added the maximum number of guests permitted for this meal.</p>";
       $buttonAddDisable = "disabled";
       $buttonDeleteDisable = "";
@@ -172,13 +173,24 @@ if (isset($_GET['guestUID'])) {
 <div class="modal-footer">
   <button type="button" class="btn btn-link text-muted" data-bs-dismiss="modal">Close</button>
   <?php
-  if ($mealObject->check_meal_bookable(true)) {
-    if ($mode == "edit") {
-      echo "<button type=\"submit\" class=\"btn btn-danger " . $buttonDeleteDisable . "\" onclick=\"deleteGuest('" . $guestObject->guest_uid . "')\"><svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#trash\"/></svg> Delete Guest</button>";
-      echo "<button type=\"submit\" class=\"btn btn-primary " . $buttonAddDisable . "\" onclick=\"editGuest('" . $guestObject->guest_uid . "')\"><svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#person-plus\"/></svg> Modify Guest</button>";
-    } elseif ($mode == "add") {
-      echo "<button type=\"submit\" class=\"btn btn-primary " . $buttonAddDisable . "\" onclick=\"addGuest()\"><svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#person-plus\"/></svg> Add Guest</button>";
+  $buttonEditDisable = "";
+  $buttonAddDisable = "";
+  
+  if ($mode == "add") {
+    if (!$mealObject->check_cutoff_ok(true)) {
+      $buttonAddDisable = " disabled";
     }
+    
+    echo "<button type=\"submit\" class=\"btn btn-primary " . $buttonAddDisable . "\" onclick=\"addGuest()\"><svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#person-plus\"/></svg> Add Guest</button>";
+  } elseif ($mode == "edit") {
+    if (!$mealObject->check_cutoff_ok(true)) {
+      // we're editing the guest, and there's nothing stopping us
+      $buttonEditDisable = " disabled";
+    }
+    
+    echo "<button type=\"submit\" class=\"btn btn-danger " . $buttonEditDisable . "\" onclick=\"deleteGuest('" . $guestObject->guest_uid . "')\"><svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#trash\"/></svg> Delete Guest</button>";
+    echo "<button type=\"submit\" class=\"btn btn-primary " . $buttonEditDisable . "\" onclick=\"editGuest('" . $guestObject->guest_uid . "')\"><svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#person-plus\"/></svg> Modify Guest</button>";
   }
   ?>
 </div>
+

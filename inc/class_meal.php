@@ -327,7 +327,8 @@ class meal {
 
     foreach ($array AS $updateItem => $value) {
       if ($updateItem != 'mealUID' && $value != '<p><br></p>') {
-        $value = str_replace("'", "\'", $value);
+        $value = escape($value);
+        
         $sqlUpdate[] = $updateItem ." = '" . $value . "' ";
       }
     }
@@ -399,7 +400,7 @@ class meal {
     return $deleteMeal;
   }
 
-  public function check_capacity_ok() {
+  public function check_capacity_ok($factorInAdminAccess = false) {
     $mealCapacity = $this->totalCapacity($_SESSION['type']);
     $currentBookingsCount = $this->total_bookings_this_meal($_SESSION['type']);
 
@@ -408,11 +409,17 @@ class meal {
     } else {
       $capacityStatus = false;
     }
+    
+    if ($factorInAdminAccess == true) {
+      if ($_SESSION['admin'] == 1) {
+        $capacityStatus = true;
+      }
+    }
 
     return $capacityStatus;
   }
 
-  public function check_cutoff_ok() {
+  public function check_cutoff_ok($factorInAdminAccess = false) {
     $mealCutoffDateTime = date('Y-m-d H:i:s', strtotime($this->date_cutoff));
     $nowDateTime = date('Y-m-d H:i:s');
 
@@ -421,11 +428,17 @@ class meal {
     } else {
       $cutoffStatus = false;
     }
-
+    
+    if ($factorInAdminAccess == true) {
+      if ($_SESSION['admin'] == 1) {
+        $cutoffStatus = true;
+      }
+    }
+    
     return $cutoffStatus;
   }
 
-  public function check_member_ok() {
+  public function check_member_ok($factorInAdminAccess = false) {
     $currentMemberStatus = $_SESSION['enabled'];
 
     if ($currentMemberStatus == 1) {
@@ -433,25 +446,25 @@ class meal {
     } else {
       $memberStatus = false;
     }
+    
+    if ($factorInAdminAccess == true) {
+      if ($_SESSION['admin'] == 1) {
+        $memberStatus = true;
+      }
+    }
 
     return $memberStatus;
   }
 
   public function check_meal_bookable($factorInAdminAccess = false) {
-    $check_capacity = $this->check_capacity_ok();
-    $check_cutoff   = $this->check_cutoff_ok();
-    $check_member   = $this->check_member_ok();
+    $check_capacity = $this->check_capacity_ok($factorInAdminAccess);
+    $check_cutoff   = $this->check_cutoff_ok($factorInAdminAccess);
+    $check_member   = $this->check_member_ok($factorInAdminAccess);
 
     if ($check_capacity && $check_cutoff && $check_member) {
       $return = true;
     } else {
       $return = false;
-    }
-
-    if ($factorInAdminAccess == true) {
-      if ($_SESSION['admin'] == 1) {
-        $return = true;
-      }
     }
 
     return $return;

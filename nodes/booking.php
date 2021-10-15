@@ -1,15 +1,12 @@
 <?php
 $bookingsClass = new bookings();
 $mealObject = new meal($_GET['mealUID']);
+$memberObject = new member($_SESSION['username']);
 
 $bookingByMember = $bookingsClass->bookingForMealByMember($mealObject->uid, $_SESSION['username']);
 $bookingObject = new booking($bookingByMember['uid']);
 
 if (isset($_POST['bookingUID'])) {
-  
-  if (empty($_POST['domus'])) {
-    $_POST['domus'] = 0;
-  }
   if (empty($_POST['wine'])) {
     $_POST['wine'] = 0;
   }
@@ -17,8 +14,6 @@ if (isset($_POST['bookingUID'])) {
     $_POST['dessert'] = 0;
   }
   
-  printArray($_POST);
-
   $bookingObject->update($_POST);
   $bookingObject = new booking($_POST['bookingUID']);
 }
@@ -50,36 +45,38 @@ if (isset($bookingByMember)) {
   <form method="post" id="bookingUpdate" action="<?php echo $_SERVER['REQUEST_URI']; ?>" class="row needs-validation" novalidate>
     <div class="col-md-5 col-lg-4 order-md-last">
       <div class="divide-y">
-        <?php
-        //DOMUS form element
-
-        $output  = "<div>";
-        $output .= "<label class=\"row\">";
-        $output .= "<span class=\"col\"><svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#graduation-cap\"></svg> Domus</span>";
-        $output .= "<span class=\"col-auto\">";
-        $output .= "<label class=\"form-check form-check-single form-switch\">";
-
-        $domusDisabledCheck = " disabled";
-        if ($mealObject->domus == 1 || $mealObject->check_meal_bookable(true)) {
-          $domusDisabledCheck = "";
-        }
-
-        $checked = "";
-        if ($bookingObject->domus == 1) {
-          $checked = "checked";
-        }
-
-        $output .= "<input class=\"form-check-input needs-validation\"" . $domusDisabledCheck . " novalidate id=\"domus\" name=\"domus\" type=\"checkbox\"" . $checked . " value=\"1\" onchange=\"domusCheckbox(this.id)\">";
-        $output .= "</label>";
-        $output .= "</span>";
-        $output .= "<input type=\"text\" class=\"form-control\" id=\"domus_reason\" name=\"domus_reason\" placeholder=\"Domus reason (required)\" hidden >";
-        $output .= "<small id=\"domus_reasonHelp\" class=\"form-text text-muted mb-3\" hidden>A brief description of why your booking is Domus</small>";
-        $output .= "</label>";
-        $output .= "</div>";
-        $output .= "";
-
-        echo $output;
-        ?>
+        <label for="charge_to" class="form-label">Charge To</label>
+        <select class="form-select mb-3" id="charge_to" name="charge_to" aria-label="Charge To">
+          <?php
+          $chargeToOptions = explode(",", $settingsClass->value('booking_charge-to'));
+          
+          foreach ($chargeToOptions AS $chargeToOption) {
+            $selected = "";
+            if ($bookingObject->charge_to == $chargeToOption) {
+              $selected = " selected";
+              $dontSelectAgain = true;
+            } else {
+              if ($dontSelectAgain != true && ($chargeToOption == "Domus" || $mealObject->domus == 1 || $memberObject->default_domus == 1)) {
+                $selected = " selected";
+              }
+            }
+            
+            $output = "<option " . $selected . " value=\"" . $chargeToOption . "\">" . $chargeToOption . "</option>";
+            
+            echo $output;
+          }
+          
+          // show/hide the domus_reason text box:
+          if ($bookingObject->charge_to == "Battels") {
+            $domusVisual = " visually-hidden";
+          } else {
+            $domusVisual = "";
+          }
+          ?>
+        </select>
+        
+        <input class="form-control mb-3 <?php echo $domusVisual; ?>" type="text" id="domus_reason" name="domus_reason" placeholder="Description (required)" aria-label="Charge To Description" value="<?php echo $bookingObject->domus_reason; ?>" <?php if ($bookingObject->charge_to <> "Battels") { echo " required";} ?>>
+        
         <div>
           <label class="row">
             <span class="col"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#wine-glass"></svg> Wine</span>
@@ -114,7 +111,7 @@ if (isset($bookingByMember)) {
             </span>
           </label>
         </div>
-        <button type="submit" class="btn btn-sm w-100 btn-primary">Update Booking Preferences</button>
+        <button type="submit" class="btn btn-sm w-100 btn-primary <?php if (!$mealObject->check_cutoff_ok(true)) { echo " disabled"; }?>">Update Booking Preferences</button>
         <input type="hidden" name="bookingUID" id="bookingUID" value="<?php echo $bookingObject->uid; ?>">
       </div>
 
@@ -150,10 +147,10 @@ if (isset($bookingByMember)) {
       </div>
       <div class="modal-body">
         <?php
-        if (!$mealObject->check_member_ok()) {
+        if (!$mealObject->check_member_ok(true)) {
           $message = "<p>Your account is currently disabled.  You cannot make changes to this booking.  Please contact the Bursary for further assistance.</p>";
           $buttonStatus = "disabled";
-        } elseif (!$mealObject->check_cutoff_ok() && $_SESSION['admin'] != "1") {
+        } elseif (!$mealObject->check_cutoff_ok(true)) {
           $message = "<p>The deadline for making changes to this booking has passed.  Please contact the Bursary for further assistance.</p>";
           $buttonStatus = "disabled";
         } else {
@@ -217,3 +214,30 @@ if (isset($bookingByMember)) {
     </div>
   </div>
 </div>
+
+
+<h2 id="pick"></h2>
+<script>
+// logic for charge_to select
+const element = document.getElementById("charge_to");
+const domus_reason = document.getElementById("domus_reason");
+
+element.addEventListener("change", (e) => {
+  const value = e.target.value;
+  const text = element.options[element.selectedIndex].text;
+ 
+  if (value == "Domus" || value == "Entertainment Allowance") {
+    // Domus/Entertainment sleected
+    // show the domus_reason text box
+    domus_reason.required = true;
+    domus_reason.value = "";
+    domus_reason.className = 'form-control mb-3';
+  } else {
+    // Battels selected
+    // hide the domus_reason text box
+    domus_reason.value = "";
+    domus_reason.required = false;
+    domus_reason.className = 'form-control mb-3 visually-hidden';
+  }
+});
+</script>

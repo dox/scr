@@ -47,10 +47,11 @@ function autoPluralise ($singular, $plural, $count = 1) {
 } // END function autoPluralise
 
 function escape($var) {
-	$var=stripslashes($var);
-	$var=htmlentities($var);
-	$var=strip_tags($var);
-	$var=str_replace("'", "\'", $var);
+	$var = stripslashes($var);
+	$var = htmlentities($var);
+	//$var = htmlspecialchars($value, ENT_QUOTES);
+	$var = strip_tags($var);
+	$var = str_replace("'", "\'", $var);
 
 	return $var;
 }

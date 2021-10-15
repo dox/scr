@@ -7,12 +7,6 @@ $guestName = $_POST['guest_name'];
 $guestDietary = explode(",", $_POST['guest_dietary']);
 $guestDomusDescription = $_POST['guest_domus_description'];
 
-if ($_POST['guest_domus'] == "true") {
-	$guestDomus = "on";
-} else {
-	$guestDomus = null;
-}
-
 if ($_POST['guest_wine'] == "true") {
 	$guestWine = "on";
 } else {
@@ -30,8 +24,8 @@ $bookingObject = new booking($bookingUID);
 $newGuest = array(
 	'guest_name' => $guestName,
 	'guest_dietary' => $guestDietary,
-	'guest_domus' => $guestDomus,
-	'guest_domus_description' => $guestDomusDescription,
+	'guest_charge_to' => $_POST['guest_charge_to'],
+	'guest_domus_reason' => $_POST['guest_domus_reason'],
 	'guest_wine' => $guestWine,
 	'guest_dessert' => $guestDessert
 );
