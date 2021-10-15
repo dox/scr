@@ -3,7 +3,7 @@
 $columns = array(
   "booking_uid",
   "booking_date",
-  "booking_domus",
+  "booking_charge_to",
   "booking_domus_reason",
   "booking_wine",
   "booking_dessert",
@@ -36,10 +36,16 @@ foreach ($bookings AS $booking) {
   $mealObject = new meal($booking['meal_uid']);
 
   $bookingGuests = $bookingObject->guestsArray();
+  
+  if ($mealObject->domus == "1") {
+    $charge_to = "Domus";
+  } else {
+    $charge_to = $bookingObject->charge_to;
+  }
 
   $bookingRow['booking_uid'] = $bookingObject->uid;
   $bookingRow['booking_date'] = $bookingObject->date;
-  $bookingRow['booking_domus'] = $bookingObject->domus;
+  $bookingRow['booking_charge_to'] = $charge_to;
   $bookingRow['booking_domus_reason'] = $bookingObject->domus_reason;
   $bookingRow['booking_wine'] = $bookingObject->wine;
   $bookingRow['booking_dessert'] = $bookingObject->dessert;
@@ -57,10 +63,20 @@ foreach ($bookings AS $booking) {
   foreach ($bookingGuests AS $guest) {
     $guest = json_decode($guest);
     $bookingRowGuest = null;
+    
+    if ($mealObject->domus == "1") {
+      $charge_to = "Domus";
+    } else {
+      if (isset($guest->charge_to)) {
+        $charge_to = $guest->charge_to;
+      } else {
+        $charge_to = "Unknown";
+      }
+    }
 
     $bookingRowGuest['booking_uid'] = $bookingObject->uid;
-    $bookingRow['booking_date'] = $bookingObject->date;
-    $bookingRowGuest['booking_domus'] = onToOne($guest->guest_domus);
+    $bookingRowGuest['booking_date'] = $bookingObject->date;
+    $bookingRowGuest['booking_charge_to'] = $charge_to;
     $bookingRowGuest['booking_domus_reason'] = $guest->guest_domus_description;
     $bookingRowGuest['booking_wine'] = onToOne($bookingObject->wine);
     $bookingRowGuest['booking_dessert'] = onToOne($bookingObject->dessert);

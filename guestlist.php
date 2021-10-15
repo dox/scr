@@ -73,7 +73,7 @@ $bookingsClass = new bookings();
           $displayName = $memberObject->displayName();
         }
 
-        if ($bookingObject->domus == "1") {
+        if ($bookingObject->charge_to == "Domus" || $mealObject->domus == "1") {
           $icons[] = "<svg width=\"2em\" height=\"2em\" class=\"mx-1\"><use xlink:href=\"img/icons.svg#graduation-cap\"/></svg>";
         } else {
           $icons[] = "<svg width=\"2em\" height=\"2em\" class=\"mx-1\"><use xlink:href=\"img/icons.svg#blank\"/></svg>";
