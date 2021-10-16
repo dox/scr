@@ -259,11 +259,6 @@ function itterate() {
           </div>
 
           <div class="col-12">
-            <label for="dietary" class="form-label">Dietary Information</label>
-            <input type="text" class="form-control" name="dietary" id="dietary">
-          </div>
-
-          <div class="col-12">
             <label for="email" class="form-label">Email <span class="text-muted">(Optional)</span></label>
             <input type="email" class="form-control" name="email" id="email">
             <div class="invalid-feedback">
