@@ -2,6 +2,8 @@
 include_once("../../inc/autoload.php");
 
 $membersClass = new members;
+
+$memberObject = new member($_SESSION['username']);
 $bookingObject = new booking($_GET['bookingUID']);
 $mealObject = new meal($bookingObject->meal_uid);
 
@@ -25,7 +27,6 @@ if (isset($_GET['guestUID'])) {
   // we're adding a new guest
   $mode = "add";
   $title = "Add Guest";
-  $memberObject->dietary = array();
 }
 ?>
 
@@ -37,7 +38,13 @@ if (isset($_GET['guestUID'])) {
       <div class="form-group mb-3">
         <label for="name">Guest Name</label>
         <input type="text" class="form-control" name="guest_name" id="guest_name" aria-describedby="termNameHelp" value="<?php echo $guestObject->guest_name; ?>" required>
-        <small id="nameHelp" class="form-text text-muted">This name will show on the sign-up list</small>
+        <?php
+        if ($memberObject->opt_in == "1") {
+          echo "<small id=\"nameHelp\" class=\"form-text text-muted\">This name will appear on the sign-up list</small>";
+        } else {
+          echo "<small id=\"nameHelp\" class=\"form-text text-muted\">This name will be hidden on the sign-up list.  You can change your default privacy settings in <a href=\"index.php?n=member\">your profile</a></small>";
+        }
+        ?>
       </div>
 
       <div class="mb-3">
