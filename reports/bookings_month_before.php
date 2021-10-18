@@ -39,16 +39,10 @@ foreach ($bookings AS $booking) {
   $mealObject = new meal($booking['meal_uid']);
 
   $bookingGuests = $bookingObject->guestsArray();
-  
-  if ($mealObject->domus == "1") {
-    $charge_to = "Domus";
-  } else {
-    $charge_to = $bookingObject->charge_to;
-  }
 
   $bookingRow['booking_uid'] = $bookingObject->uid;
   $bookingRow['booking_date'] = $bookingObject->date;
-  $bookingRow['booking_charge_to'] = $charge_to;
+  $bookingRow['booking_charge_to'] = $bookingObject->charge_to;
   $bookingRow['booking_domus_reason'] = $bookingObject->domus_reason;
   $bookingRow['booking_wine'] = $bookingObject->wine;
   $bookingRow['booking_dessert'] = $bookingObject->dessert;
@@ -71,8 +65,8 @@ foreach ($bookings AS $booking) {
     if ($mealObject->domus == "1") {
       $charge_to = "Domus";
     } else {
-      if (isset($guest->charge_to)) {
-        $charge_to = $guest->charge_to;
+      if (isset($guest->guest_charge_to)) {
+        $charge_to = $guest->guest_charge_to;
       } else {
         $charge_to = "Unknown";
       }
@@ -100,19 +94,6 @@ foreach ($bookings AS $booking) {
 
   $bookingsArray[] = $bookingRow;
 }
-
-
-function onToOne($input = null) {
-  if ($input == "on" || $input == "1") {
-    $return = 1;
-  } else {
-    $return = null;
-  }
-
-  return $return;
-}
-
-
 
 // Build the CSV from the bookingsArray...
 foreach ($bookingsArray AS $booking) {
