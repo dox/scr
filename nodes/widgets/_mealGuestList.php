@@ -21,7 +21,7 @@ foreach ($thisMealsBookingsUIDs AS $booking) {
   $guestsArray = $guestBookingObject->guestsArray();
   $totalGuests = count($guestsArray);
   
-  if ($guestBookingObject->dessert == "1" || $guest->guest_dessert == "on") {
+  if ($guestBookingObject->dessert == "1") {
     $icon = " <svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#cookie\"></use></svg>";
   } else {
    $icon = ""; 
