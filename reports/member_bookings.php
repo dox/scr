@@ -11,7 +11,7 @@ if ($_SESSION['admin'] != true) {
 $columns = array(
   "booking_uid",
   "meal_uid",
-  "booking_domus",
+  "booking_charge_to",
   "booking_domus_reason",
   "booking_wine",
   "booking_dessert",
@@ -35,12 +35,12 @@ foreach ($bookings AS $bookingUID) {
   $bookingObject = new booking($bookingUID);
   $mealObject = new meal($bookingObject->meal_uid);
 
-  $bookingGuests = json_decode($bookingObject->guests_array);
+  $bookingGuests = json_decode($bookingObject->guests_array, true);
 
   $bookingRow['booking_uid'] = $bookingObject->uid;
   $bookingRow['meal_uid'] = $bookingObject->meal_uid;
-  $bookingRow['booking_domus'] = $bookingObject->domus;
-  $bookingRow['booking_domus_reason'] = $bookingObject->booking_domus_reason;
+  $bookingRow['booking_charge_to'] = $bookingObject->charge_to;
+  $bookingRow['booking_domus_reason'] = $bookingObject->domus_reason;
   $bookingRow['booking_wine'] = $bookingObject->wine;
   $bookingRow['booking_dessert'] = $bookingObject->dessert;
   $bookingRow['booking_guests'] = count($bookingGuests);
@@ -56,12 +56,15 @@ foreach ($bookings AS $bookingUID) {
 
   foreach ($bookingGuests AS $guest) {
     $bookingRowGuest = null;
+    
+    $guest = json_decode($guest);
 
     $bookingRowGuest['booking_uid'] = $bookingObject->uid;
-    $bookingRowGuest['booking_domus'] = $guest->guest_domus;
-    $bookingRowGuest['booking_domus_reason'] = $guest->guest_domus_description;
-    $bookingRowGuest['booking_wine'] = $bookingObject->wine;
-    $bookingRowGuest['booking_dessert'] = $bookingObject->dessert;
+    $bookingRowGuest['meal_uid'] = $bookingObject->meal_uid;
+    $bookingRowGuest['booking_charge_to'] = $guest->guest_charge_to;
+    $bookingRowGuest['booking_domus_reason'] = $guest->guest_domus_reason;
+    $bookingRowGuest['booking_wine'] = onToOne($guest->guest_wine) ;
+    $bookingRowGuest['booking_dessert'] = onToOne($guest->guest_dessert);
     $bookingRowGuest['meal_name'] = $mealObject->name;
     $bookingRowGuest['meal_notes'] = $mealObject->notes;
     $bookingRowGuest['meal_date'] = date('Y-m-d', strtotime($mealObject->date_meal));

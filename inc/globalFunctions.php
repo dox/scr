@@ -245,4 +245,13 @@ function ALTmakeTitle($title = null, $subtitle = nulll, $iconsArray = null) {
 
 	return $output;
 }
+
+function onToOne($input = null) {
+	if ($input == "on" || $input == "1") {
+		$return = 1;
+	} else {
+		$return = null;
+	}
+	return $return;
+}
 ?>
