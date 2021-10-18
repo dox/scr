@@ -273,16 +273,32 @@ echo makeTitle($title, $subtitle, $icons);
     </div>
 
     <hr />
+    
+    <div class="mb-3">
+      <label for="type" class="form-label">Default Charge Meal To</label>
+      <select class="form-select" name="charge_to" id="charge_to">
+        <?php
+        $charge_to_options = explode(",", $settingsClass->value('booking_charge-to'));
+
+        foreach ($charge_to_options AS $option) {
+          if ($option == $mealObject->charge_to) {
+            $selected = " selected ";
+          } else {
+            $selected = "";
+          }
+          $output = "<option value=\"" . $option . "\"" . $selected . ">" . $option . "</option>";
+
+          echo $output;
+        }
+        ?>
+      </select>
+      <div id="scr_charge_toHelp" class="form-text">* wine charged via Battels</div>
+    </div>
+    
+    
+    <hr />
 
     <div class="divide-y">
-      <div>
-        <label class="row">
-          <span class="col"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#graduation-cap"></svg> Domus (for all members)</span>
-          <span class="col-auto">
-            <label class="form-check form-check-single form-switch"><input class="form-check-input" type="checkbox" name="domus" <?php if ($mealObject->domus == 1) { echo "checked=\"\""; } ?> value="1"></label>
-          </span>
-        </label>
-      </div>
       <div>
         <label class="row">
           <span class="col"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#wine-glass"></svg> Wine Available</span>

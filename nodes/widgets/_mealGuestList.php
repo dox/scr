@@ -14,17 +14,23 @@ $thisMealsBookingsUIDs = $bookingsClass->bookingsUIDsByMealUID($_GET['mealUID'])
 <?php
 foreach ($thisMealsBookingsUIDs AS $booking) {
   $output = "";
-
+  
   $guestBookingObject = new booking($booking['uid']);
   $memberObject = new member($guestBookingObject->member_ldap);
-
+    
   $guestsArray = $guestBookingObject->guestsArray();
   $totalGuests = count($guestsArray);
-
-  if ($totalGuests > 0) {
-    $output .= "<li>" . $memberObject->public_displayName() . " (" . $totalGuests . autoPluralise(" guest", " guests", $totalGuests) . ")</li>";
+  
+  if ($guestBookingObject->dessert == "1" || $guest->guest_dessert == "on") {
+    $icon = " <svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#cookie\"></use></svg>";
   } else {
-    $output .= "<li>" . $memberObject->public_displayName() . "</li>";
+   $icon = ""; 
+  }
+  
+  if ($totalGuests > 0) {
+    $output .= "<li>" . $memberObject->public_displayName() . " (" . $totalGuests . autoPluralise(" guest", " guests", $totalGuests) . ")" . $icon . "</li>";
+  } else {
+    $output .= "<li>" . $memberObject->public_displayName() . $icon . "</li>";
   }
 
   if ($totalGuests == $totalGuests) {
@@ -32,7 +38,14 @@ foreach ($thisMealsBookingsUIDs AS $booking) {
 
     foreach ($guestsArray AS $guest) {
       $guest = json_decode($guest);
-      $output .= "<li>" . $guest->guest_name . "</li>";
+      
+      if ($guest->guest_dessert == "on") {
+        $icon = " <svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#cookie\"></use></svg>";
+      } else {
+       $icon = ""; 
+      }
+      
+      $output .= "<li>" . $guest->guest_name . $icon . "</li>";
     }
     $output .= "</ul>";
   }

@@ -86,6 +86,8 @@ function addGuest(this_id) {
     // Close the Guest Add modal
     var modalGuestAdd = bootstrap.Modal.getInstance(document.getElementById('modalGuestAdd'));
     modalGuestAdd.hide();
+    
+    location.reload();
   }
 
   xhr.onerror = function(){
@@ -140,6 +142,8 @@ function editGuest(this_id) {
     // Close the Guest Add modal
     var modalGuestAdd = bootstrap.Modal.getInstance(document.getElementById('modalGuestAdd'));
     modalGuestAdd.hide();
+    
+    location.reload();
   }
 
   xhr.onerror = function(){
@@ -180,6 +184,8 @@ function deleteGuest(this_id) {
         // Close the Guest Add modal
         var modalGuestAdd = bootstrap.Modal.getInstance(document.getElementById('modalGuestAdd'));
         modalGuestAdd.hide();
+        
+        location.reload();
     	}
 
     	xhr.onerror = function(){
@@ -233,7 +239,7 @@ function editGuestModal(e) {
         const value = e.target.value;
         const text = guest_element.options[guest_element.selectedIndex].text;
        
-        if (value == "College Hospitality" || value == "Entertainment Allowance") {
+        if (value != "Battels") {
           // Domus/Entertainment sleected
           // show the domus_reason text box
           guest_domus_reason.required = true;

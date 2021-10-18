@@ -117,7 +117,7 @@ if (isset($_GET['guestUID'])) {
         <label class="row">
           <?php
           $wineDisabledCheck = " disabled";
-          if ($mealObject->allowed_wine == 1 && $mealObject->check_meal_bookable(true)) {
+          if ($mealObject->allowed_wine == 1 && $mealObject->check_cutoff_ok(true)) {
             $wineDisabledCheck = "";
           }
 
@@ -138,19 +138,45 @@ if (isset($_GET['guestUID'])) {
         <label class="row">
           <?php
           $dessertDisabledCheck = " disabled";
-          if ($mealObject->allowed_dessert == 1 && $mealObject->check_meal_bookable(true)) {
-            $dessertDisabledCheck = "";
-          }
-
-          $checked = "";
+          $dessertHelper = "(dessert is not available)";
+          $dessertChecked = "";
+          
           if ($guestObject->guest_dessert == "on") {
-            $checked = "checked";
+            // guest already booked on for dessert
+            $dessertChecked = " checked";
+            
+            if ($mealObject->allowed_dessert == 1 && $mealObject->check_meal_bookable(true)) {
+              $dessertDisabledCheck = "";
+              $dessertHelper = "";
+            } else {
+              $dessertHelper = "Deadline passed";
+            }
+            
+            
+          } else {
+            // we're not yet booked on for dessert
+            if ($mealObject->allowed_dessert == 1 && $mealObject->check_meal_bookable(true)) {
+              $dessertDisabledCheck = "";
+              $dessertHelper = "";
+            }
+            
+            // check if member has booked dessert - if they haven't then guests aren't allowed either
+            if ($bookingObject->dessert != 1) {
+              $dessertDisabledCheck = " disabled";
+              $dessertHelper =  "(you are required to have dessert also)";
+            }
+            
+            // check if dessert capacity is reached
+            if ($mealObject->total_dessert_bookings_this_meal() >= $mealObject->scr_dessert_capacity) {
+              $dessertDisabledCheck = " disabled";
+              $dessertHelper =  "(capacity for dessert reached)";
+            }
           }
           ?>
-          <span class="col"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#cookie"></svg> Guest Dessert</span>
+          <span class="col"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#cookie"></svg> Guest Dessert <?php echo $dessertHelper; ?></span>
           <span class="col-auto">
             <label class="form-check form-check-single form-switch">
-              <input class="form-check-input" id="guest_dessert" name="guest_dessert" type="checkbox" <?php echo $checked; ?> <?php echo $dessertDisabledCheck; ?>>
+              <input class="form-check-input" id="guest_dessert" name="guest_dessert" type="checkbox" <?php echo $dessertChecked; ?> <?php echo $dessertDisabledCheck; ?>>
             </label>
           </span>
         </label>

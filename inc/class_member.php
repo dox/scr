@@ -14,7 +14,6 @@ class member {
   public $email;
   public $dietary;
   public $opt_in;
-  public $default_domus;
   public $default_wine;
   public $default_dessert;
   public $date_lastlogon;

@@ -10,6 +10,7 @@ class meal {
   public $date_cutoff;
   public $location;
   public $domus;
+  public $charge_to;
   public $allowed_wine;
   public $allowed_dessert;
   public $scr_capacity;

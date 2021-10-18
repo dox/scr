@@ -9,6 +9,7 @@ $columns = array(
   "booking_dessert",
   "booking_guests",
   "meal_name",
+  "meal_default_charge_to",
   "meal_notes",
   "meal_date",
   "meal_time",
@@ -20,8 +21,10 @@ $columns = array(
 );
 
 //get all meals in the previous month
-$sqlMeals  = "SELECT uid FROM meals WHERE date_meal >= DATE_FORMAT( CURRENT_DATE - INTERVAL 1 MONTH, '%Y/%m/01' ) 
-AND date_meal < DATE_FORMAT( CURRENT_DATE, '%Y/%m/01' ) ORDER BY `meals`.`date_meal`  ASC";
+$sqlMeals  = "SELECT uid FROM meals WHERE date_meal >= DATE_FORMAT( CURRENT_DATE - INTERVAL 1 MONTH, '%Y/%m/01' ) AND date_meal < DATE_FORMAT( CURRENT_DATE, '%Y/%m/01' ) ORDER BY `meals`.`date_meal`  ASC";
+
+//get all meals in THIS month
+//$sqlMeals  = "SELECT uid FROM meals WHERE date_meal >= DATE_FORMAT( CURRENT_DATE - INTERVAL 1 MONTH, '%Y/%m/01' ) AND date_meal < CURRENT_DATE ORDER BY `meals`.`date_meal`  ASC";
 
 // get all the bookings that reference the meals from the previous month
 $sql = "SELECT * FROM bookings WHERE meal_uid IN (" . $sqlMeals . ")";
@@ -51,6 +54,7 @@ foreach ($bookings AS $booking) {
   $bookingRow['booking_dessert'] = $bookingObject->dessert;
   $bookingRow['booking_guests'] = count($bookingGuests);
   $bookingRow['meal_name'] = $mealObject->name;
+  $bookingRow['meal_default_charge_to'] = $mealObject->charge_to;
   $bookingRow['meal_notes'] = $mealObject->notes;
   $bookingRow['meal_date'] = date('Y-m-d', strtotime($mealObject->date_meal));
   $bookingRow['meal_time'] = date('H:i', strtotime($mealObject->date_meal));

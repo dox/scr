@@ -54,11 +54,9 @@ if (isset($bookingByMember)) {
             $selected = "";
             if ($bookingObject->charge_to == $chargeToOption) {
               $selected = " selected";
-              $dontSelectAgain = true;
+              //$dontSelectAgain = true;
             } else {
-              if ($dontSelectAgain != true && ($chargeToOption == "Domus" || $mealObject->domus == 1 || $memberObject->default_domus == 1)) {
-                $selected = " selected";
-              }
+              $selected = "";
             }
             
             $output = "<option " . $selected . " value=\"" . $chargeToOption . "\">" . $chargeToOption . "</option>";
@@ -67,7 +65,7 @@ if (isset($bookingByMember)) {
           }
           
           // show/hide the domus_reason text box:
-          if ($bookingObject->charge_to == "Battels") {
+          if ($bookingObject->charge_to == "Battels" || $bookingObject->charge_to == "Dining Entitlement") {
             $domusVisual = " visually-hidden";
           } else {
             $domusVisual = "";
@@ -75,15 +73,15 @@ if (isset($bookingByMember)) {
           ?>
         </select>
         
-        <input class="form-control mb-3 <?php echo $domusVisual; ?>" type="text" id="domus_reason" name="domus_reason" placeholder="Description (required)" aria-label="Charge To Description" value="<?php echo $bookingObject->domus_reason; ?>" <?php if ($bookingObject->charge_to <> "Battels") { echo " required";} ?>>
+        <input class="form-control mb-3 <?php echo $domusVisual; ?>" type="text" id="domus_reason" name="domus_reason" placeholder="Description (required)" aria-label="Charge To Description" value="<?php echo $bookingObject->domus_reason; ?>" <?php if ($bookingObject->charge_to == "Domus") { echo " required";} ?>>
         
         <div>
           <label class="row">
-            <span class="col"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#wine-glass"></svg> Wine</span>
+            <span class="col"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#wine-glass"></svg> Wine (charged via Battels)</span>
             <span class="col-auto">
               <label class="form-check form-check-single form-switch">
                 <?php
-                if ($mealObject->allowed_wine == 1 && $mealObject->check_meal_bookable(true)) {
+                if ($mealObject->allowed_wine == 1 && $mealObject->check_cutoff_ok(true)) {
                   $wineDisabledCheck = "";
                 } else {
                   $wineDisabledCheck = " disabled";
@@ -96,17 +94,52 @@ if (isset($bookingByMember)) {
         </div>
         <div>
           <label class="row">
-            <span class="col"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#cookie"></svg> Dessert</span>
-            <span class="col-auto">
-              <label class="form-check form-check-single form-switch">
-                <?php
-                if ($mealObject->allowed_dessert == 1 && $mealObject->check_meal_bookable(true)) {
-                  $dessertDisabledCheck = "";
-                } else {
+            <?php
+            $dessertHelper = "";
+            $dessertChecked = "";
+            $dessertDisabledCheck = " disabled";
+            
+            if ($bookingObject->dessert == 1) {
+              // we're already booked on for dessert
+              $dessertChecked = "checked";
+              
+              if ($mealObject->allowed_dessert == 1 && $mealObject->check_meal_bookable(true)) {
+                $dessertDisabledCheck = "";
+              } else {
+                $dessertHelper = "Deadline passed";
+              }
+              
+              // check if we have guests with dessert, if so, don't let this box be unticked!
+              foreach ($bookingObject->guestsArray() AS $guest) {
+                $guest = json_decode($guest);
+                
+                if ($guest->guest_dessert == "on") {
+                  $dessertHelper = "(your guests are having dessert)";
                   $dessertDisabledCheck = " disabled";
                 }
-                ?>
-                <input class="form-check-input" <?php echo $dessertDisabledCheck; ?> id="dessert" name="dessert" value="1" type="checkbox" <?php if ($bookingObject->dessert == 1) { echo "checked";} ?>>
+              }
+              
+              
+            } else {
+              // we're not yet booked on for dessert
+              if ($mealObject->allowed_dessert == 1 && $mealObject->check_meal_bookable(true)) {
+                $dessertDisabledCheck = "";
+              }
+              
+              // check if dessert capacity is reached
+              if ($mealObject->total_dessert_bookings_this_meal() >= $mealObject->scr_dessert_capacity) {
+                $dessertDisabledCheck = " disabled";
+                $dessertHelper =  "(capacity for dessert reached)";
+              }
+            }
+            
+            
+           
+            ?>
+            <span class="col"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#cookie"></svg> Dessert <?php echo $dessertHelper; ?></span>
+            <span class="col-auto">
+              <label class="form-check form-check-single form-switch">
+                <input class="form-check-input" <?php echo $dessertDisabledCheck; ?> id="dessert" name="dessert" value="1" type="checkbox" <?php echo $dessertChecked; ?>>
               </label>
             </span>
           </label>
@@ -215,8 +248,6 @@ if (isset($bookingByMember)) {
   </div>
 </div>
 
-
-<h2 id="pick"></h2>
 <script>
 // logic for charge_to select
 const element = document.getElementById("charge_to");

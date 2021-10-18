@@ -8,13 +8,6 @@ $memberObject = new member($_SESSION['username']);
 $wineValue = "0";
 $dessertValue = "0";
 
-if ($mealObject->domus == 1 || $memberObject->default_domus == 1) {
-	$chargeToValue = "Domus";
-	$domusReason = "Meal auto-marked as Domus";
-} else {
-	$chargeToValue = "Battels";
-}
-
 if ($mealObject->allowed_wine == 1 && $memberObject->default_wine == 1) {
 	$wineValue = "1";
 }
@@ -27,7 +20,7 @@ $bookingArray = array(
 	'meal_uid' => $_POST['meal_uid'],
 	'type' => $memberObject->type,
 	'member_ldap' => strtoupper($_SESSION['username']),
-	'charge_to' => $chargeToValue,
+	'charge_to' => $mealObject->charge_to,
 	'domus_reason' => $domusReason,
 	'wine' => $wineValue,
 	'dessert' => $dessertValue

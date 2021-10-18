@@ -28,9 +28,6 @@ if (isset($_POST['memberUID'])) {
   if (!isset($_POST['opt_in'])) {
     $_POST['opt_in'] = 0;
   }
-  if (!isset($_POST['default_domus'])) {
-    $_POST['default_domus'] = 0;
-  }
   if (!isset($_POST['default_wine'])) {
     $_POST['default_wine'] = 0;
   }
@@ -252,16 +249,6 @@ include_once('_member_stats.php');
             </label>
           </div>
           <hr />
-          <div>
-            <label class="row">
-              <span class="col"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#graduation-cap"></svg> Always Domus <small>(Overrides meal setting)</small></span>
-              <span class="col-auto">
-                <label class="form-check form-check-single form-switch">
-                  <input class="form-check-input" type="checkbox" id="default_domus" name="default_domus" value="1" <?php if ($memberObject->default_domus == "1") { echo " checked";} ?> <?php echo $disabledCheck; ?>>
-                </label>
-              </span>
-            </label>
-          </div>
           <div>
             <label class="row">
               <span class="col"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#wine-glass"></svg> Default Wine <small>(when available)</small></span>
