@@ -40,7 +40,8 @@ if (isset($_GET['add'])) {
   $title = $mealObject->name;
   $subtitle = $mealObject->location . " " . dateDisplay($mealObject->date_meal);
   $icons[] = array("class" => "btn-danger", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#trash\"/></svg> Delete Meal", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#deleteMealModal\"");
-  $icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#trash\"/></svg> Guest List", "value" => "onclick=\"window.open('guestlist.php?mealUID=" . $mealObject->uid . "')\"");
+  $icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#wine-glass\"/></svg> Drinks Sign-up", "value" => "onclick=\"window.open('guestlist.php?mealUID=" . $mealObject->uid . "&type=predinner')\"");
+  $icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#person\"/></svg> Guest List", "value" => "onclick=\"window.open('guestlist.php?mealUID=" . $mealObject->uid . "')\"");
 }
 
 
