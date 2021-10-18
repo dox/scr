@@ -132,9 +132,6 @@ if (isset($bookingByMember)) {
                 $dessertHelper =  "(capacity for dessert reached)";
               }
             }
-            
-            
-           
             ?>
             <span class="col"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#cookie"></svg> Dessert <?php echo $dessertHelper; ?></span>
             <span class="col-auto">

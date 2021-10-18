@@ -13,7 +13,10 @@ if ($mealObject->allowed_wine == 1 && $memberObject->default_wine == 1) {
 }
 
 if ($mealObject->allowed_dessert == 1 && $memberObject->default_dessert == 1) {
-	$wineValue = "1";
+	// check if dessert capacity is reached
+	if ($mealObject->total_dessert_bookings_this_meal() < $mealObject->scr_dessert_capacity) {
+		$dessertValue = "1";
+	}
 }
 
 $bookingArray = array(
