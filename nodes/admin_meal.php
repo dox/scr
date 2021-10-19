@@ -219,7 +219,7 @@ echo makeTitle($title, $subtitle, $icons);
       </div>
 
       <div class="col mb-3">
-        <label for="mcr_dessert_capacity" class="form-label">MCR Desert Capacity</label>
+        <label for="mcr_dessert_capacity" class="form-label">MCR Dessert Capacity</label>
         <input type="number" class="form-control" name="mcr_dessert_capacity" id="mcr_dessert_capacity" value="<?php echo $capacityMCRDessert; ?>" min=0 required>
         <div class="invalid-feedback">
           MCR Dessert Capacity is required.
