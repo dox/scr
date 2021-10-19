@@ -172,6 +172,11 @@ if (isset($_GET['guestUID'])) {
               $dessertHelper =  "(capacity for dessert reached)";
             }
           }
+          
+          //admin override for dessert booking!
+          if ($_SESSION['admin'] == 1) {
+            $dessertDisabledCheck = "";
+          }
           ?>
           <span class="col"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#cookie"></svg> Guest Dessert <?php echo $dessertHelper; ?></span>
           <span class="col-auto">

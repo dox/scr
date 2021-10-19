@@ -16,7 +16,18 @@ $bookingsClass = new bookings();
 
 <body>
   <div class="container">
-    <h1 class="text-center"><?php echo $mealObject->name; if(isset($_GET['type'])) { echo " - Pre-Dinner Drinks Signup"; } ?></h1>
+    <?php
+    $title = $mealObject->name;
+    if (isset($_GET['type'])) {
+      if (strpos($mealObject->name, 'Buffet') !== false) {
+        $title .= " - Drinks Signup";
+      } else {
+        $title .= " - Pre-Dinner Drinks Signup";
+      }
+    }
+    
+    ?>
+    <h1 class="text-center"><?php echo $title; ?></h1>
     <h2 class="text-center mb-3"><?php echo $mealObject->location; ?> <small class="text-muted"><?php echo dateDisplay($mealObject->date_meal, true); ?></small></h2>
 
     <div class="row row-deck row-cards">
