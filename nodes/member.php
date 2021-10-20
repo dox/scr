@@ -45,8 +45,10 @@ if (isset($_POST['memberUID'])) {
 <?php
 $title = $memberObject->displayName() . $memberObject->stewardBadge();
 $subtitle = $memberObject->type . " (" . $memberObject->category . ")" . $memberObject->adminBadge();
-
-echo makeTitle($title, $subtitle);
+if ($_SESSION['admin'] == 1) {
+  $icons[] = array("class" => "btn-danger", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#trash\"/></svg> Delete Member", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#deleteMemberModal\"");
+}
+echo makeTitle($title, $subtitle, $icons);
 
 include_once('_member_stats.php');
 
@@ -274,6 +276,56 @@ include_once('_member_stats.php');
   </div>
 </div>
 
+<!-- Delete Member Modal -->
+<div class="modal" tabindex="-1" id="deleteMemberModal" data-backdrop="static" data-keyboard="false" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Delete Member <span class="text-danger"><strong>WARNING!</strong></span></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p><span class="text-danger"><strong>WARNING!</strong> Are you sure you want to delete this member?</p>
+        <p>This will also delete <strong>all</strong> bookings (past and present) for this member.<p>
+        <p><span class="text-danger"><strong>THIS ACTION CANNOT BE UNDONE!</strong></span></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-link link-secondary mr-auto" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-danger" onclick="memberDelete(<?php echo $memberObject->uid; ?>)"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#trash"/></svg> Delete Member</button>
+      </div>
+    </div>
+  </div>
+</div>
+  
 <script>
 checkMaxCheckboxes(<?php echo $dietaryOptionsMax; ?>);
+
+function memberDelete(member_uid) {
+  var member_uid = member_uid;
+  
+  if (window.confirm("Are you really sure you want to delete this member and all of their past/future bookings?")) {
+    var xhr = new XMLHttpRequest();
+
+    var formData = new FormData();
+    formData.append("member_uid", member_uid);
+    
+    xhr.onload = async function() {
+      // Close the Guest Add modal
+      var deleteMemberModal = bootstrap.Modal.getInstance(document.getElementById('deleteMemberModal'));
+      deleteMemberModal.hide();
+      
+      location.href = 'index.php?n=admin_members';
+    }
+
+    xhr.onerror = function(){
+      // failure case
+      alert (xhr.responseText);
+    }
+
+    xhr.open ("POST", "../actions/member_delete.php", true);
+    xhr.send (formData);
+
+    return false;
+  }
+}
 </script>

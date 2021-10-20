@@ -281,5 +281,30 @@ class member {
 
     return array_sum($guestsArray);
   }
+  
+  public function delete() {
+    global $db, $logsClass
+    ;
+    // warning - deletes a member and all their bookings!
+    $memberUID = $this->uid;
+    $memberName = $this->displayName();
+    
+    $sqlMember  = "DELETE FROM members";
+    $sqlMember .= " WHERE uid = '" . $this->uid . "'";
+    $sqlMember .= " LIMIT 1";
+
+    $sqlBookings  = "DELETE FROM bookings";
+    $sqlBookings .= " WHERE member_ldap = '" . $this->ldap . "'";
+    
+    $deleteMember   = $db->query($sqlMember);
+    $deleteBookings = $db->query($sqlBookings);
+    
+    $logArray['category'] = "member";
+    $logArray['result'] = "danger";
+    $logArray['description'] = "Deleted  " . $memberName . " [memberUID:" . $memberUID . "] and all associated bookings";
+    $logsClass->create($logArray);
+    
+    return true;
+  }
 }
 ?>
