@@ -306,5 +306,33 @@ class member {
     
     return true;
   }
+  
+  public function memberRow() {
+    global $settingsClass;
+    
+    $scrStewardLDAP = $settingsClass->value('member_steward');
+    
+    if ($this->type == "SCR" && $this->enabled == "1") {
+      $handle  = "<svg width=\"1em\" height=\"1em\" class=\"handle\"><use xlink:href=\"img/icons.svg#grip-vertical\"/></svg>";
+    } else {
+      $handle = "";
+    }
+    
+    $output  = "<li class=\"list-group-item\" id=\"" . $this->uid . "\">";
+    $output .= $handle;
+    $output .= "<a href=\"index.php?n=member&memberUID=" . $this->uid . "\">" . $this->displayName() . "</a>";
+    
+    $output .= "<span class=\"float-end\">";
+    $output .= $this->stewardBadge() ." ";
+    
+    $output .= $this->adminBadge() ." ";
+    
+    $output .= "<span class=\"text-muted\">" . $this->category . "</span>";
+    
+    $output .= "</span>";
+    $output .= "</li>";
+    
+    return $output;
+  }
 }
 ?>
