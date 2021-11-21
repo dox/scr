@@ -33,11 +33,10 @@ class terms extends term {
 
     $weeksBefore = $settingsClass->value('meal_weeks_navbar_before');
     $weeksAfter = $settingsClass->value('meal_weeks_navbar_after');
-
+    
+    $thisWeekStartDate = date('Y-m-d', strtotime('sunday this week'));
     $i = $weeksBefore;
     do {
-      $thisWeekStartDate = date('Y-m-d', strtotime('this week -1 day', time()));
-
       $weekDate = date('Y-m-d', strtotime($thisWeekStartDate . " -" . $i . " week"));
 
       $weeksArray[] = $weekDate;
@@ -47,8 +46,6 @@ class terms extends term {
 
     $i = 0;
     do {
-      $thisWeekStartDate = date('Y-m-d', strtotime('this week -1 day', time()));
-
       $weekDate = date('Y-m-d', strtotime($thisWeekStartDate . " +" . $i . " week"));
 
       $weeksArray[] = $weekDate;
@@ -58,8 +55,6 @@ class terms extends term {
 
     return $weeksArray;
   }
-
-
 }
 
 
