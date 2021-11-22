@@ -34,7 +34,7 @@ class terms extends term {
     $weeksBefore = $settingsClass->value('meal_weeks_navbar_before');
     $weeksAfter = $settingsClass->value('meal_weeks_navbar_after');
     
-    $thisWeekStartDate = date('Y-m-d', strtotime('sunday this week'));
+    $thisWeekStartDate = firstDayOfWeek();
     $i = $weeksBefore;
     do {
       $weekDate = date('Y-m-d', strtotime($thisWeekStartDate . " -" . $i . " week"));

@@ -40,7 +40,9 @@ echo makeTitle($title, $subtitle);
   <?php
   $termsClass = new terms();
   $windowOfWeeks = $termsClass->arrayWindowOfWeeks();
-
+  
+  $firstDayOfCurrentWeek = firstDayOfWeek();
+  
   foreach ($windowOfWeeks AS $week) {
     $checkTerm = $termsClass->checkIsInTerm($week);
     if (isset($checkTerm[0]['uid'])) {
@@ -50,7 +52,8 @@ echo makeTitle($title, $subtitle);
       $name = "<small>w/c</small> " . date('M jS', strtotime($week));
     }
 
-    if ($week == date('Y-m-d', strtotime('sunday this week'))) {
+    if ($week == $firstDayOfCurrentWeek) {
+      
       $class = "active";
       $name = "<strong>" . $name . "</strong>";
     } else {
@@ -80,7 +83,7 @@ echo makeTitle($title, $subtitle);
 function testFunc(this_id) {
   alert(this_id);
 }
-load_home('<?php echo date('Y-m-d', strtotime('sunday this week')); ?>');
+load_home('<?php echo $firstDayOfCurrentWeek; ?>');
 async function load_home(this_id) {
   var triggerEl = document.getElementById(this_id);
   var tabTrigger = new bootstrap.Tab(triggerEl);

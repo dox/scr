@@ -19,6 +19,24 @@ function dateDisplay($date = null, $longFormat = false) {
 	return $returnDate;
 }
 
+function firstDayOfWeek($inputDate = null) {
+		// considers Sunday the first day of the week
+		
+		if ($inputDate == null) {
+			$date = strtotime(date('Y-m-d'));
+		} else {
+			$date = strtotime($inputDate);
+		}
+		
+		if (date('N', $date) == 7) {
+			$returnDate = date('Y-m-d', $date);
+		} else {
+			$returnDate = date('Y-m-d', strtotime('sunday last week', $date));
+		}
+		
+		return $returnDate;
+	}
+
 function timeDisplay($date = null, $hour12 = false) {
 	global $settingsClass;
 
