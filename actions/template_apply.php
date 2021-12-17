@@ -47,6 +47,7 @@ if (date('N', strtotime($givenStartDate)) == 7) {
         $newMeal['menu'] = htmlspecialchars($mealObject->menu);
         $newMeal['notes'] = $mealObject->notes;
         $newMeal['photo'] = $mealObject->photo;
+        $newMeal['charge_to'] = $mealObject->charge_to;
 
         printArray($newMeal);
 
