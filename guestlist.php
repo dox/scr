@@ -12,6 +12,24 @@ $bookingsClass = new bookings();
 <html lang="en" class="h-100">
 <head>
   <?php include_once("views/html_head.php"); ?>
+  <style>
+  @media print 
+  {
+      @page {
+        size: A4; /* DIN A4 standard, Europe */
+        margin:0;
+      }
+      html, body {
+          width: 210mm;
+          height: 282mm;
+          background: #FFF;
+          overflow:visible;
+      }
+      body {
+          padding-top:15mm;
+      }
+  }
+</style>
 </head>
 
 <body>
