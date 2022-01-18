@@ -3,7 +3,7 @@ include_once("../inc/autoload.php");
 
 $bookingUID = $_POST['bookingUID'];
 $guestUID = $_POST['guest_uid'];
-$guestName = $_POST['guest_name'];
+$guestName = htmlspecialchars($_POST['guest_name'], ENT_QUOTES);
 $guestDietary = explode(",", $_POST['guest_dietary']);
 
 if ($_POST['guest_wine'] == "true") {

@@ -37,7 +37,7 @@ if (!isset($bookingObject)) {
     }
     $output  = "<li class=\"list-group-item d-flex justify-content-between lh-sm\">";
     $output .= "<div>";
-    $output .= "<h6 class=\"my-0\">" . $guestObject->guest_name . " " . $badge . "</h6>";
+    $output .= "<h6 class=\"my-0\">" . htmlspecialchars_decode($guestObject->guest_name) . " " . $badge . "</h6>";
     $output .= "<p>" . implode(" ", $icons) . "</p>";
     if (!empty($guestObject->guest_dietary)) {
       $output .= "<small class=\"text-muted\">" . implode(", ", $guestObject->guest_dietary) . "</small>";

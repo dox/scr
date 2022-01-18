@@ -3,7 +3,7 @@ include_once("../inc/autoload.php");
 
 $bookingUID = $_POST['bookingUID'];
 
-$guestName = $_POST['guest_name'];
+$guestName = htmlspecialchars($_POST['guest_name'], ENT_QUOTES);
 $guestDietary = explode(",", $_POST['guest_dietary']);
 $guestDomusDescription = $_POST['guest_domus_description'];
 

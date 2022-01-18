@@ -86,7 +86,7 @@ foreach ($bookings AS $booking) {
     $bookingRowGuest['member_type'] = "Guest";
     $bookingRowGuest['meal_default_charge_to'] = $mealObject->charge_to; 
     $bookingRowGuest['member_ldap'] = $memberObject->ldap;
-    $bookingRowGuest['member_name'] = $guest->guest_name;
+    $bookingRowGuest['member_name'] = htmlspecialchars_decode($guest->guest_name);
     $bookingRowGuest['member_category'] = $memberObject->category . " Guest";
 
     $bookingsArray[] = $bookingRowGuest;

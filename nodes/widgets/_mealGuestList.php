@@ -45,7 +45,7 @@ foreach ($thisMealsBookingsUIDs AS $booking) {
        $icon = ""; 
       }
       
-      $output .= "<li>" . $guest->guest_name . $icon . "</li>";
+      $output .= "<li>" . htmlspecialchars_decode($guest->guest_name) . $icon . "</li>";
     }
     $output .= "</ul>";
   }

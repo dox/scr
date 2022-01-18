@@ -37,7 +37,7 @@ if (isset($_GET['guestUID'])) {
     <form method="post" class="needs-validation" action="../actions/booking_add_guest.php">
       <div class="form-group mb-3">
         <label for="name">Guest Name</label>
-        <input type="text" class="form-control" name="guest_name" id="guest_name" aria-describedby="termNameHelp" value="<?php echo $guestObject->guest_name; ?>" required>
+        <input type="text" class="form-control" name="guest_name" id="guest_name" aria-describedby="termNameHelp" value="<?php echo htmlspecialchars_decode($guestObject->guest_name); ?>" required>
         <?php
         if ($memberObject->opt_in == "1") {
           echo "<small id=\"nameHelp\" class=\"form-text text-muted\">This name will appear on the sign-up list</small>";

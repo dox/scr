@@ -166,7 +166,7 @@ $bookingsClass = new bookings();
             }
 
             $output .= "<div class=\"d-flex w-100 justify-content-between\">";
-            $output .= "<h6 class=\"mb-1 text-muted\"> + " . $guest->guest_name . "</h6>";
+            $output .= "<h6 class=\"mb-1 text-muted\"> + " . htmlspecialchars_decode($guest->guest_name) . "</h6>";
             $output .= "<small>" . implode("", $guestIcons) . "</small>";
             $output .= "</div>";
 
