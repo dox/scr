@@ -35,7 +35,7 @@ foreach ($members AS $member) {
   $memberRow['category'] = $memberObject->category;
   $memberRow['ldap'] = $memberObject->ldap;
   $memberRow['title'] = $memberObject->title;
-  $memberRow['firstname'] = $memberObject->namefirstname;
+  $memberRow['firstname'] = $memberObject->firstname;
   $memberRow['lastname'] = $memberObject->lastname;
   $memberRow['email'] = $memberObject->email;
   $memberRow['dietary'] = $memberObject->dietary;
