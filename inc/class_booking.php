@@ -43,7 +43,12 @@ class booking {
     $guest_uid = "x" . bin2hex(random_bytes(5));
     $guest['guest_uid'] = $guest_uid;
     foreach ($newGuestArray AS $key => $value) {
-      $guest[$key] = htmlspecialchars($value, ENT_QUOTES);
+      // check for htmlspecialchars = but not for dietary info!
+      if ($key == "guest_dietary") {
+        $guest[$key] = $value;        
+      } else {
+        $guest[$key] = htmlspecialchars($value, ENT_QUOTES);
+      }
     }
 
 	  $sql  = "UPDATE " . self::$table_name;
