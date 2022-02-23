@@ -35,10 +35,10 @@ if (isset($_POST['inputUsername']) && isset($_POST['inputPassword']) && $_SESSIO
       // EXISTING user, fill our their missing details
       $UPDATEUSER['memberUID'] = $memberLookup['uid'];
       if (empty($memberLookup['firstname'])) {
-        $UPDATEUSER['firstname'] = $ldapUser[0]['givenname'][0];
+        $UPDATEUSER['firstname'] = addslashes($ldapUser[0]['givenname'][0]);
       }
       if (empty($memberLookup['lastname'])) {
-        $UPDATEUSER['lastname'] = $ldapUser[0]['sn'][0];
+        $UPDATEUSER['lastname'] = addslashes($ldapUser[0]['sn'][0]);
       }
       if (empty($memberLookup['email'])) {
         $UPDATEUSER['email'] = $ldapUser[0]['mail'][0];
