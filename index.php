@@ -20,8 +20,8 @@ if (isset($_POST['inputUsername']) && isset($_POST['inputPassword']) && $_SESSIO
       $NEWUSER['title'] = "";
       $NEWUSER['enabled'] = "1";
       $NEWUSER['ldap'] = $ldapUser[0]['samaccountname'][0];
-      $NEWUSER['firstname'] = $ldapUser[0]['givenname'][0];
-      $NEWUSER['lastname'] = $ldapUser[0]['sn'][0];
+      $NEWUSER['firstname'] = addslashes($ldapUser[0]['givenname'][0]);
+      $NEWUSER['lastname'] = addslashes($ldapUser[0]['sn'][0]);
       $NEWUSER['category'] = "Student";
       $NEWUSER['type'] = "MCR";
       $NEWUSER['email'] = $ldapUser[0]['mail'][0];
