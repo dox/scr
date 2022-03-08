@@ -35,7 +35,11 @@ $title = "Week " . $term->whichWeek($mealObject->date_meal) . " " . $mealObject-
 $subtitle = $mealObject->type . ": " . $mealObject->location . ", " . dateDisplay($mealObject->date_meal, true);
 if (isset($bookingByMember)) {
   $icons[] = array("class" => "btn-danger", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#trash\"/></svg> Delete Booking", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#staticBackdrop\"");
-  $icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#person-plus\"/></svg> Add Guest", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#modalGuestAdd\" onclick=\"addGuestModal('" . $bookingObject->uid . "')\"");
+  if (count($bookingObject->guestsArray()) < $mealObject->getTotalGuestsAllowed() || $_SESSION['admin'] == true) {
+    $icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#person-plus\"/></svg> Add Guest", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#modalGuestAdd\" onclick=\"addGuestModal('" . $bookingObject->uid . "')\"");
+  } else {
+    $icons[] = array("class" => "btn-secondary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#person-plus\"/></svg> Max Guests Added", "value" => "null");
+  }
 }
 
 echo makeTitle($title, $subtitle, $icons);
