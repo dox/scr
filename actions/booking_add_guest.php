@@ -20,6 +20,7 @@ if ($_POST['guest_dessert'] == "true") {
 }
 
 $bookingObject = new booking($bookingUID);
+$mealObject = new meal($bookingObject->meal_uid);
 
 $newGuest = array(
 	'guest_name' => $guestName,
@@ -30,7 +31,13 @@ $newGuest = array(
 	'guest_dessert' => $guestDessert
 );
 
-$bookingObject->addGuest($newGuest);
-
-//$logsClass->create("booking", $guestName . " added as guest to booking UID " . $bookingUID);
+// check that we're not adding a guest above the maximum number
+if (count($bookingObject->guestsArray()) < $mealObject->getTotalGuestsAllowed() || $_SESSION['admin'] == true) {
+	$bookingObject->addGuest($newGuest);
+} else {
+	$logArray['category'] = "booking";
+	$logArray['result'] = "danger";
+	$logArray['description'] = "Error attempting to add too many guests to [bookingUID:" . $bookingObject->uid . "]";
+	$logsClass->create($logArray);
+}
 ?>

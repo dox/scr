@@ -461,7 +461,7 @@ class meal {
     $check_capacity = $this->check_capacity_ok($factorInAdminAccess);
     $check_cutoff   = $this->check_cutoff_ok($factorInAdminAccess);
     $check_member   = $this->check_member_ok($factorInAdminAccess);
-
+    
     if ($check_capacity && $check_cutoff && $check_member) {
       $return = true;
     } else {

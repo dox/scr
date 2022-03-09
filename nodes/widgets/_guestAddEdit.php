@@ -32,8 +32,21 @@ if (isset($_GET['guestUID'])) {
 
 <div class="modal-body">
   <?php
-  if ($mealObject->check_meal_bookable(true)) {
-  ?>
+  if (!$mealObject->check_meal_bookable(true)) {
+    $buttonDeleteDisable = "disabled";
+        
+        if (!$mealObject->check_cutoff_ok(true)) {
+          echo "<p>The deadline for making changes to this booking has passed.  Please contact the Bursary for further assistance.</p>";
+        } elseif ($mealObject->check_capacity_ok()) {
+          echo "<p>You have added the maximum number of guests permitted for this meal.</p>";
+          $buttonAddDisable = "disabled";
+          $buttonDeleteDisable = "";
+        } else {
+          echo "<p>Meal not bookable.</p>";
+        }
+  } elseif (count($bookingObject->guestsArray()) >= $mealObject->getTotalGuestsAllowed() && $_SESSION['admin'] != true) {
+echo "<p>You have added the maximum number of guests permitted for this meal.</p>";
+  } else { ?>
     <form method="post" class="needs-validation" action="../actions/booking_add_guest.php">
       <div class="form-group mb-3">
         <label for="name">Guest Name</label>
@@ -46,7 +59,7 @@ if (isset($_GET['guestUID'])) {
         }
         ?>
       </div>
-
+    
       <div class="mb-3">
         <label for="dietary" class="form-label">Guest's Dietary Information</label>
         <div class="selectBox" onclick="showCheckboxes()">
@@ -64,20 +77,20 @@ if (isset($_GET['guestUID'])) {
             } else {
               $checked = "";
             }
-
+    
             $output  = "<div class=\"form-check\">";
             $output .= "<input class=\"form-check-input dietaryOptionsMax\" type=\"checkbox\" onclick=\"checkMaxCheckboxes(" . $dietaryOptionsMax . ")\" name=\"guest_dietary\" id=\"guest_dietary\" value=\"" . $dietaryOption . "\" " . $checked . ">";
             $output .= "<label class=\"form-check-label\" for=\"" . $dietaryOption . "\">" . $dietaryOption . "</label>";
             $output .= "</div>";
-
+    
             echo $output;
           }
           ?>
         </div>
       </div>
-
+    
       <hr />
-
+    
       <div>
         <label class="row">
           <div>
@@ -110,7 +123,7 @@ if (isset($_GET['guestUID'])) {
             
             <input class="form-control mb-3 <?php echo $domusVisual; ?>" type="text" id="guest_domus_reason" name="guest_domus_reason" placeholder="Description (required)" aria-label="Charge Guest To Description" value="<?php echo $guestObject->guest_domus_reason; ?>" <?php if ($guestObject->guest_charge_to <> "Battels") { echo " required";} ?>>
           </div>
-
+    
         </label>
       </div>
       <div>
@@ -120,7 +133,7 @@ if (isset($_GET['guestUID'])) {
           if ($mealObject->allowed_wine == 1 && $mealObject->check_cutoff_ok(true)) {
             $wineDisabledCheck = "";
           }
-
+    
           $checked = "";
           if ($guestObject->guest_wine == "on") {
             $checked = "checked";
@@ -186,24 +199,14 @@ if (isset($_GET['guestUID'])) {
           </span>
         </label>
       </div>
-
-
-    </form>
-
-
-  <?php } else {
-    $buttonDeleteDisable = "disabled";
     
-    if (!$mealObject->check_cutoff_ok(true)) {
-      echo "<p>The deadline for making changes to this booking has passed.  Please contact the Bursary for further assistance.</p>";
-    } elseif ($mealObject->check_capacity_ok()) {
-      echo "<p>You have added the maximum number of guests permitted for this meal.</p>";
-      $buttonAddDisable = "disabled";
-      $buttonDeleteDisable = "";
-    } else {
-      echo "<p>Meal not bookable.</p>";
-    }
-  } ?>
+    
+    </form>
+  
+  <?php } ?>
+
+    
+
   <input type="hidden" id="bookingUID" name="bookingUID" value="<?php echo $bookingObject->uid; ?>">
   <input type="hidden" id="mealUID" name="mealUID" value="<?php echo $mealObject->uid; ?>">
 </div>
