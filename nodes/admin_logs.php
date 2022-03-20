@@ -45,9 +45,19 @@ echo makeTitle($title, $subtitle);
 
 <div id="myTable" class="list-group">
   <?php
-  echo $logsClass->displayTable();
+  if (isset($_GET['p'])){
+    $offset = $_GET['p'];
+  } else {
+    $offset = 0;
+  }
+  echo $logsClass->displayTable($offset);
   ?>
 </div>
+
+<?php
+echo $logsClass->paginationDisplay(count($logs), $_GET['p']);
+
+?>
 
 
 <script>

@@ -9,6 +9,8 @@ class logs {
   public $result;
   public $category;
   public $description;
+  
+  public $logsPerPage = 100;
 
   public function categoryColour($category = null, $alpha = "0.3") {
     $unknownColour = "rgba(0, 0, 0, 0.4)";
@@ -36,15 +38,31 @@ class logs {
   public function all() {
     global $db;
     global $settingsClass;
-
+  
     $maximumLogsAge = date('Y-m-d', strtotime('-' . $settingsClass->value('logs_retention') . ' days'));
-
+  
     $sql  = "SELECT uid, INET_NTOA(ip) AS ip, username, date, result, category, description  FROM " . self::$table_name;
     $sql .= " WHERE DATE(date) > '" . $maximumLogsAge . "' ";
     $sql .= " ORDER BY date DESC";
-
+  
     $logs = $db->query($sql)->fetchAll();
-
+  
+    return $logs;
+  }
+  
+  public function paginatedResults($offset = 0, $results = 10) {
+    global $db;
+    global $settingsClass;
+  
+    $maximumLogsAge = date('Y-m-d', strtotime('-' . $settingsClass->value('logs_retention') . ' days'));
+  
+    $sql  = "SELECT uid, INET_NTOA(ip) AS ip, username, date, result, category, description  FROM " . self::$table_name;
+    $sql .= " WHERE DATE(date) > '" . $maximumLogsAge . "' ";
+    $sql .= " ORDER BY date DESC";
+    $sql .= " LIMIT " . $offset . ", " . $results;
+  
+    $logs = $db->query($sql)->fetchAll();
+  
     return $logs;
   }
 
@@ -159,7 +177,8 @@ class logs {
     return $output;
   }
 
-  public function displayTable() {
+  public function displayTable($offsetPage = 0, $results = 100) {
+    $offsetPage = $offsetPage * $results;
     $output  = "<table id=\"logsTable\" class=\"table\">";
     $output .= "<tr class=\"header\">";
     $output .= "<th>" . "Date" . "</th>";
@@ -170,7 +189,7 @@ class logs {
 
     $output .= "<tbody>";
 
-    foreach ($this->all() AS $log) {
+    foreach ($this->paginatedResults($offsetPage, $results) AS $log) {
       $output .= $this->displayRow($log);
     }
 
@@ -195,6 +214,59 @@ class logs {
 
     $output = "<span class=\"badge rounded-pill " . $class . " float-end\">" . $category . "</span>";
 
+    return $output;
+  }
+  
+  public function paginationDisplay($totalLogs = 0, $currentPage = 0) {
+    
+    $totalLogPages = number_format($totalLogs/$this->logsPerPage,0);
+    
+    $output  = "<nav aria-label=\"Page pagination\">";
+    $output .= "<ul class=\"pagination\">";
+    $output .= $this->paginationPreviousButton($totalLogs, $currentPage);
+    
+    $i = 0;
+    do {
+      $active = "";
+      if ($i == $_GET['p']) {
+        $active = "active";
+      }
+      $output .= "<li class=\"page-item " . $active . "\"><a class=\"page-link\" href=\"index.php?n=admin_logs&p=" . $i . "\">" . $i . "</a></li>";
+      $i++;
+    } while($i <= $totalLogPages);
+    
+    $output .= $this->paginationNextButton($totalLogs, $currentPage);
+    $output .= "</ul>";
+    $output .= "</nav>";
+    
+    return $output;
+  }
+  
+  private function paginationPreviousButton($totalLogs = 0, $currentPage = 0) {
+    $disabled = "";
+    if ($currentPage <= 0) {
+      $previousPageNumber = 0;
+      $disabled = " disabled";
+    } else {
+      $previousPageNumber = $currentPage - 1;
+    }
+    $output = "<li class=\"page-item " . $disabled . "\"><a class=\"page-link\" href=\"index.php?n=admin_logs&p=" . $previousPageNumber . "\">Previous</a></li>";
+    
+    return $output;
+  }
+  
+  private function paginationNextButton($totalLogs = 0, $currentPage = 0) {
+    $totalLogPages = number_format($totalLogs/$this->logsPerPage,0);
+    
+    $disabled = "";
+    if ($currentPage >= $totalLogPages) {
+      $nextPageNumber = 0;
+      $disabled = " disabled";
+    } else {
+      $nextPageNumber = $currentPage + 1;
+    }
+    $output = "<li class=\"page-item " . $disabled . "\"><a class=\"page-link\" href=\"index.php?n=admin_logs&p=" . $nextPageNumber . "\">Next</a></li>";
+    
     return $output;
   }
 }
