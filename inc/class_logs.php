@@ -81,18 +81,28 @@ class logs {
 
     return $logs;
   }
-
-  public function allByCategoryByDay($category = null, $date = null) {
-    global $db;
-
-    $sql  = "SELECT uid, INET_NTOA(ip) AS ip, username, date, category, result, description  FROM " . self::$table_name;
-    $sql .= " WHERE DATE(date) = '" . $date . "'";
-    $sql .= " AND category = '" . $category . "'";
-    $sql .= " ORDER BY date DESC";
-
+  
+  public function byDay($category = null) {
+    global $db, $settingsClass;
+    
+    $maximumLogsAge = date('Y-m-d', strtotime('-' . $settingsClass->value('logs_display') . ' days'));
+    
+    $sql  = "SELECT DATE(date) AS date, count(*) AS total FROM " . self::$table_name;
+    $sql .= " WHERE date >= '" . $maximumLogsAge . "'";
+    
+    if ($category != null) {
+      $sql .= " AND category = '" . $category . "'";
+    }
+    $sql .= " GROUP BY DATE(date)";
+    
     $logs = $db->query($sql)->fetchAll();
-
-    return $logs;
+    
+    $logsArray = array();
+    foreach ($logs AS $log) {
+      $logsArray[$log['date']] = $log['total']; 
+    }
+    
+    return $logsArray;
   }
 
   public function create($array = null) {
@@ -117,7 +127,7 @@ class logs {
     global $db;
     global $settingsClass;
 
-    $maximumLogsAge = date('Y-m-d', strtotime('-' . $settingsClass->value('logs_retention') . ' days'));
+    $maximumLogsAge = date('Y-m-d', strtotime('-' . $settingsClass->value('logs_display') . ' days'));
 
     $sql  = "SELECT category FROM " . self::$table_name;
     $sql .= " WHERE DATE(date) > '" . $maximumLogsAge . "' ";
