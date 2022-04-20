@@ -6,10 +6,8 @@ admin_gatekeeper();
 
 <?php
 $logsClass->purge();
-$logs = $logsClass->all();
 $logsByDay = $logsClass->byDay("logon");
-?>
-<?php
+
 $title = "Logs";
 $subtitle = "Admin/User logs for the last " . $logsDisplay . " days";
 
@@ -18,7 +16,12 @@ echo makeTitle($title, $subtitle);
 
 <div class="ct-chart-logs"></div>
 
-<input type="text" id="logs_fiter_input" class="form-control mt-3 mb-3" onkeyup="tableFilter()" placeholder="Filter Logs...">
+<form method="post" id="search" action="<?php echo $_SERVER['REQUEST_URI']; ?>" class="needs-validation" novalidate>
+<div class="input-group my-3">
+  <input type="text" class="form-control" id="logs_search" name="logs_search" placeholder="e.g. '[memberUID:137]'" aria-label="Search Logs" aria-describedby="button-addon2" value="<?php if (isset($_POST['logs_search'])) { echo $_POST['logs_search']; } ?>">
+  <button class="btn btn-outline-secondary" type="submit" id="button-addon2">Search</button>
+</div>
+</form>
 
 <div id="myTable" class="list-group">
   <?php
@@ -27,28 +30,14 @@ echo makeTitle($title, $subtitle);
   } else {
     $offset = 0;
   }
-  echo $logsClass->displayTable($offset);
+  
+  echo $logsClass->displayTable($offset, $_POST['logs_search']);
   ?>
 </div>
 
 <?php
-echo $logsClass->paginationDisplay(count($logs), $_GET['p']);
-
+echo $logsClass->paginationDisplay(count($logsClass->all()), $_GET['p']);
 ?>
-
-
-<script>
-function tableFilter() {
-  const input = document.getElementById("logs_fiter_input");
-  const inputStr = input.value.toUpperCase();
-  document.querySelectorAll('#logsTable tr:not(.header)').forEach((tr) => {
-    const anyMatch = [...tr.children]
-      .some(td => td.textContent.toUpperCase().includes(inputStr));
-    if (anyMatch) tr.style.removeProperty('display');
-    else tr.style.display = 'none';
-  });
-}
-</script>
 
 <script>
 var data = {

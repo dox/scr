@@ -10,7 +10,7 @@ class logs {
   public $category;
   public $description;
   
-  public $logsPerPage = 100;
+  public $logsPerPage = 500;
 
   public function categoryColour($category = null, $alpha = "0.3") {
     $unknownColour = "rgba(0, 0, 0, 0.4)";
@@ -36,8 +36,7 @@ class logs {
   }
 
   public function all() {
-    global $db;
-    global $settingsClass;
+    global $db, $settingsClass;
   
     $maximumLogsAge = date('Y-m-d', strtotime('-' . $settingsClass->value('logs_retention') . ' days'));
   
@@ -50,35 +49,23 @@ class logs {
     return $logs;
   }
   
-  public function paginatedResults($offset = 0, $results = 10) {
-    global $db;
-    global $settingsClass;
+  public function paginatedResults($offset = 0, $search = null) {
+    global $db, $settingsClass;
   
     $maximumLogsAge = date('Y-m-d', strtotime('-' . $settingsClass->value('logs_retention') . ' days'));
   
     $sql  = "SELECT uid, INET_NTOA(ip) AS ip, username, date, result, category, description  FROM " . self::$table_name;
     $sql .= " WHERE DATE(date) > '" . $maximumLogsAge . "' ";
+    
+    if ($search != null) {
+      $sql .= " AND description LIKE '%" . $search . "%' ";
+    }
+    
     $sql .= " ORDER BY date DESC";
-    $sql .= " LIMIT " . $offset . ", " . $results;
+    $sql .= " LIMIT " . $offset . ", " . $this->logsPerPage;
   
     $logs = $db->query($sql)->fetchAll();
   
-    return $logs;
-  }
-
-  public function allWhereMatch($string = null) {
-    global $db;
-    global $settingsClass;
-
-    $maximumLogsAge = date('Y-m-d', strtotime('-' . $settingsClass->value('logs_retention') . ' days'));
-
-    $sql  = "SELECT uid, INET_NTOA(ip) AS ip, username, date, result, category, description  FROM " . self::$table_name;
-    $sql .= " WHERE DATE(date) > '" . $maximumLogsAge . "' ";
-    $sql .= " AND description LIKE '%" . $string . "%' ";
-    $sql .= " ORDER BY date DESC";
-
-    $logs = $db->query($sql)->fetchAll();
-
     return $logs;
   }
   
@@ -187,8 +174,8 @@ class logs {
     return $output;
   }
 
-  public function displayTable($offsetPage = 0, $results = 100) {
-    $offsetPage = $offsetPage * $results;
+  public function displayTable($offsetPage = 0, $search = null) {
+    $offsetPage = $offsetPage * $this->logsPerPage;
     $output  = "<table id=\"logsTable\" class=\"table\">";
     $output .= "<tr class=\"header\">";
     $output .= "<th>" . "Date" . "</th>";
@@ -198,8 +185,8 @@ class logs {
     $output .= "</tr>";
 
     $output .= "<tbody>";
-
-    foreach ($this->paginatedResults($offsetPage, $results) AS $log) {
+    
+    foreach ($this->paginatedResults($offsetPage, $search) AS $log) {
       $output .= $this->displayRow($log);
     }
 
@@ -228,7 +215,6 @@ class logs {
   }
   
   public function paginationDisplay($totalLogs = 0, $currentPage = 0) {
-    
     $totalLogPages = number_format($totalLogs/$this->logsPerPage,0);
     
     $output  = "<nav aria-label=\"Page pagination\">";
@@ -280,6 +266,5 @@ class logs {
     return $output;
   }
 }
-
 $logsClass = new logs();
 ?>
