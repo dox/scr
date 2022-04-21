@@ -53,9 +53,14 @@ echo $logsClass->paginationDisplay($logsAll, $offset);
 ?>
 
 <script>
+<?php
+foreach (array_keys($logsByDay) AS $label) {
+  $labelsArray[] = date('M d', strtotime($label));
+}
+?>
 var data = {
   // A labels array that can contain any sort of values
-  labels: ['<?php echo implode("','", array_keys($logsByDay)); ?>'],
+  labels: ['<?php echo implode("','", $labelsArray); ?>'],
   // Our series array that contains series objects or in this case series data arrays
   series: [
     [<?php echo implode(",", $logsByDay); ?>]
