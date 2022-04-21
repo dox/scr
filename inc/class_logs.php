@@ -12,29 +12,6 @@ class logs {
   
   public $logsPerPage = 500;
 
-  public function categoryColour($category = null, $alpha = "0.3") {
-    $unknownColour = "rgba(0, 0, 0, 0.4)";
-    //$randomColour = "rgba(" . rand(0,255) . ", " . rand(0,255) . ", " . rand(0,255) . ", 0.2)";
-
-    $coloursArray = array(
-      "admin" => "rgba(255, 235, 0, " . $alpha . ")",
-      "booking" => "rgba(255, 99, 132, " . $alpha . ")",
-      "ldap" => "rgba(118, 42, 145, " . $alpha . ")",
-      "logon" => "rgba(54, 162, 3, " . $alpha . ")",
-      "meal" => "rgba(254, 77, 17, " . $alpha . ")",
-      "member" => "rgba(54, 162, 235, " . $alpha . ")",
-      "notification" => "rgba(29, 143, 177, " . $alpha . ")",
-      "report" => "rgba(252, 40, 37, " . $alpha . ")",
-      "view" => "rgba(60, 162, 3, " . $alpha . ")"
-    );
-
-    if (isset($coloursArray[$category])) {
-      return $coloursArray[$category];
-    } else {
-      return $unknownColour;
-    }
-  }
-
   public function all() {
     global $db, $settingsClass;
   
@@ -51,6 +28,8 @@ class logs {
   
   public function paginatedResults($offset = 0, $search = null) {
     global $db, $settingsClass;
+    
+    $offset = $offset * $this->logsPerPage;
   
     $maximumLogsAge = date('Y-m-d', strtotime('-' . $settingsClass->value('logs_retention') . ' days'));
   
@@ -65,8 +44,28 @@ class logs {
     $sql .= " LIMIT " . $offset . ", " . $this->logsPerPage;
   
     $logs = $db->query($sql)->fetchAll();
-  
+    
     return $logs;
+  }
+  
+  public function paginatedResultsTotal($search = null) {
+    global $db, $settingsClass;
+  
+    $maximumLogsAge = date('Y-m-d', strtotime('-' . $settingsClass->value('logs_retention') . ' days'));
+  
+    $sql  = "SELECT count(*) AS total FROM " . self::$table_name;
+    $sql .= " WHERE DATE(date) > '" . $maximumLogsAge . "' ";
+    
+    if ($search != null) {
+      $sql .= " AND description LIKE '%" . $search . "%' ";
+    }
+    
+    $sql .= " ORDER BY date DESC";
+    
+    $logs = $db->query($sql)->fetchAll();
+    $logsCount = $logs[0]['total'];
+    
+    return $logsCount;
   }
   
   public function byDay($category = null) {
@@ -174,8 +173,7 @@ class logs {
     return $output;
   }
 
-  public function displayTable($offsetPage = 0, $search = null) {
-    $offsetPage = $offsetPage * $this->logsPerPage;
+  public function displayTable($logs = null) {
     $output  = "<table id=\"logsTable\" class=\"table\">";
     $output .= "<tr class=\"header\">";
     $output .= "<th>" . "Date" . "</th>";
@@ -186,7 +184,7 @@ class logs {
 
     $output .= "<tbody>";
     
-    foreach ($this->paginatedResults($offsetPage, $search) AS $log) {
+    foreach ($logs AS $log) {
       $output .= $this->displayRow($log);
     }
 
@@ -215,7 +213,7 @@ class logs {
   }
   
   public function paginationDisplay($totalLogs = 0, $currentPage = 0) {
-    $totalLogPages = number_format($totalLogs/$this->logsPerPage,0);
+    $totalLogPages = number_format($totalLogs/$this->logsPerPage,0) - 1;
     
     $output  = "<nav aria-label=\"Page pagination\">";
     $output .= "<ul class=\"pagination\">";
