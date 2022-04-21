@@ -19,7 +19,7 @@ if ($_SESSION['admin'] == true) {
 
   $logArray['category'] = "ldap";
   $logArray['result'] = "success";
-  $logArray['description'] = "LDAP lookup permitted for " . escape($_POST['firstname']) . "/" . escape($_POST['sn']);
+  $logArray['description'] = "LDAP lookup permitted for " . escape($_POST['firstname']) . "/" . escape($_POST['sn']) . " = " . $bestGuessLDAP;
   $logsClass->create($logArray);
 
   if (empty($bestGuessLDAP)) {
