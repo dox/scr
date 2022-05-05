@@ -37,7 +37,15 @@ class logs {
     $sql .= " WHERE DATE(date) > '" . $maximumLogsAge . "' ";
     
     if ($search != null) {
-      $sql .= " AND description LIKE '%" . $search . "%' ";
+      $sql .= " AND (";
+      $sql.= "description LIKE '%" . $search . "%' ";
+      $sql .= "OR username LIKE '%" . $search . "%'";
+      
+      if (filter_var($search, FILTER_VALIDATE_IP)) {
+        $sql .= "OR ip LIKE '%" . ip2long($search) . "%'";
+      }
+      
+      $sql .= ") ";
     }
     
     $sql .= " ORDER BY date DESC";
@@ -57,7 +65,15 @@ class logs {
     $sql .= " WHERE DATE(date) > '" . $maximumLogsAge . "' ";
     
     if ($search != null) {
-      $sql .= " AND description LIKE '%" . $search . "%' ";
+      $sql .= " AND (";
+      $sql.= "description LIKE '%" . $search . "%' ";
+      $sql .= "OR username LIKE '%" . $search . "%'";
+      
+      if (filter_var($search, FILTER_VALIDATE_IP)) {
+        $sql .= "OR ip LIKE '%" . ip2long($search) . "%'";
+      }
+      
+      $sql .= ") ";
     }
     
     $sql .= " ORDER BY date DESC";
