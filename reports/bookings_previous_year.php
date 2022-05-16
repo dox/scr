@@ -75,19 +75,6 @@ foreach ($bookings AS $booking) {
   $bookingsArray[] = $bookingRow;
 }
 
-
-function onToOne($input = null) {
-  if ($input == "on" || $input == "1") {
-    $return = 1;
-  } else {
-    $return = null;
-  }
-
-  return $return;
-}
-
-
-
 // Build the CSV from the bookingsArray...
 foreach ($bookingsArray AS $booking) {
   $rowOutput = null;

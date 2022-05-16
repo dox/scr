@@ -49,6 +49,22 @@ class logs {
     return $logs;
   }
   
+  public function allWhereMatch($string = null) {
+     global $db;
+     global $settingsClass;
+  
+     $maximumLogsAge = date('Y-m-d', strtotime('-' . $settingsClass->value('logs_retention') . ' days'));
+  
+     $sql  = "SELECT uid, INET_NTOA(ip) AS ip, username, date, result, category, description  FROM " . self::$table_name;
+     $sql .= " WHERE DATE(date) > '" . $maximumLogsAge . "' ";
+     $sql .= " AND description LIKE '%" . $string . "%' ";
+     $sql .= " ORDER BY date DESC";
+  
+     $logs = $db->query($sql)->fetchAll();
+  
+     return $logs;
+   }
+  
   public function paginatedResults($offset = 0, $search = null) {
     global $db, $settingsClass;
   
