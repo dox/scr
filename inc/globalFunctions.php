@@ -269,6 +269,6 @@ function onToOne($input = null) {
 	if ($input == "on" || $input == "1") {
 		$return = 1;
 	}
-	return $input;
+	return $return;
 }
 ?>

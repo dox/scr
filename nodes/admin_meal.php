@@ -76,6 +76,7 @@ echo makeTitle($title, $subtitle, $icons);
       }
       ?>
     </ul>
+    <a href="report.php?reportUID=9&mealUID=<?php echo $mealObject->uid; ?>" class="text-muted float-end">Export all meal bookings</a>
   </div>
   <div class="col-md-7 col-lg-8">
     <h4 class="mb-3">Meal Information</h4>
