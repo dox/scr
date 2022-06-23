@@ -84,7 +84,7 @@ foreach ($bookings AS $booking) {
     $bookingRowGuest['meal_time'] = date('H:i', strtotime($mealObject->date_meal));
     $bookingRowGuest['member_diner_type'] = "Guest";
     $bookingRowGuest['member_type'] = "Guest";
-    $bookingRowGuest['meal_default_charge_to'] = $guest->guest_charge_to; 
+    $bookingRowGuest['meal_default_charge_to'] = $mealObject->charge_to; 
     $bookingRowGuest['member_ldap'] = $memberObject->ldap;
     $bookingRowGuest['member_name'] = htmlspecialchars_decode($guest->guest_name);
     $bookingRowGuest['member_category'] = $memberObject->category . " Guest";
