@@ -255,7 +255,6 @@ echo makeTitle($title, $subtitle, $icons);
     <div class="mb-3">
       <label for="type" class="form-label">Photo</label>
       <select class="form-select" name="photo" id="photo">
-        <option value=""></option>
         <?php
         $photos = explode(",", $settingsClass->value('meal_photos'));
 
