@@ -1,6 +1,6 @@
 <?php
-if (isset($_GET['assignFrom']) && isset($_GET['assignTo'])) {
-  $sql = "UPDATE bookings SET member_ldap = '" . $_GET['assignTo'] . "' WHERE member_ldap = '" . $_GET['assignFrom'] . "';";
+if (isset($_POST['assignFrom']) && isset($_POST['assignTo'])) {
+  $sql = "UPDATE bookings SET member_ldap = '" . $_POST['assignTo'] . "' WHERE member_ldap = '" . $_POST['assignFrom'] . "';";
 
   echo $sql;
 
@@ -20,6 +20,16 @@ $members = $membersClass->all();
 
 
 ?>
+
+<datalist id="members">
+  <?php
+  foreach ($members AS $member) {
+    $content = $member['firstname'] . " " . $member['lastname'] . " (" . $member['ldap'] . ")";
+    echo "<option data-value=\"" . $member['ldap'] . "\" value=\"" . $content . "\">";
+  }
+  ?>
+</datalist>
+
 <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center bg-light">
   <div class="p-lg-5 mx-auto my-5">
     <h1 class="display-4 fw-normal">Orphaned Bookings</h1>
@@ -38,17 +48,9 @@ $members = $membersClass->all();
   <tbody>
     <?php
     foreach ($orphanedBookings AS $booking) {
-      $dropdown  = "<div class=\"dropdown\">";
-      $dropdown .= "<button class=\"btn btn-secondary dropdown-toggle\" type=\"button\" id=\"dropdownMenuButton1\" data-bs-toggle=\"dropdown\" aria-expanded=\"false\">";
-      $dropdown .= "Reassign Bookings To:";
-      $dropdown .= "</button>";
-      $dropdown .= "<ul class=\"dropdown-menu\" aria-labelledby=\"dropdownMenuButton1\">";
-      foreach ($members AS $member) {
-        $url = $_SERVER[REQUEST_URI] . "&assignFrom=" . $booking['member_ldap'] . "&assignTo=" . $member['ldap'];
-
-        $dropdown .= "<li><a class=\"dropdown-item\" href=\"" . $url . "\">" . $member['firstname'] . " " . $member['lastname'] . " (" . $member['ldap'] . ")</a></li>";
-      }
-      $dropdown .= "</ul>";
+      $dropdown  = "<div class=\"input-group mb-3\">";
+      $dropdown .= "<input type=\"text\" class=\"form-control\" placeholder=\"Member Name\" list=\"members\" name=\"" . $booking['member_ldap'] . "-browser\" id=\"" . $booking['member_ldap'] . "-browser\">";
+      $dropdown .= "<button class=\"btn btn-outline-secondary\" type=\"button\" id=\"button-addon2\" data-member=\"" . $booking['member_ldap'] . "\" onclick=\"test(this)\">Reassign</button>";
       $dropdown .= "</div>";
 
       $output  = "<tr>";
@@ -62,3 +64,38 @@ $members = $membersClass->all();
     ?>
   </tbody>
 </table>
+
+
+<script>
+function test(ldap) {
+  var assignFrom = ldap.getAttribute('data-member');
+  
+  var shownVal = document.getElementById(assignFrom + "-browser").value;
+  var value2send = document.querySelector("#members option[value='"+shownVal+"']").dataset.value;
+  
+  var url = "/report.php?reportUID=4";
+  
+  var xhr = new XMLHttpRequest();
+  var formData = new FormData();
+  xhr.open("POST", url, true);
+  
+  formData.append("assignFrom", assignFrom);
+  formData.append("assignTo", value2send);
+  
+  xhr.send(formData);
+  
+  xhr.onload = function() {
+    if (xhr.status != 200) { // analyze HTTP status of the response
+      alert("Something went wrong.  Please refresh this page and try again.");
+      alert(`Error ${xhr.status}: ${xhr.statusText}`); // e.g. 404: Not Found
+    } else {
+      // success
+      location.reload();
+    }
+  }
+  
+  xhr.onerror = function() {
+    alert("Request failed");
+  };
+}
+</script>
