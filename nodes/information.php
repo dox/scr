@@ -71,6 +71,8 @@ const editor = SUNEDITOR.create(document.getElementById('contentInfo'),{
 			"removeFormat",
 			"align",
 			"horizontalRule",
+      "list",
+      "table",
 			"link",
 			"fullScreen",
 			"codeView",
