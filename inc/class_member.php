@@ -321,6 +321,7 @@ class member {
     $output  = "<li class=\"list-group-item\" id=\"" . $this->uid . "\">";
     $output .= $handle;
     $output .= "<a href=\"index.php?n=member&memberUID=" . $this->uid . "\">" . $this->displayName() . "</a>";
+    $output .= " <span class=\"text-muted\">[" . $this->ldap ."]</span>";
     
     $output .= "<span class=\"float-end\">";
     $output .= $this->stewardBadge() ." ";
