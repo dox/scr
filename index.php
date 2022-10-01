@@ -28,6 +28,10 @@ if (isset($_POST['inputUsername']) && isset($_POST['inputPassword']) && $_SESSIO
       $NEWUSER['enabled'] = "1";
 
       $memberObject->create($NEWUSER, false);
+      
+      $sql = "SELECT * FROM members where ldap = '" . $ldapUser[0]['samaccountname'][0] . "';";
+      $memberLookup = $db->query($sql)->fetchArray();
+      $memberObject = new member($memberLookup['uid']);
     } else {
 			$memberObject = new member($memberLookup['uid']);
 
