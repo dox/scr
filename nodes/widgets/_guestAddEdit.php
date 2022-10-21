@@ -44,8 +44,8 @@ if (isset($_GET['guestUID'])) {
         } else {
           echo "<p>Meal not bookable.</p>";
         }
-  } elseif (count($bookingObject->guestsArray()) >= $mealObject->getTotalGuestsAllowed() && $_SESSION['admin'] != true) {
-echo "<p>You have added the maximum number of guests permitted for this meal.</p>";
+  } elseif (count($bookingObject->guestsArray()) >= $mealObject->getTotalGuestsAllowed() && $_SESSION['admin'] != true && $mode == "add") {
+    echo "<p>You have added the maximum number of guests permitted for this meal.</p>";
   } else { ?>
     <form method="post" class="needs-validation" action="../actions/booking_add_guest.php">
       <div class="form-group mb-3">
