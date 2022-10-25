@@ -58,7 +58,12 @@ function addGuest(this_id) {
   var mealGuestList = document.getElementById('meal_guest_list');
 
   // if guest is domus, demand a description
-  
+  if (guestChargeTo == "College Hospitality" || guestChargeTo == "Entertainment Allowance") {
+    if (guestDomusReason == null || guestDomusReason == "") {
+      alert("When charging a guest to '" + guestChargeTo + "' a reason must be given.");
+      return false;
+    }
+  }
 
   for (var i = 0; i < guestDietaryCheckboxes.length; i++) {
     guestDietary.push(guestDietaryCheckboxes[i].value)
@@ -114,6 +119,14 @@ function editGuest(this_id) {
   var guestDessert = document.getElementById('guest_dessert').checked;
   var guestsList = document.getElementById('guests_list');
   var mealGuestList = document.getElementById('meal_guest_list');
+  
+  // if guest is domus, demand a description
+  if (guestChargeTo == "College Hospitality" || guestChargeTo == "Entertainment Allowance") {
+    if (guestDomusReason == null || guestDomusReason == "") {
+      alert("When charging a guest to '" + guestChargeTo + "' a reason must be given.");
+      return false;
+    }
+  }
 
   for (var i = 0; i < guestDietaryCheckboxes.length; i++) {
     guestDietary.push(guestDietaryCheckboxes[i].value)
