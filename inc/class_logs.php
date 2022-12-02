@@ -127,6 +127,11 @@ class logs {
     global $db;
 
     $array['description'] = str_replace("'" , "\'", $array['description']);
+    
+    // log if the person doing this is impersonating someone else
+    if ($_SESSION['impersonating'] == true) {
+      $array['description'] = $array['description'] . " (impersonated by " . $_SESSION['username_original'] . ")";
+    }
 
     $sql  = "INSERT INTO " . self::$table_name;
     $sql .= " (ip, username, category, result, description) ";
