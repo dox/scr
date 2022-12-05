@@ -121,7 +121,7 @@ if (isset($_GET['guestUID'])) {
             </select>
             
             
-            <input class="form-control mb-3 <?php echo $domusVisual; ?>" type="text" id="guest_domus_reason" name="guest_domus_reason" placeholder="Description (required)" aria-label="Charge Guest To Description" value="<?php echo $guestObject->guest_domus_reason; ?>" <?php if ($guestObject->guest_charge_to <> "Battels") { echo " required";} ?>>
+            <input class="form-control mb-3 <?php echo $domusVisual; ?>" type="text" id="guest_domus_reason" name="guest_domus_reason" placeholder="Reason for Charge-To (required)" aria-label="Reason for Charge-To (required)" value="<?php echo $guestObject->guest_domus_reason; ?>" <?php if ($guestObject->guest_charge_to <> "Battels") { echo " required";} ?>>
           </div>
     
         </label>

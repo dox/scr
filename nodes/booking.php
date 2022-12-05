@@ -73,7 +73,7 @@ if (isset($bookingByMember)) {
           ?>
         </select>
         
-        <input class="form-control mb-3 <?php echo $domusVisual; ?>" type="text" id="domus_reason" name="domus_reason" placeholder="Description (required)" aria-label="Charge To Description" value="<?php echo $bookingObject->domus_reason; ?>" <?php if ($bookingObject->charge_to == "Domus") { echo " required";} ?>>
+        <input class="form-control mb-3 <?php echo $domusVisual; ?>" type="text" id="domus_reason" name="domus_reason" placeholder="Domus Reason (required)" aria-label="Domus Reason (required)" value="<?php echo $bookingObject->domus_reason; ?>" <?php if ($bookingObject->charge_to == "Domus") { echo " required";} ?>>
         
         <div>
           <label class="row">
