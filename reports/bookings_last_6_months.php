@@ -75,7 +75,7 @@ foreach ($bookings AS $booking) {
     $bookingRowGuest['booking_uid'] = $bookingObject->uid;
     $bookingRowGuest['booking_date'] = $bookingObject->date;
     $bookingRowGuest['booking_charge_to'] = $charge_to;
-    $bookingRowGuest['booking_domus_reason'] = $guest->guest_domus_description;
+    $bookingRowGuest['booking_domus_reason'] = $guest->guest_domus_reason;
     $bookingRowGuest['booking_wine'] = onToOne($guest->guest_wine);
     $bookingRowGuest['booking_dessert'] = onToOne($guest->guest_dessert);
     $bookingRowGuest['meal_name'] = $mealObject->name;
