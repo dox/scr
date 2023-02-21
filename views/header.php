@@ -1,5 +1,5 @@
 <header>
-	<nav class="navbar navbar-expand-lg ">
+	<nav class="navbar navbar-expand-lg bg-body-secondary">
 	<div class="container">
 	  <a class="navbar-brand" href="index.php">
 			<svg width="1.3em" height="1.3em">
@@ -87,7 +87,7 @@
 		$output .= "</div>";
 		$output .= "</nav>";
 
-		echo $output;
+		//echo $output;
 	}
 
 
