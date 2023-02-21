@@ -85,7 +85,7 @@ if ($_SESSION['logon'] != true) {
 }
 ?>
 <!DOCTYPE html>
-<html lang="en" class="h-100">
+<html lang="en">
 <head>
   <?php include_once("views/html_head.php"); ?>
 </head>

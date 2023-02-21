@@ -1,5 +1,5 @@
 <header>
-	<nav class="navbar navbar-expand-lg navbar-light bg-light">
+	<nav class="navbar navbar-expand-lg ">
 	<div class="container">
 	  <a class="navbar-brand" href="index.php">
 			<svg width="1.3em" height="1.3em">
@@ -78,7 +78,7 @@
 	</nav>
 	<?php
 	if (debug) {
-		$output  = "<nav class=\"navbar navbar-expand-lg navbar-light bg-warning\">";
+		$output  = "<nav class=\"navbar navbar-expand-lg bg-warning\">";
 		$output .= "<div class=\"container\">";
 		$output .= "<div class=\"navbar-text\">";
 		$output .= "<strong>Warning!</strong> This site is in <code>debug mode</code>.  It is for testing purposes only!";
