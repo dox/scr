@@ -200,7 +200,9 @@ class member {
 
   public function bookingUIDS_upcoming() {
     global $db;
-
+    
+    $bookingUIDSarray = array();
+    
     $sql  = "SELECT bookings.uid AS uid FROM bookings";
     $sql .= " LEFT JOIN meals ON bookings.meal_uid = meals.uid";
     $sql .= " WHERE meals.date_meal >= NOW()";
@@ -218,6 +220,8 @@ class member {
 
   public function bookingUIDS_previous() {
     global $db;
+    
+    $bookingUIDSarray = array();
 
     $sql  = "SELECT bookings.uid AS uid FROM bookings";
     $sql .= " LEFT JOIN meals ON bookings.meal_uid = meals.uid";

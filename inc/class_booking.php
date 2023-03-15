@@ -27,12 +27,10 @@ class booking {
   }
 
   public function guestsArray() {
-
-    
     if (!empty($this->guests_array)) {
     	$guestsArray = json_decode($this->guests_array, true);
     } else {
-	    //$guestsArray = array();
+	    $guestsArray = array();
     }
     return $guestsArray;
   }
