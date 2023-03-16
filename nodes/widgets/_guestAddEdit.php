@@ -72,7 +72,7 @@ if (isset($_GET['guestUID'])) {
         <div id="checkboxes" class="mt-2">
           <?php
           foreach ($membersClass->dietaryOptions() AS $dietaryOption) {
-            if (in_array($dietaryOption, $guestObject->guest_dietary)) {
+            if (!empty($guestObject->guest_dietary) && in_array($dietaryOption, $guestObject->guest_dietary)) {
               $checked = " checked ";
             } else {
               $checked = "";

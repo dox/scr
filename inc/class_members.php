@@ -71,10 +71,15 @@ class members extends member {
 
   public function dietaryOptions() {
     global $settingsClass;
-
+    
     $dietaryOptions = explode(",", $settingsClass->value('meal_dietary'));
-    sort($dietaryOptions);
-
+    
+    if (!empty($dietaryOptions)) {
+      sort($dietaryOptions);
+    } else {
+      $dietaryOptions = array();
+    }
+    
     return $dietaryOptions;
   }
 }
