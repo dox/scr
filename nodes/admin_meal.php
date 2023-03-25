@@ -390,8 +390,5 @@ var fp2 = flatpickr("#date_cutoff", {
   time_24hr: true
 })
 
-function test(date) {
-  var date = '<?php echo date('Y-m-d', strtotime(selectedDates)); ?>';
-  return date;
-}
+
 </script>
