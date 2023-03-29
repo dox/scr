@@ -217,6 +217,53 @@ class member {
 
     return $bookingUIDSarray;
   }
+  
+  public function bookingsByDay() {
+    global $db;
+    
+    //mysql format
+    $days = array(
+        1 => 'Sunday',
+        2 => 'Monday',
+        3 => 'Tuesday',
+        4 => 'Wednesday',
+        5 => 'Thursday',
+        6 => 'Friday',
+        7 => 'Saturday'
+    );
+    
+    $sql  = "SELECT DAYOFWEEK(meals.date_meal) AS dayofweek, count(*) AS totalMeals, meals.type";
+    $sql .= " FROM bookings LEFT JOIN (meals) ON (bookings.meal_uid = meals.uid) ";
+    $sql .= " WHERE member_ldap = '" . $this->ldap . "'";
+    $sql .= " GROUP BY DAYOFWEEK(meals.date_meal), meals.type";
+    $sql .= " ORDER BY DAYOFWEEK(meals.date_meal) ASC";
+    
+    $bookings = $db->query($sql)->fetchAll();
+    
+    $sql2  = "SELECT DISTINCT meals.type";
+    $sql2 .= " FROM bookings LEFT JOIN (meals) ON (bookings.meal_uid = meals.uid) ";
+    $sql2 .= " WHERE member_ldap = '" . $this->ldap . "'";
+
+    $mealTypes = $db->query($sql)->fetchAll();
+    
+    foreach ($mealTypes AS $mealType) {      
+      $returnArray[$mealType['type']]['Sunday'] = 0;
+      $returnArray[$mealType['type']]['Monday'] = 0;
+      $returnArray[$mealType['type']]['Tuesday'] = 0;
+      $returnArray[$mealType['type']]['Wednesday'] = 0;
+      $returnArray[$mealType['type']]['Thursday'] = 0;
+      $returnArray[$mealType['type']]['Friday'] = 0;
+      $returnArray[$mealType['type']]['Saturday'] = 0;
+    }
+    
+    foreach ($bookings AS $booking) {
+      $dayName = $days[$booking['dayofweek']];
+      
+      $returnArray[$booking['type']][$dayName] = $booking['totalMeals'];
+    }
+    
+    return $returnArray;
+  }
 
   public function bookingUIDS_previous() {
     global $db;

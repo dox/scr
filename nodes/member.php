@@ -94,7 +94,12 @@ include_once('_member_stats.php');
       } while($i <= $mealsToDisplay);
       ?>
     </ul>
-    <a href="report.php?reportUID=3&memberUID=<?php echo $memberObject->uid; ?>" class="text-muted float-end">Export all meal bookings</a>
+    <a href="report.php?reportUID=3&memberUID=<?php echo $memberObject->uid; ?>" class="text-muted text-end">Export all meal bookings</a>
+    
+    <hr />
+    
+    <h4 class="d-flex justify-content-between align-items-center mb-3">Bookings by Day</h4>
+    <div id="chart-meals_by_day"></div>
   </div>
 
   <div class="col-md-7 col-lg-8">
@@ -328,4 +333,38 @@ function memberDelete(member_uid) {
     return false;
   }
 }
+</script>
+
+
+<?php
+$chartArray = array();
+foreach ($memberObject->bookingsByDay() AS $mealName => $mealBookings) {
+  $output  = "{name: '" . $mealName . "',";
+  $output .= "data: [" . implode(",", $mealBookings) . "]}";
+  
+  $chartArray[] = $output;
+}
+?>
+<script>
+var options = {
+  chart: {
+    type: 'bar',
+    stacked: true,
+    height: '300px',
+    toolbar: {
+      show: false
+    }
+  },
+  dataLabels: {
+    enabled: false
+  },
+  series: [<?php echo implode(",", $chartArray); ?>],
+  xaxis: {
+    categories: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+  }
+}
+
+var chart = new ApexCharts(document.querySelector("#chart-meals_by_day"), options);
+
+chart.render();
 </script>
