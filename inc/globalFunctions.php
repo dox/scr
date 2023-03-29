@@ -198,21 +198,27 @@ function siteURL() {
 
 function admin_gatekeeper() {
 	if ($_SESSION['admin'] != true) {
+		// build this out one day when I have time :-s
+		if (isset($_COOKIE["username"])) {
+			//printArray($_COOKIE["username"]);
+		} else {
+			
+		}
+		
 		global $logsClass;
 
 		$logArray['category'] = "admin";
-    $logArray['result'] = "danger";
-    $logArray['description'] = "Page view for " . $_SERVER['REQUEST_URI'] . " failed";
-    $logsClass->create($logArray);
-
+    	$logArray['result'] = "danger";
+    	$logArray['description'] = "Page view for " . $_SERVER['REQUEST_URI'] . " failed";
+    	$logsClass->create($logArray);
+		
 		$output  = "<div class=\"text-center mt-4\">";
 		$output .= "<svg width=\"48\" height=\"48\"><use xlink:href=\"img/icons.svg#x-circle\"/></svg>";
 		$output .= "<h1 class=\"text-center mt-4\">Access denied</h1>";
 		$output .= "</div>";
 
 		echo $output;
-
-
+		
 		header("Location: " . siteURL() . "/logon.php");
 	  exit;
 	}

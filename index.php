@@ -63,6 +63,17 @@ if (isset($_POST['inputUsername']) && isset($_POST['inputPassword']) && $_SESSIO
 		} else {
 			$_SESSION['admin'] = false;
 		}
+    
+    // build this out one day when I have time :-s
+    if(!empty($_POST["inputRemember"])) {
+      //setcookie ("username",$_SESSION['username'],time()+ 3600);
+      //setcookie ("password",$_POST['inputPassword'],time()+ 3600);      
+      //echo "Cookies Set Successfuly";
+    } else {
+      //setcookie("username","");
+      //setcookie("password","");
+      //echo "Cookies Not Set";
+    }
 
 		$logArray['category'] = "logon";
     $logArray['result'] = "success";

@@ -12,38 +12,34 @@
 
 	<style>
 	body {
-	  box-shadow: inset 0 0 5rem rgba(0, 0, 0, .9);
+	  display: flex;
+	  align-items: center;
+	  padding-top: 40px;
+	  padding-bottom: 40px;
+	  background-color: #f5f5f5;
 	  background: url('/img/cover.jpg') no-repeat center center fixed;
-	  -webkit-background-size: cover;
-	  -moz-background-size: cover;
-	  -o-background-size: cover;
-	  background-size: cover;
+	  box-shadow: inset 0 0 5rem rgba(0, 0, 0, .9);
+		-webkit-background-size: cover;
+		-moz-background-size: cover;
+		-o-background-size: cover;
+		background-size: cover;
 	}
-
+	
 	.form-signin {
-	  width: 100%;
 	  max-width: 330px;
 	  padding: 15px;
-	  margin: auto;
 	}
-	.form-signin .checkbox {
-	  font-weight: 400;
-	}
-	.form-signin .form-control {
-	  position: relative;
-	  box-sizing: border-box;
-	  height: auto;
-	  padding: 10px;
-	  font-size: 16px;
-	}
-	.form-signin .form-control:focus {
+	
+	.form-signin .form-floating:focus-within {
 	  z-index: 2;
 	}
+	
 	.form-signin input[type="text"] {
 	  margin-bottom: -1px;
 	  border-bottom-right-radius: 0;
 	  border-bottom-left-radius: 0;
 	}
+	
 	.form-signin input[type="password"] {
 	  margin-bottom: 10px;
 	  border-top-left-radius: 0;
@@ -52,58 +48,62 @@
 	</style>
 </head>
 
-<body class="d-flex h-100 text-center text-white bg-dark">
-	<div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
-    <header class="mb-auto">
-		</header>
-
-		<main class="form-signin">
+<body class="text-center">
+	<main class="form-signin w-100 m-auto">
+		<?php
+		if (debug) {
+			$output  = "<div class=\"alert alert-warning\" role=\"alert\">";
+			$output .= "<strong>Warning!</strong> This site is in <code>debug mode</code>.  It is for testing purposes only!";
+			$output .= "</div>";
+			echo $output;
+		}
+		
+		if (isset($_SESSION['logon_error'])) {
+			echo "<div class=\"alert alert-warning\" role=\"alert\">";
+			echo "<p>" . $_SESSION['logon_error'] . "</p>";
+			echo "<p><a href=\"" . reset_url . "\" class=\"alert-link\">Forgot your password?</a></p>";
+			echo "</div>";
+		}
+		?>
+		
+		<svg width="72" height="72" class="mb-4 <?php if(debug) { echo "text-warning";}?>">
+			<use xlink:href="img/icons.svg#chough"/>
+		</svg>
+		
+		<form method="post" id="loginSubmit" action="index.php">
+			<h1 class="h3 mb-3 fw-normal text-white"><?php echo site_name;?></h1>
+			
+			<div class="form-floating">
+			  <input type="text" class="form-control" id="inputUsername" name="inputUsername" placeholder="Username">
+			  <label for="inputUsername">Username</label>
+			</div>
+			<div class="form-floating">
+			  <input type="password" class="form-control" id="inputPassword" name="inputPassword" placeholder="Password">
+			  <label for="inputPassword">Password</label>
+			</div>
+			
+			<!--<div class="checkbox mb-3">
+			  <label class="text-white">
+				<input type="checkbox" value="remember-me" id="inputRemember" name="inputRemember" value=true> Remember me
+			  </label>
+			</div>-->
+			<button class="w-100 btn btn-lg btn-primary" type="submit">Sign in</button>
+			
 			<?php
-
-			if (debug) {
-				$output  = "<div class=\"alert alert-warning\" role=\"alert\">";
-				$output .= "<strong>Warning!</strong> This site is in <code>debug mode</code>.  It is for testing purposes only!";
-				$output .= "</div>";
-
-				echo $output;
-			}
-
-			if (isset($_SESSION['logon_error'])) {
-				echo "<div class=\"alert alert-warning\" role=\"alert\">";
-				echo "<p>" . $_SESSION['logon_error'] . "</p>";
-				echo "<p><a href=\"" . reset_url . "\" class=\"alert-link\">Forgot your password?</a></p>";
-				echo "</div>";
+			if (!empty(reset_url)) {
+				echo "<p class=\"mt-5 mb-3  text-center\">";
+				echo "<a class=\"text-white\" href=\"" . reset_url . "\">Forgot your password?</a>";
+				echo "</p>";
 			}
 			?>
-	    <form method="post" id="loginSubmit" action="index.php">
-	      <div class="mb-4 text-center">
-					<svg width="5em" height="5em" <?php if(debug) { echo "class=\"text-warning\"";}?>>
-						<use xlink:href="img/icons.svg#chough"/>
-					</svg>
-	        <h1 class="h3 mb-3 font-weight-normal"><?php echo site_name;?></h1>
-	      </div>
-	      <label for="inputUsername" class="visually-hidden">Username</label>
-	      <input type="text" id="inputUsername" name="inputUsername" class="form-control" placeholder="Username" required autofocus>
-	      <label for="inputPassword" class="visually-hidden">Password</label>
-	      <input type="password" id="inputPassword" name="inputPassword" class="form-control" placeholder="Password" required>
-	      <button class="btn btn-lg btn-primary w-100" type="submit">Log In</button>
-				<?php
-				if (!empty(reset_url)) {
-					echo "<p class=\"mt-5 mb-3  text-center\">";
-					echo "<a class=\"text-white\" href=\"" . reset_url . "\">Forgot your password?</a>";
-					echo "</p>";
-				}
-				?>
-	    </form>
-	  </main>
-		<footer class="mt-auto text-white-50">
-			<p><a href="https://github.com/dox/scr" class="text-white"><?php echo site_name;?></a> developed by <a href="https://github.com/dox" class="text-white">Andrew Breakspear</a>.</p>
-		</footer>
-    <?php
-			$_SESSION['logon_error'] = null;
-		?>
-	</div>
+			
+			<p class="mt-5 mb-3 text-white"><?php echo site_name;?> developed by <a href="https://github.com/dox" class="text-white">Andrew Breakspear</a></p>
+	</main>
+	
 </body>
+<?php
+	$_SESSION['logon_error'] = null;
+?>
 </html>
 
 <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
