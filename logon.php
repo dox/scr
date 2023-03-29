@@ -18,7 +18,6 @@
 	  padding-bottom: 40px;
 	  background-color: #f5f5f5;
 	  background: url('/img/cover.jpg') no-repeat center center fixed;
-	  box-shadow: inset 0 0 5rem rgba(0, 0, 0, .9);
 		-webkit-background-size: cover;
 		-moz-background-size: cover;
 		-o-background-size: cover;
@@ -55,18 +54,18 @@
 			$output  = "<div class=\"alert alert-warning\" role=\"alert\">";
 			$output .= "<strong>Warning!</strong> This site is in <code>debug mode</code>.  It is for testing purposes only!";
 			$output .= "</div>";
-			echo $output;
+			//echo $output;
 		}
 		
 		if (isset($_SESSION['logon_error'])) {
 			echo "<div class=\"alert alert-warning\" role=\"alert\">";
 			echo "<p>" . $_SESSION['logon_error'] . "</p>";
 			echo "<p><a href=\"" . reset_url . "\" class=\"alert-link\">Forgot your password?</a></p>";
-			echo "</div>";
+			//echo "</div>";
 		}
 		?>
 		
-		<svg width="72" height="72" class="mb-4 <?php if(debug) { echo "text-warning";}?>">
+		<svg width="72" height="72" class="mb-4 <?php if(debug) { echo "text-warning";} else { echo "text-white"; }?>">
 			<use xlink:href="img/icons.svg#chough"/>
 		</svg>
 		
