@@ -81,7 +81,7 @@ class reports {
   private function displayRow($array = null) {
     $dropdownButton  = "<div class=\"dropdown float-end\">";
     $dropdownButton .= "<button class=\"btn btn-sm btn-primary dropdown-toggle\" type=\"button\" id=\"dropdownMenuButton1\" data-bs-toggle=\"dropdown\" aria-expanded=\"false\">";
-    $dropdownButton .= "Dropdown button";
+    $dropdownButton .= "Run Report";
     $dropdownButton .= "</button>";
     $dropdownButton .= "<ul class=\"dropdown-menu\" aria-labelledby=\"dropdownMenuButton1\">";
     $dropdownButton .= "<li><a class=\"dropdown-item\" href=\"report.php?reportUID=" . $array['uid'] . "\">Run Now</a></li>";
@@ -91,7 +91,7 @@ class reports {
 
     $output  = "<tr>";
     //$output .= "<td>" . dateDisplay($array['date']) . " " . timeDisplay($array['date']) . "</td>";
-    $output .= "<td><a href=\"index.php?n=admin_report&reportUID=" . $array['uid'] . "\">" . $array['name'] . "</a></td>";
+    $output .= "<td>" . $array['name'] . "</td>";
     $output .= "<td>" . $array['type'] . "</td>";
     $output .= "<td>" . $this->accessBadge($array['admin_only']) . "</td>";
     $output .= "<td>" . $array['date_lastrun'] . "</td>";

@@ -1,11 +1,13 @@
 <?php
 class meals extends meal {
-  public function all() {
+  public function all($limit = 1000) {
     global $db;
 
     $sql  = "SELECT *  FROM " . self::$table_name;
     $sql .= " WHERE template = '0'";
-    $sql .= " ORDER BY date_meal DESC LIMIT 1000";
+    $sql .= " ORDER BY date_meal DESC LIMIT " . $limit;
+    
+    echo $sql;
 
     $meals = $db->query($sql)->fetchAll();
 
