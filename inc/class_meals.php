@@ -6,8 +6,6 @@ class meals extends meal {
     $sql  = "SELECT *  FROM " . self::$table_name;
     $sql .= " WHERE template = '0'";
     $sql .= " ORDER BY date_meal DESC LIMIT " . $limit;
-    
-    echo $sql;
 
     $meals = $db->query($sql)->fetchAll();
 
