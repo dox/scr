@@ -51,3 +51,10 @@
 		?>
 	</div>
 </div>
+
+<?php
+$logArray['category'] = "report";
+$logArray['result'] = "success";
+$logArray['description'] = "[reportUID:" . $report['uid'] . "] run";
+$logsClass->create($logArray);
+?>
