@@ -30,6 +30,12 @@ if (file_exists($node)) {
     include_once($node);
     echo "</div>";
 
+  } elseif ($report['type'] == "HTML") {
+    include_once("views/html_head.php");
+    
+    echo "<div class=\"container\">";
+    include_once($node);
+    echo "</div>";
   } else {
     echo "Report type '" . $report['type'] . "' not supported.";
     exit();
