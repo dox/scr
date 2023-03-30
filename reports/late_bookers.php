@@ -1,6 +1,6 @@
 <div class="row">
 	<div class="col">
-		<h1>Meals, and those booking late</h1>
+		<h1 class="mb-4">Meals, and those booking late</h1>
 		<?php
 		$mealsClass = new meals();
 		
@@ -22,24 +22,23 @@
 					$bookingLateArray[] = $booking['member_ldap'] . " booking was " . $dateDiff . " minutes late";
 					$membersLate[$booking['member_ldap']] = $membersLate[$booking['member_ldap']] + 1;
 				}
+			}
+			
+			if (!empty($bookingLateArray)) {
+				$url = "http://scr2.seh.ox.ac.uk/index.php?n=admin_meal&mealUID=" . $meal->uid;
 				
-				if (!empty($bookingLateArray)) {
-					$url = "http://scr2.seh.ox.ac.uk/index.php?n=admin_meal&mealUID=" . $meal->uid;
-					
-					echo "<h3><a href=\"" . $url . "\">" . $meal->name . "</a> <i>(" . dateDisplay($meal->date_meal) . ")</i></h3>";
-					
-					echo implode("<br />", $bookingLateArray);
-					echo "<br /><br />";
-				}
+				echo "<h3><a href=\"" . $url . "\">" . $meal->name . "</a> <i>(" . dateDisplay($meal->date_meal) . ")</i></h3>";
 				
+				echo implode("<br />", $bookingLateArray);
+				echo "<br /><br />";
 			}
 		}
 		?>
 	</div>
 	<div class="col">
+		<h1 class="mb-4">Most Frequently Late</h1>
 		<?php
 		arsort($membersLate);
-		echo "<h1>Most Frequently Late</h1>";
 		echo "<ul class=\"list-unstyled\">";
 		foreach ($membersLate AS $member => $value) {
 			$member = new member($member);
