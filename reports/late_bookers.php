@@ -16,7 +16,7 @@
 			$bookingLateArray = array();
 			
 			foreach ($bookings AS $booking) {
-				$dateDiff = datediff('n', $meal->date_meal, $booking['date']);
+				$dateDiff = datediff('n', $meal->date_cutoff, $booking['date']);
 				
 				if ($booking['date'] > $meal->date_meal) {
 					$bookingLateArray[] = $booking['member_ldap'] . " booking was " . $dateDiff . " minutes late";
