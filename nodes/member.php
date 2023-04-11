@@ -355,12 +355,17 @@ var options = {
       show: false
     }
   },
+  
   dataLabels: {
     enabled: false
   },
   series: [<?php echo implode(",", $chartArray); ?>],
   xaxis: {
     categories: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+  },
+  tooltip: {
+    intersect: false,
+    shared: true
   }
 }
 
