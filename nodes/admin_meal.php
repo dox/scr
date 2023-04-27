@@ -339,6 +339,8 @@ echo makeTitle($title, $subtitle, $icons);
   </form>
 </div>
 
+<div id="chart-meals_by_day"></div>
+
 
 <!-- Modal -->
 <div class="modal" tabindex="-1" id="deleteMealModal" data-backdrop="static" data-keyboard="false" aria-hidden="true">
@@ -389,6 +391,47 @@ var fp2 = flatpickr("#date_cutoff", {
   enableTime: true,
   time_24hr: true
 })
+</script>
 
 
+
+<?php
+$chartReadingsArray = array();
+foreach ($mealObject->bookings_this_meal() AS $booking) {
+  $date = date('Y-m-d', strtotime($booking['date']));
+  
+  $bookingTotals[$date] = $bookingTotals[$date] + 1;
+  $chartReadingsArray[strtotime($date)*1000] = "[" . (strtotime($date)*1000) . "," . $bookingTotals[$date] . "]";
+}
+?>
+<script>
+var options = {
+  chart: {
+    type: 'bar',
+    height: '300px',
+    toolbar: {
+      show: false
+    }
+  },
+  
+  dataLabels: {
+    enabled: false
+  },
+  series: [{
+    name: "Total bookings by day",
+    data: [<?php echo implode (",", $chartReadingsArray); ?>]
+  }],
+  xaxis: {
+    type: 'datetime',
+  },
+  tooltip: {
+    x: {
+      format: 'yyyy MMM dd'
+    }
+  }
+}
+
+var chart = new ApexCharts(document.querySelector("#chart-meals_by_day"), options);
+
+chart.render();
 </script>
