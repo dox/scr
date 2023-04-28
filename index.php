@@ -55,7 +55,8 @@ if (isset($_POST['inputUsername']) && isset($_POST['inputPassword']) && $_SESSIO
 		$_SESSION['logon'] = true;
 		$_SESSION['enabled'] = $memberObject->enabled;
 		$_SESSION['username'] = strtoupper($ldapUser[0]['samaccountname'][0]);
-		$_SESSION['type'] = $memberObject->type;
+    $_SESSION['type'] = $memberObject->type;
+    $_SESSION['category'] = $memberObject->category;
 
     $arrayOfAdmins = explode(",", strtoupper($settingsClass->value('member_admins')));
 		if (in_array(strtoupper($_SESSION['username']), $arrayOfAdmins)) {

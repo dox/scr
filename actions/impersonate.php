@@ -8,6 +8,8 @@ if (isset($_POST['impersonate_ldap'])) {
   $_SESSION['username_original'] = $_SESSION['username'];
   $_SESSION['type_original'] = $_SESSION['type'];
   $_SESSION['type'] = $memberObject->type;
+  $_SESSION['category_original'] = $_SESSION['category'];
+  $_SESSION['category'] = $memberObject->category;
   $_SESSION['username'] = $memberObject->ldap;
   $_SESSION['impersonating'] = "true";
 
@@ -37,6 +39,7 @@ if ($_POST['impersonate_submit_button'] == "stop") {
 
   $_SESSION['username'] = $_SESSION['username_original'];
   $_SESSION['type'] = $_SESSION['type_original'];
+  $_SESSION['category'] = $_SESSION['category_original'];
   unset($_SESSION['username_original']);
   unset($_SESSION['type_original']);
   unset($_SESSION['impersonating']);

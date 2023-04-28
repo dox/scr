@@ -9,6 +9,7 @@ class meal {
   public $date_meal;
   public $date_cutoff;
   public $location;
+  public $allowed;
   public $domus;
   public $charge_to;
   public $allowed_wine;
@@ -155,6 +156,17 @@ class meal {
         $bookingClass = "btn-secondary disabled";
         $bookingOnClick = "";
         $bookingDisplayText = "Your account is disabled";
+      }
+      
+      // check for member category (if allowed this meal)
+      if ($this->check_member_type_ok(true)) {
+        // member status fine
+      } else {
+        // member disabled
+        $bookingLink = "#";
+        $bookingClass = "btn-secondary disabled";
+        $bookingOnClick = "";
+        $bookingDisplayText = "Restricted Meal";
       }
     }
 
@@ -441,7 +453,7 @@ class meal {
 
   public function check_member_ok($factorInAdminAccess = false) {
     $currentMemberStatus = $_SESSION['enabled'];
-
+  
     if ($currentMemberStatus == 1) {
       $memberStatus = true;
     } else {
@@ -453,16 +465,44 @@ class meal {
         $memberStatus = true;
       }
     }
-
+  
     return $memberStatus;
+  }
+  
+  public function check_member_type_ok($factorInAdminAccess = false) {
+    $allowedMemberTypes = array();
+    if (!empty($this->allowed)) {
+      $allowedMemberTypes = explode(",", $this->allowed);
+    }
+    
+    $memberTypeCheck = false;
+    
+    if (!empty($allowedMemberTypes)) {
+      if (in_array($_SESSION['category'], $allowedMemberTypes)) {
+        $memberTypeCheck = true;
+      }
+    } else {
+      // meal has no allow restrictions
+      $memberTypeCheck = true;
+    }
+    
+    if ($factorInAdminAccess == true) {
+      if ($_SESSION['admin'] == 1) {
+        $memberTypeCheck = true;
+      }
+    }
+    
+    return $memberTypeCheck;
   }
 
   public function check_meal_bookable($factorInAdminAccess = false) {
-    $check_capacity = $this->check_capacity_ok($factorInAdminAccess);
-    $check_cutoff   = $this->check_cutoff_ok($factorInAdminAccess);
-    $check_member   = $this->check_member_ok($factorInAdminAccess);
+    $check_capacity     = $this->check_capacity_ok($factorInAdminAccess);
+    $check_cutoff       = $this->check_cutoff_ok($factorInAdminAccess);
+    $check_member       = $this->check_member_ok($factorInAdminAccess);
+    $check_member_type  = $this->check_member_type_ok($factorInAdminAccess);
     
-    if ($check_capacity && $check_cutoff && $check_member) {
+    
+    if ($check_capacity && $check_cutoff && $check_member && $check_member_type) {
       $return = true;
     } else {
       $return = false;

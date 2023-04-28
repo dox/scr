@@ -13,6 +13,14 @@ $mealObject = new meal($_GET['mealUID']);
 
 
 if (isset($_POST['mealUID'])) {
+  printArray($_POST);
+  
+  if (isset($_POST['allowed'])) {
+    $_POST['allowed'] = implode(",", $_POST['allowed']);
+  } else {
+    $_POST['allowed'] = null;
+  }
+  
   if (!isset($_POST['domus'])) {
     $_POST['domus'] = '0';
   }
@@ -241,6 +249,46 @@ echo makeTitle($title, $subtitle, $icons);
       <div class="col">
         <label for="menu" class="form-label">Menu</label>
         <textarea rows="4" class="form-control" name="menu" id="menu"><?php echo $mealObject->menu; ?></textarea>
+      </div>
+    </div>
+    
+    <div class="row">
+      <div class="col">
+        
+        <div class="accordion" id="accordionAllowed">
+        <div class="accordion-item">
+          <h2 class="accordion-header">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+              Allowed Groups
+            </button>
+          </h2>
+          <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionAllowed">
+            <div class="accordion-body">
+              <strong>Select none for everyone to be allowed, otherwise only those member types selected can book this meal</strong>
+              
+              <?php
+              $memberTypes = explode(",", $settingsClass->value('member_categories'));
+              $mealTypesAllowed = explode(",", $mealObject->allowed);
+              
+              foreach ($memberTypes AS $memberType) {
+                if (in_array($memberType, $mealTypesAllowed)) {
+                  $checked = " checked";
+                } else {
+                  $checked = "";
+                }
+                $output  = "<div class=\"form-check\">";
+                $output .= "<input class=\"form-check-input\" type=\"checkbox\" value=\"" . $memberType . "\" name=\"allowed[]\" id=\"flexCheckDefault\" " . $checked . ">";
+                $output .= "<label class=\"form-check-label\" for=\"flexCheckDefault\">" . $memberType . "</label>";
+                $output .= "</div>";
+                
+                echo $output;
+                
+              }
+              ?>
+            </div>
+          </div>
+        </div>
+        </div>
       </div>
     </div>
 
