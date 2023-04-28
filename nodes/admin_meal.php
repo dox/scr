@@ -190,6 +190,48 @@ echo makeTitle($title, $subtitle, $icons);
     </div>
 
     <hr />
+    
+    <div class="row">
+      <div class="col">
+        
+        <div class="accordion" id="accordionAllowed">
+        <div class="accordion-item">
+          <h2 class="accordion-header">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+              Allowed Groups
+            </button>
+          </h2>
+          <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionAllowed">
+            <div class="accordion-body">
+              <strong>Select none for everyone to be allowed, otherwise only those member types selected can book this meal</strong>
+              
+              <?php
+              $memberTypes = explode(",", $settingsClass->value('member_categories'));
+              $mealTypesAllowed = explode(",", $mealObject->allowed);
+              
+              foreach ($memberTypes AS $memberType) {
+                if (in_array($memberType, $mealTypesAllowed)) {
+                  $checked = " checked";
+                } else {
+                  $checked = "";
+                }
+                $output  = "<div class=\"form-check\">";
+                $output .= "<input class=\"form-check-input\" type=\"checkbox\" value=\"" . $memberType . "\" name=\"allowed[]\" id=\"flexCheckDefault\" " . $checked . ">";
+                $output .= "<label class=\"form-check-label\" for=\"flexCheckDefault\">" . $memberType . "</label>";
+                $output .= "</div>";
+                
+                echo $output;
+                
+              }
+              ?>
+            </div>
+          </div>
+        </div>
+        </div>
+      </div>
+    </div>
+    
+    <hr />
 
     <div class="row mb-3">
       <div class="col">
@@ -251,47 +293,6 @@ echo makeTitle($title, $subtitle, $icons);
         <textarea rows="4" class="form-control" name="menu" id="menu"><?php echo $mealObject->menu; ?></textarea>
       </div>
     </div>
-    
-    <div class="row">
-      <div class="col">
-        
-        <div class="accordion" id="accordionAllowed">
-        <div class="accordion-item">
-          <h2 class="accordion-header">
-            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-              Allowed Groups
-            </button>
-          </h2>
-          <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionAllowed">
-            <div class="accordion-body">
-              <strong>Select none for everyone to be allowed, otherwise only those member types selected can book this meal</strong>
-              
-              <?php
-              $memberTypes = explode(",", $settingsClass->value('member_categories'));
-              $mealTypesAllowed = explode(",", $mealObject->allowed);
-              
-              foreach ($memberTypes AS $memberType) {
-                if (in_array($memberType, $mealTypesAllowed)) {
-                  $checked = " checked";
-                } else {
-                  $checked = "";
-                }
-                $output  = "<div class=\"form-check\">";
-                $output .= "<input class=\"form-check-input\" type=\"checkbox\" value=\"" . $memberType . "\" name=\"allowed[]\" id=\"flexCheckDefault\" " . $checked . ">";
-                $output .= "<label class=\"form-check-label\" for=\"flexCheckDefault\">" . $memberType . "</label>";
-                $output .= "</div>";
-                
-                echo $output;
-                
-              }
-              ?>
-            </div>
-          </div>
-        </div>
-        </div>
-      </div>
-    </div>
-
 
     <hr />
 
