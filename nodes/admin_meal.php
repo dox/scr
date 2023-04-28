@@ -13,8 +13,6 @@ $mealObject = new meal($_GET['mealUID']);
 
 
 if (isset($_POST['mealUID'])) {
-  printArray($_POST);
-  
   if (isset($_POST['allowed'])) {
     $_POST['allowed'] = implode(",", $_POST['allowed']);
   } else {
@@ -209,6 +207,7 @@ echo makeTitle($title, $subtitle, $icons);
               $memberTypes = explode(",", $settingsClass->value('member_categories'));
               $mealTypesAllowed = explode(",", $mealObject->allowed);
               
+              $i = 0;
               foreach ($memberTypes AS $memberType) {
                 if (in_array($memberType, $mealTypesAllowed)) {
                   $checked = " checked";
@@ -216,9 +215,11 @@ echo makeTitle($title, $subtitle, $icons);
                   $checked = "";
                 }
                 $output  = "<div class=\"form-check\">";
-                $output .= "<input class=\"form-check-input\" type=\"checkbox\" value=\"" . $memberType . "\" name=\"allowed[]\" id=\"flexCheckDefault\" " . $checked . ">";
-                $output .= "<label class=\"form-check-label\" for=\"flexCheckDefault\">" . $memberType . "</label>";
+                $output .= "<input class=\"form-check-input\" type=\"checkbox\" value=\"" . $memberType . "\" name=\"allowed[]\" id=\"flexCheckDefault_" . $i . "\" " . $checked . ">";
+                $output .= "<label class=\"form-check-label\" for=\"flexCheckDefault_" . $i . "\">" . $memberType . "</label>";
                 $output .= "</div>";
+                
+                $i++;
                 
                 echo $output;
                 
