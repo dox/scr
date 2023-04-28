@@ -65,6 +65,9 @@ var options = {
     name: 'Logs',
     data: [<?php echo implode(",", $logsByDay); ?>]
   }],
+  dataLabels: {
+    enabled: false
+  },
   xaxis: {
     categories: ['<?php echo implode("','", $labelsArray); ?>']
   }
