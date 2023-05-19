@@ -142,6 +142,9 @@ if (isset($bookingByMember)) {
             <span class="col-auto">
               <label class="form-check form-check-single form-switch">
                 <input class="form-check-input" <?php echo $dessertDisabledCheck; ?> id="dessert" name="dessert" value="1" type="checkbox" <?php echo $dessertChecked; ?>>
+                <?php
+                // include the dessert value in POST if the checkbox is disabled (otherwise dessert resets to 0)
+                if ($dessertDisabledCheck == " disabled") { echo "<input type=\"hidden\" id=\"dessert\" name=\"dessert\" value=\"1\" />"; } ?>
               </label>
             </span>
           </label>
