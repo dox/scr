@@ -58,6 +58,7 @@ foreach (array_keys($logsByDay) AS $label) {
 <script>
 var options = {
   chart: {
+    id: 'logs-daily',
     type: 'bar',
     height: '300px'
   },
