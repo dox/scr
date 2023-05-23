@@ -48,7 +48,7 @@ if (isset($_GET['guestUID'])) {
     echo "<p>You have added the maximum number of guests permitted for this meal.</p>";
   } else { 
     
-    if ($bookingObject->dessert == "1" && $mealObject->total_dessert_bookings_this_meal() >= $mealObject->scr_dessert_capacity && $mode == "add") {
+    if ($bookingObject->dessert == "1" && $mealObject->total_dessert_bookings_this_meal() >= $mealObject->scr_dessert_capacity && $mode == "add" && $_SESSION['admin'] != true) {
       exit("<p>You cannot add a guest as it would exceed the available number of dessert spaces.  Please remove yourself from dessert if you wish to add another guest</p>");
     }
     
