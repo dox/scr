@@ -15,13 +15,14 @@ $thisMealsBookingsUIDs = $bookingsClass->bookingsUIDsByMealUID($_GET['mealUID'])
 foreach ($thisMealsBookingsUIDs AS $booking) {
   $output = "";
   
+  $bookingObject = new booking($booking['uid']);
   $guestBookingObject = new booking($booking['uid']);
   $memberObject = new member($guestBookingObject->member_ldap);
     
   $guestsArray = $guestBookingObject->guestsArray();
   $totalGuests = count($guestsArray);
   
-  if ($guestBookingObject->dessert == "1") {
+  if ($bookingObject->dessert == "1") {
     $icon = " <svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#cookie\"></use></svg>";
   } else {
    $icon = ""; 
@@ -39,7 +40,7 @@ foreach ($thisMealsBookingsUIDs AS $booking) {
     foreach ($guestsArray AS $guest) {
       $guest = json_decode($guest);
       
-      if ($guest->guest_dessert == "on") {
+      if ($bookingObject->dessert == "1") {
         $icon = " <svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#cookie\"></use></svg>";
       } else {
        $icon = ""; 
