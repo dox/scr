@@ -32,7 +32,7 @@ if (!isset($bookingObject)) {
     if ($guestObject->guest_wine == "on") {
       $icons[] = "<svg width=\"1em\" height=\"1em\" class=\"text-muted\"><use xlink:href=\"img/icons.svg#wine-glass\"/></svg>";
     }
-    if ($guestObject->guest_dessert == "on") {
+    if ($bookingObject->dessert == "1") {
       $icons[] = "<svg width=\"1em\" height=\"1em\" class=\"text-muted\"><use xlink:href=\"img/icons.svg#cookie\"/></svg>";
     }
     $output  = "<li class=\"list-group-item d-flex justify-content-between lh-sm\">";

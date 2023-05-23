@@ -46,7 +46,13 @@ if (isset($_GET['guestUID'])) {
         }
   } elseif (count($bookingObject->guestsArray()) >= $mealObject->getTotalGuestsAllowed() && $_SESSION['admin'] != true && $mode == "add") {
     echo "<p>You have added the maximum number of guests permitted for this meal.</p>";
-  } else { ?>
+  } else { 
+    
+    if ($bookingObject->dessert == "1" && $mealObject->total_dessert_bookings_this_meal() >= $mealObject->scr_dessert_capacity && $mode == "add") {
+      exit("<p>You cannot add a guest as it would exceed the available number of dessert spaces.  Please remove yourself from dessert if you wish to add another guest</p>");
+    }
+    
+    ?>
     <form method="post" class="needs-validation" action="../actions/booking_add_guest.php">
       <div class="form-group mb-3">
         <label for="name">Guest Name</label>
@@ -143,58 +149,6 @@ if (isset($_GET['guestUID'])) {
           <span class="col-auto">
             <label class="form-check form-check-single form-switch">
               <input class="form-check-input" id="guest_wine" name="guest_wine" type="checkbox" <?php echo $checked ?> <?php echo $wineDisabledCheck; ?>>
-            </label>
-          </span>
-        </label>
-      </div>
-      <div>
-        <label class="row">
-          <?php
-          $dessertDisabledCheck = " disabled";
-          $dessertHelper = "(dessert is not available)";
-          $dessertChecked = "";
-          
-          if ($guestObject->guest_dessert == "on") {
-            // guest already booked on for dessert
-            $dessertChecked = " checked";
-            
-            if ($mealObject->allowed_dessert == 1 && $mealObject->check_meal_bookable(true)) {
-              $dessertDisabledCheck = "";
-              $dessertHelper = "";
-            } else {
-              $dessertHelper = "Deadline passed";
-            }
-            
-            
-          } else {
-            // we're not yet booked on for dessert
-            if ($mealObject->allowed_dessert == 1 && $mealObject->check_meal_bookable(true)) {
-              $dessertDisabledCheck = "";
-              $dessertHelper = "";
-            }
-            
-            // check if member has booked dessert - if they haven't then guests aren't allowed either
-            if ($bookingObject->dessert != 1) {
-              $dessertDisabledCheck = " disabled";
-              $dessertHelper =  "(you are required to have dessert also)";
-            }
-            
-            // check if dessert capacity is reached
-            if ($mealObject->total_dessert_bookings_this_meal() >= $mealObject->scr_dessert_capacity) {
-              $dessertDisabledCheck = " disabled";
-              $dessertHelper =  "(capacity for dessert reached)";
-            }
-          }
-          
-          //admin override for dessert booking!
-          if ($_SESSION['admin'] == 1) {
-            $dessertDisabledCheck = "";
-          }
-          ?>
-          <span class="col"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#cookie"></svg> Guest Dessert <?php echo $dessertHelper; ?></span>
-          <span class="col-auto">
-            <label class="form-check form-check-single form-switch">
-              <input class="form-check-input" id="guest_dessert" name="guest_dessert" type="checkbox" <?php echo $dessertChecked; ?> <?php echo $dessertDisabledCheck; ?>>
             </label>
           </span>
         </label>

@@ -252,52 +252,36 @@ class meal {
     $guestsDessert = 0;
 
     if ($memberType == "SCR") {
-      $sql  = "SELECT COUNT(*) AS totalDessert FROM bookings";
+      $sql  = "SELECT * FROM bookings";
       $sql .= " WHERE meal_uid = '" . $this->uid . "'";
       $sql .= " AND dessert = '1'";
       $sql .= " AND type = 'SCR'";
-
-      $sqlGuests  = "SELECT guests_array FROM bookings";
-      $sqlGuests .= " WHERE meal_uid = '" . $this->uid . "'";
-      $sqlGuests .= " AND guests_array IS NOT NULL";
-      $sqlGuests .= " AND type = 'SCR'";
     } elseif ($memberType == "MCR") {
-      $sql  = "SELECT COUNT(*) AS totalDessert FROM bookings";
+      $sql  = "SELECT * FROM bookings";
       $sql .= " WHERE meal_uid = '" . $this->uid . "'";
       $sql .= " AND dessert = '1'";
       $sql .= " AND type = 'MCR'";
-
-      $sqlGuests  = "SELECT guests_array FROM bookings";
-      $sqlGuests .= " WHERE meal_uid = '" . $this->uid . "'";
-      $sqlGuests .= " AND guests_array IS NOT NULL";
-      $sqlGuests .= " AND type = 'MCR'";
     } else {
-      $sql  = "SELECT COUNT(*) AS totalDessert FROM bookings";
+      $sql  = "SELECT * FROM bookings";
       $sql .= " WHERE meal_uid = '" . $this->uid . "'";
       $sql .= " AND dessert = '1'";
-
-      $sqlGuests  = "SELECT guests_array FROM bookings";
-      $sqlGuests .= " WHERE meal_uid = '" . $this->uid . "'";
-      $sqlGuests .= " AND guests_array IS NOT NULL";
     }
 
-    $members_array = $db->query($sql)->fetchAll();
-    $membersDessert = $members_array[0]['totalDessert'];
-
-    $guests_array = $db->query($sqlGuests)->fetchAll();
-
-    $totalGuestDessert = 0;
-    foreach ($guests_array AS $guest) {
-      $guests = json_decode($guest['guests_array']);
-      foreach ($guests AS $guest) {
-        $guest = json_decode($guest);
-        if ($guest->guest_dessert == "on") {
-          $totalGuestDessert ++;
-        }
+    $bookings = $db->query($sql)->fetchAll();
+    
+    foreach ($bookings AS $booking) {
+      $bookingObject = new booking($booking['uid']);
+      
+      if ($bookingObject->dessert == "1") {
+        $membersDessert ++;
+        $guestsDessert = $guestsDessert + count($bookingObject->guestsArray());
       }
+      
     }
-
-    $totalDessert = $membersDessert + $totalGuestDessert;
+    
+    //echo "Members Dessert: " . $membersDessert . "<br />";
+    //echo "Guest Dessert: " . $guestsDessert . "<br />";
+    $totalDessert = $membersDessert + $guestsDessert;
 
     return $totalDessert;
   }

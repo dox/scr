@@ -16,11 +16,7 @@ if (isset($_POST['impersonate_ldap'])) {
   if ($_POST['maintainAdminAccess'] == "true") {
     $_SESSION['admin'] = "1";
   } else {
-    if ($memberObject->isAdmin() == true) {
-      $_SESSION['admin'] = "1";
-    } else {
-      $_SESSION['admin'] = "0";
-    }
+    $_SESSION['admin'] = "0";
   }
 
   $logArray['category'] = "admin";

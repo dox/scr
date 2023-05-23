@@ -98,8 +98,7 @@ if (isset($bookingByMember)) {
             $dessertHelper = "";
             $dessertChecked = "";
             $dessertDisabledCheck = " disabled";
-            
-            if ($bookingObject->dessert == 1) {
+            if ($bookingObject->dessert == "1") {
               // we're already booked on for dessert
               $dessertChecked = "checked";
               
@@ -108,18 +107,6 @@ if (isset($bookingByMember)) {
               } else {
                 $dessertHelper = "Deadline passed";
               }
-              
-              // check if we have guests with dessert, if so, don't let this box be unticked!
-              foreach ($bookingObject->guestsArray() AS $guest) {
-                $guest = json_decode($guest);
-                
-                if ($guest->guest_dessert == "on") {
-                  $dessertHelper = "(your guests are having dessert)";
-                  $dessertDisabledCheck = " disabled";
-                }
-              }
-              
-              
             } else {
               // we're not yet booked on for dessert
               if ($mealObject->allowed_dessert == 1 && $mealObject->check_meal_bookable(true)) {
@@ -138,7 +125,7 @@ if (isset($bookingByMember)) {
               $dessertDisabledCheck = "";
             }
             ?>
-            <span class="col"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#cookie"></svg> Dessert <?php echo $dessertHelper; ?></span>
+            <span class="col"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#cookie"></svg> Dessert <i>(applies to your guests)</i> <?php echo $dessertHelper; ?></span>
             <span class="col-auto">
               <label class="form-check form-check-single form-switch">
                 <input class="form-check-input" <?php echo $dessertDisabledCheck; ?> id="dessert" name="dessert" value="1" type="checkbox" <?php echo $dessertChecked; ?>>

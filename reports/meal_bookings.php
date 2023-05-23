@@ -68,7 +68,7 @@ foreach ($bookings AS $booking) {
     $bookingRowGuest['booking_charge_to'] = $guest->guest_charge_to;
     $bookingRowGuest['booking_domus_reason'] = $guest->guest_domus_reason;
     $bookingRowGuest['booking_wine'] = onToOne($guest->guest_wine) ;
-    $bookingRowGuest['booking_dessert'] = onToOne($guest->guest_dessert);
+    $bookingRowGuest['booking_dessert'] = $bookingObject->dessert; // takes value from host booking
     $bookingRowGuest['meal_name'] = htmlspecialchars_decode($mealObject->name);
     $bookingRowGuest['meal_notes'] = $mealObject->notes;
     $bookingRowGuest['meal_date'] = date('Y-m-d', strtotime($mealObject->date_meal));
