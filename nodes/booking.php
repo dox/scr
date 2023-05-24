@@ -5,6 +5,7 @@ $memberObject = new member($_SESSION['username']);
 
 $bookingByMember = $bookingsClass->bookingForMealByMember($mealObject->uid, $_SESSION['username']);
 $bookingObject = new booking($bookingByMember['uid']);
+$bookingObjectUID = $bookingObject->uid; // keep this for later!
 
 if (isset($_POST['bookingUID'])) {
   if (empty($_POST['wine'])) {
@@ -188,7 +189,7 @@ if (isset($bookingByMember)) {
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-link link-secondary mr-auto" data-bs-dismiss="modal">Close</button>
-        <a href="index.php?deleteBookingUID=<?php echo $bookingObject->uid; ?>" role="button" class="btn btn-danger <?php echo $buttonStatus; ?>" onclck="bookingDeleteButton();"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#trash"/></svg> Delete</a>
+        <a href="index.php?deleteBookingUID=<?php echo $bookingObjectUID; ?>" role="button" class="btn btn-danger <?php echo $buttonStatus; ?>" onclck="bookingDeleteButton();"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#trash"/></svg> Delete</a>
       </div>
     </div>
   </div>
