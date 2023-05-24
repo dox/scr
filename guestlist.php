@@ -154,7 +154,7 @@ $bookingsClass = new bookings();
             } else {
               $guestIcons[] = "<svg width=\"2em\" height=\"2em\" class=\"ms-1 me-1\"></svg>";
             }
-            if ($guest->guest_dessert == "on") {
+            if ($bookingObject->dessert == "1") {
               $guestIcons[] = "<svg width=\"2em\" height=\"2em\" class=\"ms-1 me-1\"><use xlink:href=\"img/icons.svg#cookie\"/></svg>";
             } else {
               $guestIcons[] = "<svg width=\"2em\" height=\"2em\" class=\"ms-1 me-1\"></svg>";
