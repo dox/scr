@@ -113,7 +113,6 @@ function editGuest(this_id) {
   var guestChargeTo = document.getElementById('guest_charge_to').value;
   var guestDomusReason = document.getElementById('guest_domus_reason').value;
   var guestWine = document.getElementById('guest_wine').checked;
-  var guestDessert = document.getElementById('guest_dessert').checked;
   var guestsList = document.getElementById('guests_list');
   var mealGuestList = document.getElementById('meal_guest_list');
   
@@ -139,7 +138,6 @@ function editGuest(this_id) {
   formData.append("guest_charge_to", guestChargeTo);
   formData.append("guest_domus_reason", guestDomusReason);
   formData.append("guest_wine", guestWine);
-  formData.append("guest_dessert", guestDessert);
 
   xhr.onload = async function() {
     let url = 'nodes/widgets/_bookingGuestList.php?bookingUID=' + bookingUID + '&mealUID=' + mealUID;
