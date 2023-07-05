@@ -541,6 +541,7 @@ function quickAdd() {
         if (request.status != 200) { // analyze HTTP status of the response
           alert(`Something went wrong. ${request.status}: ${request.statusText}`); // e.g. 404: Not Found
         } else { // show the result
+          location.reload();
           //alert(`Done, got ${request.response.length} bytes`); // response is the server response
         }
       };
