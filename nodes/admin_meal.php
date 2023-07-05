@@ -83,7 +83,7 @@ echo makeTitle($title, $subtitle, $icons);
 
         echo $output;
         
-        $currentMembersBooked = $memberObject->member_ldap;
+        $currentMembersBooked[] = $memberObject->ldap;
       }
       ?>
       <li class="list-group-item d-flex justify-content-between lh-sm">
@@ -498,8 +498,10 @@ chart.render();
 
 <datalist id="members-list">
   <?php
-  $membersClass2 = new members();
-  $members = $membersClass2->allEnabled();
+  printArray($currentMembersBooked);
+  
+  $membersClass = new members();
+  $members = $membersClass->allEnabled();
 
   foreach ($members AS $member) {
     $memberObject = new member($member['uid']);
