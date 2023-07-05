@@ -87,8 +87,9 @@ echo makeTitle($title, $subtitle, $icons);
       }
       ?>
       <li class="list-group-item d-flex justify-content-between lh-sm">
+        Coming soon...
         <input class="form-control" type="text" id='quick-add-member' list='members-list' placeholder="Quick Add Member" aria-label="Quick Add Member">
-        <button type="submit" id="quick-add-member-submit" onclick='quickAdd()' name="quick-add-member-submit" class="btn btn-primary"> Add</button>
+        <button type="submit" id="quick-add-member-submit" disabled onclick='quickAdd()' name="quick-add-member-submit" class="btn btn-primary"> Add</button>
       </li>
     </ul>
     <a href="report.php?reportUID=9&mealUID=<?php echo $mealObject->uid; ?>" class="text-muted float-end">Export all meal bookings</a>
