@@ -61,6 +61,9 @@ echo makeTitle($title, $subtitle, $icons);
     </h4>
     <ul class="list-group mb-3">
       <?php
+      
+      $currentMembersBooked = array();
+      
       foreach ($mealObject->bookings_this_meal() AS $booking) {
         $memberObject = new member($booking['member_ldap']);
 
@@ -79,8 +82,14 @@ echo makeTitle($title, $subtitle, $icons);
         $output .= "</li>";
 
         echo $output;
+        
+        $currentMembersBooked = $memberObject->member_ldap;
       }
       ?>
+      <li class="list-group-item d-flex justify-content-between lh-sm">
+        <input class="form-control" type="text" id='quick-add-member' list='members-list' placeholder="Quick Add Member" aria-label="Quick Add Member">
+        <button type="submit" id="quick-add-member-submit" onclick='quickAdd()' name="quick-add-member-submit" class="btn btn-primary"> Add</button>
+      </li>
     </ul>
     <a href="report.php?reportUID=9&mealUID=<?php echo $mealObject->uid; ?>" class="text-muted float-end">Export all meal bookings</a>
   </div>
@@ -484,4 +493,63 @@ var options = {
 var chart = new ApexCharts(document.querySelector("#chart-meals_by_day"), options);
 
 chart.render();
+</script>
+
+
+<datalist id="members-list">
+  <?php
+  $membersClass = new members();
+  $members = $membersClass->allEnabled();
+
+  foreach ($members AS $member) {
+    $memberObject = new member($member['uid']);
+    
+    if (!in_array($memberObject->ldap, $currentMembersBooked)) {
+      echo "<option id=\"" . $memberObject->ldap . "\" value=\"" . $memberObject->displayName() . "\"></option>";
+    }
+    
+  }
+  ?>
+</datalist>
+
+
+
+<script>
+function quickAdd() {
+  var buttonClicked = document.getElementById('quick-add-member-submit');
+  var impersonateInput = document.getElementById('quick-add-member');
+
+  var val = document.getElementById("quick-add-member").value;
+
+  var opts = document.getElementById('members-list').childNodes;
+  
+  for (var i = 0; i < opts.length; i++) {
+    if (opts[i].value === val) {
+      var formData = new FormData();
+      formData.append("meal_uid", "<?php echo $mealObject->uid; ?>");
+      formData.append("member_ldap", opts[i].id);
+      
+      var request = new XMLHttpRequest();
+
+      request.open("POST", "../actions/booking_create.php", true);
+      request.send(formData);
+
+      // 4. This will be called after the response is received
+      request.onload = function() {
+        if (request.status != 200) { // analyze HTTP status of the response
+          alert(`Something went wrong. ${request.status}: ${request.statusText}`); // e.g. 404: Not Found
+        } else { // show the result
+          //alert(`Done, got ${request.response.length} bytes`); // response is the server response
+        }
+      };
+
+      request.onerror = function() {
+        alert("Request failed");
+      };
+
+
+      break;
+    }
+  }
+}
 </script>

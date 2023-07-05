@@ -2,8 +2,14 @@
 include_once("../inc/autoload.php");
 
 $bookingObject = new booking();
+
 $mealObject = new meal($_POST['meal_uid']);
-$memberObject = new member($_SESSION['username']);
+
+if (isset($_POST['member_ldap'])) {
+	$memberObject = new member($_POST['member_ldap']);
+} else {
+	$memberObject = new member($_SESSION['username']);
+}
 
 $wineValue = "0";
 $dessertValue = "0";
