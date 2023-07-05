@@ -498,8 +498,8 @@ chart.render();
 
 <datalist id="members-list">
   <?php
-  $membersClass = new members();
-  $members = $membersClass->allEnabled();
+  $membersClass2 = new members();
+  $members = $membersClass2->allEnabled();
 
   foreach ($members AS $member) {
     $memberObject = new member($member['uid']);
