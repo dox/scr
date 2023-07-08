@@ -28,7 +28,7 @@ if ($mealObject->allowed_dessert == 1 && $memberObject->default_dessert == 1) {
 $bookingArray = array(
 	'meal_uid' => $_POST['meal_uid'],
 	'type' => $memberObject->type,
-	'member_ldap' => strtoupper($_SESSION['username']),
+	'member_ldap' => strtoupper($memberObject->ldap),
 	'charge_to' => $mealObject->charge_to,
 	'domus_reason' => $domusReason,
 	'wine' => $wineValue,
