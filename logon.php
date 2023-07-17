@@ -61,7 +61,7 @@
 			echo "<div class=\"alert alert-warning\" role=\"alert\">";
 			echo "<p>" . $_SESSION['logon_error'] . "</p>";
 			echo "<p><a href=\"" . reset_url . "\" class=\"alert-link\">Forgot your password?</a></p>";
-			//echo "</div>";
+			echo "</div>";
 		}
 		?>
 		
