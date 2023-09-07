@@ -2,6 +2,7 @@
 <script src="https://cdn.jsdelivr.net/npm/suneditor@latest/dist/suneditor.min.js"></script>
 
 <?php
+//check if updating existing setting
 if (isset($_POST['contentInfo'])) {
   $_POST['contentInfo'] = str_replace("'", "\'", $_POST['contentInfo']);
 
@@ -9,8 +10,11 @@ if (isset($_POST['contentInfo'])) {
   $sql .= " SET value = '" . $_POST['contentInfo'] . "'";
   $sql .= " WHERE name = 'scr_accessibility'";
   $sql .= " LIMIT 1";
+  
+  $db->query($sql);
 
   echo $settingsClass->alert("success", "Success!", "SCR Accessibility Statement successfully updated");
+  
 }
 
 $text = $settingsClass->value('scr_accessibility');
