@@ -365,7 +365,7 @@ class meal {
 
     $logArray['category'] = "meal";
     $logArray['result'] = "success";
-    $logArray['description'] = "[mealUID:" . $create->lastInsertID() . "] created";
+    $logArray['description'] = escape($array['name']) . " (" . $array['type'] . ") at " . $array['date_meal'] . " [mealUID:" . $create->lastInsertID() . "] created";
     $logsClass->create($logArray);
 
     return $create;
