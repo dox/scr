@@ -147,7 +147,7 @@ class member {
     foreach ($array AS $updateItem => $value) {
       if ($updateItem != 'memberNew') {
         $sqlColumns[] = $updateItem;
-        $sqlValues[] = "'" . $value . "' ";
+        $sqlValues[] = "'" . escape($value) . "' ";
       }
     }
 
@@ -174,7 +174,7 @@ class member {
 
     foreach ($array AS $updateItem => $value) {
       if ($updateItem != 'memberUID') {
-        $sqlUpdate[] = $updateItem ." = '" . $value . "' ";
+        $sqlUpdate[] = $updateItem ." = '" . escape($value) . "' ";
       }
       if (is_array($value)) {
         $sqlUpdate[] = $updateItem ." = '" . implode(",", $value) . "' ";

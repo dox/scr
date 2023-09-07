@@ -1,22 +1,24 @@
 <?php
 
-$sql = "SELECT * FROM `bookings` WHERE dessert = 0 AND guests_array IS NOT NULL ORDER BY uid DESC";
+$sql = "SELECT * FROM `meals` ORDER BY date_meal DESC";
 
-$bookings = $db->query($sql)->fetchAll();
+$meals = $db->query($sql)->fetchAll();
 
 
-foreach ($bookings AS $booking) {
-	$booking = new booking($booking['uid']);
-		
-	foreach ($booking->guestsArray() AS $guest) {
-		$guest = json_decode($guest);
-		
-		if ($guest->guest_dessert == "on") {
-			printArray($guest);
+foreach ($meals AS $meal) {
+	$sql = "SELECT member_ldap , COUNT(*) AS total FROM `bookings` WHERE meal_uid = " . $meal['uid'] . " GROUP BY member_ldap";
+	
+	$bookings = $db->query($sql)->fetchAll();
+
+	foreach ($bookings AS $booking) {
+		if ($booking['total'] > 1) {
+			$bookingObject = new booking($booking['uid']);
 			
-			$sql = "UPDATE bookings SET dessert = '1' WHERE uid = '" . $booking->uid . "' LIMIT 1;";
-			echo $sql;
-			$db->query($sql);
+			echo "<p>" . $meal['uid'] . " - " . $booking['member_ldap'] . " has " . $booking['total'] . " bookings " . "</p>";
+			
+			//if () {
+				
+			//}
 		}
 	
 		
