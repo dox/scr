@@ -99,9 +99,9 @@ echo makeTitle($title, $subtitle, $icons);
     <h4 class="mb-3">Meal Information</h4>
     <?php
     if (isset($_GET['add'])) {
-      echo "<form method=\"post\" id=\"mealUpdate\" action=\"index.php?n=admin_meals\" class=\"needs-validation\" novalidate>";
+      echo "<form method=\"post\" id=\"mealUpdate\" action=\"index.php?n=admin_meals\" class=\"needs-validation\" >";
     } else {
-      echo "<form method=\"post\" id=\"mealUpdate\" action=\"" . $_SERVER['REQUEST_URI'] . "\" class=\"needs-validation\" novalidate>";
+      echo "<form method=\"post\" id=\"mealUpdate\" action=\"" . $_SERVER['REQUEST_URI'] . "\" class=\"needs-validation\" >";
     }
     ?>
     <div class="row">
