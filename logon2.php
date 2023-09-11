@@ -17,6 +17,14 @@ if (isset($_GET['logout'])) {
 					<div class="px-5 ms-xl-4">
 						<img src="/img/logo.png" alt="Site Logo" width="100px" class="me-3 pt-5 mt-xl-4" />
 						<h1 class="pt-4"><?php echo site_name; ?></h1>
+						<?php
+						if (debug) {
+							$output  = "<div class=\"alert alert-warning\" role=\"alert\">";
+							$output .= "<strong>Warning!</strong> This site is in <code>debug mode</code>.  It is for testing purposes only!";
+							$output .= "</div>";
+							echo $output;
+						}
+						?>
 					</div>
 					
 					<div class="d-flex align-items-center h-custom-2 px-5 ms-xl-4 mt-5 pt-5 pt-xl-0 mt-xl-n5">
@@ -42,7 +50,7 @@ if (isset($_GET['logout'])) {
 				</div>
 				
 				<div class="col-sm-6 px-0 d-none d-sm-block">
-					<img src="/img/cover.jpg" alt="Login image" class="w-100 vh-100" style="object-fit: cover; object-position: left;">
+					<img src="/img/cover.jpg" alt="Login image" class="w-100 vh-100" style="object-fit: cover; object-position: center;">
 				</div>
 			</div>
 		</div>
