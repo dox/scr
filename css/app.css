@@ -1,6 +1,6 @@
 body {
   margin: 0;
- 
+  background-color: #f4f6fa;
   overflow-y: scroll; /* Show vertical scrollbar */
 }
 
