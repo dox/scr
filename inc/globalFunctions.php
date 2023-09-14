@@ -64,12 +64,15 @@ function autoPluralise ($singular, $plural, $count = 1) {
 	return ($count == 1)? $singular : $plural;
 } // END function autoPluralise
 
-function escape($var) {
-	$var = stripslashes($var);
-	$var = htmlentities($var);
-	//$var = htmlspecialchars($value, ENT_QUOTES);
-	$var = strip_tags($var);
-	$var = str_replace("'", "\'", $var);
+function escape($var = null) {
+	if (!empty($var) && !is_array($var)) {
+		$var = stripslashes($var);
+		$var = htmlentities($var);
+		//$var = htmlspecialchars($value, ENT_QUOTES);
+		$var = strip_tags($var);
+		$var = str_replace("'", "\'", $var);
+	}
+	
 
 	return $var;
 }
