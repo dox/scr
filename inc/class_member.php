@@ -169,6 +169,9 @@ class member {
 
   public function update($array = null, $displayAlert = true) {
     global $db, $logsClass, $settingsClass;
+    
+    $originalUsername = $this->ldap;
+    $newUsername = escape($array['ldap']);
 
     $sql  = "UPDATE " . self::$table_name;
 
@@ -186,6 +189,20 @@ class member {
     $sql .= " LIMIT 1";
 
     $update = $db->query($sql);
+    
+    // check if username is changing
+    // if so, update all meals booked under the old username and update to the new
+    if (isset($newUsername) && $newUsername <> $originalUsername) {
+      $sql = "UPDATE bookings SET member_ldap = '" . $newUsername . "' WHERE member_ldap = '" . $originalUsername . "'";
+      
+      $updateExistingBookings = $db->query($sql);
+      
+      $logArray['category'] = "member";
+      $logArray['result'] = "success";
+      $logArray['description'] = "Updated existing meals from '" . escape($array['ldap']) . "' to '" . $this->ldap . "'";
+      $logsClass->create($logArray);
+    }
+    
     if ($displayAlert == true) {
       echo $settingsClass->alert("success", "Success!", "Member successfully updated");
 
