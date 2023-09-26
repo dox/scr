@@ -3,6 +3,8 @@ include_once("../inc/autoload.php");
 $termsClass = new terms();
 $currentTerm = new term();
 
+$totalMeals = 0;
+
 $mealsClass = new meals();
 $firstDayOfCurrentWeek = firstDayOfWeek();
 
@@ -20,9 +22,13 @@ for($i = 0; $i < 7; $i++){
   $meals = array_reverse($meals);
 
   foreach ($meals AS $meal) {
-	$mealObject = new meal($meal['uid']);
+    if (!empty($mealObject->menu)) {
+      $totalMeals = $totalMeals + 1;
+    }
+    
+  $mealObject = new meal($meal['uid']);
 
-	$output .= "<p><strong>" . $mealObject->type . "</strong> " . $mealObject->menu . "</p>";
+  $output .= "<p><strong>" . $mealObject->type . "</strong> " . $mealObject->menu . "</p>";
   }
 }
 
@@ -38,8 +44,13 @@ $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
 
 $message = '<p><strong>This is strong text</strong> while this is not.</p>';
 
+if ($totalMeals > 0) {
+  mail($to, $subject, $output, $headers);
+  echo "Email sent for " . $totalMeals . " meals";
+} else {
+  echo "No menu data to send";
+}
 
-mail($to, $subject, $output, $headers);
 
 
 ?>
