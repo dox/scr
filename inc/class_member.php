@@ -199,7 +199,7 @@ class member {
       
       $logArray['category'] = "member";
       $logArray['result'] = "success";
-      $logArray['description'] = "Updated existing meals from '" . escape($array['ldap']) . "' to '" . $this->ldap . "'";
+      $logArray['description'] = "Updated existing meals from '" . $originalUsername . "' to '" . $newUsername . "'";
       $logsClass->create($logArray);
     }
     
