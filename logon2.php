@@ -13,7 +13,7 @@ if (isset($_GET['logout'])) {
 	<section class="vh-100">
 		<div class="container-fluid">
 			<div class="row">
-				<div class="col-sm-6 text-black">
+				<div class="col-sm-6">
 					<div class="px-5 ms-xl-4">
 						<img src="/img/logo.png" alt="Site Logo" width="100px" class="me-3 pt-5 mt-xl-4" />
 						<h1 class="pt-4"><?php echo site_name; ?></h1>

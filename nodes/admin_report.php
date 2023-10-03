@@ -45,6 +45,7 @@ echo makeTitle($title, $subtitle);
           <select class="form-select" name="type" id="type" required>
             <option value="CSV" <?php if ($report['type'] == "CSV") { echo " selected"; } ?>>CSV</option>
             <option value="PDF" <?php if ($report['type'] == "PDF") { echo " selected"; } ?>>PDF</option>
+            <option value="HTML" <?php if ($report['type'] == "HTML") { echo " selected"; } ?>>HTML</option>
           </select>
           <div class="invalid-feedback">
             Valid report type is required.

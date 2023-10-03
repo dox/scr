@@ -30,10 +30,10 @@ $members = $membersClass->all();
   ?>
 </datalist>
 
-<div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center bg-light">
-  <div class="p-lg-5 mx-auto my-5">
-    <h1 class="display-4 fw-normal">Orphaned Bookings</h1>
-    <p class="lead fw-normal"><?php echo number_format($totalOrphanedBookings); ?> bookings that belong to <?php echo number_format($totalOrphanedMembers); ?> unknown members</p>
+<div class="p-5 mb-4 bg-body-tertiary rounded-3">
+  <div class="container-fluid py-5">
+    <h1 class="display-5 fw-bold">Orphaned Bookings</h1>
+    <p class="col-md-8 fs-4"><?php echo number_format($totalOrphanedBookings); ?> bookings that belong to <?php echo number_format($totalOrphanedMembers); ?> unknown members</p>
   </div>
 </div>
 

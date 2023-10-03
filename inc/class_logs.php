@@ -200,7 +200,7 @@ class logs {
     //$preg_string = preg_replace($pattern, $replace, $string);
 
     $output  = "<tr class=\"table-" . $array['result'] . " filterRow\">";
-    $output .= "<td>" . date('Y-m-d H:i:s', strtotime($array['date'])) . "</td>";
+    $output .= "<th scope=\"row\">" . date('Y-m-d H:i:s', strtotime($array['date'])) . "</th>";
     $output .= "<td>" . $array['ip'] . "</td>";
     $output .= "<td>" . $array['username'] . "</td>";
     $output .= "<td style=\"word-wrap: break-word;max-width: 500px;\" class=\"filterDescription\">" . $array['description'] . $this->displayCategoryBadge($array['category']) . "</td>";
@@ -212,12 +212,14 @@ class logs {
 
   public function displayTable($logs = null) {
     $output  = "<table id=\"logsTable\" class=\"table\">";
-    $output .= "<tr class=\"header\">";
-    $output .= "<th>" . "Date" . "</th>";
-    $output .= "<th>" . "IP" . "</th>";
-    $output .= "<th>" . "Username" . "</th>";
-    $output .= "<th>" . "Description" . "</th>";
+    $output .= "<thead>";
+    $output .= "<tr>";
+    $output .= "<th scope=\"col\">" . "Date" . "</th>";
+    $output .= "<th scope=\"col\">" . "IP" . "</th>";
+    $output .= "<th scope=\"col\">" . "Username" . "</th>";
+    $output .= "<th scope=\"col\">" . "Description" . "</th>";
     $output .= "</tr>";
+    $output .= "</thead>";
 
     $output .= "<tbody>";
     

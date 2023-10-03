@@ -31,11 +31,15 @@ if (file_exists($node)) {
     echo "</div>";
 
   } elseif ($report['type'] == "HTML") {
+    echo "<html lang=\"en\">";
+    echo "<head>";
     include_once("views/html_head.php");
+    echo "</head>";
     
     echo "<div class=\"container\">";
     include_once($node);
     echo "</div>";
+    echo "</html>";
   } else {
     echo "Report type '" . $report['type'] . "' not supported.";
     exit();
