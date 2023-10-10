@@ -86,7 +86,7 @@ $bookingsClass = new bookings();
     
     <?php
     if (isset($_GET['type'])) {
-      echo "<p>Please write your pre-dinner drink (for you and your guest(s) in the space provided:</p>";
+      echo "<p>Please write your pre-dinner drink (for you and your guest(s)) in the space provided:</p>";
     }
     ?>
     <div class="list-group">
