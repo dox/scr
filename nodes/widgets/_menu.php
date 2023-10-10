@@ -21,7 +21,9 @@ if (!empty($mealObject->menu)) {
 }
 echo "</div>";
 
-echo "<hr />";
+if ($mealObject->domus == 1 || $mealObject->allowed_wine == 1 || $mealObject->allowed_dessert == 1) {
+ echo "<hr />"; 
+}
 
 if ($mealObject->domus == 1) {
   echo "<p><svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#graduation-cap\"/></svg> Meal is Domus</p>";
