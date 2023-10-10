@@ -25,7 +25,7 @@ if (isset($_GET['logout'])) {
 						<form style="width: 23rem;" method="post" id="loginSubmit" action="index.php">
 							<div class="pt-1 mb-4 d-grid gap-2">
 								<?php
-								if (isset($_SESSION['logon_error'])) {
+								if (isset($_SESSION['logon_error']) && $_GET['logout'] != "true") {
 									echo "<div class=\"alert alert-warning\" role=\"alert\">";
 									echo $_SESSION['logon_error'];
 									echo "</div>";
@@ -35,12 +35,12 @@ if (isset($_GET['logout'])) {
 							
 							<div class=" mb-4">
 								<label class="form-label" for="inputUsername">Username</label>
-								<input type="text" id="inputUsername" name="inputUsername" class="form-control form-control-lg" />
+								<input type="text" id="inputUsername" name="inputUsername" class="form-control form-control-lg" required />
 							</div>
 							
 							<div class="mb-4">
 								<label class="form-label" for="inputPassword">Password</label>
-								<input type="password" id="inputPassword" name="inputPassword" class="form-control form-control-lg" />
+								<input type="password" id="inputPassword" name="inputPassword" class="form-control form-control-lg" required />
 							</div>
 							
 							<div class="pt-1 mb-4 d-grid gap-2">
