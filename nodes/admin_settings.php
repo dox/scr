@@ -93,6 +93,9 @@ $iconsArray = array(
   "info-circle" => "Information",
   "chat-dots" => "Notifications",
   "calendar-plus" => "Date Add",
+  "dark-mode" => "Dark Mode",
+  "light-mode" => "Light Mode",
+  "auto-mode" => "Auto Mode",
   "blank" => "Blank"
 );
 

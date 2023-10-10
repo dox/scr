@@ -1,119 +1,62 @@
 <?php
-	include_once("inc/autoload.php");
+include_once("inc/autoload.php");
 
-	if (isset($_GET['logout'])) {
-		session_destroy();
-	}
+if (isset($_GET['logout'])) {
+	session_destroy();
+}
 ?>
-<!DOCTYPE html>
 <html lang="en" class="h-100">
 <head>
-  <?php include_once("views/html_head.php"); ?>
-
-	<style>
-	body {
-	  display: flex;
-	  align-items: center;
-	  padding-top: 40px;
-	  padding-bottom: 40px;
-	  background-color: #f5f5f5;
-	  background: url('/img/cover.jpg') no-repeat center center fixed;
-		-webkit-background-size: cover;
-		-moz-background-size: cover;
-		-o-background-size: cover;
-		background-size: cover;
-	}
-	
-	.form-signin {
-	  max-width: 330px;
-	  padding: 15px;
-	}
-	
-	.form-signin .form-floating:focus-within {
-	  z-index: 2;
-	}
-	
-	.form-signin input[type="text"] {
-	  margin-bottom: -1px;
-	  border-bottom-right-radius: 0;
-	  border-bottom-left-radius: 0;
-	}
-	
-	.form-signin input[type="password"] {
-	  margin-bottom: 10px;
-	  border-top-left-radius: 0;
-	  border-top-right-radius: 0;
-	}
-	</style>
+	<?php include_once("views/html_head.php"); ?>
 </head>
-
-<body class="text-center">
-	<main class="form-signin w-100 m-auto">
-		<?php
-		if (debug) {
-			$output  = "<div class=\"alert alert-warning\" role=\"alert\">";
-			$output .= "<strong>Warning!</strong> This site is in <code>debug mode</code>.  It is for testing purposes only!";
-			$output .= "</div>";
-			//echo $output;
-		}
-		
-		if (isset($_SESSION['logon_error'])) {
-			echo "<div class=\"alert alert-warning\" role=\"alert\">";
-			echo "<p>" . $_SESSION['logon_error'] . "</p>";
-			echo "<p><a href=\"" . reset_url . "\" class=\"alert-link\">Forgot your password?</a></p>";
-			echo "</div>";
-		}
-		?>
-		
-		<svg width="72" height="72" class="mb-4 <?php if(debug) { echo "text-warning";} else { echo "text-white"; }?>">
-			<use xlink:href="img/icons.svg#chough"/>
-		</svg>
-		
-		<form method="post" id="loginSubmit" action="index.php">
-			<h1 class="h3 mb-3 fw-normal text-white"><?php echo site_name;?></h1>
-			
-			<div class="form-floating">
-			  <input type="text" class="form-control" id="inputUsername" name="inputUsername" placeholder="Username">
-			  <label for="inputUsername">Username</label>
+<body>
+	<section class="vh-100">
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-sm-6">
+					<div class="px-5 ms-xl-4">
+						<img src="/img/logo.png" alt="Site Logo" width="100px" class="me-3 pt-5 mt-xl-4" />
+						<h1 class="pt-4"><?php echo site_name; ?></h1>
+						
+					</div>
+					
+					<div class="d-flex align-items-center h-custom-2 px-5 ms-xl-4 mt-5 pt-5 pt-xl-0 mt-xl-n5">
+						<form style="width: 23rem;" method="post" id="loginSubmit" action="index.php">
+							<div class=" mb-4">
+								<label class="form-label" for="inputUsername">Username</label>
+								<input type="text" id="inputUsername" name="inputUsername" class="form-control form-control-lg" />
+							</div>
+							
+							<div class="mb-4">
+								<label class="form-label" for="inputPassword">Password</label>
+								<input type="password" id="inputPassword" name="inputPassword" class="form-control form-control-lg" />
+							</div>
+							
+							<div class="pt-1 mb-4 d-grid gap-2">
+								<button class="btn btn-primary btn-lg" type="submit">Login</button>
+								<p class="mb-4 pb-lg-2"><a class="text-muted" href="<?php echo reset_url; ?>">Forgot password?</a></p>
+							</div>
+							
+							<div class="pt-1 mb-4 d-grid gap-2">
+								<p class="text-muted small">Developed by <a href="https://github.com/dox">Andrew Breakspear</a>
+								<?php
+								if (debug) {
+									$output  = "<span class=\"badge text-bg-warning\">DEBUG MODE</span>";
+									echo $output;
+								}
+								?>
+								</p>
+							</div>
+							
+						</form>
+					</div>
+				</div>
+				
+				<div class="col-sm-6 px-0 d-none d-sm-block">
+					<img src="/img/cover.jpg" alt="Login image" class="w-100 vh-100" style="object-fit: cover; object-position: center;">
+				</div>
 			</div>
-			<div class="form-floating">
-			  <input type="password" class="form-control" id="inputPassword" name="inputPassword" placeholder="Password">
-			  <label for="inputPassword">Password</label>
-			</div>
-			
-			<!--<div class="checkbox mb-3">
-			  <label class="text-white">
-				<input type="checkbox" value="remember-me" id="inputRemember" name="inputRemember" value=true> Remember me
-			  </label>
-			</div>-->
-			<button class="w-100 btn btn-lg btn-primary" type="submit">Sign in</button>
-			
-			<?php
-			if (!empty(reset_url)) {
-				echo "<p class=\"mt-5 mb-3  text-center\">";
-				echo "<a class=\"text-white\" href=\"" . reset_url . "\">Forgot your password?</a>";
-				echo "</p>";
-			}
-			?>
-			
-			<p class="mt-5 mb-3 text-white"><?php echo site_name;?> developed by <a href="https://github.com/dox" class="text-white">Andrew Breakspear</a></p>
-	</main>
-	
+		</div>
+	</section>
 </body>
-<?php
-	$_SESSION['logon_error'] = null;
-?>
 </html>
-
-<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-<script src="https://help.seh.ox.ac.uk/assets/chat/chat.min.js"></script>
-<script>
-$(function() {
-  new ZammadChat({
-	title: 'Need IT Support?',
-	background: '#6b7889',
-	fontSize: '12px',
-	chatId: 1
-  });
-});
-</script>

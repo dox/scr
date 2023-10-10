@@ -211,7 +211,7 @@ class logs {
   }
 
   public function displayTable($logs = null) {
-    $output  = "<table id=\"logsTable\" class=\"table\">";
+    $output  = "<table id=\"logsTable\" class=\"table table-sm\">";
     $output .= "<thead>";
     $output .= "<tr>";
     $output .= "<th scope=\"col\">" . "Date" . "</th>";

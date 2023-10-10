@@ -102,7 +102,7 @@ if ($_SESSION['logon'] != true) {
   <?php include_once("views/html_head.php"); ?>
 </head>
 
-<body>
+<body class="bg-body-tertiary">
 		<?php
 		include_once("views/header.php");
 		?>
