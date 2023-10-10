@@ -38,6 +38,10 @@ foreach ($bookings AS $booking) {
   $bookingObject = new booking($booking['uid']);
   $memberObject = new member($bookingObject->member_ldap);
   $bookingGuests = json_decode($bookingObject->guests_array, true);
+  
+  if (!is_array($bookingGuests)) {
+    $bookingGuests = array();
+  }
 
   $bookingRow['booking_uid'] = $bookingObject->uid;
   $bookingRow['meal_uid'] = $mealObject->uid;
