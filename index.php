@@ -1,7 +1,7 @@
 <?php
 include_once("inc/autoload.php");
 
-if (isset($_POST['inputUsername']) && isset($_POST['inputPassword']) && $_SESSION['logon'] != 1) {
+if (!empty($_POST['inputUsername']) && !empty($_POST['inputPassword']) && $_SESSION['logon'] != 1) {
 	// first LDAP auth this user...
 	$ldapLookupUsername = escape($_POST['inputUsername']) . LDAP_ACCOUNT_SUFFIX;
 	$ldapLookupPassword = $_POST['inputPassword'];
