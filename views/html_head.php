@@ -12,7 +12,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <link href="css/app.css" rel="stylesheet">
-<script src="js/app.js"></script>
+<script src="js/app2.js"></script>
 
 <!-- Favicons -->
 <link rel="apple-touch-icon" sizes="57x57" href="/img/favicons/apple-icon-57x57.png">
@@ -32,3 +32,4 @@
 <meta name="msapplication-TileColor" content="#eab45c">
 <meta name="msapplication-TileImage" content="/img/favicons/ms-icon-144x144.png">
 <meta name="theme-color" content="#eab45c">
+<meta http-equiv="Cache-control" content="No-Cache">
