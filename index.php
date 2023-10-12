@@ -26,6 +26,7 @@ if (!empty($_POST['inputUsername']) && !empty($_POST['inputPassword']) && $_SESS
       $NEWUSER['type'] = "MCR";
       $NEWUSER['email'] = $ldapUser[0]['mail'][0];
       $NEWUSER['enabled'] = "1";
+      $NEWUSER['date_lastlogon'] = date('c');
 
       $memberObject->create($NEWUSER, false);
       

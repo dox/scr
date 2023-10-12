@@ -32,7 +32,7 @@ $bookingsClass = new bookings();
 </style>
 </head>
 
-<body>
+<body class="bg-body-tertiary">
   <div class="container">
     <?php
     $title = $mealObject->name;
