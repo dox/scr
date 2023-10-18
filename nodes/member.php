@@ -179,19 +179,20 @@ include_once('_member_stats.php');
             Please select a valid Member Type.
           </div>
         </div>
-
-        <div class="mb-3">
-          <label for="dietary" class="form-label">Dietary Information</label>
-          <div class="selectBox" onclick="showCheckboxes()">
-            <select class="form-select">
-              <option>Select up to <?php echo $dietaryOptionsMax; ?> dietary preferences</option>
-            </select>
-            <small id="nameHelp" class="form-text text-muted"><?php echo $settingsClass->value('meal_dietary_message'); ?></small>
-            <div class="overSelect"></div>
-          </div>
-          <div id="checkboxes" name="dietary" id="dietary" class="mt-2">
+        
+        <div class="accordion mb-3" id="accordionDietary">
+        <div class="accordion-item">
+          <h2 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+            Dietary Information&nbsp;<i>(Maximum: <?php echo $dietaryOptionsMax; ?>)</i>
+          </button>
+          </h2>
+          <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionDietary">
+          <div class="accordion-body">
             <?php
             $memberDietary = explode(",", $memberObject->dietary);
+            
+            $i = 0;
             foreach ($membersClass->dietaryOptions() AS $dietaryOption) {
               if (in_array($dietaryOption, $memberDietary)) {
                 $checked = " checked";
@@ -202,11 +203,19 @@ include_once('_member_stats.php');
               $output .= "<input class=\"form-check-input dietaryOptionsMax\" type=\"checkbox\" onclick=\"checkMaxCheckboxes(" . $dietaryOptionsMax . ")\" name=\"dietary[]\" id=\"dietary\" value=\"" . $dietaryOption . "\" " . $checked . ">";
               $output .= "<label class=\"form-check-label\" for=\"" . $dietaryOption . "\">" . $dietaryOption . "</label>";
               $output .= "</div>";
-
+              
               echo $output;
+              
+            
+            $i++;
+            
+            
             }
             ?>
           </div>
+          </div>
+        </div>
+        <small id="nameHelp" class="form-text text-muted"><?php echo $settingsClass->value('meal_dietary_message'); ?></small>
         </div>
 
         <div class="mb-3">

@@ -65,34 +65,43 @@ if (isset($_GET['guestUID'])) {
         }
         ?>
       </div>
-    
-      <div class="mb-3">
-        <label for="dietary" class="form-label">Guest's Dietary Information</label>
-        <div class="selectBox" onclick="showCheckboxes()">
-          <select class="form-select">
-            <option>Select up to <?php echo $dietaryOptionsMax; ?> dietary preferences</option>
-          </select>
-          <small id="nameHelp" class="form-text text-muted"><?php echo $settingsClass->value('meal_dietary_message'); ?></small>
-          <div class="overSelect"></div>
-        </div>
-        <div id="checkboxes" class="mt-2">
+      
+      <div class="accordion mb-3" id="accordionDietary">
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+          Guest's Dietary Information&nbsp;<i>(Maximum: <?php echo $dietaryOptionsMax; ?>)</i>
+        </button>
+        </h2>
+        <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionDietary">
+        <div class="accordion-body">
           <?php
+          $memberDietary = explode(",", $memberObject->dietary);
+          
+          $i = 0;
           foreach ($membersClass->dietaryOptions() AS $dietaryOption) {
             if (!empty($guestObject->guest_dietary) && in_array($dietaryOption, $guestObject->guest_dietary)) {
-              $checked = " checked ";
+              $checked = " checked";
             } else {
               $checked = "";
             }
-    
             $output  = "<div class=\"form-check\">";
             $output .= "<input class=\"form-check-input dietaryOptionsMax\" type=\"checkbox\" onclick=\"checkMaxCheckboxes(" . $dietaryOptionsMax . ")\" name=\"guest_dietary\" id=\"guest_dietary\" value=\"" . $dietaryOption . "\" " . $checked . ">";
             $output .= "<label class=\"form-check-label\" for=\"" . $dietaryOption . "\">" . $dietaryOption . "</label>";
             $output .= "</div>";
-    
+            
             echo $output;
+            
+          
+          $i++;
+          
+          
           }
           ?>
         </div>
+        </div>
+      </div>
+      <small id="nameHelp" class="form-text text-muted"><?php echo $settingsClass->value('meal_dietary_message'); ?></small>
       </div>
     
       <hr />
