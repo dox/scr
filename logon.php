@@ -9,7 +9,7 @@ if (isset($_GET['logout'])) {
 <head>
 	<?php include_once("views/html_head.php"); ?>
 </head>
-<body>
+<body class="bg-body-tertiary">
 	<section class="vh-100">
 		<div class="container-fluid">
 			<div class="row">
