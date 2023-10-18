@@ -90,25 +90,37 @@ class booking {
 
   public function create($array = null) {
     global $db, $logsClass;
-
-    $sql  = "INSERT INTO " . self::$table_name;
-
-    foreach ($array AS $updateItem => $value) {
-      $sqlColumns[] = $updateItem;
-      $sqlValues[] = "'" . $value . "' ";
+    
+    $bookingsCheck = new bookings();
+    
+    // check if already booked onto this meal
+    if ($bookingsCheck->bookingExistCheck($array['meal_uid'], $array['member_ldap'])) {
+      $logArray['category'] = "booking";
+      $logArray['result'] = "warning";
+      $logArray['description'] = $array['member_ldap'] . " attempted to book twice for [mealUID:" . $array['meal_uid'] . "]";
+      $logsClass->create($logArray);
+      
+      return false;
+    } else {
+      $sql  = "INSERT INTO " . self::$table_name;
+      
+      foreach ($array AS $updateItem => $value) {
+        $sqlColumns[] = $updateItem;
+        $sqlValues[] = "'" . $value . "' ";
+      }
+      
+      $sql .= " (" . implode(",", $sqlColumns) . ") ";
+      $sql .= " VALUES (" . implode(",", $sqlValues) . ")";
+      
+      $create = $db->query($sql);
+      
+      $logArray['category'] = "booking";
+      $logArray['result'] = "success";
+      $logArray['description'] = "[bookingUID:" . $create->lastInsertID() . "] made for " . $_SESSION['username'] . " for [mealUID:" . $array['meal_uid'] . "]";
+      $logsClass->create($logArray);
+      
+      return $create;
     }
-
-    $sql .= " (" . implode(",", $sqlColumns) . ") ";
-    $sql .= " VALUES (" . implode(",", $sqlValues) . ")";
-
-    $create = $db->query($sql);
-
-    $logArray['category'] = "booking";
-    $logArray['result'] = "success";
-    $logArray['description'] = "[bookingUID:" . $create->lastInsertID() . "] made for " . $_SESSION['username'] . " for [mealUID:" . $array['meal_uid'] . "]";
-    $logsClass->create($logArray);
-
-    return $create;
   }
 
   public function update($array = null) {
