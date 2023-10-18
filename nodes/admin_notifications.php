@@ -86,7 +86,7 @@ echo makeTitle($title, $subtitle, $icons);
             <label for="date_start">Notification Start Date</label>
             <div class="input-group">
               <span class="input-group-text" id="date_start-addon"><svg width="1em" height="1em" class="text-muted"><use xlink:href="img/icons.svg#calendar-plus"/></svg></span>
-              <input type="text" class="form-control" name="date_start" id="date_start" aria-describedby="date_start">
+              <input type="date" class="form-control" name="date_start" id="date_start" value="<?php echo date('Y-m-d'); ?>" aria-describedby="date_start">
             </div>
           </div>
 
@@ -94,7 +94,7 @@ echo makeTitle($title, $subtitle, $icons);
             <label for="date_end">Notification End Date</label>
             <div class="input-group">
               <span class="input-group-text" id="date_end-addon"><svg width="1em" height="1em" class="text-muted"><use xlink:href="img/icons.svg#calendar-plus"/></svg></span>
-              <input type="text" class="form-control" name="date_end" id="date_end" aria-describedby="date_end">
+              <input type="date" class="form-control" name="date_end" id="date_end" value="<?php echo date('Y-m-d', strtotime("+1 month")); ?>" aria-describedby="date_end">
             </div>
           </div>
 
@@ -124,15 +124,3 @@ echo makeTitle($title, $subtitle, $icons);
     </div>
   </div>
 </div>
-
-<script>
-var fp = flatpickr("#date_start", {
-  dateFormat: "Y-m-d",
-  defaultDate: ["<?php echo date('Y-m-d'); ?>"]
-})
-
-var fp2 = flatpickr("#date_end", {
-  dateFormat: "Y-m-d",
-  defaultDate: ["<?php echo date('Y-m-d', strtotime('+1 month')); ?>"]
-})
-</script>
