@@ -3,6 +3,8 @@ DEFINE("debug", false);
 
 DEFINE("site_name", "SCR Meal Booking");
 
+DEFINE("salt", "UNIQUE_SALT");  // keep this private!
+
 DEFINE("db_host", "localhost");
 DEFINE("db_name", "database");
 DEFINE("db_username", "username");

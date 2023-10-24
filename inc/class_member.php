@@ -17,6 +17,7 @@ class member {
   public $default_wine;
   public $default_dessert;
   public $date_lastlogon;
+  public $calendar_hash;
 
   function __construct($memberUID = null) {
     global $db;
@@ -24,6 +25,7 @@ class member {
 		$sql  = "SELECT * FROM " . self::$table_name;
     $sql .= " WHERE uid = '" . $memberUID . "'";
     $sql .= " OR ldap = '" . $memberUID . "'";
+    $sql .= " OR calendar_hash = '" . $memberUID . "'";
 
 		$member = $db->query($sql)->fetchArray();
 
@@ -38,6 +40,7 @@ class member {
       $member['email'] = "no-reply@seh.ox.ac.uk";
       $member['dietary'] = "";
       $member['opt_in'] = "0";
+      $member['calendar_hash'] = "0";
     }
 
 		foreach ($member AS $key => $value) {
@@ -182,6 +185,7 @@ class member {
       if (is_array($value)) {
         $sqlUpdate[] = $updateItem ." = '" . implode(",", $value) . "' ";
       }
+      $sqlUpdate[] = "calendar_hash" . " = '" . crypt(strtolower($originalUsername), salt) . "' ";
     }
 
     $sql .= " SET " . implode(", ", $sqlUpdate);

@@ -19,7 +19,7 @@ if (!empty($_POST['inputUsername']) && !empty($_POST['inputPassword']) && $_SESS
       // NEW user.  Create them and assume they are MCR...
       $NEWUSER['title'] = "";
       $NEWUSER['enabled'] = "1";
-      $NEWUSER['ldap'] = $ldapUser[0]['samaccountname'][0];
+      $NEWUSER['ldap'] = strotolower($ldapUser[0]['samaccountname'][0]);
       $NEWUSER['firstname'] = addslashes($ldapUser[0]['givenname'][0]);
       $NEWUSER['lastname'] = addslashes($ldapUser[0]['sn'][0]);
       $NEWUSER['category'] = "Student";
@@ -27,6 +27,7 @@ if (!empty($_POST['inputUsername']) && !empty($_POST['inputPassword']) && $_SESS
       $NEWUSER['email'] = $ldapUser[0]['mail'][0];
       $NEWUSER['enabled'] = "1";
       $NEWUSER['date_lastlogon'] = date('c');
+      $NEWUSER['calendar_hash'] = crypt($NEWUSER['ldap'], salt);
 
       $memberObject->create($NEWUSER, false);
       
