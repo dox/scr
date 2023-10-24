@@ -8,13 +8,13 @@ $bookingsClass = new bookings();
 $memberObject = new member(filter_var($_GET['hash'], FILTER_SANITIZE_STRING));
 $bookingUIDS = $memberObject->getAllBookingUIDS();
 
+$tzid = "Europe/London";
+
 $icalobj = new ZCiCal();
 
 foreach ($bookingUIDS AS $bookingUID) {
 	$bookingObject = new booking($bookingUID);
 	$mealObject = new meal($bookingObject->meal_uid);
-	
-	//$id = $bookingObject->uid;
 	
 	$title = $mealObject->name;
 	
@@ -23,6 +23,9 @@ foreach ($bookingUIDS AS $bookingUID) {
 	
 	// create the event within the ical object
 	$eventobj = new ZCiCalNode("VEVENT", $icalobj->curnode);
+	
+	ZCTimeZoneHelper::getTZNode(substr($event_start,0,4),substr($event_end,0,4),$tzid, $icalobj->curnode);
+	
 	$eventobj->addNode(new ZCiCalDataNode("TRANSP:" . "OPAQUE"));
 	
 	// add title
