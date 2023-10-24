@@ -5,12 +5,19 @@ include_once("inc/autoload.php");
 require_once("inc/zapcallib.php");
 
 $bookingsClass = new bookings();
-$memberObject = new member(filter_var($_GET['hash'], FILTER_SANITIZE_STRING));
-$bookingUIDS = $memberObject->getAllBookingUIDS();
+$sql  = "SELECT bookings.uid AS uid FROM bookings";
+$sql .= " LEFT JOIN meals ON bookings.meal_uid = meals.uid";
+$sql .= " WHERE bookings.calendar_hash = '" . filter_var($_GET['hash'], FILTER_SANITIZE_STRING) . "'";
+$sql .= " ORDER BY meals.date_meal DESC";
 
-$tzid = "Europe/London";
+$bookings = $db->query($sql)->fetchAll();
+
+foreach ($bookings AS $booking) {
+  $bookingUIDSarray[] = $booking['uid'];
+}
 
 $icalobj = new ZCiCal();
+$tzid = "Europe/London";
 
 foreach ($bookingUIDS AS $bookingUID) {
 	$bookingObject = new booking($bookingUID);
@@ -54,5 +61,4 @@ foreach ($bookingUIDS AS $bookingUID) {
 
 // write iCalendar feed to stdout
 echo ($icalobj->export());
-
 ?>
