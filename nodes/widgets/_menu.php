@@ -15,7 +15,7 @@ echo "<p class=\"text-center\"><i>" . $mealObject->location . ", " . dateDisplay
 
 echo "<div class=\"text-center\">";
 if (!empty($mealObject->menu)) {
-  echo $mealObject->menu;
+  echo nl2br($mealObject->menu);
 } else {
   echo "Menu not available";
 }
