@@ -19,7 +19,7 @@ if (!empty($_POST['inputUsername']) && !empty($_POST['inputPassword']) && $_SESS
       // NEW user.  Create them and assume they are MCR...
       $NEWUSER['title'] = "";
       $NEWUSER['enabled'] = "1";
-      $NEWUSER['ldap'] = strotolower($ldapUser[0]['samaccountname'][0]);
+      $NEWUSER['ldap'] = strtolower($ldapUser[0]['samaccountname'][0]);
       $NEWUSER['firstname'] = addslashes($ldapUser[0]['givenname'][0]);
       $NEWUSER['lastname'] = addslashes($ldapUser[0]['sn'][0]);
       $NEWUSER['category'] = "Student";
