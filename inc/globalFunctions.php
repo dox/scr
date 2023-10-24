@@ -280,4 +280,49 @@ function onToOne($input = null) {
 	}
 	return $return;
 }
+
+function sendMail($subject = "No Subject Specified", $recipients = NULL, $body = NULL, $senderAddress = NULL, $senderName = NULL) {
+	global $mail, $logsClass;
+	
+	// clear addresses of all types
+	$mail->clearAllRecipients();
+
+	$mail->IsSMTP();
+	$mail->Host = smtp_server;
+	$mail->IsHTML(true);
+
+	if (isset($senderAddress)) {
+		$mail->From = $senderAddress;
+		$mail->FromName = $senderName;
+		$mail->AddReplyTo($senderAddress, $senderName);
+	} else {
+		$mail->From = "noreply@seh.ox.ac.uk";
+		$mail->FromName = "No Reply ";
+	}
+	
+	foreach ($recipients AS $recipient) {
+		$mail->addBCC($recipient);
+	}
+	
+	$mail->WordWrap = 50;                                 // Set word wrap to 50 characters
+	//$mail->AddAttachment('/var/tmp/file.tar.gz');         // Add attachments
+	//$mail->AddAttachment('/tmp/image.jpg', 'new.jpg');    // Optional name
+	$mail->IsHTML(true);                                  // Set email format to HTML
+
+	$mail->Subject = $subject;
+	$mail->Body    = $body;
+	//$mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
+	
+	if($mail->Send()) {
+		$logArray['category'] = "email";
+		$logArray['result'] = "success";
+		$logArray['description'] = "Email sent to " . implode(", ",array_keys($mail->getAllRecipientAddresses())) . ". Subject: " . $subject;
+		$logsClass->create($logArray);
+	} else {
+		$logArray['category'] = "email";
+		$logArray['result'] = "danger";
+		$logArray['description'] = "Email could not be sent to " . implode(", ",array_keys($mail->getAllRecipientAddresses())) . " <code>" . $mail->ErrorInfo . "</code>";
+		$logsClass->create($logArray);
+	}
+}
 ?>

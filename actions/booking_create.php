@@ -42,6 +42,24 @@ if ($mealBookableCheck == true) {
 } else {
 	if ($_SESSION['admin'] == true) {
 		$booking = $bookingObject->create($bookingArray);
+		
+		if ($memberObject->email_reminders == "1") {
+			$body  = "<h1>You have booked onto the following meal:</h1>";
+			$body .= "<p>Name: " . $mealObject->name . "</p>";
+			$body .= "<p>Date/Time: " . dateDisplay($mealObject->date_meal, true) . " at " . timeDisplay($mealObject->date_meal) . "</p>";
+			$body .= "<p>Location: " . $mealObject->location . "</p>";
+			$body .= "<br /><p><i>Changes to this booking can be made no later than: " . dateDisplay($mealObject->date_cutoff, true) . " at " . timeDisplay($mealObject->date_meal) . "</i></p>";
+			
+			if (!empty($mealObject->menu)) {
+				$body .= "<hr><h2>Menu</h2><p>" . nl2br($mealObject->menu) . "</p>";
+			}
+			
+			//$url = "http://scr2.seh.ox.ac.uk/calendar.php?hash=" . $memberObject->calendar_hash;
+			//$body .= "<p>You can add all your SCR meal bookings to your calendar, by <a href=\"" . $url . "\">subscribing to your ICS file here</a></p>";
+			
+			
+			sendMail("SCR Meal Booking Subject Specified", array($memberObject->email), $body);
+		}
 	} else {
 		echo "Error: An error occured when making this booking.  Please refresh the page and try again.  If the problem persists, please contact the Bursary.";
 	}

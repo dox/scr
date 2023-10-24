@@ -38,7 +38,6 @@ try {
     echo $error->getDiagnosticMessage();
 }
 
-
 require_once($root . '/inc/globalFunctions.php');
 require_once($root . '/inc/database.php');
 require_once($root . '/inc/class_settings.php');
@@ -53,6 +52,15 @@ require_once($root . '/inc/class_meals.php');
 require_once($root . '/inc/class_booking.php');
 require_once($root . '/inc/class_bookings.php');
 require_once($root . '/inc/class_reports.php');
+require_once($root . '/inc/PHPMailer/Exception.php');
+require_once($root . '/inc/PHPMailer/PHPMailer.php');
+require_once($root . '/inc/PHPMailer/SMTP.php');
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\Exception;
+
+$mail = new PHPMailer(true);
 
 $db = new db(db_host, db_username, db_password, db_name);
 ?>

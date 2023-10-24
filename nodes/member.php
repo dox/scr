@@ -28,6 +28,9 @@ if (isset($_POST['memberUID'])) {
   if (!isset($_POST['opt_in'])) {
     $_POST['opt_in'] = 0;
   }
+  if (!isset($_POST['email_reminders'])) {
+    $_POST['email_reminders'] = 0;
+  }
   if (!isset($_POST['default_wine'])) {
     $_POST['default_wine'] = 0;
   }
@@ -264,6 +267,25 @@ include_once('_member_stats.php');
               </span>
             </label>
           </div>
+          <div>
+            <label class="row">
+              <span class="col"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#calendar-plus"></svg> Send me an email confirmation when I book a meal</span>
+              <span class="col-auto">
+                <label class="form-check form-check-single form-switch"><input class="form-check-input" type="checkbox" id="email_reminders" name="email_reminders" value="1" <?php if ($memberObject->email_reminders == "1") { echo " checked";} ?>></label>
+              </span>
+            </label>
+          </div>
+          
+          <hr />
+          <div>
+            <label class="row">
+              <span class="col">ical Subscription: <code>https://<?php echo $_SERVER['HTTP_HOST']; ?>/calendar.php?hash=<?php echo $memberObject->calendar_hash; ?></code></span>
+              <span class="col-auto">
+                <label class="form-check form-check-single form-switch"><span class="badge rounded-pill text-bg-warning">BETA FEATURE</span></label>
+              </span>
+            </label>
+          </div>
+          
           <hr />
           <div>
             <label class="row">

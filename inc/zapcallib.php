@@ -24,5 +24,5 @@ if(!defined('_ZAPCAL_BASE'))
 	define('_ZAPCAL_BASE',__DIR__);
 }
 
-require_once(_ZAPCAL_BASE . '/includes/framework.php');
+require_once(_ZAPCAL_BASE . '/calendar/framework.php');
 

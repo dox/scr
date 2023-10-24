@@ -10,6 +10,10 @@ DEFINE("db_name", "database");
 DEFINE("db_username", "username");
 DEFINE("db_password", "password");
 
+DEFINE("smtp_server", "smtp.some-server.com");
+DEFINE("smtp_sender_address", "noreply@some-server.com");
+DEFINE("smtp_sender_name", site_name);
+
 DEFINE("reset_url", "https://some.domain/reset"); // where you want to redirect users to reset their LDAP password
 DEFINE("support_email", "help@some.domain");
 
