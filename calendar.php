@@ -1,12 +1,13 @@
 <?php
 //header('Content-type: text/calendar; charset=utf-8');
-
+echo "test";
 require_once("inc/zapcallib.php");
 include_once("inc/autoload.php");
 
 $bookingsClass = new bookings();
 $memberObject = new member(filter_var($_GET['hash'], FILTER_SANITIZE_STRING));
 $bookingUIDS = $memberObject->getAllBookingUIDS();
+
 
 $membersClass = new members();
 foreach ($membersClass->all(999) AS $member) {
@@ -45,8 +46,7 @@ foreach ($bookingUIDS AS $bookingUID) {
 	$eventobj->addNode(new ZCiCalDataNode("DTSTAMP:" . ZCiCal::fromSqlDateTime()));
 	
 	// Add description
-	//$eventobj->addNode(new ZCiCalDataNode("Description:" . ZCiCal::formatContent(
-			"This is a simple event, using the Zap Calendar PHP library.")));
+	//$eventobj->addNode(new ZCiCalDataNode("Description:" . ZCiCal::formatContent("This is a simple event, using the Zap Calendar PHP library.")));
 }
 
 // write iCalendar feed to stdout
