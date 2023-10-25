@@ -5,15 +5,20 @@ include_once("inc/autoload.php");
 require_once("inc/zapcallib.php");
 
 $bookingsClass = new bookings();
+
+$sql  = "SELECT * FROM members WHERE calendar_hash = '" . filter_var($_GET['hash'], FILTER_SANITIZE_STRING) . "'";
+$sql .= " LIMIT 1";
+$member = $db->query($sql)->fetchAll();
+
 $sql  = "SELECT bookings.uid AS uid FROM bookings";
 $sql .= " LEFT JOIN meals ON bookings.meal_uid = meals.uid";
-$sql .= " WHERE bookings.calendar_hash = '" . filter_var($_GET['hash'], FILTER_SANITIZE_STRING) . "'";
+$sql .= " WHERE bookings.member_ldap = '" . $member[0]['ldap'] . "'";
 $sql .= " ORDER BY meals.date_meal DESC";
 
 $bookings = $db->query($sql)->fetchAll();
 
 foreach ($bookings AS $booking) {
-  $bookingUIDSarray[] = $booking['uid'];
+  $bookingUIDS[] = $booking['uid'];
 }
 
 $icalobj = new ZCiCal();
