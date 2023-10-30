@@ -25,7 +25,7 @@
 			}
 			
 			if (!empty($bookingLateArray)) {
-				$url = "http://scr2.seh.ox.ac.uk/index.php?n=admin_meal&mealUID=" . $meal->uid;
+				$url = "index.php?n=admin_meal&mealUID=" . $meal->uid;
 				
 				echo "<h3><a href=\"" . $url . "\">" . $meal->name . "</a> <i>(" . dateDisplay($meal->date_meal) . ")</i></h3>";
 				
