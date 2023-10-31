@@ -72,6 +72,29 @@ include_once('_member_stats.php');
       }
       ?>
     </ul>
+    
+    <button type="button" class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#exampleModal">
+      <svg width="1em" height="1em"><use xlink:href="img/icons.svg#calendar-plus"/></svg> Add meals to your calendar
+    </button>
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Add meals to your calendar <span class="badge rounded-pill text-bg-warning">BETA FEATURE</span></h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p>The link below is your unique URL to subscribe to your meals in your calendar application (Outlook/iCalendar/Google Calendar).  Please copy the URL and 'subscribe' to it in your calendar application.</p>
+            <p><code>https://<?php echo $_SERVER['HTTP_HOST']; ?>/calendar.php?hash=<?php echo $memberObject->calendar_hash; ?></code></p>
+            
+            <p><strong>Please note:</strong> changes to your SCR bookings can take up to 24 hours to update in your calendar!</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <hr />
 
@@ -277,16 +300,7 @@ include_once('_member_stats.php');
           </div>
           
           <hr />
-          <div>
-            <label class="row">
-              <span class="col">ical Subscription: <code>https://<?php echo $_SERVER['HTTP_HOST']; ?>/calendar.php?hash=<?php echo $memberObject->calendar_hash; ?></code></span>
-              <span class="col-auto">
-                <label class="form-check form-check-single form-switch"><span class="badge rounded-pill text-bg-warning">BETA FEATURE</span></label>
-              </span>
-            </label>
-          </div>
           
-          <hr />
           <div>
             <label class="row">
               <span class="col"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#wine-glass"></svg> Default Wine <small>(when available)</small></span>
