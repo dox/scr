@@ -67,8 +67,10 @@ foreach ($bookingUIDS AS $bookingUID) {
 // write iCalendar feed to stdout
 echo ($icalobj->export());
 
-$logArray['category'] = "calendar";
-$logArray['result'] = "success";
-$logArray['description'] = "iCal feed generated for " . $member[0]['ldap'];
-$logsClass->create($logArray);
+if (debug) {
+	$logArray['category'] = "calendar";
+	$logArray['result'] = "success";
+	$logArray['description'] = "iCal feed generated for " . $member[0]['ldap'];
+	$logsClass->create($logArray);
+}
 ?>
