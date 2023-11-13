@@ -39,6 +39,8 @@ $headers  = "From: " . strip_tags($_POST['req-email']) . "\r\n";
 $headers .= "Reply-To: " . strip_tags($_POST['req-email']) . "\r\n";
 $headers .= "CC: ryan.trehearne@seh.ox.ac.uk\r\n";
 $headers .= "CC: stephen.lloyd@seh.ox.ac.uk\r\n";
+$headers .= "CC: grzegorz.zbylut@seh.ox.ac.uk\r\n";
+$headers .= "CC: vahid.kordbacheh@seh.ox.ac.uk\r\n";
 $headers .= "MIME-Version: 1.0\r\n";
 $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
 
