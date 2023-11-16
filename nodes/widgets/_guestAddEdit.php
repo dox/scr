@@ -32,27 +32,61 @@ if (isset($_GET['guestUID'])) {
 
 <div class="modal-body">
   <?php
-  if (!$mealObject->check_meal_bookable(true)) {
-    $buttonDeleteDisable = "disabled";
-        
-        if (!$mealObject->check_cutoff_ok(true)) {
-          echo "<p>The deadline for making changes to this booking has passed.  Please contact the Bursary for further assistance.</p>";
-        } elseif ($mealObject->check_capacity_ok()) {
-          echo "<p>You have added the maximum number of guests permitted for this meal.</p>";
-          $buttonAddDisable = "disabled";
-          $buttonDeleteDisable = "";
-        } else {
-          echo "<p>Meal not bookable.</p>";
-        }
-  } elseif (count($bookingObject->guestsArray()) >= $mealObject->getTotalGuestsAllowed() && $_SESSION['admin'] != true && $mode == "add") {
+  if ($mode == "add") {
+  $buttonDeleteDisable = "";
+  $buttonEditDisable = "";
+  $buttonAddDisable = "";
+  
+  if (!$mealObject->check_cutoff_ok(true)) {
+    echo "<p>The deadline for making changes to this booking has passed.  Please contact the Bursary for further assistance.</p>";
+    $buttonDeleteDisable = $buttonEditDisable = $buttonAddDisable = " disabled";
+    exit();
+  }
+  if (!$mealObject->check_capacity_ok(true)) {
+    echo "<p>The capacity for this meal has been reached.</p>";
+    $buttonDeleteDisable = $buttonEditDisable = $buttonAddDisable = " disabled";
+    exit();
+  }
+  if (count($bookingObject->guestsArray()) >= $mealObject->getTotalGuestsAllowed()) {
     echo "<p>You have added the maximum number of guests permitted for this meal.</p>";
-  } else { 
-    
-    if ($bookingObject->dessert == "1" && $mealObject->total_dessert_bookings_this_meal() >= $mealObject->scr_dessert_capacity && $mode == "add" && $_SESSION['admin'] != true) {
-      exit("<p>You cannot add a guest as it would exceed the available number of dessert spaces.  Please remove yourself from dessert if you wish to add another guest</p>");
-    }
-    
-    ?>
+    $buttonDeleteDisable = $buttonEditDisable = $buttonAddDisable = " disabled";
+    exit();
+  }
+  if ($bookingObject->dessert == "1" && $mealObject->total_dessert_bookings_this_meal() >= $mealObject->scr_dessert_capacity) {
+    echo "<p>You cannot add a guest as it would exceed the available number of dessert spaces.  Please remove yourself from dessert if you wish to add another guest</p>";
+    $buttonDeleteDisable = $buttonEditDisable = $buttonAddDisable = " disabled";
+    exit();
+  }
+  if (!$mealObject->check_member_ok(true)) {
+    echo "<p>Your account is currently disabled.</p>";
+    $buttonDeleteDisable = $buttonEditDisable = $buttonAddDisable = " disabled";
+    exit();
+  }
+  if (!$mealObject->check_member_type_ok(true)) {
+    echo "<p>Your account is not currently included in the allowed groups for this meal.</p>";
+    $buttonDeleteDisable = $buttonEditDisable = $buttonAddDisable = " disabled";
+    exit();
+  }
+  } elseif ($mode == "edit") {
+  if (!$mealObject->check_cutoff_ok(true)) {
+    echo "<p>The deadline for making changes to this booking has passed.  Please contact the Bursary for further assistance.</p>";
+    $buttonDeleteDisable = $buttonEditDisable = $buttonAddDisable = " disabled";
+    exit();
+  }
+  if ($bookingObject->dessert == "1" && $mealObject->total_dessert_bookings_this_meal() >= $mealObject->scr_dessert_capacity) {
+    echo "<p>You cannot add a guest as it would exceed the available number of dessert spaces.  Please remove yourself from dessert if you wish to add another guest</p>";
+    $buttonDeleteDisable = $buttonEditDisable = $buttonAddDisable = " disabled";
+    //exit();
+  }
+  }
+  ?>
+  
+  
+  
+  
+  
+  
+  
     <form method="post" class="needs-validation" action="../actions/booking_add_guest.php">
       <div class="form-group mb-3">
         <label for="name">Guest Name</label>
@@ -166,7 +200,7 @@ if (isset($_GET['guestUID'])) {
     
     </form>
   
-  <?php } ?>
+
 
     
 

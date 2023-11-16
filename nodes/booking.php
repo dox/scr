@@ -103,19 +103,20 @@ if (isset($bookingByMember)) {
               // we're already booked on for dessert
               $dessertChecked = "checked";
               
-              if ($mealObject->allowed_dessert == 1 && $mealObject->check_meal_bookable(true)) {
+              if ($mealObject->allowed_dessert == 1 && $mealObject->check_cutoff_ok(true)) {
                 $dessertDisabledCheck = "";
               } else {
                 $dessertHelper = "Deadline passed";
               }
             } else {
               // we're not yet booked on for dessert
-              if ($mealObject->allowed_dessert == 1 && $mealObject->check_meal_bookable(true)) {
+              if ($mealObject->allowed_dessert == 1 && $mealObject->check_cutoff_ok(true)) {
                 $dessertDisabledCheck = "";
               }
               
               // check if dessert capacity is reached
-              if ($mealObject->total_dessert_bookings_this_meal() >= $mealObject->scr_dessert_capacity) {
+              
+              if (($mealObject->total_dessert_bookings_this_meal() + count($bookingObject->guestsArray()) + 1) > $mealObject->scr_dessert_capacity) {
                 $dessertDisabledCheck = " disabled";
                 $dessertHelper =  "(capacity for dessert reached)";
               }
