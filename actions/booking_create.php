@@ -55,7 +55,7 @@ if ($mealBookableCheck == true || $_SESSION['admin'] == true) {
 		//$body .= "<p>You can add all your SCR meal bookings to your calendar, by <a href=\"" . $url . "\">subscribing to your ICS file here</a></p>";
 		
 		
-		sendMail("SCR Meal Booking Subject Specified", array($memberObject->email), $body);
+		sendMail("SCR Meal Booking Confirmation", array($memberObject->email), $body);
 	}
 } else {
 	echo "Error: An error occured when making this booking.  Please refresh the page and try again.  If the problem persists, please contact the Bursary.";
