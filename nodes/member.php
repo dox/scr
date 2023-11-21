@@ -48,9 +48,8 @@ if (isset($_POST['memberUID'])) {
 <?php
 $title = $memberObject->displayName() . $memberObject->stewardBadge();
 $subtitle = $memberObject->type . " (" . $memberObject->category . ")" . $memberObject->adminBadge();
-
 $icons[] = array("class" => "btn-info", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#calendar-plus\"/></svg> Add meals to your calendar", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#calendarModal\"");
-if ($_SESSION['admin'] == 1) {
+if ($_SESSION['admin'] == 1 && $memberObject->ldap != $_SESSION['username']) {
   $icons[] = array("class" => "btn-danger", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#trash\"/></svg> Delete Member", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#deleteMemberModal\"");
 }
 echo makeTitle($title, $subtitle, $icons);
