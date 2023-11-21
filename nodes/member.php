@@ -93,9 +93,9 @@ include_once('_member_stats.php');
                 </h2>
                 <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
                   <div class="accordion-body">
-                    <p>Please <strong>copy</strong> the following link (this is your unique URL to meal calendar)</p>
+                    <p>Please <strong>copy</strong> the following link (this is your unique URL to your meal calendar)</p>
                     <p><code>https://<?php echo $_SERVER['HTTP_HOST']; ?>/calendar.php?hash=<?php echo $memberObject->calendar_hash; ?></code></p>
-                    <p>Open Outlook (Or log in to your Outlook account on the web at https://outlook.live.com/ and open your calendar.</p>
+                    <p>Open Outlook (Or log in to your Outlook account on the web at <a href="https://outlook.live.com/">https://outlook.live.com/</a> and open your calendar.</p>
                     <p>Click on "Add calendar" in the left-hand panel.</p>
                     <p>Click "Subscribe from web" and paste in the copied URL.  Give your calendar a name, customise any details, and click "Import".</p>
                     <p>Your calendar will appear under "Other calendars".</p>
@@ -113,7 +113,7 @@ include_once('_member_stats.php');
                 </h2>
                 <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
                   <div class="accordion-body">
-                    <p>Please <strong>click</strong> the following link (this is your unique URL to meal calendar) then click 'Allow', then 'Subscribe'.</p>
+                    <p>Please <strong>click</strong> the following link (this is your unique URL to your meal calendar) then click 'Allow', then 'Subscribe'.</p>
                     <p><a href="webcal://<?php echo $_SERVER['HTTP_HOST']; ?>/calendar.php?hash=<?php echo $memberObject->calendar_hash; ?>">webcal://<?php echo $_SERVER['HTTP_HOST']; ?>/calendar.php?hash=<?php echo $memberObject->calendar_hash; ?></a></p>
                     <p>Your calendar will appear under "Other calendars".</p>
                     
