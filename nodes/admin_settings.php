@@ -72,6 +72,8 @@ echo makeTitle($title, $subtitle, $icons);
 $iconsArray = array(
   "chough" => "Chough",
   "chough-modern" => "Chough (new logo modern version)",
+  "apple" => "Apple Logo",
+  "microsoft" => "Micosoft Logo",
   "chef-hat" => "Chef Hat",
   "house-door" => "Home",
   "person" => "Member(s)",

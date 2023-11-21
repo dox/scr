@@ -48,6 +48,8 @@ if (isset($_POST['memberUID'])) {
 <?php
 $title = $memberObject->displayName() . $memberObject->stewardBadge();
 $subtitle = $memberObject->type . " (" . $memberObject->category . ")" . $memberObject->adminBadge();
+
+$icons[] = array("class" => "btn-info", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#calendar-plus\"/></svg> Add meals to your calendar", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#calendarModal\"");
 if ($_SESSION['admin'] == 1) {
   $icons[] = array("class" => "btn-danger", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#trash\"/></svg> Delete Member", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#deleteMemberModal\"");
 }
@@ -73,10 +75,7 @@ include_once('_member_stats.php');
       ?>
     </ul>
     
-    <button type="button" class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#exampleModal">
-      <svg width="1em" height="1em"><use xlink:href="img/icons.svg#calendar-plus"/></svg> Add meals to your calendar
-    </button>
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="calendarModal" tabindex="-1" aria-labelledby="calendarModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
@@ -84,10 +83,48 @@ include_once('_member_stats.php');
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            <p>The link below is your unique URL to subscribe to your meals in your calendar application (Outlook/iCalendar/Google Calendar).  Please copy the URL and 'subscribe' to it in your calendar application.</p>
-            <p><code>https://<?php echo $_SERVER['HTTP_HOST']; ?>/calendar.php?hash=<?php echo $memberObject->calendar_hash; ?></code></p>
+            <p>You can subscribe to your meals (past and present) in your calendar application.</p>
+            <p>Any meals you book will, after a few hours, be updated and shown in your calendar application.  You only need to subscribe once.</p>
+            <div class="accordion" id="accordionExample">
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                    <svg width="1em" height="1em"><use xlink:href="img/icons.svg#microsoft"></svg>&nbsp;Windows/Microsoft Outlook
+                  </button>
+                </h2>
+                <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+                    <p>Please <strong>copy</strong> the following link (this is your unique URL to meal calendar)</p>
+                    <p><code>https://<?php echo $_SERVER['HTTP_HOST']; ?>/calendar.php?hash=<?php echo $memberObject->calendar_hash; ?></code></p>
+                    <p>Open Outlook (Or log in to your Outlook account on the web at https://outlook.live.com/ and open your calendar.</p>
+                    <p>Click on "Add calendar" in the left-hand panel.</p>
+                    <p>Click "Subscribe from web" and paste in the copied URL.  Give your calendar a name, customise any details, and click "Import".</p>
+                    <p>Your calendar will appear under "Other calendars".</p>
+                    
+                    <hr />
+                    <p><strong>Please note:</strong> changes to your SCR bookings can take up to 24 hours to update in your calendar!</p>
+                  </div>
+                </div>
+              </div>
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                    <svg width="1em" height="1em"><use xlink:href="img/icons.svg#apple"></svg>&nbsp;Apple/iCalendar
+                  </button>
+                </h2>
+                <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+                    <p>Please <strong>click</strong> the following link (this is your unique URL to meal calendar) then click 'Allow', then 'Subscribe'.</p>
+                    <p><a href="webcal://<?php echo $_SERVER['HTTP_HOST']; ?>/calendar.php?hash=<?php echo $memberObject->calendar_hash; ?>">webcal://<?php echo $_SERVER['HTTP_HOST']; ?>/calendar.php?hash=<?php echo $memberObject->calendar_hash; ?></a></p>
+                    <p>Your calendar will appear under "Other calendars".</p>
+                    
+                    <hr />
+                    <p><strong>Please note:</strong> changes to your SCR bookings can take up to 2 hours to update in your calendar!</p>
+                  </div>
+                </div>
+              </div>
+            </div>
             
-            <p><strong>Please note:</strong> changes to your SCR bookings can take up to 24 hours to update in your calendar!</p>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
