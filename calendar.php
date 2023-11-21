@@ -14,6 +14,7 @@ $sql  = "SELECT bookings.uid AS uid FROM bookings";
 $sql .= " LEFT JOIN meals ON bookings.meal_uid = meals.uid";
 $sql .= " WHERE bookings.member_ldap = '" . $member[0]['ldap'] . "'";
 $sql .= " ORDER BY meals.date_meal DESC";
+$sql .= " LIMIT 1000";
 
 $bookings = $db->query($sql)->fetchAll();
 
@@ -57,11 +58,18 @@ foreach ($bookingUIDS AS $bookingUID) {
 	// DTSTAMP is a required item in VEVENT
 	$eventobj->addNode(new ZCiCalDataNode("DTSTAMP:" . ZCiCal::fromSqlDateTime()));
 	
-	// Add description
-	$eventobj->addNode(new ZCiCalDataNode("DESCRIPTION:" . ZCiCal::formatContent(
-		"Charged to: " . $bookingObject->charge_to . ", " . 
-		count($bookingObject->guestsArray()) . " guest(s)"
-	)));
+	// Add description if there are guests
+	$guestArray = array();
+	if (count($bookingObject->guestsArray()) > 0) {
+		foreach ($bookingObject->guestsArray() AS $guest) {
+			$guest = json_decode($guest);
+			$guestArray[] = $guest->guest_name;
+		}
+		$eventobj->addNode(new ZCiCalDataNode("DESCRIPTION:" . ZCiCal::formatContent(
+			"Guest(s): " . implode(", ", $guestArray)
+		)));
+	}
+	
 }
 
 // write iCalendar feed to stdout
