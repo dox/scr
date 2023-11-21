@@ -38,13 +38,9 @@ $logs = $logsClass->paginatedResults($offset, $search);
 </div>
 </form>
 
-
-
-<div id="myTable" class="list-group">
-  <?php
+<?php
   echo $logsClass->displayTable($logs);
-  ?>
-</div>
+?>
 
 <?php
 echo $logsClass->paginationDisplay($logsAll, $offset);
