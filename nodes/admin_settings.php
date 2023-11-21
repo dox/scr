@@ -71,7 +71,6 @@ echo makeTitle($title, $subtitle, $icons);
 <?php
 $iconsArray = array(
   "chough" => "Chough",
-  "chough-modern" => "Chough (new logo modern version)",
   "apple" => "Apple Logo",
   "microsoft" => "Micosoft Logo",
   "chef-hat" => "Chef Hat",
@@ -79,10 +78,9 @@ $iconsArray = array(
   "person" => "Member(s)",
   "person-plus" => "Member Add",
   "person-check" => "Member Added",
-  "person-secret" => "Impersonate",
   "list-stars" => "Meals List",
   "journal-text" => "Information",
-  "grip-vertical" => "Gripper for re-orderable lists",
+  "grip-vertical" => "Gripper",
   "sliders" => "Edit/Settings",
   "trash" => "Delete",
   "calendar-plus" => "Date Add",
@@ -103,21 +101,24 @@ $iconsArray = array(
 
 
 
-echo "<ul class=\"list-group\">";
+echo "<dic class=\"row text-center\">";
 foreach ($iconsArray AS $icon => $name) {
-  $output  = "<li class=\"list-group-item list-group-item-action\">";
-  $output .= "<div class=\"d-flex w-100 justify-content-between\">";
-  $output .= "<span><svg width=\"2em\" height=\"2em\">";
+  $output  = "<div class=\"col-sm-2 mb-3\">";
+  $output .= "<div class=\"card\">";
+  $output .= "<div class=\"card-body\">";
+  $output .= "<h5 class=\"card-title\"><code>" . $icon . "</code></h5>";
+  $output .= "<span><svg width=\"3em\" height=\"3em\">";
   $output .= "<use xlink:href=\"img/icons.svg#" . $icon . "\"/>";
-  $output .= "</svg> " . $name . "</span>";
-  $output .= "<small>[" . $icon . "]</small>";
+  $output .= "</svg></span>";
+  $output .= "<p class=\"card-text text-muted\">" . $name . "</p>";
   $output .= "</div>";
-  $output .= "</li>";
+  $output .= "</div>";
+  $output .= "</div>";
 
   echo $output;
 }
 
-echo "</ul>";
+echo "</div>";
 ?>
 
 <!-- Modal -->
