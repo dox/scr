@@ -19,15 +19,24 @@ $columns = array(
   "date_lastlogon"
 );
 
-//get all members
-$sql  = "SELECT * FROM members ORDER BY precedence ASC, lastname ASC, firstname ASC";
+//get all iCal logs (grouped by description) for the last 24 hours
+$sql  = "SELECT description FROM `logs` WHERE description LIKE 'iCal feed generated for %' AND date BETWEEN DATE_SUB(NOW(), INTERVAL 24 HOUR) AND NOW() GROUP BY description;";
 
-$members = $db->query($sql)->fetchAll();
+$results = $db->query($sql)->fetchAll();
 
-foreach ($members AS $member) {
+// build an array of usernames from the above
+$usernames = array();
+foreach ($results AS $result) {
+  $cleanUsename = str_replace("iCal feed generated for ", "", $result['description'], );
+  
+  $usernames[] = $cleanUsename;
+}
+
+
+foreach ($usernames AS $username) {
   $bookingRow = null;
   
-  $memberObject = new member($member['uid']);
+  $memberObject = new member($username);
   
   $memberRow['uid'] = $memberObject->uid;
   $memberRow['enabled'] = $memberObject->enabled;
