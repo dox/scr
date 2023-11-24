@@ -55,32 +55,44 @@ echo makeTitle($title, $subtitle, $icons);
 ?>
 
 <ul class="list-inline">
-  <li class="list-inline-item"><button class="btn btn-link btn-sm" onclick="fetchAndDisplay('/nodes/widgets/_member_stats.php?memberUID=<?php echo $memberObject->uid;?>&scope=all')">All</button></li>
-  <li class="list-inline-item"><button class="btn btn-link btn-sm" onclick="fetchAndDisplay('/nodes/widgets/_member_stats.php?memberUID=<?php echo $memberObject->uid;?>&scope=year')">Year</button></li>
-  <li class="list-inline-item"><button class="btn btn-link btn-sm" onclick="fetchAndDisplay('/nodes/widgets/_member_stats.php?memberUID=<?php echo $memberObject->uid;?>&scope=term')">This Term</button></li>
+  <li class="list-inline-item"><a href="#" class="small stats-link" onclick="fetchAndDisplay('/nodes/widgets/_member_stats.php?memberUID=<?php echo $memberObject->uid;?>&scope=all', this)">All</a></li>
+  <li class="list-inline-item"><a href="#" class="small stats-link fw-bold" onclick="fetchAndDisplay('/nodes/widgets/_member_stats.php?memberUID=<?php echo $memberObject->uid;?>&scope=year', this)" >Year</a></li>
+  <li class="list-inline-item"><a href="#" class="small stats-link" onclick="fetchAndDisplay('/nodes/widgets/_member_stats.php?memberUID=<?php echo $memberObject->uid;?>&scope=term', this)">This Term</a></li>
 </ul>
 <div id="member_stats_container"></div>
 <hr />
 
 <script>
-    function fetchAndDisplay(filePath) {
-        fetch(filePath)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`Network response was not ok: ${response.statusText}`);
-                }
-                return response.text();
-            })
-            .then(data => {
-                // Update the content of the div with the fetched data
-                document.getElementById('member_stats_container').innerHTML = data;
-            })
-            .catch(error => {
-                console.error('Error fetching data:', error);
-            });
-    }
+function fetchAndDisplay(filePath, clickedLink) {
+  if (clickedLink) {
+    // Remove bold styling from all links
+    var allLinks = document.querySelectorAll('.stats-link');
+    allLinks.forEach(link => {
+      link.classList.remove('fw-bold');
+    });
     
-    fetchAndDisplay('/nodes/widgets/_member_stats.php?memberUID=<?php echo $memberObject->uid;?>&scope=year');
+    // Make the clicked link bold
+    clickedLink.classList.add('fw-bold');
+  }
+  
+  fetch(filePath)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`Network response was not ok: ${response.statusText}`);
+      }
+      
+      return response.text();
+    })
+    .then(data => {
+      // Update the content of the div with the fetched data
+      document.getElementById('member_stats_container').innerHTML = data;
+    })
+    .catch(error => {
+      console.error('Error fetching data:', error);
+    });
+  }
+  
+  fetchAndDisplay('/nodes/widgets/_member_stats.php?memberUID=<?php echo $memberObject->uid;?>&scope=year');
 </script>
 
 <div class="row g-3">
