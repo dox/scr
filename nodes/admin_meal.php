@@ -50,9 +50,10 @@ if (isset($_GET['add'])) {
   $icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#person\"/></svg> Guest List", "value" => "onclick=\"window.open('guestlist.php?mealUID=" . $mealObject->uid . "')\"");
 }
 
-
 echo makeTitle($title, $subtitle, $icons);
+
 ?>
+
 <div class="row g-3">
   <div class="col-md-5 col-lg-4 order-md-last">
     <h4 class="d-flex justify-content-between align-items-center mb-3">
@@ -94,6 +95,9 @@ echo makeTitle($title, $subtitle, $icons);
       </li>
     </ul>
     <a href="report.php?reportUID=9&mealUID=<?php echo $mealObject->uid; ?>" class="text-muted float-end">Export all meal bookings</a>
+    
+    <div id="chart-meals_by_day"></div>
+    
   </div>
   <div class="col-md-7 col-lg-8">
     <h4 class="mb-3">Meal Information</h4>
@@ -400,9 +404,6 @@ echo makeTitle($title, $subtitle, $icons);
   </form>
 </div>
 
-<div id="chart-meals_by_day"></div>
-
-
 <!-- Modal -->
 <div class="modal" tabindex="-1" id="deleteMealModal" data-backdrop="static" data-keyboard="false" aria-hidden="true">
   <div class="modal-dialog">
@@ -469,12 +470,15 @@ foreach ($mealObject->bookings_this_meal() AS $booking) {
 var options = {
   chart: {
     type: 'bar',
-    height: '300px',
+    height: '200px',
     toolbar: {
       show: false
-    }
+    },
+    background: 'transparent'
   },
-  
+  grid: {
+    show: false
+  },
   dataLabels: {
     enabled: false
   },
