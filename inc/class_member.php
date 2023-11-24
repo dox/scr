@@ -324,16 +324,21 @@ class member {
     return $bookingUIDSarray;
   }
 
-  public function count_allBookings($type = null) {
+  public function count_allBookings($type = null, $date_range_days = null) {
     global $db;
 
     $sql  = "SELECT count(*) AS total FROM bookings";
     $sql .= " INNER JOIN meals ON bookings.meal_uid = meals.uid";
     $sql .= " WHERE bookings.member_ldap = '" . $this->ldap . "'";
+    
+    if ($date_range_days != null) {
+      $sql .= " AND meals.date_meal > DATE_SUB(NOW(), INTERVAL " . $date_range_days . " DAY)";
+    }
 
     if ($type != null) {
       $sql .= " AND meals.type = '" . $type . "'";
     }
+    
     $totalMeals = $db->query($sql)->fetchAll()[0]['total'];
 
     return $totalMeals;

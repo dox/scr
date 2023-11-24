@@ -1,4 +1,3 @@
-
 <?php
 if (isset($_GET['memberUID'])) {
   if ($_SESSION['admin'] == true) {
@@ -53,10 +52,36 @@ if ($_SESSION['admin'] == 1 && $memberObject->ldap != $_SESSION['username']) {
   $icons[] = array("class" => "btn-danger", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#trash\"/></svg> Delete Member", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#deleteMemberModal\"");
 }
 echo makeTitle($title, $subtitle, $icons);
-
-include_once('_member_stats.php');
-
 ?>
+
+<ul class="list-inline">
+  <li class="list-inline-item"><button class="btn btn-link btn-sm" onclick="fetchAndDisplay('/nodes/widgets/_member_stats.php?memberUID=<?php echo $memberObject->uid;?>&scope=all')">All</button></li>
+  <li class="list-inline-item"><button class="btn btn-link btn-sm" onclick="fetchAndDisplay('/nodes/widgets/_member_stats.php?memberUID=<?php echo $memberObject->uid;?>&scope=year')">Year</button></li>
+  <li class="list-inline-item"><button class="btn btn-link btn-sm" onclick="fetchAndDisplay('/nodes/widgets/_member_stats.php?memberUID=<?php echo $memberObject->uid;?>&scope=term')">This Term</button></li>
+</ul>
+<div id="member_stats_container"></div>
+<hr />
+
+<script>
+    function fetchAndDisplay(filePath) {
+        fetch(filePath)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Network response was not ok: ${response.statusText}`);
+                }
+                return response.text();
+            })
+            .then(data => {
+                // Update the content of the div with the fetched data
+                document.getElementById('member_stats_container').innerHTML = data;
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+    }
+    
+    fetchAndDisplay('/nodes/widgets/_member_stats.php?memberUID=<?php echo $memberObject->uid;?>&scope=year');
+</script>
 
 <div class="row g-3">
   <div class="col-md-5 col-lg-4 order-md-last">
