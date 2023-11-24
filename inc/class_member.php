@@ -323,6 +323,24 @@ class member {
 
     return $bookingUIDSarray;
   }
+  
+  public function countBookingsByType($date_range_days = null) {
+    global $db;
+  
+    $sql  = "SELECT count(*) AS total, meals.type FROM bookings";
+    $sql .= " INNER JOIN meals ON bookings.meal_uid = meals.uid";
+    $sql .= " WHERE bookings.member_ldap = '" . $this->ldap . "'";
+    
+    if ($date_range_days != null) {
+      $sql .= " AND meals.date_meal > DATE_SUB(NOW(), INTERVAL " . $date_range_days . " DAY)";
+    }
+    
+    $sql .= " GROUP BY meals.type";
+    
+    $results = $db->query($sql)->fetchAll();
+  
+    return $results;
+  }
 
   public function count_allBookings($type = null, $date_range_days = null) {
     global $db;
