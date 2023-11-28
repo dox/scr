@@ -321,9 +321,7 @@ echo makeTitle($title, $subtitle, $icons);
       
       <div class="row row-cols-1 row-cols-lg-3">
         <?php
-        $photos = explode(",", $settingsClass->value('meal_photos'));
-
-        foreach ($photos AS $photo) {
+        foreach ($mealsClass->mealCardImages() AS $photo) {
           if ($photo == $mealObject->photo) {
             $selected = " checked ";
           } else {

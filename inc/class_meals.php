@@ -68,6 +68,15 @@ class meals extends meal {
 
     return $mealTypesSettings;
   }
+  
+  public function mealCardImages() {
+    $mealCardDirectory = "img/cards/";
+    
+    $files = scandir($mealCardDirectory, SCANDIR_SORT_DESCENDING);
+    $cleanFiles = array_diff($files, array('..', '.'));
+    
+    return $cleanFiles;
+  }
 
   public function mealLocations() {
     global $db;

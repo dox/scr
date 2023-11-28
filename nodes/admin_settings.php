@@ -41,17 +41,41 @@ echo makeTitle($title, $subtitle, $icons);
     $output  = "<div class=\"accordion-item\">";
       $output .= "<h2 class=\"accordion-header\" id=\"" . $setting['uid'] . "\">";
       $output .= "<button class=\"" . $headingShow . "\" type=\"button\" data-bs-toggle=\"collapse\" data-bs-target=\"#" . $itemName . "\" aria-expanded=\"true\" aria-controls=\"" . $itemName . "\">";
-      $output .= "<strong>" . $setting['name'] . "</strong>: " . $setting['description'];
+      $output .= "<strong>" . $setting['name'] . "</strong>: " . $setting['description'] . " <span class=\"badge bg-secondary\">" . $setting['type'] . "</span>";
       $output .= "</button></h2>";
 
       $output .= "<div id=\"" . $itemName . "\" class=\"" . $settingShow . "\" aria-labelledby=\"" . $setting['uid'] . "\" data-bs-parent=\"#accordionExample\">";
         $output .= "<div class=\"accordion-body\">";
 
-        $output .= "<form method=\"post\" id=\"form-" .  $setting['uid'] . "\" action=\"" . $_SERVER['REQUEST_URI'] . "\" class=\"needs-validation\" novalidate>";
-        $output .= "<div class=\"input-group\">";
-          $output .= "<input type=\"text\" class=\"form-control\" id=\"value\" name=\"value\" value=\"" . escape($setting['value']). "\">";
+        $output .= "<form method=\"post\" id=\"form-" .  $setting['uid'] . "\" action=\"" . $_SERVER['REQUEST_URI'] . "\">";
+        
+        if ($setting['type'] == "numeric") {
+          $output .= "<div class=\"input-group\">";
+            $output .= "<input type=\"number\" class=\"form-control\" id=\"value\" name=\"value\" value=\"" . escape($setting['value']). "\">";
+            $output .= "<button class=\"btn btn-primary\" type=\"submit\" id=\"button-addon2\">Update</button>";
+          $output .= "</div>";
+        } elseif ($setting['type'] == "boolean") {
+          $checked = "";
+          if ($setting['value'] == "true") {
+            $checked = " checked ";
+          }
+          $output .= "<div class=\"form-check\">";
+          $output .= "<input type=\"hidden\" id=\"value\" name=\"value\" value=\"false\">";
+          $output .= "<input type=\"checkbox\" class=\"form-check-input\" id=\"value\" name=\"value\" value=\"true\" " . $checked . ">";
           $output .= "<button class=\"btn btn-primary\" type=\"submit\" id=\"button-addon2\">Update</button>";
-        $output .= "</div>";
+          $output .= "</div>";
+        } elseif ($setting['type'] == "json") {
+            $output .= "<textarea type=\"text\" rows=\"10\" class=\"form-control\" id=\"value\" name=\"value\">" . json_encode(json_decode($setting['value']), JSON_PRETTY_PRINT) . "</textarea>";
+            $output .= "<button class=\"btn btn-primary\" type=\"submit\" id=\"button-addon2\">Update</button>";
+        } elseif ($setting['type'] == "hidden") {
+          $output .= "Setting cannot be changed here";
+        } else {
+          $output .= "<div class=\"input-group\">";
+            $output .= "<input type=\"text\" class=\"form-control\" id=\"value\" name=\"value\" value=\"" . escape($setting['value']). "\">";
+            $output .= "<button class=\"btn btn-primary\" type=\"submit\" id=\"button-addon2\">Update</button>";
+          $output .= "</div>";
+        }
+        
         $output .= "<input type=\"hidden\" id=\"uid\" name=\"uid\" value=\"" . $setting['uid']. "\">";
         $output .= "</form>";
 
@@ -65,7 +89,7 @@ echo makeTitle($title, $subtitle, $icons);
   ?>
 </div>
 
-<h2 class="m-3">Icons Availabe in <code>./img/icon.svg</code></h2>
+<h2 class="m-3">Icons Available in <code>./img/icon.svg</code></h2>
 
 
 <?php
@@ -131,6 +155,18 @@ echo "</div>";
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
+        <div class="mb-3">
+          <label for="type">Setting Type</label>
+          <select class="form-select" name="type" id="type" aria-label="type">
+            <option selected value="numeric">Numeric</option>
+            <option value="alphanumeric">Alphanumeric</option>
+            <option value="list">List</option>
+            <option value="boolean">Boolean</option>
+            <option value="json">JSON</option>
+            <option value="hidden">Hidden</option>
+          </select>
+        </div>
+        
           <div class="mb-3">
             <label for="name">Setting Name</label>
             <input type="text" class="form-control" name="name" id="name" aria-describedby="termNameHelp">
@@ -161,3 +197,63 @@ function dismiss(el){
   document.getElementById(el).parentNode.style.display='none';
 };
 </script>
+
+
+<?php
+function prettyPrint( $json )
+{
+    $result = '';
+    $level = 0;
+    $in_quotes = false;
+    $in_escape = false;
+    $ends_line_level = NULL;
+    $json_length = strlen( $json );
+
+    for( $i = 0; $i < $json_length; $i++ ) {
+        $char = $json[$i];
+        $new_line_level = NULL;
+        $post = "";
+        if( $ends_line_level !== NULL ) {
+            $new_line_level = $ends_line_level;
+            $ends_line_level = NULL;
+        }
+        if ( $in_escape ) {
+            $in_escape = false;
+        } else if( $char === '"' ) {
+            $in_quotes = !$in_quotes;
+        } else if( ! $in_quotes ) {
+            switch( $char ) {
+                case '}': case ']':
+                    $level--;
+                    $ends_line_level = NULL;
+                    $new_line_level = $level;
+                    break;
+
+                case '{': case '[':
+                    $level++;
+                case ',':
+                    $ends_line_level = $level;
+                    break;
+
+                case ':':
+                    $post = " ";
+                    break;
+
+                case " ": case "\t": case "\n": case "\r":
+                    $char = "";
+                    $ends_line_level = $new_line_level;
+                    $new_line_level = NULL;
+                    break;
+            }
+        } else if ( $char === '\\' ) {
+            $in_escape = true;
+        }
+        if( $new_line_level !== NULL ) {
+            $result .= "\n".str_repeat( "\t", $new_line_level );
+        }
+        $result .= $char.$post;
+    }
+
+    return $result;
+}
+?>

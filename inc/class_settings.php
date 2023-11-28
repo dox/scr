@@ -2,17 +2,15 @@
 class settings {
   protected static $table_name = "settings";
   public $uid;
+  public $type;
   public $name;
   public $description;
   public $value;
 
   public function all() {
     global $db;
-
-    $settingsToExclude = array("'scr_information'", "'scr_accessibility'");
-
+    
     $sql  = "SELECT *  FROM " . self::$table_name;
-    $sql .= " WHERE name NOT IN (" . implode("," , $settingsToExclude) . ")";
     $sql .= " ORDER BY name ASC";
 
     $settings = $db->query($sql)->fetchAll();
@@ -89,14 +87,15 @@ class settings {
 
   public function templates() {
     global $db;
-
+  
     $sql  = "SELECT *  FROM " . self::$table_name;
     $sql .= " WHERE name LIKE 'template%'";
-
+  
     $templates = $db->query($sql)->fetchAll();
-
+  
     return $templates;
   }
+  
 
   public function alert ($type = null, $title = null, $description = null) {
 	  $alertClasses = array("primary", "secondary", "success" , "danger" , "warning", "info");
