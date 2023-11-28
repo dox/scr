@@ -314,27 +314,38 @@ echo makeTitle($title, $subtitle, $icons);
 
     <div class="mb-3">
       <label for="notes" class="form-label">Notes (Private)</label>
-      <input type="text" class="form-control" name="notes" id="notes" value="<?php echo $mealObject->notes; ?>">
+        <textarea rows="4" class="form-control" name="notes" id="notes"><?php echo $mealObject->notes; ?></textarea>
     </div>
 
     <div class="mb-3">
-      <label for="type" class="form-label">Photo</label>
-      <select class="form-select" name="photo" id="photo">
+      <label for="photo" class="form-label">Photo</label>
+      
+      <div class="row row-cols-1 row-cols-lg-3">
         <?php
         $photos = explode(",", $settingsClass->value('meal_photos'));
 
         foreach ($photos AS $photo) {
           if ($photo == $mealObject->photo) {
-            $selected = " selected ";
+            $selected = " checked ";
           } else {
             $selected = "";
           }
-          $output = "<option value=\"" . $photo . "\"" . $selected . ">" . $photo . "</option>";
-
+          
+          $output  = "<div class=\"col\">";
+          $output .= "<div class=\"card mb-3\">";
+          $output .= "<img src=\"img/cards/" . $photo . "\" class=\"card-img-top\" alt=\"...\">";
+          $output .= "<div class=\"card-body\">";
+          $output .= "<p class=\"card-text\"><label for=\"photo-" . $photo . "\" class=\"form-label\">";
+          $output .= "<input class=\"form-check-input\" type=\"radio\" name=\"photo\" id=\"photo-" . $photo . "\" value=\"" . $photo . "\"" . $selected . "> ";
+          $output .= $photo . "</label></p>";
+          $output .= "</div>";
+          $output .= "</div>";
+          $output .= "</div>";
+          
           echo $output;
         }
         ?>
-      </select>
+      </div>
     </div>
 
     <hr />
