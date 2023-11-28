@@ -34,18 +34,7 @@ $bookingsClass = new bookings();
 
 <body class="bg-body-tertiary">
   <div class="container">
-    <?php
-    $title = $mealObject->name;
-    if (isset($_GET['type'])) {
-      if (strpos($mealObject->name, 'Buffet') !== false) {
-        $title .= " - Drinks Signup";
-      } else {
-        $title .= " - Pre-Dinner Drinks Signup";
-      }
-    }
-    
-    ?>
-    <h1 class="text-center"><?php echo $title; ?></h1>
+    <h1 class="text-center"><?php echo $mealObject->name; ?></h1>
     <h2 class="text-center mb-3"><?php echo $mealObject->location; ?> <small class="text-muted"><?php echo dateDisplay($mealObject->date_meal, true); ?></small></h2>
 
     <div class="row row-deck row-cards">
@@ -84,11 +73,6 @@ $bookingsClass = new bookings();
     </div>
     <h4 class="d-flex justify-content-between align-items-center mb-3">Guest List</h4>
     
-    <?php
-    if (isset($_GET['type'])) {
-      echo "<p>Please write your pre-dinner drink (for you and your guest(s)) in the space provided:</p>";
-    }
-    ?>
     <div class="list-group">
       <?php
       $thisMealsBookingsUIDs = $bookingsClass->bookingsUIDsByMealUID($_GET['mealUID']);
@@ -123,11 +107,6 @@ $bookingsClass = new bookings();
         } else {
           $icons[] = "<svg width=\"2em\" height=\"2em\" class=\"mx-1\"><use xlink:href=\"img/icons.svg#blank\"/></svg>";
         }
-        
-        if (isset($_GET['type'])) {
-          $icons = null;
-          $icons[] = "<br />________________________________________";
-        }
 
         $output  = "<a href=\"#\" class=\"list-group-item list-group-item-action\" aria-current=\"true\">";
         $output .= "<div class=\"d-flex w-100 justify-content-between\">";
@@ -135,7 +114,7 @@ $bookingsClass = new bookings();
         $output .= "<small>" . implode("", $icons) . "</small>";
         $output .= "</div>";
 
-        if (!empty($memberObject->dietary) && !isset($_GET['type'])) {
+        if (!empty($memberObject->dietary)) {
           $output .= $memberObject->dietary;
         }
 
@@ -160,18 +139,13 @@ $bookingsClass = new bookings();
               $guestIcons[] = "<svg width=\"2em\" height=\"2em\" class=\"ms-1 me-1\"></svg>";
             }
             
-            if (isset($_GET['type'])) {
-              $guestIcons = null;
-              $guestIcons[] = "<br />________________________________________";
-            }
-
             $output .= "<div class=\"d-flex w-100 justify-content-between\">";
             $output .= "<h6 class=\"mb-1 text-muted\"> + " . htmlspecialchars_decode($guest->guest_name) . "</h6>";
             $output .= "<small>" . implode("", $guestIcons) . "</small>";
             $output .= "</div>";
 
             //$output .= "<li>" . $guest->guest_name . implode(", ", $guestIcons) ."</li>";
-            if (!empty($guest->guest_dietary) && !isset($_GET['type'])) {
+            if (!empty($guest->guest_dietary)) {
               $output .= "<small class=\"text-muted\">" . implode(", ", $guest->guest_dietary) . "</small>";
             }
           }
