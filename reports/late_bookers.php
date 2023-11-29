@@ -18,7 +18,7 @@
 			foreach ($bookings AS $booking) {
 				$dateDiff = datediff('n', $meal->date_cutoff, $booking['date']);
 				
-				if ($booking['date'] > $meal->date_meal) {
+				if ($booking['date'] > $meal->date_cutoff) {
 					$bookingLateArray[] = $booking['member_ldap'] . " booking was " . $dateDiff . " minutes late";
 					$membersLate[$booking['member_ldap']] = $membersLate[$booking['member_ldap']] + 1;
 				}
