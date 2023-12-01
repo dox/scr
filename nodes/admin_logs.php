@@ -31,6 +31,30 @@ $logs = $logsClass->paginatedResults($offset, $search);
 
 <div id="chart-logs"></div>
 
+<?php
+$totalBookings = $db->query("SELECT COUNT(*) AS totalBookings FROM bookings")->fetchArray();
+$totalMeals = $db->query("SELECT COUNT(*) AS totalMeals FROM meals")->fetchArray();
+$oldestMeal = $db->query("SELECT * FROM meals ORDER BY date_meal DESC")->fetchArray();
+?>
+<div class="row">
+  <div class="col-sm-6 mb-3 mb-sm-0">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title"><?php echo number_format($totalBookings['totalBookings']); ?></h5>
+        <p class="card-text">Total Bookings</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title"><?php echo number_format($totalMeals['totalMeals']); ?></h5>
+        <p class="card-text">Total Meals <i>(since: <?php echo dateDisplay($oldestMeal['date_meal'], true); ?>)</i></p>
+      </div>
+    </div>
+  </div>
+</div>
+
 <form method="post" id="search" action="<?php echo $_SERVER['REQUEST_URI']; ?>" class="needs-validation" novalidate>
 <div class="input-group my-3">
   <input type="text" class="form-control" id="logs_search" name="logs_search" placeholder="e.g. '[memberUID:137]'" aria-label="Search Logs" aria-describedby="button-addon2" value="<?php if (isset($search)) { echo $search; } ?>">
