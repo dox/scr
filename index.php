@@ -30,7 +30,7 @@ if (!empty($_POST['inputUsername']) && !empty($_POST['inputPassword']) && $_SESS
       $NEWUSER['calendar_hash'] = crypt($NEWUSER['ldap'], salt);
 
       $memberObject->create($NEWUSER, false);
-
+      
       $sql = "SELECT * FROM members where ldap = '" . $ldapUser[0]['samaccountname'][0] . "';";
       $memberLookup = $db->query($sql)->fetchArray();
       $memberObject = new member($memberLookup['uid']);
@@ -66,7 +66,7 @@ if (!empty($_POST['inputUsername']) && !empty($_POST['inputPassword']) && $_SESS
     } else {
       $_SESSION['admin'] = false;
     }
-
+    
     // build this out one day when I have time :-s
     if(!empty($_POST["inputRemember"])) {
       //setcookie ("username",$_SESSION['username'],time()+ 3600);
@@ -105,26 +105,26 @@ if ($_SESSION['logon'] != true) {
 </head>
 
 <body class="bg-body-tertiary">
-		<?php
-		include_once("views/header.php");
-		?>
+    <?php
+    include_once("views/header.php");
+    ?>
 
     <div class="container">
       <?php
-  		$node = "nodes/index.php";
-  			if (isset($_GET['n'])) {
-  				$node = "nodes/" . $_GET['n'] . ".php";
+      $node = "nodes/index.php";
+        if (isset($_GET['n'])) {
+          $node = "nodes/" . $_GET['n'] . ".php";
 
-  				if (!file_exists($node)) {
-  					$node = "nodes/404.php";
-  				}
-  			}
-  		include_once($node);
+          if (!file_exists($node)) {
+            $node = "nodes/404.php";
+          }
+        }
+      include_once($node);
       ?>
     </div>
     <?php
-		include_once("views/footer.php");
-		?>
+    include_once("views/footer.php");
+    ?>
 </body>
 </html>
 
