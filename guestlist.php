@@ -28,6 +28,12 @@ $bookingsClass = new bookings();
       body {
           padding-top:15mm;
       }
+      table {
+        page-break-inside:auto
+      }
+      tr    {
+        page-break-inside:avoid; page-break-after:auto
+      }
   }
 </style>
 </head>
@@ -73,97 +79,92 @@ $bookingsClass = new bookings();
     </div>
     <h4 class="d-flex justify-content-between align-items-center mb-3">Guest List</h4>
     
-    <div class="list-group">
-      <?php
-      $thisMealsBookingsUIDs = $bookingsClass->bookingsUIDsByMealUID($_GET['mealUID']);
-      foreach ($thisMealsBookingsUIDs AS $booking) {
-        $bookingObject = new booking($booking['uid']);
-        $memberObject = new member($bookingObject->member_ldap);
-        $guestsArray = $bookingObject->guestsArray();
-
-        //printArray($guestsArray);
-
-        $icons = array();
-        $guestIcons = array();
-
-        if (count($guestsArray) > 0) {
-          $displayName = $memberObject->displayName() . " <small>(+ " . count($guestsArray) . autoPluralise(" guest", " guests", count($guestsArray)) . ")</small>";
-        } else {
-          $displayName = $memberObject->displayName();
-        }
-
-        if ($bookingObject->charge_to == "Domus" || $mealObject->domus == "1") {
-          $icons[] = "<svg width=\"2em\" height=\"2em\" class=\"mx-1\"><use xlink:href=\"img/icons.svg#graduation-cap\"/></svg>";
-        } else {
-          $icons[] = "<svg width=\"2em\" height=\"2em\" class=\"mx-1\"><use xlink:href=\"img/icons.svg#blank\"/></svg>";
-        }
-        if ($bookingObject->wine == "1") {
-          $icons[] = "<svg width=\"2em\" height=\"2em\" class=\"mx-1\"><use xlink:href=\"img/icons.svg#wine-glass\"/></svg>";
-        } else {
-          $icons[] = "<svg width=\"2em\" height=\"2em\" class=\"mx-1\"><use xlink:href=\"img/icons.svg#blank\"/></svg>";
-        }
-        if ($bookingObject->dessert == "1") {
-          $icons[] = "<svg width=\"2em\" height=\"2em\" class=\"mx-1\"><use xlink:href=\"img/icons.svg#cookie\"/></svg>";
-        } else {
-          $icons[] = "<svg width=\"2em\" height=\"2em\" class=\"mx-1\"><use xlink:href=\"img/icons.svg#blank\"/></svg>";
-        }
-
-        $output  = "<a href=\"#\" class=\"list-group-item list-group-item-action\" aria-current=\"true\">";
-        $output .= "<div class=\"d-flex w-100 justify-content-between\">";
-        $output .= "<h5 class=\"mb-1\">" . $displayName . "</h5>";
-        $output .= "<small>" . implode("", $icons) . "</small>";
-        $output .= "</div>";
-
-        if (!empty($memberObject->dietary)) {
-          $output .= $memberObject->dietary;
-        }
-
-        if (!empty($guestsArray)) {
-          //$output .= "<ul>";
-          foreach ($guestsArray AS $guest) {
-            $guest = json_decode($guest);
-            $guestIcons = array();
-            if ($guest->guest_domus == "on") {
-              $guestIcons[] = "<svg width=\"2em\" height=\"2em\" class=\"ms-1 me-1\"><use xlink:href=\"img/icons.svg#graduation-cap\"/></svg>";
-            } else {
-              $guestIcons[] = "<svg width=\"2em\" height=\"2em\" class=\"ms-1 me-1\"></svg>";
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col" width="2em">#</th>
+          <th scope="col">Name</th>
+          <th scope="col" width="2em"><svg width="2em" height="2em" class="mx-1 text-muted"><use xlink:href="img/icons.svg#wine-glass"/></svg></th>
+          <th scope="col" width="2em"><svg width="2em" height="2em" class="mx-1 text-muted"><use xlink:href="img/icons.svg#cookie"/></svg></th>
+          <th scope="col" width="2em"><svg width="2em" height="2em" class="mx-1 text-muted"><use xlink:href="img/icons.svg#graduation-cap"/></svg></th>
+        </tr>
+      </thead>
+      <tbody>
+        <?php
+        $thisMealsBookingsUIDs = $bookingsClass->bookingsUIDsByMealUID($_GET['mealUID']);
+        
+        $i = 1;
+        foreach ($thisMealsBookingsUIDs AS $booking) {
+          $bookingObject = new booking($booking['uid']);
+          $memberObject = new member($bookingObject->member_ldap);
+          $guestsArray = $bookingObject->guestsArray();
+          
+          $output  = "<tr>";
+          $output .= "<th scope=\"row\" rowspan=\"" . count($bookingObject->guestsArray()) + 1 . "\"><h5>" . $i . "</h5></th>";
+          $output .= "<td>";
+            $output .= "<h4>" . $memberObject->displayName() . "</h4>";
+            if (!empty($memberObject->dietary)) {
+              $output .= $memberObject->dietary;
             }
-            if ($guest->guest_wine == "on") {
-              $guestIcons[] = "<svg width=\"2em\" height=\"2em\" class=\"ms-1 me-1\"><use xlink:href=\"img/icons.svg#wine-glass\"/></svg>";
-            } else {
-              $guestIcons[] = "<svg width=\"2em\" height=\"2em\" class=\"ms-1 me-1\"></svg>";
+          $output .= "</td>";
+          
+          $output .= "<td>";
+            if ($bookingObject->wine == "1") {
+              $output .= "<svg width=\"2em\" height=\"2em\" class=\"mx-1\"><use xlink:href=\"img/icons.svg#wine-glass\"/></svg>";
             }
+          $output .= "</td>";
+          $output .= "<td>";
             if ($bookingObject->dessert == "1") {
-              $guestIcons[] = "<svg width=\"2em\" height=\"2em\" class=\"ms-1 me-1\"><use xlink:href=\"img/icons.svg#cookie\"/></svg>";
-            } else {
-              $guestIcons[] = "<svg width=\"2em\" height=\"2em\" class=\"ms-1 me-1\"></svg>";
+              $output .= "<svg width=\"2em\" height=\"2em\" class=\"mx-1\"><use xlink:href=\"img/icons.svg#cookie\"/></svg>";
+            }
+          $output .= "</td>";
+          $output .= "<td>";
+            if ($bookingObject->domus == "1") {
+              $output .= "<svg width=\"2em\" height=\"2em\" class=\"mx-1\"><use xlink:href=\"img/icons.svg#graduation-cap\"/></svg>";
+            }
+          $output .= "</td>";
+          $output .= "</tr>";
+          
+          
+          if (!empty($guestsArray)) {
+            $output .= "<tr>";
+            foreach ($guestsArray AS $guest) {
+              $guest = json_decode($guest);
+              
+              $output .= "<td>";
+                $output .= "<h5> + " . $guest->guest_name . "</h5>";
+                if (!empty($guest->guest_dietary)) {
+                  $output .= implode(", ", $guest->guest_dietary);
+                }
+              $output .= "</td>";
+              $output .= "<td>";
+                if ($guest->guest_wine == "on") {
+                  $output .= "<svg width=\"2em\" height=\"2em\" class=\"mx-1\"><use xlink:href=\"img/icons.svg#wine-glass\"/></svg>";
+                }
+              $output .= "</td>";
+              $output .= "<td>";
+                if ($bookingObject->dessert == "1") {
+                  $output .= "<svg width=\"2em\" height=\"2em\" class=\"mx-1\"><use xlink:href=\"img/icons.svg#cookie\"/></svg>";
+                }
+              $output .= "</td>";
+              $output .= "<td>";
+                if ($guest->guest_charge_to == "Domus") {
+                  $output .= "<svg width=\"2em\" height=\"2em\" class=\"mx-1\"><use xlink:href=\"img/icons.svg#graduation-cap\"/></svg>";
+                }
+              $output .= "</td>";
             }
             
-            $output .= "<div class=\"d-flex w-100 justify-content-between\">";
-            $output .= "<h6 class=\"mb-1 text-muted\"> + " . htmlspecialchars_decode($guest->guest_name) . "</h6>";
-            $output .= "<small>" . implode("", $guestIcons) . "</small>";
-            $output .= "</div>";
-
-            //$output .= "<li>" . $guest->guest_name . implode(", ", $guestIcons) ."</li>";
-            if (!empty($guest->guest_dietary)) {
-              $output .= "<small class=\"text-muted\">" . implode(", ", $guest->guest_dietary) . "</small>";
-            }
+            $output .= "</tr>";
           }
-          $output .= "</ul>";
+          
+          echo $output;
+          
+          $i++;
         }
-
-        //$output .= "<p class=\"mb-1\">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>";
-
-        if (!empty($guestObject->dietary)) {
-          $output .= "<small>" . implode(", ", $guestObject->guest_dietary) . "</small>";
-        }
-        $output .= "</a>";
-
-        echo $output;
-      }
-      ?>
-    </div>
-
+        ?>
+      </tbody>
+    </table>
+    
     <div class="row mt-3 float-end">
       <p><em>Guest List generated on <?php echo dateDisplay(date('r'), true) . " " . timeDisplay(date('r'), true) . " by " . $_SESSION['username']; ?></em></p>
     </div>
