@@ -39,7 +39,14 @@ class term {
     if (count($currentTerm) == 1) {
       $currentTerm = $currentTerm[0];
     } else {
-      $currentTerm = array("uid"=>"0", "name"=>"Vacation", "date_start"=>"Unknown", "date_end"=>"Unknown");
+      $sql  = "SELECT *  FROM " . self::$table_name;
+      $sql .= " WHERE CURDATE() > date_start ";
+      $sql .= " ORDER BY date_end DESC";
+      $sql .= " LIMIT 1";
+      
+      $previousTerm = $db->query($sql)->fetchArray();
+      
+      $currentTerm = array("uid"=>"0", "name"=>"Vacation", "date_start"=>$previousTerm['date_end'], "date_end"=>date('Y-m-d'));
     }
 
     return $currentTerm;
