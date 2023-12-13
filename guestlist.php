@@ -104,7 +104,9 @@ $bookingsClass = new bookings();
           $output .= "<td>";
             $output .= "<h4>" . $memberObject->displayName() . "</h4>";
             if (!empty($memberObject->dietary)) {
-              $output .= $memberObject->dietary;
+              $dietaryArray = explode(",", $memberObject->dietary);
+              
+              $output .= implode(", ", $dietaryArray);
             }
           $output .= "</td>";
           
