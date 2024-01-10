@@ -129,8 +129,9 @@ $bookingsClass = new bookings();
           
           
           if (!empty($guestsArray)) {
-            $output .= "<tr>";
             foreach ($guestsArray AS $guest) {
+              $output .= "<tr>";
+              
               $guest = json_decode($guest);
               
               $output .= "<td>";
@@ -154,9 +155,9 @@ $bookingsClass = new bookings();
                   $output .= "<svg width=\"2em\" height=\"2em\" class=\"mx-1\"><use xlink:href=\"img/icons.svg#graduation-cap\"/></svg>";
                 }
               $output .= "</td>";
+              
+              $output .= "</tr>";
             }
-            
-            $output .= "</tr>";
           }
           
           echo $output;
