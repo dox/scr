@@ -48,7 +48,13 @@ $bookingsClass = new bookings();
         <div class="card">
           <div class="card-body">
             <div class="subheader">SCR Diners</div>
-            <div class="h1 mb-3"><?php echo $mealObject->total_bookings_this_meal('SCR'); ?></div>
+            <?php
+            $exceededClass = "";
+            if ($mealObject->total_bookings_this_meal('SCR') > $mealObject->scr_capacity) {
+              $exceededClass = " text-danger";
+            }
+            ?>
+            <div class="h1 mb-3 <?php echo $exceededClass; ?>"><?php echo $mealObject->total_bookings_this_meal('SCR'); ?></div>
           </div>
         </div>
       </div>
@@ -56,7 +62,13 @@ $bookingsClass = new bookings();
         <div class="card">
           <div class="card-body">
             <div class="subheader">MCR Diners</div>
-            <div class="h1 mb-3"><?php echo $mealObject->total_bookings_this_meal('MCR'); ?></div>
+            <?php
+            $exceededClass = "";
+            if ($mealObject->total_bookings_this_meal('MCR') > $mealObject->mcr_capacity) {
+              $exceededClass = " text-danger";
+            }
+            ?>
+            <div class="h1 mb-3 <?php echo $exceededClass; ?>"><?php echo $mealObject->total_bookings_this_meal('MCR'); ?></div>
           </div>
         </div>
       </div>
@@ -64,7 +76,13 @@ $bookingsClass = new bookings();
         <div class="card">
           <div class="card-body">
             <div class="subheader">SCR Dessert</div>
-            <div class="h1 mb-3"><?php echo $mealObject->total_dessert_bookings_this_meal('SCR'); ?></div>
+            <?php
+            $exceededClass = "";
+            if ($mealObject->total_dessert_bookings_this_meal('SCR') > $mealObject->scr_dessert_capacity) {
+              $exceededClass = " text-danger";
+            }
+            ?>
+            <div class="h1 mb-3 <?php echo $exceededClass; ?>"><?php echo $mealObject->total_dessert_bookings_this_meal('SCR'); ?></div>
           </div>
         </div>
       </div>
@@ -72,7 +90,13 @@ $bookingsClass = new bookings();
         <div class="card">
           <div class="card-body">
             <div class="subheader">MCR Dessert</div>
-            <div class="h1 mb-3"><?php echo $mealObject->total_dessert_bookings_this_meal('MCR'); ?></div>
+            <?php
+            $exceededClass = "";
+            if ($mealObject->total_dessert_bookings_this_meal('MCR') > $mealObject->mcr_dessert_capacity) {
+              $exceededClass = " text-danger";
+            }
+            ?>
+            <div class="h1 mb-3 <?php echo $exceededClass; ?>"><?php echo $mealObject->total_dessert_bookings_this_meal('MCR'); ?></div>
           </div>
         </div>
       </div>
