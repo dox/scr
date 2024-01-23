@@ -47,7 +47,7 @@ if (isset($_GET['guestUID'])) {
     $buttonDeleteDisable = $buttonEditDisable = $buttonAddDisable = " disabled";
     exit();
   }
-  if (count($bookingObject->guestsArray()) >= $mealObject->getTotalGuestsAllowed()) {
+  if ((count($bookingObject->guestsArray()) >= $mealObject->getTotalGuestsAllowed()) && $_SESSION['admin'] == false) {
     echo "<p>You have added the maximum number of guests permitted for this meal.</p>";
     $buttonDeleteDisable = $buttonEditDisable = $buttonAddDisable = " disabled";
     exit();
