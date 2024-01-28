@@ -32,20 +32,16 @@ for($i = 0; $i < 7; $i++){
   }
 }
 
-$to = "andrew.breakspear@seh.ox.ac.uk";
+$headers  = "From: " . smtp_sender_address . "\r\n";
+$headers .= "Reply-To: " . smtp_sender_address . "\r\n";
 
+$recipients = explode(",", $settingsClass->value('menu_recipients'));
+foreach ($recipients AS $recipient) {
+  $headers .= "CC: " . $recipient . "\r\n";
+}
 
-$headers  = "From: " . strip_tags($_POST['req-email']) . "\r\n";
-$headers .= "Reply-To: " . strip_tags($_POST['req-email']) . "\r\n";
-$headers .= "CC: ryan.trehearne@seh.ox.ac.uk\r\n";
-$headers .= "CC: stephen.lloyd@seh.ox.ac.uk\r\n";
-$headers .= "CC: alex.grantd@seh.ox.ac.uk\r\n";
-$headers .= "CC: grzegorz.zbylut@seh.ox.ac.uk\r\n";
-$headers .= "CC: vahid.kordbacheh@seh.ox.ac.uk\r\n";
 $headers .= "MIME-Version: 1.0\r\n";
 $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
-
-$message = '<p><strong>This is strong text</strong> while this is not.</p>';
 
 if ($totalMeals > 0) {
   mail($to, $subject, $output, $headers);
@@ -53,7 +49,4 @@ if ($totalMeals > 0) {
 } else {
   echo "No menu data to send";
 }
-
-
-
 ?>
