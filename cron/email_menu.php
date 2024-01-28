@@ -36,15 +36,12 @@ $headers  = "From: " . smtp_sender_address . "\r\n";
 $headers .= "Reply-To: " . smtp_sender_address . "\r\n";
 
 $recipients = explode(",", $settingsClass->value('menu_recipients'));
-foreach ($recipients AS $recipient) {
-  $headers .= "CC: " . $recipient . "\r\n";
-}
 
 $headers .= "MIME-Version: 1.0\r\n";
 $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
 
 if ($totalMeals > 0) {
-  mail($to, $subject, $output, $headers);
+  sendMail($subject, $recipients, $output);
   echo "Email sent for " . $totalMeals . " meals";
 } else {
   echo "No menu data to send";
