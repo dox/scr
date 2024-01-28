@@ -10,6 +10,8 @@ $firstDayOfCurrentWeek = firstDayOfWeek();
 
 $subject  = "SEH Menu for week commencing " . $firstDayOfCurrentWeek;
 
+$recipients = explode(",", $settingsClass->value('menu_recipients'));
+
 $output = "<h1>" . $subject . "</h1>";
 // iterate through the whole week (based on weekStartDate)
 for($i = 0; $i < 7; $i++){
@@ -31,14 +33,6 @@ for($i = 0; $i < 7; $i++){
   $output .= "<p><strong>" . $mealObject->type . "</strong> " . $mealObject->menu . "</p>";
   }
 }
-
-$headers  = "From: " . smtp_sender_address . "\r\n";
-$headers .= "Reply-To: " . smtp_sender_address . "\r\n";
-
-$recipients = explode(",", $settingsClass->value('menu_recipients'));
-
-$headers .= "MIME-Version: 1.0\r\n";
-$headers .= "Content-Type: text/html; charset=UTF-8\r\n";
 
 if ($totalMeals > 0) {
   sendMail($subject, $recipients, $output);
