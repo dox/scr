@@ -74,7 +74,7 @@ class member {
       if ($this->opt_in == 1) {
         $name = $this->displayName();
       } else {
-        $name = "HIDDEN";
+        $name = "Hidden";
       }
     }
 

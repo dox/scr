@@ -18,7 +18,7 @@ foreach ($thisMealsBookingsUIDs AS $booking) {
   $bookingObject = new booking($booking['uid']);
   $guestBookingObject = new booking($booking['uid']);
   $memberObject = new member($guestBookingObject->member_ldap);
-    
+  
   $guestsArray = $guestBookingObject->guestsArray();
   $totalGuests = count($guestsArray);
   
@@ -46,7 +46,12 @@ foreach ($thisMealsBookingsUIDs AS $booking) {
        $icon = ""; 
       }
       
-      $output .= "<li>" . htmlspecialchars_decode($guest->guest_name) . $icon . "</li>";
+      if ($memberObject->opt_in == 1 || $_SESSION['admin'] == "1") {
+        $guestName = $guest->guest_name;
+      } else {
+        $guestName = "Hidden";
+      }
+      $output .= "<li>" . htmlspecialchars_decode($guestName) . $icon . "</li>";
     }
     $output .= "</ul>";
   }

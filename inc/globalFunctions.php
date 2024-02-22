@@ -296,8 +296,8 @@ function sendMail($subject = "No Subject Specified", $recipients = NULL, $body =
 		$mail->FromName = $senderName;
 		$mail->AddReplyTo($senderAddress, $senderName);
 	} else {
-		$mail->From = "noreply@seh.ox.ac.uk";
-		$mail->FromName = "No Reply ";
+		$mail->From = smtp_sender_address;
+		$mail->FromName = smtp_sender_name;
 	}
 	
 	foreach ($recipients AS $recipient) {

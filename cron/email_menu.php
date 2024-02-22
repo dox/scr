@@ -10,6 +10,8 @@ $firstDayOfCurrentWeek = firstDayOfWeek();
 
 $subject  = "SEH Menu for week commencing " . $firstDayOfCurrentWeek;
 
+$recipients = explode(",", $settingsClass->value('menu_recipients'));
+
 $output = "<h1>" . $subject . "</h1>";
 // iterate through the whole week (based on weekStartDate)
 for($i = 0; $i < 7; $i++){
@@ -32,27 +34,10 @@ for($i = 0; $i < 7; $i++){
   }
 }
 
-$to = "andrew.breakspear@seh.ox.ac.uk";
-
-
-$headers  = "From: " . strip_tags($_POST['req-email']) . "\r\n";
-$headers .= "Reply-To: " . strip_tags($_POST['req-email']) . "\r\n";
-$headers .= "CC: ryan.trehearne@seh.ox.ac.uk\r\n";
-$headers .= "CC: stephen.lloyd@seh.ox.ac.uk\r\n";
-$headers .= "CC: grzegorz.zbylut@seh.ox.ac.uk\r\n";
-$headers .= "CC: vahid.kordbacheh@seh.ox.ac.uk\r\n";
-$headers .= "MIME-Version: 1.0\r\n";
-$headers .= "Content-Type: text/html; charset=UTF-8\r\n";
-
-$message = '<p><strong>This is strong text</strong> while this is not.</p>';
-
 if ($totalMeals > 0) {
-  mail($to, $subject, $output, $headers);
+  sendMail($subject, $recipients, $output);
   echo "Email sent for " . $totalMeals . " meals";
 } else {
   echo "No menu data to send";
 }
-
-
-
 ?>
