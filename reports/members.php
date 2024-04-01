@@ -20,7 +20,7 @@ $columns = array(
 );
 
 //get all members
-$sql  = "SELECT * FROM members ORDER BY precedence ASC, lastname ASC, firstname ASC";
+$sql  = "SELECT * FROM members ORDER BY enabled DESC, type DESC, precedence ASC, lastname ASC, firstname ASC";
 
 $members = $db->query($sql)->fetchAll();
 
