@@ -21,7 +21,7 @@ use LdapRecord\Connection;
 
 // Create a new connection:
 $ldap_connection = new Connection([
-	'hosts' => [LDAP_SERVER],
+	'hosts' => LDAP_SERVER,
 	'port' => LDAP_PORT,
 	'base_dn' => LDAP_BASE_DN,
 	'username' => LDAP_BIND_DN,
