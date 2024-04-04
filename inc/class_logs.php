@@ -251,10 +251,29 @@ class logs {
     return $output;
   }
   
+  private function calculate_percentile($percent, $numbers) {
+      sort($numbers);
+      $count = count($numbers);
+      
+      $index = ($percent / 100) * ($count - 1);
+      $fractional_part = $index - floor($index);
+      
+      $lower_index = (int) $index;
+      $lower_value = $numbers[$lower_index];
+      
+      if ($lower_index + 1 < $count) {
+          $upper_value = $numbers[$lower_index + 1];
+      } else {
+          $upper_value = $lower_value;
+      }
+      
+      $result = $lower_value + ($upper_value - $lower_value) * $fractional_part;
+      return $result;
+  }
+
+
   public function paginatedBar() {
     $thresold = 30;
-    $percentageToRemove = 30;
-    $half_percentageToRemove = $percentageToRemove/2;
     
     $totallogspages = count($this->all()) / $this->logsPerPage;
     
@@ -263,8 +282,8 @@ class logs {
     
     if (count($array) > $thresold) {
       // Calculate the range of keys to be removed
-      $startKey = ceil(($totallogspages/2) - ($half_percentageToRemove/2)); // Start from 25th percentile
-      $endKey = floor(($totallogspages/2) + ($half_percentageToRemove/2)); // End at 75th percentile
+      $startKey = $this->calculate_percentile(30, $array);
+      $endKey = $this->calculate_percentile(70, $array);
       
       // Remove the middle 50% of keys from the array
       for ($i = $startKey; $i <= $endKey; $i++) {
