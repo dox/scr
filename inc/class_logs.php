@@ -251,34 +251,95 @@ class logs {
     return $output;
   }
   
-  public function paginationDisplay($totalLogs = 0, $currentPage = 0) {
+  public function paginatedBar() {
+    $thresold = 30;
+    $percentageToRemove = 30;
+    $half_percentageToRemove = $percentageToRemove/2;
+    
+    $totallogspages = count($this->all()) / $this->logsPerPage;
+    
+    // Generate array with keys from 1 to $number
+    $array = range(1, $totallogspages);
+    
+    if (count($array) > $thresold) {
+      // Calculate the range of keys to be removed
+      $startKey = ceil(($totallogspages/2) - ($half_percentageToRemove/2)); // Start from 25th percentile
+      $endKey = floor(($totallogspages/2) + ($half_percentageToRemove/2)); // End at 75th percentile
+      
+      // Remove the middle 50% of keys from the array
+      for ($i = $startKey; $i <= $endKey; $i++) {
+          unset($array[$i]);
+      }
+    }
+    
+    return $array;
+  }
+  
+  public function paginatedLogs() {
+      // Get current page from query string or set default to 1
+      $page = isset($_GET['p']) ? $_GET['p'] : 1;
+      
+      // Calculate total number of pages
+      $totalPages = ceil(count($this->all()) / $this->logsPerPage);
+      
+      // Make sure the page is within bounds
+      $page = max(1, min($totalPages, intval($page)));
+      
+      // Calculate start and end indexes for the current page
+      $startIndex = ($page - 1) * $this->logsPerPage;
+      $endIndex = min($startIndex + $this->logsPerPage - 1, count($this->all()) - 1);
+      
+      // Extract items for the current page
+      $currentPageItems = array_slice($this->all(), $startIndex, $endIndex - $startIndex + 1);
+      
+      return [
+          'currentPageItems' => $currentPageItems,
+          'currentPage' => $page,
+          'totalPages' => $totalPages
+      ];
+  }
+  
+  public function paginationResults($totalLogs = 0) {
+    $currentPage = isset($_GET['p']) ? $_GET['p'] : 1; // Get current page from query string, default to 1
+    
     $totalLogPages = number_format($totalLogs/$this->logsPerPage,0) - 1;
     
     $output  = "<nav aria-label=\"Page pagination\">";
     $output .= "<ul class=\"pagination\">";
-    $output .= $this->paginationPreviousButton($totalLogs, $currentPage);
+    $output .= $this->paginationPreviousButton();
     
-    $i = 0;
-    do {
+    $i = 1;
+    foreach ($this->paginatedBar() AS $barNum) {
       $active = "";
-      if ($i == $_GET['p']) {
+      if ($barNum == $_GET['p']) {
         $active = "active";
       }
-      $output .= "<li class=\"page-item " . $active . "\"><a class=\"page-link\" href=\"index.php?n=admin_logs&p=" . $i . "\">" . $i . "</a></li>";
+      
+      if ($barNum != $i) {
+        $output .= "<li class=\"page-item disabled\"><a class=\"page-link\" href=\"#\">...</a></li>";
+        $i = $barNum;
+      } else {
+        $output .= "<li class=\"page-item " . $active . "\"><a class=\"page-link\" href=\"index.php?n=admin_logs&p=" . $barNum . "\">" . $barNum . "</a></li>";
+      }
       $i++;
-    } while($i <= $totalLogPages);
+      
+    }
     
-    $output .= $this->paginationNextButton($totalLogs, $currentPage);
+    $output .= $this->paginationNextButton();
     $output .= "</ul>";
     $output .= "</nav>";
     
     return $output;
   }
   
-  private function paginationPreviousButton($totalLogs = 0, $currentPage = 0) {
+  private function paginationPreviousButton() {
+    $currentPage = isset($_GET['p']) ? $_GET['p'] : 1; // Get current page from query string, default to 1
+    $totalLogPages = floor(count($this->all()) / $this->logsPerPage);
+    
     $disabled = "";
-    if ($currentPage <= 0) {
-      $previousPageNumber = 0;
+    
+    if ($currentPage <= 1) {
+      $previousPageNumber = 1;
       $disabled = " disabled";
     } else {
       $previousPageNumber = $currentPage - 1;
@@ -288,12 +349,14 @@ class logs {
     return $output;
   }
   
-  private function paginationNextButton($totalLogs = 0, $currentPage = 0) {
-    $totalLogPages = number_format($totalLogs/$this->logsPerPage,0);
+  private function paginationNextButton() {
+    $currentPage = isset($_GET['p']) ? $_GET['p'] : 1; // Get current page from query string, default to 1
+    $totalLogPages = floor(count($this->all()) / $this->logsPerPage);
     
     $disabled = "";
+    
     if ($currentPage >= $totalLogPages) {
-      $nextPageNumber = 0;
+      $nextPageNumber = $currentPage;
       $disabled = " disabled";
     } else {
       $nextPageNumber = $currentPage + 1;

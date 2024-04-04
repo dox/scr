@@ -63,11 +63,18 @@ $oldestMeal = $db->query("SELECT * FROM meals ORDER BY date_meal DESC")->fetchAr
 </form>
 
 <?php
-  echo $logsClass->displayTable($logs);
+  //echo $logsClass->displayTable($logs);
 ?>
 
 <?php
-echo $logsClass->paginationDisplay($logsAll, $offset);
+//printArray($logsClass->paginationDisplay2(4, 5));
+
+$paginatedResults = $logsClass->paginatedLogs();
+echo $logsClass->displayTable($paginatedResults['currentPageItems']);
+
+
+echo $logsClass->paginationResults();
+
 
 
 foreach (array_keys($logsByDay) AS $label) {
