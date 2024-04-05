@@ -276,6 +276,9 @@ class logs {
     // % of keys to remove 1 - 99, ideally about 30
     $percentage = 30;
     
+    // Get the current page from the query string, default to 1
+    $currentPage = isset($_GET['p']) ? intval($_GET['p']) : 1;
+    
     // calculate how many pages of logs exist
     $totallogspages = count($this->all()) / $this->logsPerPage;
     
@@ -289,7 +292,9 @@ class logs {
       
       // Remove the middle $percentage of keys from the array
       for ($i = $startKey; $i <= $endKey; $i++) {
-          unset($array[$i]);
+          if (abs($i - $currentPage) > 2) {
+              unset($array[$i]);
+          }
       }
     }
     
