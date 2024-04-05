@@ -273,19 +273,21 @@ class logs {
 
 
   public function paginatedBar() {
-    $thresold = 30;
+    // % of keys to remove 1 - 99, ideally about 30
+    $percentage = 30;
     
+    // calculate how many pages of logs exist
     $totallogspages = count($this->all()) / $this->logsPerPage;
     
-    // Generate array with keys from 1 to $number
+    // Generate array with keys from 1 to $totallogspages
     $array = range(1, $totallogspages);
     
-    if (count($array) > $thresold) {
+    if (count($array) > $percentage) {
       // Calculate the range of keys to be removed
       $startKey = $this->calculate_percentile(30, $array);
       $endKey = $this->calculate_percentile(70, $array);
       
-      // Remove the middle 50% of keys from the array
+      // Remove the middle $percentage of keys from the array
       for ($i = $startKey; $i <= $endKey; $i++) {
           unset($array[$i]);
       }
