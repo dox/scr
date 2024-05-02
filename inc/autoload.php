@@ -51,6 +51,7 @@ require_once($root . '/inc/class_meal.php');
 require_once($root . '/inc/class_meals.php');
 require_once($root . '/inc/class_booking.php');
 require_once($root . '/inc/class_bookings.php');
+require_once($root . '/inc/class_wine.php');
 require_once($root . '/inc/class_reports.php');
 require_once($root . '/inc/PHPMailer/Exception.php');
 require_once($root . '/inc/PHPMailer/PHPMailer.php');

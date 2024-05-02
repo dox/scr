@@ -19,6 +19,12 @@ function dateDisplay($date = null, $longFormat = false) {
 	return $returnDate;
 }
 
+function currencyDisplay($value = null) {
+	$output = "£" . $value;
+	
+	return $output;
+}
+
 function firstDayOfWeek($inputDate = null) {
 		// considers Sunday the first day of the week
 		
