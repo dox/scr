@@ -26,25 +26,9 @@ echo makeTitle($title, $subtitle, $icons);
 <?php
 
 foreach ($wines AS $wine) {
-	$wine = new wine($wine['uid']);
+	$wine = new wine($wine['bin']);
 	
-	$output  = "<div class=\"col\">";
-	$output .= "<div class=\"card shadow-sm\">";
-	$output .= "<div class=\"card-body\">";
-	$output .= "<h5 class=\"card-title\">" . $wine->name . "</h5>";
-	$output .= "<p class=\"card-text\">" . $wine->notes . "</p>";
-	$output .= "<div class=\"d-flex justify-content-between align-items-center\">";
-	$output .= "<div class=\"btn-group\">";
-	$output .= "<a href=\"index.php?n=wine_wine&uid=" . $wine->uid . "\" type=\"button\" class=\"btn btn-sm btn-outline-secondary\">View</a>";
-	$output .= "<a href=\"index.php?n=wine_cellars\" type=\"button\" class=\"btn btn-sm btn-outline-secondary\">Edit</a>";
-	$output .= "</div>";
-	$output .= "<small class=\"text-body-secondary\">" . $wine->qty  . autoPluralise(" bottle", " bottles", $wine->qty). "</small>";
-	$output .= "</div>";
-	$output .= "</div>";
-	$output .= "</div>";
-	$output .= "</div>";
-	
-	echo $output;
+	echo $wine->binCard();
 }
 
 ?>

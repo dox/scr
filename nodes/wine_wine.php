@@ -1,12 +1,12 @@
 <?php
 $cleanUID = filter_var($_GET['uid'], FILTER_SANITIZE_NUMBER_INT);
+$cleanBIN = filter_var($_GET['bin'], FILTER_SANITIZE_STRING);
 
-$wine = new wine($cleanUID);
-$bin = new bin($wine->bin_uid);
-$cellar = new cellar($bin->cellar_uid);
+$wine = new wine($cleanBIN, $cleanUID);
+$cellar = new cellar($wine->cellar_uid);
 
-$title = $wine->name . " Wine";
-$subtitle = "BETA FEATURE!";
+$title = $wine->name;
+$subtitle = $wine->grape . ", " . $wine->country_of_origin;
 //$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#plus-circle\"/></svg> Add Cellar", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#deleteTermModal\"");
 echo makeTitle($title, $subtitle, $icons);
 
@@ -17,16 +17,17 @@ echo makeTitle($title, $subtitle, $icons);
 	<ol class="breadcrumb">
 		<li class="breadcrumb-item"><a href="index.php?n=wine_index">Wine</a></li>
 		<li class="breadcrumb-item"><a href="index.php?n=wine_cellar&uid=<?php echo $cellar->uid?>"><?php echo $cellar->name; ?></a></li>
-		<li class="breadcrumb-item"><a href="index.php?n=wine_bin&uid=<?php echo $bin->uid?>"><?php echo $bin->name; ?></a></li>
-		<li class="breadcrumb-item active" aria-current="page"><?php echo $wine->name; ?></li>
+		<li class="breadcrumb-item active"><?php echo $wine->bin; ?></li>
 	</ol>
 </nav>
 
 <hr class="pb-3" />
 
-<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-
-</div>
+<?php
+if ($wine->bond == 1) {
+	echo "<div class=\"alert alert-warning text-center\" role=\"alert\">WINE IN BOND</div>";
+}
+?>
 
 <div class="row">
 	<div class="col">
@@ -40,7 +41,7 @@ echo makeTitle($title, $subtitle, $icons);
 	<div class="col">
 		<div class="card mb-3">
 			<div class="card-body">
-				<h5 class="card-title"><?php echo currencyDisplay($wine->purchase_price); ?></h5>
+				<h5 class="card-title"><?php echo currencyDisplay($wine->pricePerBottle("Purchase")); ?></h5>
 				<h6 class="card-subtitle mb-2 text-body-secondary">Purchase Price</h6>
 			</div>
 		</div>
@@ -48,8 +49,8 @@ echo makeTitle($title, $subtitle, $icons);
 	<div class="col">
 		<div class="card mb-3">
 			<div class="card-body">
-				<h5 class="card-title"><?php echo currencyDisplay($wine->sale_price); ?></h5>
-				<h6 class="card-subtitle mb-2 text-body-secondary">Sale Price</h6>
+				<h5 class="card-title"><?php echo currencyDisplay($wine->pricePerBottle("Internal")) . " / " . currencyDisplay($wine->pricePerBottle("External")); ?></h5>
+				<h6 class="card-subtitle mb-2 text-body-secondary">Internal/External Price</h6>
 			</div>
 		</div>
 	</div>

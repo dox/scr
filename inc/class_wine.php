@@ -75,8 +75,20 @@ class cellar extends wineClass {
   public function getBins() {
     global $db;
   
-    $sql  = "SELECT * FROM wine_bins";
+    $sql  = "SELECT bin FROM wine_wines";
     $sql .= " WHERE cellar_uid = '" . $this->uid . "'";
+  
+    $results = $db->query($sql)->fetchAll();
+  
+    return $results;
+  }
+  
+  public function getAllWinesByBin($bin = null) {
+    global $db;
+  
+    $sql  = "SELECT * FROM wine_wines";
+    $sql .= " WHERE bin = '" . $bin . "'";
+    $sql .= " ORDER BY name ASC";
   
     $results = $db->query($sql)->fetchAll();
   
@@ -87,7 +99,7 @@ class cellar extends wineClass {
     global $db;
   
     $sql  = "SELECT SUM(qty) AS total_wines FROM wine_wines";
-    $sql .= " WHERE bin_uid IN (SELECT uid FROM wine_bins WHERE cellar_uid = '" . $this->uid . "')";
+    $sql .= " WHERE cellar_uid = '" . $this->uid . "'";
     
     $results = $db->query($sql)->fetchArray();
     
@@ -98,50 +110,91 @@ class cellar extends wineClass {
     return $results['total_wines'];
   }
 }
-
-class bin extends wineClass {
-  protected static $table_name = "wine_bins";
-  
-  function __construct($binUID = null) {
-    global $db;
-  
-    $sql  = "SELECT * FROM " . self::$table_name;
-    $sql .= " WHERE uid = '" . $binUID . "'";
-  
-    $results = $db->query($sql)->fetchArray();
-  
-    foreach ($results AS $key => $value) {
-      $this->$key = $value;
-    }
-  }
-  
-  public function getWines() {
-    global $db;
-  
-    $sql  = "SELECT * FROM wine_wines";
-    $sql .= " WHERE bin_uid = '" . $this->uid . "'";
-  
-    $results = $db->query($sql)->fetchAll();
-  
-    return $results;
-  }
-  
-}
   
 class wine extends wineClass {
   protected static $table_name = "wine_wines";
   
-  function __construct($binUID = null) {
+  function __construct($bin = null, $uid = null) {
     global $db;
-  
-    $sql  = "SELECT * FROM " . self::$table_name;
-    $sql .= " WHERE uid = '" . $binUID . "'";
+    
+    if (isset($uid)) {
+      $sql  = "SELECT * FROM " . self::$table_name;
+      $sql .= " WHERE uid = '" . $uid . "'";
+    } elseif(isset($bin)) {
+      $sql  = "SELECT * FROM " . self::$table_name;
+      $sql .= " WHERE bin = '" . $bin . "'";
+    } else {
+      die("Error - no wine UID (or bin ref) given");
+    }
+    
   
     $results = $db->query($sql)->fetchArray();
   
     foreach ($results AS $key => $value) {
       $this->$key = $value;
     }
+  }
+  
+  public function totalBottlesInStock() {
+    global $db;
+    
+    $sql  = "SELECT SUM(qty) AS total_wines FROM " . self::$table_name;
+    $sql .= " WHERE cellar_uid = '" . $this->cellar_uid . "'";
+    $sql .= " AND bin = '" . $this->bin . "'";
+    
+    $results = $db->query($sql)->fetchArray();
+    
+    if (!$results['total_wines'] > 0) {
+      $results['total_wines'] = 0;
+    }
+    
+    return $results['total_wines'];
+  }
+  
+  public function pricePerBottle($target = "Internal") {
+    if ($target == "Internal") {
+      $value = $this->price_internal;
+    } elseif ($target == "External") {
+      if (isset($this->price_external)) {
+        $value = $this->price_external;
+      } else {
+        $value = $this->price_internal;
+      }
+    } elseif ($target == "Purchase") {
+      $value = $this->price_purchase;
+    } else {
+      $value = 999;
+    }
+  
+    return $value;
+  }
+  
+  public function binCard() {
+    if ($this->bond == 1) {
+      $binName = "<a href=\"index.php?n=wine_wine&uid=" . $this->uid . "\" type=\"button\" class=\"btn btn-primary position-relative\">" . $this->bin . "<span class=\"position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning\">In-Bond</span></a>";
+      $cardClass = " border-warning ";
+    } else {
+      $binName = "<a href=\"index.php?n=wine_wine&uid=" . $this->uid . "\" type=\"button\" class=\"btn btn-primary position-relative\">" . $this->bin . "</a>";
+      $cardClass = "";
+    }
+    
+    $output  = "<div class=\"col\">";
+    $output .= "<div class=\"card " . $cardClass . " shadow-sm\">";
+    $output .= "<div class=\"card-body\">";
+    $output .= "<h5 class=\"card-title\">" . $binName . "</h5>";
+    $output .= "<p class=\"card-text text-truncate\">" . $this->name . "</p>";
+    $output .= "<div class=\"d-flex justify-content-between align-items-center\">";
+    $output .= "<div class=\"btn-group\">";
+    $output .= "<a href=\"#\" type=\"button\" class=\"btn btn-sm btn-outline-secondary\">" . $this->code . "</a>";
+    $output .= "<a href=\"#\" type=\"button\" class=\"btn btn-sm btn-outline-secondary\">" . $this->vintage . "</a>";
+    $output .= "</div>";
+    $output .= "<small class=\"text-body-secondary\">" . $this->totalBottlesInStock() . autoPluralise(" bottle", " bottles", $this->totalBottlesInStock()) . " </small>";
+    $output .= "</div>";
+    $output .= "</div>";
+    $output .= "</div>";
+    $output .= "</div>";
+    
+    return $output;
   }
 }
 ?>

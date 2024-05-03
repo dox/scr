@@ -11,11 +11,6 @@ $icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=
 echo makeTitle($title, $subtitle, $icons);
 
 $wineClass = new wineClass();
-
-$cellars = $wineClass->getAllCellars();
-$bins = $wineClass->getAllBins();
-$wines = $wineClass->getAllWines();
-
 ?>
 
 <nav aria-label="breadcrumb">
@@ -72,12 +67,6 @@ $wines = $wineClass->getAllWines();
   
   
 <div class="row">
-	<h1>Cellars</h1>
-	<?php printArray($cellars); ?>
-	
-	<h1>Bins</h1>
-	<?php printArray($bins); ?>
-	
 	<h1>Recent Additions?</h1>
 	<?php printArray($wines); ?>
 	
