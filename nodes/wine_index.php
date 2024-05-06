@@ -102,48 +102,59 @@ $wineClass = new wineClass();
 		xhr.onload = function() {
 			if (xhr.status === 200) {
 				jsonData = JSON.parse(xhr.responseText);
-				displayData(jsonData);
+				searchData(jsonData);
 			}
 		};
 	}
 
 	
+	
 	function displayData(data) {
-		var outputList = document.createElement("ul");
-		outputList.id = "outputList";
-		outputList.innerHTML = ""; // Clear previous data
-	
-		// Loop through each item in the JSON array
-		data.forEach(function(item) {
-			var listItem = document.createElement("li");
-			var link = document.createElement("a");
-			link.href = "index.php?n=wine_wine&uid=" + item.uid; // Replace "https://example.com" with your actual URL
-			link.textContent = item.name;
-			listItem.appendChild(link);
-			outputList.appendChild(listItem);
-		});
-	
-		var outputContainer = document.getElementById("outputContainer");
-		outputContainer.innerHTML = "";
-		outputContainer.appendChild(outputList);
-		outputContainer.style.display = data.length > 0 ? "block" : "none";
-	}
+            var outputList = document.createElement("ul");
+            outputList.id = "outputList";
+            outputList.innerHTML = ""; // Clear previous data
+
+            // Loop through each item in the JSON array
+            data.forEach(function(item) {
+                if (item && item.name) { // Check for null or empty values
+                    var listItem = document.createElement("li");
+                    var link = document.createElement("a");
+					link.href = "index.php?n=wine_wine&uid=" + item.uid; // Replace "https://example.com" with your actual URL
+                    link.textContent = item.name;
+                    listItem.appendChild(link);
+                    outputList.appendChild(listItem);
+                }
+            });
+
+            var outputContainer = document.getElementById("outputContainer");
+            outputContainer.innerHTML = "";
+            outputContainer.appendChild(outputList);
+            outputContainer.style.display = data.length > 0 ? "block" : "none";
+        }
 
 	function searchData() {
 		var searchInput = document.getElementById("wine_search").value.trim().toLowerCase();
-		if (searchInput !== "") {
-			var filteredData = jsonData.filter(function(item) {
-				return item.name.toLowerCase().includes(searchInput);
-			});
-			displayData(filteredData);
-		} else {
-			var outputContainer = document.getElementById("outputContainer");
-			outputContainer.innerHTML = "";
-			outputContainer.style.display = "none";
+		var filteredData = [];
+		
+		if (jsonData) {
+			if (searchInput !== "" && jsonData.length > 0) {
+				filteredData = jsonData.filter(function(item) {
+					return item.name && item.name.toLowerCase().includes(searchInput); // Check for null or empty values
+				});
+			} else {
+				filteredData = jsonData; // Show all data if search input is empty or if JSON data is empty
+			}
 		}
+	
+		displayData(filteredData);
 	}
+	
+	// Trigger search on each key press in the search input box
+	document.getElementById("wine_search").addEventListener("keyup", function() {
+		loadData();
+	});
 
 	// Load data when the page is loaded
-	window.onload = loadData;
+	//window.onload = loadData;
 </script>
 
