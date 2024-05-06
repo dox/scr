@@ -1,7 +1,3 @@
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/tomickigrzegorz/autocomplete@2.0.1/dist/css/autocomplete.min.css"/>
-<script src="https://cdn.jsdelivr.net/gh/tomickigrzegorz/autocomplete@2.0.1/dist/js/autocomplete.min.js"></script>
-
-
 <?php
 $title = "Wine Management";
 $subtitle = "BETA FEATURE!";
@@ -51,17 +47,25 @@ $wineClass = new wineClass();
 	?>
 </div>
 
+<style>
+	#outputList {
+		z-index: 1;
+		max-height: 200px;
+		overflow-y: auto;
+	}
+</style>
+
 <div class="row">
 	<div class="col">
 		<div class="card">
 			<div class="card-body">
-				<div class="auto-search-wrapper">
-				  <input type="text" id="wine_search" class="form-control-lg" placeholder="Quick search" autocomplete="off" spellcheck="false" aria-describedby="wine_searchHelp">
-				</div>
+				<input type="text" id="wine_search" class="form-control form-control-lg" placeholder="Quick search" autocomplete="off" spellcheck="false" aria-describedby="wine_searchHelp" oninput="searchData()">
 			</div>
+			<div id="outputContainer" class="bg-body">Search results...</div>
 		</div>
 	</div>
 </div>
+
 
 	
   
@@ -81,28 +85,65 @@ $wineClass = new wineClass();
 </div>
 
 
+
+
+
 <script>
-new Autocomplete("wine_search", {
-	onSearch: ({ currentValue }) => {
-		const api = `actions/wine_search.php?string=${encodeURI(currentValue)}`;
-		
-		return new Promise((resolve) => {
-			fetch(api)
-			.then((response) => response.json())
-			.then((data) => {
-				resolve(data);
-			})
-			.catch((error) => {
-				console.error(error);
-			});
+	var jsonData; // Variable to store the loaded JSON data
+
+	function loadData() {
+		// Load data from JSON file
+		var xhr = new XMLHttpRequest();
+		xhr.open("GET", "actions/wine_search.php", true);
+		xhr.setRequestHeader("Content-Type", "application/json");
+		xhr.send();
+
+		// Process loaded data
+		xhr.onload = function() {
+			if (xhr.status === 200) {
+				jsonData = JSON.parse(xhr.responseText);
+				displayData(jsonData);
+			}
+		};
+	}
+
+	
+	function displayData(data) {
+		var outputList = document.createElement("ul");
+		outputList.id = "outputList";
+		outputList.innerHTML = ""; // Clear previous data
+	
+		// Loop through each item in the JSON array
+		data.forEach(function(item) {
+			var listItem = document.createElement("li");
+			var link = document.createElement("a");
+			link.href = "index.php?n=wine_wine&uid=" + item.uid; // Replace "https://example.com" with your actual URL
+			link.textContent = item.name;
+			listItem.appendChild(link);
+			outputList.appendChild(listItem);
 		});
-	},
-	onResults: ({ matches }) =>
-	matches.map((el) => `<li>${el.name}</li>`).join(""),
-	onSubmit: ({ index, element, object }) => {
-		const { name, uid } = object;
-		
-		window.location = "index.php?n=wine_wine&uid=" + uid;
-	},
-});
+	
+		var outputContainer = document.getElementById("outputContainer");
+		outputContainer.innerHTML = "";
+		outputContainer.appendChild(outputList);
+		outputContainer.style.display = data.length > 0 ? "block" : "none";
+	}
+
+	function searchData() {
+		var searchInput = document.getElementById("wine_search").value.trim().toLowerCase();
+		if (searchInput !== "") {
+			var filteredData = jsonData.filter(function(item) {
+				return item.name.toLowerCase().includes(searchInput);
+			});
+			displayData(filteredData);
+		} else {
+			var outputContainer = document.getElementById("outputContainer");
+			outputContainer.innerHTML = "";
+			outputContainer.style.display = "none";
+		}
+	}
+
+	// Load data when the page is loaded
+	window.onload = loadData;
 </script>
+

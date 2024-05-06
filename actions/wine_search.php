@@ -1,6 +1,7 @@
 <?php
 include_once("../inc/autoload.php");
 
+
 //if ($_SESSION['authenticated'] == true) {
 	$personSearchArray = array();
 	
