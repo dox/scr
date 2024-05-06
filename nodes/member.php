@@ -391,6 +391,43 @@ function fetchAndDisplay(filePath, clickedLink) {
             </label>
           </div>
         </div>
+        
+        
+        <?php
+        // only show permissions to global admins
+        if (1 == 1) {
+        ?>
+        <hr />
+        <div>
+        <h4 class="mb-3">Permissions</h4>
+          <?php
+          $availablePermissions = json_decode($settingsClass->value('member_permissions'));
+          $grantedPermissions = explode(",", $memberObject->permissions);
+          
+          foreach ($availablePermissions AS $permission) {
+            if (in_array($permission->name, $grantedPermissions)) {
+              $checked = " checked ";
+            } else {
+              $checked = " ";
+            }
+            
+            $output  = "<div class=\"form-check\">";
+            $output .= "<input class=\"form-check-input\" type=\"checkbox\" value=\"" . $permission->name . "\" id=\"flexCheckDefault\" " . $checked . ">";
+            $output .= "<label class=\"form-check-label\" for=\"flexCheckDefault\"><strong>" . $permission->name . "</strong> <small>" . $permission->description . "</small></label>";
+            $output .= "</div>";
+            
+            echo $output;
+            
+            
+          }
+          
+          ?>
+        </div>
+        
+        <?php
+        // end check for admin persmissions
+        }
+        ?>
 
         <input type="hidden" name="memberUID" id="memberUID" value="<?php echo $memberObject->uid;?>">
         <button class="btn btn-primary  btn-block" type="submit">Update Member Details</button>
