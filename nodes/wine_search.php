@@ -2,7 +2,16 @@
 $searchArray['code'] = filter_var($_GET['code'], FILTER_SANITIZE_STRING);
 
 $wineClass = new wineClass();
-$wines = $wineClass->searchAllWines($searchArray);
+
+if (isset($_GET['list'])) {
+	$wineListUID = filter_var($_GET['list'], FILTER_SANITIZE_NUMBER_INT);
+	
+	$wineList = new wine_list($wineListUID);
+	
+	$wines = $wineClass->getAllWinesFromList($wineList->wine_uids);
+} else {
+	$wines = $wineClass->searchAllWines($searchArray);
+}
 
 $title = "Wine Search";
 $subtitle = "BETA FEATURE!";
@@ -26,7 +35,7 @@ echo makeTitle($title, $subtitle, $icons);
 <?php
 
 foreach ($wines AS $wine) {
-	$wine = new wine($wine['bin']);
+	$wine = new wine($wine['uid']);
 	
 	echo $wine->binCard();
 }

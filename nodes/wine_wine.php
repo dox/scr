@@ -1,13 +1,12 @@
 <?php
 $cleanUID = filter_var($_GET['uid'], FILTER_SANITIZE_NUMBER_INT);
-$cleanBIN = filter_var($_GET['bin'], FILTER_SANITIZE_STRING);
 
-$wine = new wine($cleanBIN, $cleanUID);
+$wine = new wine($cleanUID);
 $cellar = new cellar($wine->cellar_uid);
 
 $title = $wine->name;
 $subtitle = $wine->grape . ", " . $wine->country_of_origin;
-//$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#plus-circle\"/></svg> Add Cellar", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#deleteTermModal\"");
+$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#plus-circle\"/></svg> Add To List", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#deleteTermModal\"");
 echo makeTitle($title, $subtitle, $icons);
 
 
@@ -25,7 +24,7 @@ echo makeTitle($title, $subtitle, $icons);
 
 <?php
 if ($wine->bond == 1) {
-	echo "<div class=\"alert alert-warning text-center\" role=\"alert\">WINE IN BOND</div>";
+	echo "<div class=\"alert alert-warning text-center\" role=\"alert\">WINE IN-BOND</div>";
 }
 ?>
 

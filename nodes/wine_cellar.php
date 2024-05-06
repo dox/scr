@@ -22,8 +22,7 @@ echo makeTitle($title, $subtitle, $icons);
 
 <?php
 foreach ($cellar->getBins() AS $bin) {
-	
-	$wine = new wine($bin['bin']);
+	$wine = new wine($bin['uid']);
 	
 	echo $wine->binCard();
 }

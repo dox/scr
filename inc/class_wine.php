@@ -54,6 +54,42 @@ class wineClass {
   
     return $results;
   }
+  
+  public function getAllPublicLists() {
+    global $db;
+  
+    $sql  = "SELECT * FROM wine_lists";
+    $sql .= " WHERE type = 'public'";
+    $sql .= " ORDER BY name ASC";
+    
+    $results = $db->query($sql)->fetchAll();
+  
+    return $results;
+  }
+  
+  public function getAllMemberLists($memberUID) {
+    global $db;
+  
+    $sql  = "SELECT * FROM wine_lists";
+    $sql .= " WHERE member_uid = '" . $memberUID . "'";
+    $sql .= " ORDER BY name ASC";
+    
+    $results = $db->query($sql)->fetchAll();
+  
+    return $results;
+  }
+  
+  public function getAllWinesFromList($listUID) {
+    global $db;
+  
+    $sql  = "SELECT * FROM wine_wines";
+    $sql .= " WHERE uid IN (" . $listUID . ")";
+    $sql .= " ORDER BY name ASC";
+    
+    $results = $db->query($sql)->fetchAll();
+  
+    return $results;
+  }
 }
 
 class cellar extends wineClass {
@@ -75,7 +111,7 @@ class cellar extends wineClass {
   public function getBins() {
     global $db;
   
-    $sql  = "SELECT bin FROM wine_wines";
+    $sql  = "SELECT * FROM wine_wines";
     $sql .= " WHERE cellar_uid = '" . $this->uid . "'";
   
     $results = $db->query($sql)->fetchAll();
@@ -114,20 +150,12 @@ class cellar extends wineClass {
 class wine extends wineClass {
   protected static $table_name = "wine_wines";
   
-  function __construct($bin = null, $uid = null) {
+  function __construct($uid = null) {
     global $db;
     
-    if (isset($uid)) {
-      $sql  = "SELECT * FROM " . self::$table_name;
-      $sql .= " WHERE uid = '" . $uid . "'";
-    } elseif(isset($bin)) {
-      $sql  = "SELECT * FROM " . self::$table_name;
-      $sql .= " WHERE bin = '" . $bin . "'";
-    } else {
-      die("Error - no wine UID (or bin ref) given");
-    }
+    $sql  = "SELECT * FROM " . self::$table_name;
+    $sql .= " WHERE uid = '" . $uid . "'";
     
-  
     $results = $db->query($sql)->fetchArray();
   
     foreach ($results AS $key => $value) {
@@ -196,5 +224,25 @@ class wine extends wineClass {
     
     return $output;
   }
+}
+
+class wine_list extends wineClass {
+  protected static $table_name = "wine_lists";
+  
+  function __construct($listUID = null) {
+    global $db;
+  
+    $sql  = "SELECT * FROM " . self::$table_name;
+    $sql .= " WHERE uid = '" . $listUID . "'";
+  
+    $results = $db->query($sql)->fetchArray();
+  
+    foreach ($results AS $key => $value) {
+      $this->$key = $value;
+    }
+  }
+  
+  
+  
 }
 ?>

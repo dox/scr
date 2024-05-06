@@ -67,6 +67,12 @@ $wineClass = new wineClass();
   
   
 <div class="row">
+	<h1>Lists</h1>
+	<?php printArray($wineClass->getAllPublicLists()); ?>
+	
+	<h2>My Lists</h2>
+	<?php printArray($wineClass->getAllMemberLists(1)); ?>
+
 	<h1>Recent Additions?</h1>
 	<?php printArray($wines); ?>
 	
