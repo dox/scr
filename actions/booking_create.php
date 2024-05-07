@@ -37,7 +37,7 @@ $bookingArray = array(
 
 $mealBookableCheck = $mealObject->check_meal_bookable();
 
-if ($mealBookableCheck == true || $_SESSION['admin'] == true) {
+if ($mealBookableCheck == true || checkpoint_charlie("bookings")) {
 	$booking = $bookingObject->create($bookingArray);
 	
 	if ($memberObject->email_reminders == "1") {

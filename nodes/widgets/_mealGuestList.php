@@ -46,7 +46,7 @@ foreach ($thisMealsBookingsUIDs AS $booking) {
        $icon = ""; 
       }
       
-      if ($memberObject->opt_in == 1 || $_SESSION['admin'] == "1") {
+      if ($memberObject->opt_in == 1 || checkpoint_charlie("members,meals")) {
         $guestName = $guest->guest_name;
       } else {
         $guestName = "Hidden";
