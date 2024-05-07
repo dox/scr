@@ -15,8 +15,6 @@ $memberObject = new member($memberUID);
 $upcomingMealUIDS = $memberObject->bookingUIDS_upcoming();
 $previousMealUIDS = $memberObject->bookingUIDS_previous();
 
-printArray($_SESSION);
-
 $dietaryOptionsMax = $settingsClass->value('meal_dietary_allowed');
 
 if (checkpoint_charlie("members")) {
