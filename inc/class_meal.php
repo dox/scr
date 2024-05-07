@@ -56,7 +56,7 @@ class meal {
 
     $output .= $this->menuTooltip();
 
-    if ($_SESSION['admin'] == true) {
+    if (checkpoint_charlie("meals")) {
       $output .= "<h2 class=\"h5\"><a href=\"" . $mealURL . "\">" . $this->name . "</a></h2>";
     } else {
       $output .= "<h2 class=\"h5\">" . $this->name . "</h2>";
@@ -112,7 +112,7 @@ class meal {
         // meal capacity fine
       } else {
         // meal capacity reached
-        if ($_SESSION['admin'] == true) {
+        if (checkpoint_charlie("bookings")) {
           // allow admin override
           $bookingLink = "#";
           $bookingClass = "btn-warning";
@@ -132,7 +132,7 @@ class meal {
         // meal cutoff fine
       } else {
         // meal cutoff passed
-        if ($_SESSION['admin'] == true) {
+        if (checkpoint_charlie("bookings")) {
           // allow admin override
           $bookingLink = "#";
           $bookingClass = "btn-secondary";
@@ -408,7 +408,7 @@ class meal {
     }
     
     if ($factorInAdminAccess == true) {
-      if ($_SESSION['admin'] == 1) {
+      if (checkpoint_charlie("bookings")) {
         $capacityStatus = true;
       }
     }
@@ -427,7 +427,7 @@ class meal {
     }
     
     if ($factorInAdminAccess == true) {
-      if ($_SESSION['admin'] == 1) {
+      if (checkpoint_charlie("bookings")) {
         $cutoffStatus = true;
       }
     }
@@ -445,7 +445,7 @@ class meal {
     }
     
     if ($factorInAdminAccess == true) {
-      if ($_SESSION['admin'] == 1) {
+      if (checkpoint_charlie("bookings")) {
         $memberStatus = true;
       }
     }
@@ -471,7 +471,7 @@ class meal {
     }
     
     if ($factorInAdminAccess == true) {
-      if ($_SESSION['admin'] == 1) {
+      if (checkpoint_charlie("bookings")) {
         $memberTypeCheck = true;
       }
     }

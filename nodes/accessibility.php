@@ -21,7 +21,7 @@ $text = $settingsClass->value('scr_accessibility');
 
 $title = "Accessibility Statement";
 $subtitle = "This accessibility statement applies to the SCR Meal Booking System: <a href=\"" . siteURL() . "\">" . siteURL() . "</a>";
-if ($_SESSION['admin'] == true) {
+if (checkpoint_charlie("settings")) {
   $icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#journal-text\"/></svg> Edit Content", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#exampleModal\"");
 }
 
