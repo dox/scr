@@ -1,12 +1,12 @@
 <?php
 if (isset($_GET['memberUID'])) {
-  if ($_SESSION['admin'] == true) {
+  if (checkpoint_charlie("members")) {
     $memberUID = $_GET['memberUID'];
   } else {
-    admin_gatekeeper();
+    $memberUID = $_SESSION['username'];
   }
 } else {
-  $memberUID = $_SESSION['username'];
+    $memberUID = $_SESSION['username'];
 }
 
 $bookingsClass = new bookings();
@@ -15,9 +15,11 @@ $memberObject = new member($memberUID);
 $upcomingMealUIDS = $memberObject->bookingUIDS_upcoming();
 $previousMealUIDS = $memberObject->bookingUIDS_previous();
 
+printArray($_SESSION);
+
 $dietaryOptionsMax = $settingsClass->value('meal_dietary_allowed');
 
-if ($_SESSION['admin'] == true) {
+if (checkpoint_charlie("members")) {
   $disabledCheck = "";
 } else {
   $disabledCheck = " disabled ";
@@ -46,9 +48,9 @@ if (isset($_POST['memberUID'])) {
 ?>
 <?php
 $title = $memberObject->displayName() . $memberObject->stewardBadge();
-$subtitle = $memberObject->type . " (" . $memberObject->category . ")" . $memberObject->adminBadge();
+$subtitle = $memberObject->type . " (" . $memberObject->category . ")";
 $icons[] = array("class" => "btn-info", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#calendar-plus\"/></svg> Add meals to your calendar", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#calendarModal\"");
-if ($_SESSION['admin'] == 1 && $memberObject->ldap != $_SESSION['username']) {
+if (checkpoint_charlie("members") && $memberObject->ldap != $_SESSION['username']) {
   $icons[] = array("class" => "btn-danger", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#trash\"/></svg> Delete Member", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#deleteMemberModal\"");
 }
 echo makeTitle($title, $subtitle, $icons);
@@ -395,25 +397,24 @@ function fetchAndDisplay(filePath, clickedLink) {
         
         <?php
         // only show permissions to global admins
-        if (1 == 1) {
+        if (checkpoint_charlie("global_admin,members")) {
         ?>
         <hr />
         <div>
         <h4 class="mb-3">Permissions</h4>
           <?php
-          $availablePermissions = json_decode($settingsClass->value('member_permissions'));
           $grantedPermissions = explode(",", $memberObject->permissions);
           
-          foreach ($availablePermissions AS $permission) {
-            if (in_array($permission->name, $grantedPermissions)) {
+          foreach (available_permissions() AS $permission => $description) {
+            if (in_array($permission, $grantedPermissions)) {
               $checked = " checked ";
             } else {
               $checked = " ";
             }
             
             $output  = "<div class=\"form-check\">";
-            $output .= "<input class=\"form-check-input\" type=\"checkbox\" value=\"" . $permission->name . "\" id=\"flexCheckDefault\" " . $checked . ">";
-            $output .= "<label class=\"form-check-label\" for=\"flexCheckDefault\"><strong>" . $permission->name . "</strong> <small>" . $permission->description . "</small></label>";
+            $output .= "<input class=\"form-check-input\" type=\"checkbox\" value=\"" . $permission . "\" name=\"permissions[]\" " . $checked . ">";
+            $output .= "<label class=\"form-check-label\" for=\"flexCheckDefault\"><strong>" . $permission . "</strong> <small>" . $description . "</small></label>";
             $output .= "</div>";
             
             echo $output;

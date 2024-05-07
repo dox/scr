@@ -1,4 +1,6 @@
 <?php
+pageAccessCheck("wine");
+
 $cleanUID = filter_var($_GET['uid'], FILTER_SANITIZE_NUMBER_INT);
 
 $cellar = new cellar($cleanUID);

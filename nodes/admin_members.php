@@ -1,7 +1,7 @@
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
 
 <?php
-admin_gatekeeper();
+pageAccessCheck("members");
 
 $membersClass = new members();
 

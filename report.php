@@ -7,7 +7,7 @@ $report = $reportsClass->one($_GET['reportUID']);
 if ($report['admin_only'] == 0) {
   // allow the user to access this report
 } else {
-  admin_gatekeeper();
+  pageAccessCheck("reports");
 }
 
 $node = "reports/" . $report['file'];

@@ -1,4 +1,6 @@
 <?php
+pageAccessCheck("wine");
+
 $title = "Wine Management";
 $subtitle = "BETA FEATURE!";
 $icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#plus-circle\"/></svg> Add Wine", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#deleteTermModal\"");

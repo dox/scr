@@ -1,4 +1,8 @@
 <?php
+if (!isset($_SESSION['impersonating'])) {
+  pageAccessCheck("impersonate");
+}
+
 $title = "Impersonate";
 $subtitle = "Assume the identity of an SCR Member for the purposes of managing their meal bookings";
 

@@ -3,7 +3,7 @@ include_once("../inc/autoload.php");
 
 $memberObject = new member($_POST['member_uid']);
 
-if ($_SESSION['admin'] == true) {
+if (checkpoint_charlie("members")) {
   $memberObject->delete();
 } else {
   $logArray['category'] = "member";

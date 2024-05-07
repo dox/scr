@@ -1,4 +1,6 @@
 <?php
+pageAccessCheck("wine");
+
 $searchArray['code'] = filter_var($_GET['code'], FILTER_SANITIZE_STRING);
 
 $wineClass = new wineClass();

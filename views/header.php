@@ -89,17 +89,40 @@
 							?>
 	          </a>
 	          <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-	            <?php if($_SESSION['admin'] == true) { ?>
-								<a class="dropdown-item" href="index.php?n=admin_impersonate">Impersonate</a>
-								<a class="dropdown-item" href="index.php?n=admin_members">Members</a>
-	            	<a class="dropdown-item" href="index.php?n=admin_meals">Meals</a>
-	            	<a class="dropdown-item" href="index.php?n=admin_terms">Terms</a>
-								<a class="dropdown-item" href="index.php?n=admin_notifications">Notifications</a>
-								<a class="dropdown-item" href="index.php?n=admin_reports">Reports</a>
-								<a class="dropdown-item" href="index.php?n=admin_settings">Site Settings</a>
-								<a class="dropdown-item" href="index.php?n=admin_logs">Logs</a>
-	            	<div class="dropdown-divider"></div>
-							<?php } ?>
+	            <?php
+				if(checkpoint_charlie("impersonate")) {
+					echo "<a class=\"dropdown-item\" href=\"index.php?n=admin_impersonate\">Impersonate</a>";
+				}
+				
+				if(checkpoint_charlie("members")) {
+					echo "<a class=\"dropdown-item\" href=\"index.php?n=admin_members\">Members</a>";
+				}
+				
+				if(checkpoint_charlie("meals")) {
+					echo "<a class=\"dropdown-item\" href=\"index.php?n=admin_meals\">Meals</a>";
+				}
+				
+				if(checkpoint_charlie("terms")) {
+					echo "<a class=\"dropdown-item\" href=\"index.php?n=admin_terms\">Terms</a>";
+				}
+				
+				if(checkpoint_charlie("notifications")) {
+					echo "<a class=\"dropdown-item\" href=\"index.php?n=admin_notifications\">Notifications</a>";
+				}
+				
+				if(checkpoint_charlie("reports")) {
+					echo "<a class=\"dropdown-item\" href=\"index.php?n=admin_reports\">Reports</a>";
+				}
+				
+				if(checkpoint_charlie("settings")) {
+					echo "<a class=\"dropdown-item\" href=\"index.php?n=admin_settings\">Settings</a>";
+				}
+				
+				if(checkpoint_charlie("logs")) {
+					echo "<a class=\"dropdown-item\" href=\"index.php?n=admin_logs\">Logs</a>";
+				}
+				?>
+	            <div class="dropdown-divider"></div>
 	            <a class="dropdown-item" href="logon.php?logout=true">Logout</a>
 	          </div>
 	        </li>

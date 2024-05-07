@@ -7,7 +7,7 @@ if (isset($_GET['deleteBookingUID'])) {
   if (isset($bookingObject->uid)) {
     $mealObject = new meal($bookingObject->meal_uid);
     if ($bookingObject->member_ldap == $_SESSION['username']) {
-      if (date('Y-m-d H:i:s') <= date('Y-m-d H:i:s', strtotime($mealObject->date_cutoff)) || $_SESSION['admin'] == true) {
+      if (date('Y-m-d H:i:s') <= date('Y-m-d H:i:s', strtotime($mealObject->date_cutoff)) || checkpoint_charlie("members,impersonate")) {
         $bookingObject->delete();
       } else {
         $logArray['category'] = "booking";
@@ -16,7 +16,7 @@ if (isset($_GET['deleteBookingUID'])) {
         $logsClass->create($logArray);
       }
     } else {
-      if ( $_SESSION['admin'] == true) {
+      if ( checkpoint_charlie("members,impersonate") == true) {
         $bookingObject->delete();
       } else {
         $logArray['category'] = "booking";

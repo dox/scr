@@ -2,7 +2,7 @@
 include_once("../inc/autoload.php");
 
 
-//if ($_SESSION['authenticated'] == true) {
+if (checkpoint_charlie("wine")) {
 	$personSearchArray = array();
 	
 	$personsClass = new wineClass();
@@ -26,5 +26,5 @@ include_once("../inc/autoload.php");
 	  }
 	
 	echo json_encode($uniquePersons);
-//}
+}
 ?>

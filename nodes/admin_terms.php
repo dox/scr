@@ -2,7 +2,7 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 <?php
-admin_gatekeeper();
+pageAccessCheck("terms");
 
 $termsClass = new terms();
 

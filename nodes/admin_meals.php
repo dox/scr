@@ -2,7 +2,7 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 <?php
-admin_gatekeeper();
+pageAccessCheck("meals");
 $mealsClass = new meals();
 
 if (isset($_POST['mealNEW'])) {

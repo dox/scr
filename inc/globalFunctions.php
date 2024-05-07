@@ -205,31 +205,65 @@ function siteURL() {
 	return $actual_link;
 }
 
-function admin_gatekeeper() {
-	if ($_SESSION['admin'] != true) {
-		// build this out one day when I have time :-s
-		if (isset($_COOKIE["username"])) {
-			//printArray($_COOKIE["username"]);
-		} else {
-			
-		}
-		
-		global $logsClass;
+function available_permissions() {
+	$availablePermissions = array(
+		"global_admin" => "Access to all settings.  Overrides for all limits",
+		"meals" => "Add/Edit/Delete meals",
+		"bookings" => "Ability to override meal restrictions/cutoffs",
+		"members" => "Add/Edit/Delete members",
+		"impersonate" => "Ability to impersonate other members",
+		"notifications" => "Add/Edit/Delete notifications",
+		"terms" => "Add/Edit/Delete terms",
+		"wine" => "Add/Edit/Delete wines",
+		"reports" => "Add/Edit/Delete/Run reports",
+		"settings" => "Add/Edit/Delete site settings",
+		"logs" => "View logs"
+	);
+	
+	return $availablePermissions;
+}
 
-		$logArray['category'] = "admin";
-    	$logArray['result'] = "danger";
-    	$logArray['description'] = "Page view for " . $_SERVER['REQUEST_URI'] . " failed";
-    	$logsClass->create($logArray);
+function checkpoint_charlie($arrayOfAcceptablePermissions = null) {
+	$return = false;
+	
+	if (!is_array($arrayOfAcceptablePermissions)) {
+		$arrayOfAcceptablePermissions = explode(",", $arrayOfAcceptablePermissions);
+	}
+	
+	if (is_array($_SESSION['permissions'])) {
+		if (in_array("global_admin", $_SESSION['permissions'])) {
+			$return = true;
+		} else {
+			foreach ($arrayOfAcceptablePermissions AS $permission) {
+				if (in_array($permission, $_SESSION['permissions'])) {
+					$return = true;
+				}
+			}
+		}
+	}
+	
+	
+	return $return;
+}
+
+function pageAccessCheck($arrayOfAcceptablePermissions = null) {
+	if (!checkpoint_charlie($arrayOfAcceptablePermissions)) {
+		global $logsClass;
 		
+		$logArray['category'] = "admin";
+		$logArray['result'] = "danger";
+		$logArray['description'] = "Page view for " . $_SERVER['REQUEST_URI'] . " failed";
+		$logsClass->create($logArray);
+			
 		$output  = "<div class=\"text-center mt-4\">";
 		$output .= "<svg width=\"48\" height=\"48\"><use xlink:href=\"img/icons.svg#x-circle\"/></svg>";
 		$output .= "<h1 class=\"text-center mt-4\">Access denied</h1>";
 		$output .= "</div>";
-
-		echo $output;
 		
+		echo $output;
+			
 		header("Location: " . siteURL() . "/logon.php");
-	  exit;
+		exit;
 	}
 }
 

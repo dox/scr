@@ -5,7 +5,7 @@
 <script src="https://cdn.jsdelivr.net/npm/suneditor@latest/dist/suneditor.min.js"></script>
 
 <?php
-admin_gatekeeper();
+pageAccessCheck("meals");
 
 $mealsClass = new meals();
 

@@ -59,13 +59,7 @@ if (!empty($_POST['inputUsername']) && !empty($_POST['inputPassword']) && $_SESS
     $_SESSION['username'] = strtoupper($ldapUser[0]['samaccountname'][0]);
     $_SESSION['type'] = $memberObject->type;
     $_SESSION['category'] = $memberObject->category;
-
-    $arrayOfAdmins = explode(",", strtoupper($settingsClass->value('member_admins')));
-    if (in_array(strtoupper($_SESSION['username']), $arrayOfAdmins)) {
-      $_SESSION['admin'] = true;
-    } else {
-      $_SESSION['admin'] = false;
-    }
+    $_SESSION['permissions'] = explode(",", $memberObject->permissions);
     
     // build this out one day when I have time :-s
     if(!empty($_POST["inputRemember"])) {

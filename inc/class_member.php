@@ -6,6 +6,7 @@ class member {
   public $enabled;
   public $type;
   public $ldap;
+  public $permissions;
   public $title;
   public $firstname;
   public $lastname;
@@ -34,6 +35,7 @@ class member {
       $member['uid'] = "0";
       $member['ldap'] = $memberUID;
       $member['title'] = "";
+      $member['permissions'] = "";
       $member['type'] = "Unknown";
       $member['firstname'] = "";
       $member['lastname'] = $memberUID;
@@ -68,7 +70,7 @@ class member {
   }
 
   public function public_displayName() {
-    if ($_SESSION['admin'] == true) {
+    if (checkpoint_charlie("members")) {
       $name = $this->displayName();
     } else {
       if ($this->opt_in == 1) {
@@ -86,38 +88,16 @@ class member {
     return $name;
   }
 
-  public function isAdmin() {
-    global $settingsClass;
-
-    $arrayOfAdmins = explode(",", strtoupper($settingsClass->value('member_admins')));
-
-    if (in_array(strtoupper($this->ldap), $arrayOfAdmins)) {
-      return true;
-		} else {
-			return false;
-		}
-  }
-
   public function isSteward() {
     global $settingsClass;
 
-    $arrayOfAdmins = explode(",", strtoupper($settingsClass->value('member_steward')));
+    $arrayofStewards = explode(",", strtoupper($settingsClass->value('member_steward')));
 
-    if (in_array(strtoupper($this->ldap), $arrayOfAdmins)) {
+    if (in_array(strtoupper($this->ldap), $arrayofStewards)) {
       return true;
 		} else {
 			return false;
 		}
-  }
-
-  public function adminBadge() {
-    if ($this->isAdmin()) {
-      global $settingsClass;
-
-      $badge = " <span class=\"badge bg-info\" >Administrator</span>";
-
-      return $badge;
-    }
   }
 
   public function stewardBadge() {
@@ -422,7 +402,7 @@ class member {
     $output .= "<span class=\"float-end\">";
     $output .= $this->stewardBadge() ." ";
     
-    $output .= $this->adminBadge() ." ";
+    //$output .= $this->adminBadge() ." ";
     
     $output .= "<span class=\"text-muted\">" . $this->category . "</span>";
     

@@ -32,7 +32,7 @@ $newGuest = array(
 );
 
 // check that we're not adding a guest above the maximum number
-if (count($bookingObject->guestsArray()) < $mealObject->getTotalGuestsAllowed() || $_SESSION['admin'] == true) {
+if (count($bookingObject->guestsArray()) < $mealObject->getTotalGuestsAllowed() || checkpoint_charlie("bookings")) {
 	$bookingObject->addGuest($newGuest);
 } else {
 	$logArray['category'] = "booking";

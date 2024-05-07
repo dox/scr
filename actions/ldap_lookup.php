@@ -1,9 +1,9 @@
 <?php
 include_once("../inc/autoload.php");
 
-admin_gatekeeper();
+pageAccessCheck("members");
 
-if ($_SESSION['admin'] == true) {
+if (checkpoint_charlie("members") == true) {
   if (!empty($_POST['firstname'])) {
     $ldapUser = $ldap_connection->query()
     ->where('givenname', '~=', escape($_POST['firstname']))

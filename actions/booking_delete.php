@@ -5,7 +5,7 @@ include_once("../inc/autoload.php");
 $bookingObject = new booking($_POST['bookingUID']);
 
 $mealObject = new meal($bookingObject->meal_uid);
-if (date('Y-m-d H:i:s') >= date('Y-m-d H:i:s', strtotime($mealObject->date_cutoff)) || $_SESSION['admin'] == true) {
+if (date('Y-m-d H:i:s') >= date('Y-m-d H:i:s', strtotime($mealObject->date_cutoff)) || checkpoint_charlie("bookings")) {
   $bookingObject->delete();
 } else {
   $logArray['category'] = "booking";

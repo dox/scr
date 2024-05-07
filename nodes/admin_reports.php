@@ -1,5 +1,5 @@
 <?php
-admin_gatekeeper();
+pageAccessCheck("reports");
 
 $reportsClass = new reports();
 $reports = $reportsClass->all();

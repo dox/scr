@@ -1,6 +1,6 @@
-
-
 <?php
+pageAccessCheck("wine");
+
 $title = "Wine Cellars";
 $subtitle = "BETA FEATURE!";
 //$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#plus-circle\"/></svg> Add Cellar", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#deleteTermModal\"");

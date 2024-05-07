@@ -1,5 +1,5 @@
 <?php
-admin_gatekeeper();
+pageAccessCheck("logs");
 ?>
 
 <?php

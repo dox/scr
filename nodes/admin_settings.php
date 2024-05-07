@@ -1,5 +1,5 @@
 <?php
-admin_gatekeeper();
+pageAccessCheck("settings");
 
 //check if creating new setting
 if (isset($_POST['name'])) {

@@ -1,7 +1,7 @@
 <?php
 include_once("../inc/autoload.php");
 
-admin_gatekeeper();
+pageAccessCheck("meals");
 
 //$_POST['template_start_date'] = "2021-01-24";
 //$_POST['template_name'] = "template_1";
