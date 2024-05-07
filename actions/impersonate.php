@@ -20,7 +20,7 @@ if (isset($_POST['impersonate_ldap'])) {
 
   $logArray['category'] = "admin";
   $logArray['result'] = "info";
-  $logArray['description'] = $_SESSION['original_details']['username'] . " impersonating " . $_POST['impersonate_ldap'];
+  $logArray['description'] = $_SESSION['original_details']['username'] . " impersonating " . $_SESSION['username'];
   $logsClass->create($logArray);
 }
 

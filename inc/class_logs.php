@@ -130,7 +130,7 @@ class logs {
     
     // log if the person doing this is impersonating someone else
     if ($_SESSION['impersonating'] == true) {
-      $array['description'] = $array['description'] . " (impersonated by " . $_SESSION['username_original'] . ")";
+      $array['description'] = $array['description'] . " (impersonated by " . $_SESSION['original_details']['username'] . ")";
     }
 
     $sql  = "INSERT INTO " . self::$table_name;

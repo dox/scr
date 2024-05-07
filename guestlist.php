@@ -1,7 +1,7 @@
 <?php
 include_once("inc/autoload.php");
 
-admin_gatekeeper();
+pageAccessCheck("meals");
 
 $mealObject = new meal($_GET['mealUID']);
 $bookingsClass = new bookings();
