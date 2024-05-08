@@ -25,7 +25,6 @@ if (isset($_POST['logs_search'])) {
 
 //filter_input(INPUT_GET, 'search', FILTER_SANITIZE_SPECIAL_CHARS);
 
-$logsAll = $logsClass->paginatedResultsTotal($search);
 $logs = $logsClass->paginatedResults($offset, $search);
 ?>
 
@@ -63,7 +62,7 @@ $oldestMeal = $db->query("SELECT * FROM meals ORDER BY date_meal DESC")->fetchAr
 </form>
 
 <?php
-$paginatedResults = $logsClass->paginatedLogs();
+$paginatedResults = $logsClass->paginatedLogs($logs);
 echo $logsClass->displayTable($paginatedResults['currentPageItems']);
 
 

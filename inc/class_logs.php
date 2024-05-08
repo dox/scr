@@ -66,7 +66,7 @@ class logs {
     
     $sql .= " ORDER BY date DESC";
     $sql .= " LIMIT " . $offset . ", " . $this->logsPerPage;
-  
+    
     $logs = $db->query($sql)->fetchAll();
     
     return $logs;
@@ -301,7 +301,7 @@ class logs {
     return $array;
   }
   
-  public function paginatedLogs() {
+  public function paginatedLogs($logs) {
       // Get current page from query string or set default to 1
       $page = isset($_GET['p']) ? $_GET['p'] : 1;
       
@@ -316,7 +316,7 @@ class logs {
       $endIndex = min($startIndex + $this->logsPerPage - 1, count($this->all()) - 1);
       
       // Extract items for the current page
-      $currentPageItems = array_slice($this->all(), $startIndex, $endIndex - $startIndex + 1);
+      $currentPageItems = array_slice($logs, $startIndex, $endIndex - $startIndex + 1);
       
       return [
           'currentPageItems' => $currentPageItems,
