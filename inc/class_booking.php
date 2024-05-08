@@ -205,7 +205,7 @@ class booking {
     $output .= "<h6 class=\"my-0\">";
 
     // if admin, link to the meal itself, otherwise, link to the booking for the user
-    if ($_SESSION['admin'] == true) {
+    if (checkpoint_charlie("meals")) {
       $output .= "<a href=\"index.php?n=admin_meal&mealUID=" . $meal->uid . "\" class=\"" . $class . "\">" . $meal->name . "</a>";
     } else {
       $output .= "<a href=\"index.php?n=booking&mealUID=" . $meal->uid . "\" class=\"" . $class . "\">" . $meal->name . "</a>";
