@@ -3,7 +3,7 @@ include_once("../inc/autoload.php");
 
 pageAccessCheck("members");
 
-if (checkpoint_charlie("members") == true) {
+if (checkpoint_charlie("members")) {
   if (!empty($_POST['firstname'])) {
     $ldapUser = $ldap_connection->query()
     ->where('givenname', '~=', escape($_POST['firstname']))
@@ -27,14 +27,5 @@ if (checkpoint_charlie("members") == true) {
   } else {
     echo $bestGuessLDAP;
   }
-} else {
-  $logArray['category'] = "ldap";
-  $logArray['result'] = "warning";
-  $logArray['description'] = "LDAP lookup denied for " . escape($_POST['firstname']) . "/" . escape($_POST['sn']);
-  $logsClass->create($logArray);
-
-  echo "Unknown - you do not have permission to perform LDAP lookups.";
 }
-
-
 ?>
