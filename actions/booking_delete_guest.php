@@ -1,8 +1,8 @@
 <?php
 include_once("../inc/autoload.php");
 
-$booking_uid = $_POST['booking_uid'];
-$guest_uid = $_POST['guest_uid'];
+$booking_uid = filter_var($_POST['booking_uid'], FILTER_SANITIZE_NUMBER_INT);
+$guest_uid = filter_var($_POST['guest_uid'], FILTER_SANITIZE_NUMBER_INT);
 
 $bookingObject = new booking($booking_uid);
 

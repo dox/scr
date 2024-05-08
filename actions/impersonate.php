@@ -3,7 +3,9 @@ include_once("../inc/autoload.php");
 
 // impersonate
 if (isset($_POST['impersonate_ldap'])) {
-  $memberObject = new member($_POST['impersonate_ldap']);
+  $member = filter_var($_POST['impersonate_ldap'], FILTER_SANITIZE_STRING);
+
+  $memberObject = new member($member);
   
   $_SESSION['original_details'] = $_SESSION;
 

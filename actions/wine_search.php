@@ -1,7 +1,6 @@
 <?php
 include_once("../inc/autoload.php");
 
-
 if (checkpoint_charlie("wine")) {
 	$personSearchArray = array();
 	

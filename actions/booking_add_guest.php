@@ -1,7 +1,7 @@
 <?php
 include_once("../inc/autoload.php");
 
-$bookingUID = $_POST['bookingUID'];
+$bookingUID = filter_var($_POST['bookingUID'], FILTER_SANITIZE_NUMBER_INT);
 
 $guestName = htmlspecialchars($_POST['guest_name'], ENT_QUOTES);
 $guestDietary = explode(",", $_POST['guest_dietary']);

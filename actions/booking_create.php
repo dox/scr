@@ -1,9 +1,11 @@
 <?php
 include_once("../inc/autoload.php");
 
+$uid = filter_var($_POST['meal_uid'], FILTER_SANITIZE_NUMBER_INT);
+
 $bookingObject = new booking();
 
-$mealObject = new meal($_POST['meal_uid']);
+$mealObject = new meal($uid);
 
 if (isset($_POST['member_ldap'])) {
 	$memberObject = new member($_POST['member_ldap']);
@@ -26,7 +28,7 @@ if ($mealObject->allowed_dessert == 1 && $memberObject->default_dessert == 1) {
 }
 
 $bookingArray = array(
-	'meal_uid' => $_POST['meal_uid'],
+	'meal_uid' => $mealObject->uid,
 	'type' => $memberObject->type,
 	'member_ldap' => strtoupper($memberObject->ldap),
 	'charge_to' => $mealObject->charge_to,
