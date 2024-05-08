@@ -53,6 +53,13 @@ echo makeTitle($title, $subtitle, $icons);
 
 <div class="tab-content mt-3" id="membersContent">
   <div class="tab-pane fade show active" id="scr" role="tabpanel" aria-labelledby="scr-tab">
+    
+    <div class="row mb-3">
+      <div class="col">        
+          <input type="text" id="filterInput" class="form-control form-control-lg" placeholder="Quick search" autocomplete="off" spellcheck="false" aria-describedby="wine_searchHelp">
+      </div>
+    </div>
+    
     <form method="post" id="termForm" action="index.php?n=admin_members">
       <!--<div class="list-group" id="members_list">-->
       <ul class="list-group" id="scr_members_list">
@@ -237,11 +244,27 @@ function itterate() {
 </div>
 
 <script>
+function filterList() {
+  // Get input value and convert it to lowercase for case-insensitive matching
+  var filterValue = document.getElementById('filterInput').value.toLowerCase();
+  
+  // Get list items
+  var items = document.querySelectorAll('#scr_members_list li');
+  
+  // Loop through all list items
+  for(var i = 0; i < items.length; i++) {
+    var item = items[i];
+    var text = item.textContent.toLowerCase();
+    
+    // If the input matches the item, display it, otherwise hide it
+    if(text.indexOf(filterValue) !== -1) {
+      item.style.display = '';
+    } else {
+      item.style.display = 'none';
+    }
+  }
+}
 
-function dismiss(el){
-  document.getElementById(el).parentNode.style.display='none';
-};
-
-
-
+// Add event listener to input field
+document.getElementById('filterInput').addEventListener('input', filterList);
 </script>
