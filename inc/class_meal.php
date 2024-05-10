@@ -42,16 +42,13 @@ class meal {
     $mealURL = "index.php?n=admin_meal&mealUID=" . $this->uid;
 
     $output  = "<div class=\"col mb-3\">";
-    $output .= "<div class=\"blog-card\">";
     $output .= "<div class=\"card border-light\">";
 
     if (!empty($this->photo)) {
       $imageURL = "../../img/cards/" . $this->photo;
-      if(file_exists($imageURL)) {
-        $output .= "<img src=\"" . $imageURL . "\" class=\"card-img-top rounded-top\" alt=\"Meal Image\">";
-      }
+      $output .= "<img src=\"" . $imageURL . "\" class=\"card-img-top\" alt=\"Meal Image\">";
     }
-
+    
     $output .= "<div class=\"card-body text-center\">";
 
     $output .= $this->menuTooltip();
@@ -69,6 +66,12 @@ class meal {
     $output .= "<li>" . timeDisplay($this->date_meal) . "</li>";
 
     $output .= "</ul>";
+    
+    if (checkpoint_charlie("meals") && $this->total_dessert_bookings_this_meal() > $this->scr_dessert_capacity)  {
+      $output .= "<span class=\"badge rounded-pill bg-danger text-dark\">Dessert over capacity</span>";
+    } elseif (checkpoint_charlie("meals") && $this->$scr_dessert_capacity > 0 && $this->total_dessert_bookings_this_meal() == $this->$scr_dessert_capacity) {
+      $output .= "<span class=\"badge rounded-pill bg-warning text-dark\">Dessert at capacity</span>";
+    }
 
     $output .= "</p>";
 
@@ -83,7 +86,6 @@ class meal {
     $output .= "</div>";
     $output .= "<div class=\"card-footer bg-white border-0 px-0 py-0\">";
     $output .= $this->bookingButton();
-    $output .= "</div>";
     $output .= "</div>";
     $output .= "</div>";
     $output .= "</div>";
@@ -247,43 +249,47 @@ class meal {
 
   public function total_dessert_bookings_this_meal($memberType = null) {
     global $db;
-
-    $membersDessert = 0;
-    $guestsDessert = 0;
-
-    if ($memberType == "SCR") {
-      $sql  = "SELECT * FROM bookings";
-      $sql .= " WHERE meal_uid = '" . $this->uid . "'";
-      $sql .= " AND dessert = '1'";
-      $sql .= " AND type = 'SCR'";
-    } elseif ($memberType == "MCR") {
-      $sql  = "SELECT * FROM bookings";
-      $sql .= " WHERE meal_uid = '" . $this->uid . "'";
-      $sql .= " AND dessert = '1'";
-      $sql .= " AND type = 'MCR'";
-    } else {
-      $sql  = "SELECT * FROM bookings";
-      $sql .= " WHERE meal_uid = '" . $this->uid . "'";
-      $sql .= " AND dessert = '1'";
-    }
-
-    $bookings = $db->query($sql)->fetchAll();
     
-    foreach ($bookings AS $booking) {
-      $bookingObject = new booking($booking['uid']);
+    if ($this->allowed_dessert == 1) {
+      $membersDessert = 0;
+      $guestsDessert = 0;
       
-      if ($bookingObject->dessert == "1") {
-        $membersDessert ++;
-        $guestsDessert = $guestsDessert + count($bookingObject->guestsArray());
+      if ($memberType == "SCR") {
+        $sql  = "SELECT * FROM bookings";
+        $sql .= " WHERE meal_uid = '" . $this->uid . "'";
+        $sql .= " AND dessert = '1'";
+        $sql .= " AND type = 'SCR'";
+      } elseif ($memberType == "MCR") {
+        $sql  = "SELECT * FROM bookings";
+        $sql .= " WHERE meal_uid = '" . $this->uid . "'";
+        $sql .= " AND dessert = '1'";
+        $sql .= " AND type = 'MCR'";
+      } else {
+        $sql  = "SELECT * FROM bookings";
+        $sql .= " WHERE meal_uid = '" . $this->uid . "'";
+        $sql .= " AND dessert = '1'";
       }
       
+      $bookings = $db->query($sql)->fetchAll();
+      
+      foreach ($bookings AS $booking) {
+        $bookingObject = new booking($booking['uid']);
+        
+        if ($bookingObject->dessert == "1") {
+          $membersDessert ++;
+          $guestsDessert = $guestsDessert + count($bookingObject->guestsArray());
+        }
+        
+      }
+      
+      //echo "Members Dessert: " . $membersDessert . "<br />";
+      //echo "Guest Dessert: " . $guestsDessert . "<br />";
+      $totalDessert = $membersDessert + $guestsDessert;
+      
+      return $totalDessert;
+    } else {
+      return 0;
     }
-    
-    //echo "Members Dessert: " . $membersDessert . "<br />";
-    //echo "Guest Dessert: " . $guestsDessert . "<br />";
-    $totalDessert = $membersDessert + $guestsDessert;
-
-    return $totalDessert;
   }
 
   public function menuTooltip() {
