@@ -53,9 +53,14 @@ if (isset($_GET['guestUID'])) {
     exit();
   }
   if ($bookingObject->dessert == "1" && $mealObject->total_dessert_bookings_this_meal() >= $mealObject->scr_dessert_capacity) {
-    echo "<p>You cannot add a guest as it would exceed the available number of dessert spaces.  Please remove yourself from dessert if you wish to add another guest</p>";
-    $buttonDeleteDisable = $buttonEditDisable = $buttonAddDisable = " disabled";
-    exit();
+    if (checkpoint_charlie("bookings")) {
+      echo "<p class=\"alert alert-danger\">Please note: Dessert for this meal is oversubscribed!</p>";
+    } else {
+      echo "<p>You cannot add a guest as it would exceed the available number of dessert spaces.  Please remove yourself from dessert if you wish to add another guest</p>";
+      $buttonDeleteDisable = $buttonEditDisable = $buttonAddDisable = " disabled";
+      exit();
+    }
+    
   }
   if (!$mealObject->check_member_ok(true)) {
     echo "<p>Your account is currently disabled.</p>";
