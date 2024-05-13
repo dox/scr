@@ -89,7 +89,7 @@ if (isset($bookingByMember)) {
             <span class="col-auto">
               <label class="form-check form-check-single form-switch">
                 <?php
-                if ($mealObject->allowed_wine == 1 && $mealObject->check_cutoff_ok(true) && !checkpoint_charlie("bookings")) {
+                if ($mealObject->allowed_wine == 1 && $mealObject->check_cutoff_ok(true)) {
                   $wineDisabledCheck = "";
                 } else {
                   $wineDisabledCheck = " disabled";
@@ -113,7 +113,10 @@ if (isset($bookingByMember)) {
               if ($mealObject->allowed_dessert == 1 && $mealObject->check_cutoff_ok(true)) {
                 $dessertDisabledCheck = "";
               } else {
-                $dessertHelper = "Deadline passed";
+                if (checkpoint_charlie("bookings")) {
+                } else {
+                  $dessertHelper = "Deadline passed";
+                }
               }
             } else {
               // we're not yet booked on for dessert
@@ -124,13 +127,17 @@ if (isset($bookingByMember)) {
               // check if dessert capacity is reached
               
               if (($mealObject->total_dessert_bookings_this_meal() + count($bookingObject->guestsArray()) + 1) > $mealObject->scr_dessert_capacity) {
-                $dessertDisabledCheck = " disabled";
+                if (checkpoint_charlie("bookings")) {
+                } else {
+                  $dessertDisabledCheck = " disabled";
+                }
                 $dessertHelper =  "(capacity for dessert reached)";
               }
             }
             
             //admin override for dessert booking!
-            if ($_SESSION['admin'] == 1) {
+            if (checkpoint_charlie("bookings")) {
+            } else {
               $dessertDisabledCheck = "";
             }
             ?>
