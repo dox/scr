@@ -57,7 +57,7 @@ class booking {
 
     $logArray['category'] = "booking";
     $logArray['result'] = "success";
-    $logArray['description'] = "Guest '" . $newGuestArray['guest_name'] . "' added to [bookingUID:" . $this->uid . "] for [mealUID:" . $this->meal_uid . "]";
+    $logArray['description'] = "Guest '" . $newGuestArray['guest_name'] . "' added to [bookingUID:" . $this->uid . "] for [mealUID:" . $this->meal_uid . "]. Wine: " . $newGuestArray['guest_wine'];
     $logsClass->create($logArray);
 
 	  return $this->guests_array;
@@ -116,7 +116,7 @@ class booking {
       
       $logArray['category'] = "booking";
       $logArray['result'] = "success";
-      $logArray['description'] = "[bookingUID:" . $create->lastInsertID() . "] made for " . $_SESSION['username'] . " for [mealUID:" . $array['meal_uid'] . "]";
+      $logArray['description'] = "[bookingUID:" . $create->lastInsertID() . "] made for " . $_SESSION['username'] . " for [mealUID:" . $array['meal_uid'] . "].  Dessert: " . $array['dessert'] . " Wine: " . $array['wine'];
       $logsClass->create($logArray);
       
       return $create;
