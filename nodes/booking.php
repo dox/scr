@@ -89,7 +89,7 @@ if (isset($bookingByMember)) {
             <span class="col-auto">
               <label class="form-check form-check-single form-switch">
                 <?php
-                if ($mealObject->allowed_wine == 1 && $mealObject->check_cutoff_ok(true)) {
+                if ($mealObject->allowed_wine == 1 && $mealObject->check_cutoff_ok(true) && !checkpoint_charlie("bookings")) {
                   $wineDisabledCheck = "";
                 } else {
                   $wineDisabledCheck = " disabled";
