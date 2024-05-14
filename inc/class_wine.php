@@ -43,18 +43,20 @@ class wineClass {
     return $result['total'];
   }
   
-  public function searchAllWines($searchArray = null) {
+  public function searchAllWines($searchArray = null, $limit = null) {
     global $db;
     
     foreach ($searchArray AS $searchKey => $searchString) {
-      $searchStatements[] = $searchKey . " = '" . $searchString . "'";
+      $searchStatements[] = $searchKey . " LIKE '%" . $searchString . "%'";
     }
     
     $sql  = "SELECT * FROM wine_wines";
     $sql .= " WHERE " . implode(" OR ", $searchStatements);
     $sql .= " ORDER BY name ASC";
     
-    echo $sql;
+    if ($limit) {
+      $sql .= " LIMIT " . $limit;
+    }
     
     $results = $db->query($sql)->fetchAll();
   

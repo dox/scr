@@ -1,29 +1,25 @@
 <?php
 include_once("../inc/autoload.php");
 
+header('Content-Type: application/json');
+
 if (checkpoint_charlie("wine")) {
-	$personSearchArray = array();
+	$wineClass = new wineClass();
 	
-	$personsClass = new wineClass();
+	$data = array();
 	
-	$persons = $personsClass->getAllWines();
-	
-	foreach ($persons AS $person) {
-		$personArray = array();
-		$personArray['uid'] = $person['uid'];
-		$personArray['name'] = $person['name'];
+	if (isset($_GET['q'])) {
+		$queryArray["name"] = $_GET['q'];
 		
-		$personSearchArray[$person['uid']] = $personArray;
+		$resultsLimit = 4;
+		
+		$wines = $wineClass->searchAllWines($queryArray, $resultsLimit);
+		
+		foreach ($wines AS $wine) {
+			$data[] = array("uid" => $wine['uid'], "name" => $wine['name']);
+		}
+		
+		echo json_encode(['data' => $data]);
 	}
-	
-	$uniquePersons = array();
-	
-	foreach($personSearchArray as $personSearchResult) {
-		$needle = $personSearchResult['uid'];
-		if(array_key_exists($needle, $uniquePersons)) continue;
-		$uniquePersons[] = $personSearchResult;
-	  }
-	
-	echo json_encode($uniquePersons);
 }
 ?>
