@@ -63,23 +63,32 @@ class wineClass {
     return $results;
   }
   
-  public function getAllPublicLists() {
+  public function getAllLists() {
     global $db;
   
     $sql  = "SELECT * FROM wine_lists";
-    $sql .= " WHERE type = 'public'";
+    $sql .= " WHERE type = 'public' OR member_ldap = '" . $_SESSION['username'] . "'";
     $sql .= " ORDER BY name ASC";
     
     $results = $db->query($sql)->fetchAll();
+    
+    foreach ($results AS $result) {
+      if ($result['type'] == "public" && $result['member_ldap'] != $_SESSION['username']) {
+        $listName = $result['member_ldap'] . " " . $result['name'];
+        $returnArray[] = array("uid" => $result['uid'], "name" => $listName, "type" => $result['type'], "member_ldap" => $result['member_ldap'], "wine_uids" => $result['wine_uids']);
+      } else {
+        $returnArray[] = array("uid" => $result['uid'], "name" => $result['name'], "type" => $result['type'], "member_ldap" => $result['member_ldap'], "wine_uids" => $result['wine_uids']);
+      }
+    }
   
-    return $results;
+    return $returnArray;
   }
   
-  public function getAllMemberLists($memberUID) {
+  public function getAllMemberLists($memberLDAP) {
     global $db;
   
     $sql  = "SELECT * FROM wine_lists";
-    $sql .= " WHERE member_uid = '" . $memberUID . "'";
+    $sql .= " WHERE member_uid = '" . $memberLDAP . "'";
     $sql .= " ORDER BY name ASC";
     
     $results = $db->query($sql)->fetchAll();
@@ -243,6 +252,19 @@ class wine extends wineClass {
     
     return $output;
   }
+  
+  public function logs() {
+    global $db;
+    
+    $sql  = "SELECT * FROM logs";
+    $sql .= " WHERE category = 'wine'";
+    $sql .= " AND description LIKE '%[wineUID:" . $this->uid . "]%'";
+    $sql .= " ORDER BY date DESC";
+    
+    $results = $db->query($sql)->fetchAll();
+    
+    return $results;
+  }
 }
 
 class wine_list extends wineClass {
@@ -259,6 +281,30 @@ class wine_list extends wineClass {
     foreach ($results AS $key => $value) {
       $this->$key = $value;
     }
+  }
+  
+  public function addToList($wineUID = null) {
+    global $db;
+    
+    $sql  = "UPDATE " . self::$table_name;
+    $sql .= " SET wine_uids = CONCAT(wine_uids, '," . $wineUID . "')";
+    $sql .= " WHERE uid = '" . $this->uid . "'";
+    
+    echo $sql;
+    
+    $results = $db->query($sql)->fetchArray();
+  }
+  
+  public function updateList($wineUIDSArray = null) {
+    global $db;
+    
+    $sql  = "UPDATE " . self::$table_name;
+    $sql .= " SET wine_uids = '" . implode(",", $wineUIDSArray) . "'";
+    $sql .= " WHERE uid = '" . $this->uid . "'";
+    
+    echo $sql;
+    
+    $results = $db->query($sql);
   }
   
   

@@ -24,6 +24,20 @@ echo makeTitle($title, $subtitle, $icons);
 
 <hr class="pb-3" />
 
+<div class="dropdown">
+  <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+	Add to list
+  </button>
+  <ul class="dropdown-menu">
+	  <?php
+	  
+	  foreach ($wine->getAllLists() AS $list) {
+		  echo "<li><a class=\"dropdown-item\" href\"#\" onClick=\"handleButtonClick(this)\" data-listuid=\"" . $list['uid'] . "\" data-wineuid=\"" . $wine->uid . "\">" . $list['name'] . "</a></li>";
+	  }
+	  ?>
+  </ul>
+</div>
+
 <?php
 if ($wine->bond == 1) {
 	echo "<div class=\"alert alert-warning text-center\" role=\"alert\">WINE IN-BOND</div>";
@@ -85,13 +99,22 @@ if ($wine->bond == 1) {
 		
 		<div class="card mb-3">
 			<div class="card-body">
+				<h5 class="card-title">Tasting Notes</h5>
 				<?php echo $wine->tasting; ?>
 			</div>
 		</div>
 		
 		<div class="card mb-3">
 			<div class="card-body">
-				History
+				<h5 class="card-title">History</h5>
+				
+				<ul class="list-unstyled">
+				<?php
+				foreach($wine->logs() AS $log) {
+					echo "<li>" . dateDisplay($log['date']) . " - " .  $log['username'] . " " . $log['description'] . "</li>";
+				}
+				?>
+				</ul>
 			</div>
 		</div>
 	</div>
@@ -111,3 +134,43 @@ if ($wine->bond == 1) {
 		</div>
 	</div>
 </div>
+
+<?php
+$list = new wine_list(1);
+printArray($list);
+?>
+<script>
+function handleButtonClick(button) {
+	// Retrieve the data attributes
+	var list_uid = button.getAttribute('data-listuid');
+	var wine_uid = button.getAttribute('data-wineuid');
+	
+	// Create a new XMLHttpRequest object
+	var xhr = new XMLHttpRequest();
+
+	// Configure it: POST-request for the URL /submit-data
+	xhr.open('POST', 'actions/wine_addToList.php', true);
+	xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+	// Prepare the data to be sent
+	var params = 'list_uid=' + encodeURIComponent(list_uid) + '&wine_uid=' + encodeURIComponent(wine_uid);
+
+	// Send the request over the network
+	xhr.send(params);
+
+	// This will be called after the request is completed
+	xhr.onload = function() {
+		if (xhr.status != 200) { // analyze HTTP response status
+			alert('Error ' + xhr.status + ': ' + xhr.statusText); // e.g. 404: Not Found
+		} else {
+			//alert('Success: ' + xhr.responseText); // response is the server
+		}
+	};
+
+	// This will be called in case of a network error
+	xhr.onerror = function() {
+		alert('Request failed');
+	};
+};
+
+</script>
