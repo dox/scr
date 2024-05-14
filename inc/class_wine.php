@@ -163,6 +163,24 @@ class cellar extends wineClass {
     
     return $results['total_wines'];
   }
+  
+  public function totalPurchaseValue() {
+    global $db;
+    
+    $sql  = "SELECT sum(total) AS total FROM ";
+    $sql .= " (SELECT wine_wines.qty * wine_wines.price_purchase AS total FROM `wine_wines`";
+    $sql .= " WHERE cellar_uid = '" . $this->uid . "') tmp";
+    
+    $results = $db->query($sql)->fetchArray();
+    
+    if (!$results['total'] > 0) {
+      $results['total'] = 0;
+    }
+    
+    return $results['total'];
+    
+    
+  }
 }
   
 class wine extends wineClass {
@@ -281,6 +299,16 @@ class wine_list extends wineClass {
     foreach ($results AS $key => $value) {
       $this->$key = $value;
     }
+  }
+  
+  public function isWineInList($wineUID = null) {
+    $inList = false;
+    
+    if (in_array($wineUID, explode(",", $this->wine_uids))) {
+      $inList = true;
+    }
+    
+    return $inList;
   }
   
   public function addToList($wineUID = null) {

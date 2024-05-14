@@ -20,6 +20,9 @@ echo makeTitle($title, $subtitle, $icons);
 
 <hr class="pb-3" />
 
+<?php
+echo "<p>Total purchase value: " . currencyDisplay($cellar->totalPurchaseValue()) . "</p>";
+?>
 <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
 
 <?php

@@ -24,15 +24,20 @@ echo makeTitle($title, $subtitle, $icons);
 
 <hr class="pb-3" />
 
+
 <div class="dropdown">
-  <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-	Add to list
-  </button>
+  <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Add to list</button>
   <ul class="dropdown-menu">
 	  <?php
-	  
 	  foreach ($wine->getAllLists() AS $list) {
-		  echo "<li><a class=\"dropdown-item\" href\"#\" onClick=\"handleButtonClick(this)\" data-listuid=\"" . $list['uid'] . "\" data-wineuid=\"" . $wine->uid . "\">" . $list['name'] . "</a></li>";
+		  $list = new wine_list($list['uid']);
+		  
+		  $listIcon = "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#heart-empty\"/></svg> ";
+		  if ($list->isWineInList($wine->uid)) {
+			  $listIcon = "<svg width=\"1em\" height=\"1em\" style=\"color: red;\"><use xlink:href=\"img/icons.svg#heart-full\"/></svg> ";
+		  }
+		  
+		  echo "<li><a class=\"dropdown-item\" href\"#\" onClick=\"handleButtonClick(this)\" data-listuid=\"" . $list->uid . "\" data-wineuid=\"" . $wine->uid . "\">" . $listIcon . $list->name . "</a></li>";
 	  }
 	  ?>
   </ul>
@@ -106,6 +111,13 @@ if ($wine->bond == 1) {
 		
 		<div class="card mb-3">
 			<div class="card-body">
+				<h5 class="card-title">Private Notes</h5>
+				<?php echo $wine->notes; ?>
+			</div>
+		</div>
+		
+		<div class="card mb-3">
+			<div class="card-body">
 				<h5 class="card-title">History</h5>
 				
 				<ul class="list-unstyled">
@@ -164,6 +176,7 @@ function handleButtonClick(button) {
 			alert('Error ' + xhr.status + ': ' + xhr.statusText); // e.g. 404: Not Found
 		} else {
 			//alert('Success: ' + xhr.responseText); // response is the server
+			location.reload();
 		}
 	};
 

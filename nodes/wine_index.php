@@ -50,7 +50,7 @@ $wineClass = new wineClass();
 </div>
 
 <style>
-	#outputList {
+	#wine_search_results {
 		position: absolute;
 		z-index: 1;
 		max-height: 200px;
@@ -64,19 +64,12 @@ $wineClass = new wineClass();
 		<ul id="wine_search_results" class="list-group"></ul>
 		
 	</div>
-	
 </div>
 
-
-	
-  
-  
 <div class="row">
-	<h1>Lists</h1>
-	<?php printArray($wineClass->getAllPublicLists()); ?>
+	<h1>My Lists</h1>
+	<?php printArray($wineClass->getAllLists()); ?>
 	
-	<h2>My Lists</h2>
-	<?php printArray($wineClass->getAllMemberLists(1)); ?>
 
 	<h1>Recent Additions?</h1>
 	<?php printArray($wines); ?>
