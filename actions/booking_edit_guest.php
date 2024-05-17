@@ -3,7 +3,7 @@ include_once("../inc/autoload.php");
 
 $bookingUID = filter_var($_POST['bookingUID'], FILTER_SANITIZE_NUMBER_INT);
 
-$guestUID = filter_var($_POST['guest_uid'], FILTER_SANITIZE_NUMBER_INT);
+$guestUID = filter_var($_POST['guest_uid'], FILTER_SANITIZE_STRING);
 $guestName = htmlspecialchars($_POST['guest_name'], ENT_QUOTES);
 $guestDietary = explode(",", $_POST['guest_dietary']);
 

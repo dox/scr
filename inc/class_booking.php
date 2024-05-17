@@ -178,6 +178,8 @@ class booking {
     $sql .= " SET guests_array = JSON_REMOVE(guests_array, '$." . $guest_uid . "')";
     $sql .= " WHERE uid = '" . $this->uid . "' ";
     $sql .= " LIMIT 1";
+    
+    echo $sql;
 
     $delete = $db->query($sql);
 
