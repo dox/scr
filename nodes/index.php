@@ -36,38 +36,55 @@ $subtitle = "Current term: " . $termObject->currentTerm()['name'];
 echo makeTitle($title, $subtitle);
 ?>
 
-<ul class="nav nav-tabs justify-content-center mb-4" id="myTab" role="tablist">
-  <?php
-  $termsClass = new terms();
-  $windowOfWeeks = $termsClass->arrayWindowOfWeeks();
-  
-  $firstDayOfCurrentWeek = firstDayOfWeek();
-  
-  foreach ($windowOfWeeks AS $week) {
-    $checkTerm = $termsClass->checkIsInTerm($week);
-    if (isset($checkTerm[0]['uid'])) {
-      $term = new term($checkTerm[0]['uid']);
-      $name = ordinal($term->whichWeek($week)) . " Week";
-    } else {
-      $name = "<small>w/c</small> " . date('M jS', strtotime($week));
-    }
-
-    if ($week == $firstDayOfCurrentWeek) {
-      
-      $class = "active";
-      $name = "<strong>" . $name . "</strong>";
-    } else {
-      $class = "";
-    }
-
-    $output  = "<li class=\"nav-item\" id=\"" . $week . "-tab\" role=\"presentation\">";
-    $output .= "<a class=\"nav-link " . $class . "\" id=\"" . $week . "\" data-toggle=\"tab\" href=\"#\" onclick=\"load_home(this.id)\" role=\"tab\" aria-controls=\"week-" . $week . "\">" . $name . "</a>";
-    $output .= "</li>";
-
-    echo $output;
+<style>
+  .tabbable .nav-tabs {
+     overflow-x: auto;
+     overflow-y:hidden;
+     flex-wrap: nowrap;
   }
-  ?>
-</ul>
+  .tabbable .nav-tabs .nav-link {
+    white-space: nowrap;
+  }
+</style>
+
+
+
+<div class="container-fluid">
+  <nav class="tabbable">
+    <div class="nav nav-tabs justify-content-left" id="nav-tab" role="tablist">
+      <?php
+      $termsClass = new terms();
+      $windowOfWeeks = $termsClass->arrayWindowOfWeeks();
+      
+      $firstDayOfCurrentWeek = firstDayOfWeek();
+      
+      foreach ($windowOfWeeks AS $week) {
+        $checkTerm = $termsClass->checkIsInTerm($week);
+        if (isset($checkTerm[0]['uid'])) {
+          $term = new term($checkTerm[0]['uid']);
+          $name = ordinal($term->whichWeek($week)) . " Week";
+        } else {
+          $name = "<small>w/c</small> " . date('M jS', strtotime($week));
+        }
+      
+        if ($week == $firstDayOfCurrentWeek) {
+          
+          $class = "active";
+          $name = "<strong>" . $name . "</strong>";
+        } else {
+          $class = "";
+        }
+      
+        $output  = "<li class=\"nav-item\" id=\"" . $week . "-tab\" role=\"presentation\">";
+        $output .= "<a class=\"nav-link " . $class . "\" id=\"" . $week . "\" data-toggle=\"tab\" href=\"#\" onclick=\"load_home(this.id)\" role=\"tab\" aria-controls=\"week-" . $week . "\">" . $name . "</a>";
+        $output .= "</li>";
+      
+        echo $output;
+      }
+      ?>
+    </div>
+  </nav>
+</div>
 
 <div class="tab-content" id="myTabContent">
   <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="week-1">
@@ -80,9 +97,6 @@ echo makeTitle($title, $subtitle);
 </div>
 
 <script>
-function testFunc(this_id) {
-  alert(this_id);
-}
 load_home('<?php echo $firstDayOfCurrentWeek; ?>');
 async function load_home(this_id) {
   var triggerEl = document.getElementById(this_id);
