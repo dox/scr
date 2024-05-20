@@ -421,6 +421,7 @@ function fetchAndDisplay(filePath, clickedLink) {
           }
           
           ?>
+          <input type="hidden" value="null" name="permissions[]" />
         </div>
         
         <?php
