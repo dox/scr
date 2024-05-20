@@ -4,11 +4,15 @@ $bookingsClass = new bookings();
 $mealObject = new meal($_GET['mealUID']);
 $bookings = $bookingsClass->bookingsUIDsByMealUID($mealObject->uid);
 
-if ($_SESSION['admin'] != true) {
-  if (strtoupper($_SESSION['username']) != strtoupper($memberObject->ldap)) {
-    admin_gatekeeper();
-  }
+if (checkpoint_charlie("reports")) {
+  // user is an admin, generate the report
+} elseif (strtoupper($_SESSION['username']) == strtoupper($memberObject->ldap)) {
+  // user is themselves, that's fine too
+} else {
+  // user attempting to access report for someone else - not allowed
+  die("Access not granted");
 }
+
 // CSV columns to include
 $columns = array(
   "booking_uid",

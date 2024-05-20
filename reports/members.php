@@ -16,7 +16,8 @@ $columns = array(
   "email_reminders",
   "default_wine",
   "default_dessert",
-  "date_lastlogon"
+  "date_lastlogon",
+  "permissions"
 );
 
 //get all members
@@ -45,6 +46,7 @@ foreach ($members AS $member) {
   $memberRow['default_wine'] = $memberObject->default_wine;
   $memberRow['default_dessert'] = $memberObject->default_dessert;
   $memberRow['date_lastlogon'] = date('Y-m-d H:i:s', strtotime($memberObject->date_lastlogon));
+  $memberRow['permissions'] = $memberObject->permissions;
   
   $membersArray[] = $memberRow;
 }
