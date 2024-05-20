@@ -23,7 +23,7 @@ if (checkpoint_charlie("members")) {
   $disabledCheck = " disabled ";
 }
 
-if (isset($_POST['memberUID'])) {
+if (isset($_POST)) {
   if (!isset($_POST['opt_in'])) {
     $_POST['opt_in'] = 0;
   }
@@ -39,8 +39,8 @@ if (isset($_POST['memberUID'])) {
   if (!isset($_POST['dietary'])) {
     $_POST['dietary'] = null;
   }
+  
   $memberObject->update($_POST);
-
   $memberObject = new member($memberUID);
 }
 ?>
@@ -428,8 +428,6 @@ function fetchAndDisplay(filePath, clickedLink) {
         // end check for admin persmissions
         }
         ?>
-
-        <input type="hidden" name="memberUID" id="memberUID" value="<?php echo $memberObject->uid;?>">
         <button class="btn btn-primary  btn-block" type="submit">Update Member Details</button>
       </div>
     </form>

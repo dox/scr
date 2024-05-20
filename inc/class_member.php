@@ -20,7 +20,7 @@ class member {
   public $default_dessert;
   public $date_lastlogon;
   public $calendar_hash;
-
+  
   function __construct($memberUID = null) {
     global $db;
 
@@ -150,54 +150,65 @@ class member {
 
     return $create;
   }
-
-  public function update($array = null, $displayAlert = true) {
-    global $db, $logsClass, $settingsClass;
+  
+  public function update($array) {
+    global $db, $logsClass;
     
-    $originalUsername = $this->ldap;
-    $newUsername = escape($array['ldap']);
-
-    $sql  = "UPDATE " . self::$table_name;
-
-    foreach ($array AS $updateItem => $value) {
-      if ($updateItem != 'memberUID') {
-        $sqlUpdate[] = $updateItem ." = '" . escape($value) . "' ";
+    // Initialize the set part of the query
+    $setParts = [];
+    
+    //remove the memberUID
+    unset($array['memberUID']);
+    
+    // Loop through the new values array
+    foreach ($array as $field => $newValue) {
+      if (is_array($newValue)) {
+        $newValue = implode(",", $newValue);
       }
-      if (is_array($value)) {
-        $sqlUpdate[] = $updateItem ." = '" . implode(",", $value) . "' ";
-      }
-      $sqlUpdate[] = "calendar_hash" . " = '" . crypt(strtolower($originalUsername), salt) . "' ";
+        // Check if the field exists in the current values and if the values are different
+        if ($this->$field != $newValue) {
+          
+            // Sanitize the field and value to prevent SQL injection
+            //$field = mysqli_real_escape_string($conn, $field);
+            //$newValue = mysqli_real_escape_string($conn, $newValue);
+            // Add to the set part
+            $setParts[$field] = "`$field` = '$newValue'";
+        }
     }
-
-    $sql .= " SET " . implode(", ", $sqlUpdate);
+    
+    // If there are no changes, return null
+    if (empty($setParts)) {
+        return null;
+    }
+    
+    // Combine the set parts into a single string
+    $setString = implode(", ", $setParts);
+    
+    // Construct the final UPDATE query
+    $sql = "UPDATE " . self::$table_name . " SET " . $setString;
     $sql .= " WHERE uid = '" . $this->uid . "' ";
     $sql .= " LIMIT 1";
-
+    
+    // check if username is changing, if so, update all meals booked under the old username and update to the new
+    if (isset($setParts['ldap'])) {
+      $sqlUpdate = "UPDATE bookings SET member_ldap = '" . $array['ldap'] . "' WHERE member_ldap = '" . $this->ldap . "'";
+      
+      $updateExistingBookings = $db->query($sqlUpdate);
+      
+      $logArray['category'] = "member";
+      $logArray['result'] = "success";
+      $logArray['description'] = "Updated existing meals from '" . $this->ldap . "' to '" . $array['ldap'] . "'";
+      $logsClass->create($logArray);
+    }
+    
     $update = $db->query($sql);
     
-    // check if username is changing
-    // if so, update all meals booked under the old username and update to the new
-    if (isset($newUsername) && $newUsername <> $originalUsername) {
-      $sql = "UPDATE bookings SET member_ldap = '" . $newUsername . "' WHERE member_ldap = '" . $originalUsername . "'";
-      
-      $updateExistingBookings = $db->query($sql);
-      
-      $logArray['category'] = "member";
-      $logArray['result'] = "success";
-      $logArray['description'] = "Updated existing meals from '" . $originalUsername . "' to '" . $newUsername . "'";
-      $logsClass->create($logArray);
-    }
+    $logArray['category'] = "member";
+    $logArray['result'] = "success";
+    $logArray['description'] = "[memberUID:" . $this->uid . "] updated with fields " . $setString;
+    $logsClass->create($logArray);
     
-    if ($displayAlert == true) {
-      echo $settingsClass->alert("success", "Success!", "Member successfully updated");
-
-      $logArray['category'] = "member";
-      $logArray['result'] = "success";
-      $logArray['description'] = "[memberUID:" . $array['memberUID'] . "] updated";
-      $logsClass->create($logArray);
-    }
-
-    return $update;
+    return true;
   }
 
   public function bookingUIDS_upcoming() {
