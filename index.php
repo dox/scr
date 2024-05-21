@@ -36,8 +36,7 @@ if (!empty($_POST['inputUsername']) && !empty($_POST['inputPassword']) && $_SESS
       $memberObject = new member($memberLookup['uid']);
     } else {
       $memberObject = new member($memberLookup['uid']);
-
-      $UPDATEUSER['date_lastlogon'] = date('Y-m-d H:i:s');
+      
       // EXISTING user, fill our their missing details
       $UPDATEUSER['memberUID'] = $memberLookup['uid'];
       if (empty($memberLookup['firstname'])) {
@@ -49,7 +48,7 @@ if (!empty($_POST['inputUsername']) && !empty($_POST['inputPassword']) && $_SESS
       if (empty($memberLookup['email'])) {
         $UPDATEUSER['email'] = $ldapUser[0]['mail'][0];
       }
-
+      $memberObject->updateLastLoginDate();
       $memberObject->update($UPDATEUSER, false);
     }
 

@@ -210,6 +210,20 @@ class member {
     
     return true;
   }
+  
+  public function updateLastLoginDate() {
+    global $db;
+    
+    // Construct the final UPDATE query
+    $sql  = "UPDATE " . self::$table_name;
+    $sql .= " SET date_lastlogon = '" . date('c') . "'";
+    $sql .= " WHERE uid = '" . $this->uid . "' ";
+    $sql .= " LIMIT 1";
+    
+    $update = $db->query($sql);
+    
+    return true;
+  }
 
   public function bookingUIDS_upcoming() {
     global $db;
