@@ -23,7 +23,7 @@ if (checkpoint_charlie("members")) {
   $disabledCheck = " disabled ";
 }
 
-if (isset($_POST)) {
+if (!empty($_POST)) {
   if (!isset($_POST['opt_in'])) {
     $_POST['opt_in'] = 0;
   }
