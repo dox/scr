@@ -11,6 +11,7 @@
 		foreach ($allMeals AS $meal) {
 			$meal = new meal($meal['uid']);
 			
+			
 			$bookings = $meal->bookings_this_meal();
 			
 			$bookingLateArray = array();
@@ -19,8 +20,10 @@
 				$dateDiff = datediff('n', $meal->date_cutoff, $booking['date']);
 				
 				if ($booking['date'] > $meal->date_cutoff) {
-					$bookingLateArray[] = $booking['member_ldap'] . " booking was " . $dateDiff . " minutes late";
-					$membersLate[$booking['member_ldap']] = $membersLate[$booking['member_ldap']] + 1;
+					$member = new member($booking['member_ldap']);
+					
+					$bookingLateArray[] = $member->displayName() . " booking was " . $dateDiff . " minutes late";
+					$membersLate[$member->ldap] = $membersLate[$member->ldap] + 1;
 				}
 			}
 			
