@@ -4,7 +4,7 @@
 		<?php
 		$mealsClass = new meals();
 		
-		$allMeals = $mealsClass->all();
+		$allMeals = $mealsClass->all(100);
 		
 		$membersLate = array();
 		
