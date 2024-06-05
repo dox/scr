@@ -33,6 +33,18 @@ class wineClass {
     return $results;
   }
   
+  public function getAllWinesByFilter($filter, $value) {
+    global $db;
+  
+    $sql  = "SELECT * FROM wine_wines";
+    $sql .= " WHERE " . $filter . " = '" . $value . "'";
+    $sql .= " ORDER BY name ASC";
+  
+    $results = $db->query($sql)->fetchAll();
+  
+    return $results;
+  }
+  
   public function getAllWineBottlesTotal() {
     global $db;
     
@@ -96,16 +108,37 @@ class wineClass {
     return $results;
   }
   
-  public function getAllWinesFromList($listUID) {
+  public function getAllWinesFromList($wine_uids_array) {
     global $db;
-  
-    $sql  = "SELECT * FROM wine_wines";
-    $sql .= " WHERE uid IN (" . $listUID . ")";
-    $sql .= " ORDER BY name ASC";
     
-    $results = $db->query($sql)->fetchAll();
+    if (!empty($wine_uids_array)){ 
+      $sql  = "SELECT * FROM wine_wines";
+      $sql .= " WHERE uid IN (" . $wine_uids_array . ")";
+      $sql .= " ORDER BY name ASC";
+      
+      $results = $db->query($sql)->fetchAll();
+    } else {
+      return array();
+    }
+    
   
     return $results;
+  }
+  
+  public function stats_winesByGrape() {
+    global $db;
+  
+    $sql  = "SELECT grape, COUNT(*) AS totalBins FROM wine_wines";
+    $sql .= " WHERE grape <> ''";
+    $sql .= " GROUP BY grape";
+  
+    $results = $db->query($sql)->fetchAll();
+        
+    foreach ($results AS $result) {
+      $returnArray[$result['grape']] = $result['totalBins'];
+    }
+  
+    return $returnArray;
   }
 }
 
@@ -259,8 +292,8 @@ class wine extends wineClass {
     $output .= "<p class=\"card-text text-truncate\">" . $description . "</p>";
     $output .= "<div class=\"d-flex justify-content-between align-items-center\">";
     $output .= "<div class=\"btn-group\">";
-    $output .= "<a href=\"#\" type=\"button\" class=\"btn btn-sm btn-outline-secondary\">" . $this->code . "</a>";
-    $output .= "<a href=\"#\" type=\"button\" class=\"btn btn-sm btn-outline-secondary\">" . $this->vintage . "</a>";
+    $output .= "<a href=\"index.php?n=wine_search&filter=code&value=" . $this->code . "\" type=\"button\" class=\"btn btn-sm btn-outline-secondary\">" . $this->code . "</a>";
+    $output .= "<a href=\"index.php?n=wine_search&filter=vintage&value=" . $this->vintage . "\" type=\"button\" class=\"btn btn-sm btn-outline-secondary\">" . $this->vintage . "</a>";
     $output .= "</div>";
     $output .= "<small class=\"text-body-secondary\">" . $this->totalBottlesInStock() . autoPluralise(" bottle", " bottles", $this->totalBottlesInStock()) . " </small>";
     $output .= "</div>";
@@ -299,6 +332,31 @@ class wine_list extends wineClass {
     foreach ($results AS $key => $value) {
       $this->$key = $value;
     }
+  }
+  
+  public function name_full() {
+    $output  = $this->name;
+    $output .= " <small>(" . count($this->winesInList()) . autoPluralise(" wine", " wines", count($this->winesInList())) . ")</small>";
+    
+    if ($this->member_ldap != $_SESSION['username']) {
+      $output .= " <span class=\"badge text-bg-info\">" . $this->member_ldap . "</span>";
+    }
+    if ($this->type == "private") {
+      $output .= " <span class=\"badge text-bg-secondary\">Private</span>";
+    }
+    
+    return $output;
+  }
+  
+  public function winesInList() {
+    
+    if (!empty($this->wine_uids) ){
+      $winesInList = explode(",", $this->wine_uids);
+    } else {
+      $winesInList = array();
+    }
+    
+    return $winesInList;
   }
   
   public function isWineInList($wineUID = null) {

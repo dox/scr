@@ -66,16 +66,27 @@ $wineClass = new wineClass();
 	</div>
 </div>
 
+<div id="chart"></div>
+
 <div class="row">
 	<h1>My Lists</h1>
-	<?php printArray($wineClass->getAllLists()); ?>
-	
+	<?php
+	$output = "<ul class=\"list-group\">";
+	foreach ($wineClass->getAllLists() AS $list) {
+		$list = new wine_list($list['uid']);
+		
+		$output .= "<li  class=\"list-group-item\">";
+		$output .= "<svg width=\"1em\" height=\"1em\" class=\"text-muted\"><use xlink:href=\"img/icons.svg#heart-full\"/></svg> ";
+		$output .= "<a href=\"index.php?n=wine_search&filter=list&value=" . $list->uid . "\">";
+		$output .= $list->name_full();
+		$output .= "</a>";
+		
+		$output .= "</li>";
+	}
+	$output .= "</ul>";
+	echo $output;
 
-	<h1>Recent Additions?</h1>
-	<?php printArray($wines); ?>
-	
-	<h1>Recent Changes?</h1>
-	<?php printArray($wines); ?>
+	?>
 </div>
 
 <script>
@@ -122,4 +133,32 @@ $wineClass = new wineClass();
 		// Send the request
 		xhr.send();
 	});
+</script>
+
+<?php
+foreach ($wineClass->stats_winesByGrape() AS $grape => $count) {
+	$data[] = "{ x: '" . $grape . "', y: " . $count . "}";
+}
+?>
+<script>
+var options = {
+  series: [
+  {
+	data: [<?php echo implode(",", $data); ?>]
+  }
+],
+  legend: {
+  show: false
+},
+chart: {
+  height: 350,
+  type: 'treemap'
+},
+title: {
+  text: 'Basic Treemap'
+}
+};
+
+var chart = new ApexCharts(document.querySelector("#chart"), options);
+chart.render();
 </script>

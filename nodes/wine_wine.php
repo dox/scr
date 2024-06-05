@@ -53,6 +53,11 @@ if ($wine->bond == 1) {
 	<div class="col">
 		<div class="card mb-3">
 			<div class="card-body">
+				<div class="btn-group-vertical btn-group-sm float-end" role="group" aria-label="Vertical radio toggle button group">
+				  <button type="button" class="btn btn-outline-primary">+1</button>
+				  <button type="button" class="btn btn-outline-primary">-1</button>
+				</div>
+				
 				<h5 class="card-title"><?php echo $wine->qty; ?></h5>
 				<h6 class="card-subtitle mb-2 text-body-secondary">Bottles</h6>
 			</div>
@@ -77,7 +82,7 @@ if ($wine->bond == 1) {
 	<div class="col">
 		<div class="card mb-3">
 			<div class="card-body">
-				<h5 class="card-title"><?php echo $wine->vintage; ?></h5>
+				<h5 class="card-title"><a href="index.php?n=wine_search&filter=vintage&value=<?php echo $wine->vintage; ?>"><?php echo $wine->vintage; ?></a></h5>
 				<h6 class="card-subtitle mb-2 text-body-secondary">Vintage</h6>
 			</div>
 		</div>
@@ -85,7 +90,7 @@ if ($wine->bond == 1) {
 	<div class="col">
 		<div class="card mb-3">
 			<div class="card-body">
-				<h5 class="card-title"><a href="index.php?n=wine_search&code=<?php echo $wine->code; ?>"><?php echo $wine->code; ?></a></h5>
+				<h5 class="card-title"><a href="index.php?n=wine_search&filter=code&value=<?php echo $wine->code; ?>"><?php echo $wine->code; ?></a></h5>
 				<h6 class="card-subtitle mb-2 text-body-secondary">Wine Code</h6>
 			</div>
 		</div>

@@ -1,22 +1,29 @@
 <?php
 pageAccessCheck("wine");
 
-$searchArray['code'] = filter_var($_GET['code'], FILTER_SANITIZE_STRING);
+$searchFilter = filter_var($_GET['filter'], FILTER_SANITIZE_STRING);
+$searchValue = filter_var($_GET['value'], FILTER_SANITIZE_STRING);
 
 $wineClass = new wineClass();
 
-if (isset($_GET['list'])) {
-	$wineListUID = filter_var($_GET['list'], FILTER_SANITIZE_NUMBER_INT);
+if ($searchFilter == "list") {
+	$wineList = new wine_list($searchValue);
 	
-	$wineList = new wine_list($wineListUID);
+	if ($wineList->type == "private" && $wineList->member_ldap != $_SESSION['username']) {
+		die("This list is private!");
+	}
 	
 	$wines = $wineClass->getAllWinesFromList($wineList->wine_uids);
+} elseif ($searchFilter == "code") {
+	$wines = $wineClass->getAllWinesByFilter($searchFilter, $searchValue);
+} elseif ($searchFilter == "vintage") {
+	$wines = $wineClass->getAllWinesByFilter($searchFilter, $searchValue);
 } else {
-	$wines = $wineClass->searchAllWines($searchArray);
+	die("Search filter not recognised");
 }
 
 $title = "Wine Search";
-$subtitle = "BETA FEATURE!";
+$subtitle = "Searching on '" . $searchFilter . "' for '" . $searchValue . "'";
 //$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#plus-circle\"/></svg> Add Cellar", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#deleteTermModal\"");
 echo makeTitle($title, $subtitle, $icons);
 
