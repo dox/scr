@@ -12,7 +12,12 @@ if (isset($_POST['contentInfo'])) {
   $sql .= " LIMIT 1";
 
   $db->query($sql);
-
+  
+  $logArray['category'] = "admin";
+  $logArray['result'] = "success";
+  $logArray['description'] = "SCR Information updated";
+  $logsClass->create($logArray);
+  
   echo $settingsClass->alert("success", "Success!", "SCR Information successfully updated");
 
 }

@@ -26,7 +26,7 @@ $wineClass = new wineClass();
 		
 		$output  = "<div class=\"col mb-3\">";
 		$output .= "<div class=\"card shadow-sm\">";
-		$output .= "<img src=\"img/cards/formal.png\" class=\"card-img-top\" alt=\"Cellar photograph\">";
+		$output .= "<img src=\"" . $cellar->photograph . "\" class=\"card-img-top\" alt=\"Cellar photograph\">";
 		$output .= "<div class=\"card-body\">";
 		$output .= "<p class=\"card-text\">" . $cellar->name . "</p>";
 		$output .= "<div class=\"d-flex justify-content-between align-items-center\">";

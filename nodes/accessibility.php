@@ -12,6 +12,11 @@ if (isset($_POST['contentInfo'])) {
   $sql .= " LIMIT 1";
   
   $db->query($sql);
+  
+  $logArray['category'] = "admin";
+  $logArray['result'] = "success";
+  $logArray['description'] = "SCR Accessibility Statement updated";
+  $logsClass->create($logArray);
 
   echo $settingsClass->alert("success", "Success!", "SCR Accessibility Statement successfully updated");
   
