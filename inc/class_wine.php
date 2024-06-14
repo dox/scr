@@ -77,10 +77,14 @@ class wineClass {
   
   public function getAllLists() {
     global $db;
+    
+    // return private lists first, then public
+    // return more recently updated lists at the top
+    // then return by name
   
     $sql  = "SELECT * FROM wine_lists";
     $sql .= " WHERE type = 'public' OR member_ldap = '" . $_SESSION['username'] . "'";
-    $sql .= " ORDER BY name ASC";
+    $sql .= " ORDER BY type ASC, last_updated DESC, name ASC";
     
     $results = $db->query($sql)->fetchAll();
     
@@ -111,6 +115,8 @@ class wineClass {
   public function getAllWinesFromList($wine_uids_array) {
     global $db;
     
+    
+    
     if (!empty($wine_uids_array)){ 
       $sql  = "SELECT * FROM wine_wines";
       $sql .= " WHERE uid IN (" . $wine_uids_array . ")";
@@ -136,6 +142,39 @@ class wineClass {
         
     foreach ($results AS $result) {
       $returnArray[$result['grape']] = $result['totalBins'];
+    }
+  
+    return $returnArray;
+  }
+  
+  public function stats_winesByCode() {
+    global $db;
+  
+    $sql  = "SELECT code, COUNT(*) AS totalBins FROM wine_wines";
+    $sql .= " WHERE code <> ''";
+    $sql .= " GROUP BY code";
+  
+    $results = $db->query($sql)->fetchAll();
+        
+    foreach ($results AS $result) {
+      $returnArray[$result['code']] = $result['totalBins'];
+    }
+  
+    return $returnArray;
+  }
+  
+  public function stats_winesByCountry() {
+    global $db;
+  
+    $sql  = "SELECT country_of_origin, COUNT(*) AS totalBins FROM wine_wines";
+    $sql .= " WHERE country_of_origin <> ''";
+    $sql .= " GROUP BY country_of_origin";
+    $sql .= " ORDER BY country_of_origin ASC";
+  
+    $results = $db->query($sql)->fetchAll();
+        
+    foreach ($results AS $result) {
+      $returnArray[$result['country_of_origin']] = $result['totalBins'];
     }
   
     return $returnArray;
@@ -219,6 +258,24 @@ class cellar extends wineClass {
 class wine extends wineClass {
   protected static $table_name = "wine_wines";
   
+  public $uid;
+  public $code;
+  public $cellar_uid;
+  public $bin;
+  public $bond;
+  public $name;
+  public $qty;
+  public $category;
+  public $grape;
+  public $country_of_origin;
+  public $vintage;
+  public $price_purchase;
+  public $price_internal;
+  public $price_external;
+  public $tasting;
+  public $notes;
+  public $photograph;
+  
   function __construct($uid = null) {
     global $db;
     
@@ -230,6 +287,95 @@ class wine extends wineClass {
     foreach ($results AS $key => $value) {
       $this->$key = $value;
     }
+  }
+  
+  public function create($array) {
+    global $db, $logsClass;
+    
+    // Initialize the set part of the query
+    $setParts = [];
+    
+    //remove the memberUID
+    unset($array['uid']);
+    
+    // Loop through the new values array
+    foreach ($array as $field => $newValue) {
+      if (is_array($newValue)) {
+        $newValue = implode(",", $newValue);
+      }
+      
+      $setParts[$field] = "`$field` = '$newValue'";
+    }
+    
+    // If there are no changes, return null
+    if (empty($setParts)) {
+        return null;
+    }
+    
+    // Combine the set parts into a single string
+    $setString = implode(", ", $setParts);
+    
+    // Construct the final UPDATE query
+    $sql = "INSERT INTO wine_wines SET " . $setString;
+    
+    $update = $db->query($sql);
+    
+    $logArray['category'] = "wine";
+    $logArray['result'] = "success";
+    $logArray['description'] = "Created new wine with fields " . $setString;
+    $logsClass->create($logArray);
+    
+    return true;
+  }
+  
+  public function update($array) {
+    global $db, $logsClass;
+    
+    // Initialize the set part of the query
+    $setParts = [];
+    
+    //remove the memberUID
+    unset($array['uid']);
+    
+    // Loop through the new values array
+    foreach ($array as $field => $newValue) {
+      if (is_array($newValue)) {
+        $newValue = implode(",", $newValue);
+      }
+        // Check if the field exists in the current values and if the values are different
+        if ($this->$field != $newValue) {
+          
+            // Sanitize the field and value to prevent SQL injection
+            //$field = mysqli_real_escape_string($conn, $field);
+            //$newValue = mysqli_real_escape_string($conn, $newValue);
+            // Add to the set part
+            $setParts[$field] = "`$field` = '$newValue'";
+        }
+    }
+    
+    // If there are no changes, return null
+    if (empty($setParts)) {
+        return null;
+    }
+    
+    // Combine the set parts into a single string
+    $setString = implode(", ", $setParts);
+    
+    // Construct the final UPDATE query
+    $sql = "UPDATE wine_wines SET " . $setString;
+    $sql .= " WHERE uid = '" . $this->uid . "' ";
+    $sql .= " LIMIT 1";
+    
+    echo $sql;
+    
+    $update = $db->query($sql);
+    
+    $logArray['category'] = "member";
+    $logArray['result'] = "success";
+    $logArray['description'] = "Updated wine with fields " . $setString;
+    $logsClass->create($logArray);
+    
+    return true;
   }
   
   public function totalBottlesInStock() {
@@ -374,6 +520,7 @@ class wine_list extends wineClass {
     
     $sql  = "UPDATE " . self::$table_name;
     $sql .= " SET wine_uids = CONCAT(wine_uids, '," . $wineUID . "')";
+    $sql .= ", last_updated = '" . date(c) . "'";
     $sql .= " WHERE uid = '" . $this->uid . "'";
     
     echo $sql;
@@ -386,6 +533,7 @@ class wine_list extends wineClass {
     
     $sql  = "UPDATE " . self::$table_name;
     $sql .= " SET wine_uids = '" . implode(",", $wineUIDSArray) . "'";
+    $sql .= ", last_updated = '" . date('c') . "'";
     $sql .= " WHERE uid = '" . $this->uid . "'";
     
     echo $sql;

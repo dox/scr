@@ -20,7 +20,11 @@ function dateDisplay($date = null, $longFormat = false) {
 }
 
 function currencyDisplay($value = null) {
-	$output = "£" . number_format($value,2);
+	if (is_numeric($value)) {
+		$output = "£" . number_format($value,2);
+	} else {
+		$output = "£" . $value;
+	}
 	
 	return $output;
 }

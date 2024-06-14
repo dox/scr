@@ -8,28 +8,10 @@ $cellar = new cellar($wine->cellar_uid);
 
 $title = $wine->name;
 $subtitle = $wine->grape . ", " . $wine->country_of_origin;
-//$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#plus-circle\"/></svg> Add To List", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#deleteTermModal\"");
+$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#plus-circle\"/></svg> Add To List", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#favListModal\"");
+$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#plus-circle\"/></svg> Edit Wine", "value" => "onclick=\"location.href='index.php?n=wine_edit&edit=edit&uid=" . $wine->uid . "'\"");
 echo makeTitle($title, $subtitle, $icons);
-
-
 ?>
-<div class="dropdown float-end">
-  <button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Add to list</button>
-  <ul class="dropdown-menu">
-	  <?php
-	  foreach ($wine->getAllLists() AS $list) {
-		  $list = new wine_list($list['uid']);
-		  
-		  $listIcon = "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#heart-empty\"/></svg> ";
-		  if ($list->isWineInList($wine->uid)) {
-			  $listIcon = "<svg width=\"1em\" height=\"1em\" style=\"color: red;\"><use xlink:href=\"img/icons.svg#heart-full\"/></svg> ";
-		  }
-		  
-		  echo "<li><a class=\"dropdown-item\" href\"#\" onClick=\"handleButtonClick(this)\" data-listuid=\"" . $list->uid . "\" data-wineuid=\"" . $wine->uid . "\">" . $listIcon . $list->name . "</a></li>";
-	  }
-	  ?>
-  </ul>
-</div>
 
 <nav aria-label="breadcrumb">
 	<ol class="breadcrumb">
@@ -148,6 +130,36 @@ if ($wine->bond == 1) {
 			</div>
 		</div>
 	</div>
+</div>
+
+<div class="modal fade" id="favListModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+	<div class="modal-content">
+	  <div class="modal-header">
+		<h1 class="modal-title fs-5" id="exampleModalLabel">Wine Lists</h1>
+		<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+	  </div>
+	  <div class="modal-body">
+		<ul class="list-group list-group-flush">
+			  <?php
+			  foreach ($wine->getAllLists() AS $list) {
+				  $list = new wine_list($list['uid']);
+				  
+				  $listIcon = "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#heart-empty\"/></svg> ";
+				  if ($list->isWineInList($wine->uid)) {
+					  $listIcon = "<svg width=\"1em\" height=\"1em\" style=\"color: red;\"><use xlink:href=\"img/icons.svg#heart-full\"/></svg> ";
+				  }
+				  
+				  echo "<li class=\"list-group-item\"><a class=\"dropdown-item\" href\"#\" onClick=\"handleButtonClick(this)\" data-listuid=\"" . $list->uid . "\" data-wineuid=\"" . $wine->uid . "\">" . $listIcon . $list->name . "</a></li>";
+			  }
+			  ?>
+		  </ul>
+	  </div>
+	  <div class="modal-footer">
+		<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+	  </div>
+	</div>
+  </div>
 </div>
 
 <script>
