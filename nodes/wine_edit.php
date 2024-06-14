@@ -168,7 +168,7 @@ if ($pageType == "add") {
 	</div>
 	<div class="col-xl-4">
 		<div class="card mb-3">
-			<img src="<?php echo $wine->photograph; ?>" class="card-img-top" alt="...">
+			<img src="<?php echo $wine->photograph(); ?>" class="card-img-top" alt="...">
 			<div class="card-body">
 				Image
 			</div>
@@ -190,6 +190,27 @@ if ($pageType == "add") {
 
 <script>
 function submitWine(button) {
+	var safeToContinue = true;
+	
+	// Fetch all the forms we want to apply custom Bootstrap validation styles to
+	const forms = document.querySelectorAll('.needs-validation')
+	
+	// Loop over them and prevent submission
+	Array.from(forms).forEach(form => {
+		if (!form.checkValidity()) {
+			event.preventDefault()
+			event.stopPropagation()
+			
+			safeToContinue = false;
+		}
+		
+		form.classList.add('was-validated')
+	})
+	if (!safeToContinue) {
+		return false;
+	}
+	
+	
 	// Retrieve the data attributes
 	var wine_uid = button.getAttribute('data-wineuid');
 	

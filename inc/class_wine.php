@@ -394,6 +394,16 @@ class wine extends wineClass {
     return $results['total_wines'];
   }
   
+  public function photograph() {
+    $image = "img/blank.jpg";
+    
+    if (isset($this->photograph)) {
+      $image = "img/wines/" . $this->photograph;
+    }
+    
+    return $image;
+  }
+  
   public function pricePerBottle($target = "Internal") {
     if ($target == "Internal") {
       $value = $this->price_internal;

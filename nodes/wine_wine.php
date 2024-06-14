@@ -117,7 +117,7 @@ if ($wine->bond == 1) {
 	</div>
 	<div class="col-xl-4">
 		<div class="card mb-3">
-			<img src="<?php echo $wine->photograph; ?>" class="card-img-top" alt="...">
+			<img src="<?php echo $wine->photograph(); ?>" class="card-img-top" alt="...">
 			<div class="card-body">
 				Image
 			</div>
