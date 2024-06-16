@@ -512,8 +512,6 @@ chart.render();
 
 <datalist id="members-list">
   <?php
-  printArray($currentMembersBooked);
-  
   $membersClass = new members();
   $members = $membersClass->allEnabled();
 

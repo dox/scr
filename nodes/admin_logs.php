@@ -33,7 +33,7 @@ $logs = $logsClass->paginatedResults($offset, $search);
 <?php
 $totalBookings = $db->query("SELECT COUNT(*) AS totalBookings FROM bookings")->fetchArray();
 $totalMeals = $db->query("SELECT COUNT(*) AS totalMeals FROM meals")->fetchArray();
-$oldestMeal = $db->query("SELECT * FROM meals ORDER BY date_meal DESC")->fetchArray();
+$oldestMeal = $db->query("SELECT * FROM meals ORDER BY date_meal ASC LIMIT 1")->fetchArray();
 ?>
 <div class="row">
   <div class="col-sm-6 mb-3 mb-sm-0">

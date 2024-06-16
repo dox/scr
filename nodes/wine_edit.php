@@ -43,9 +43,11 @@ if ($pageType == "add") {
 
 <form class="row g-3 needs-validation" id="wine_addEdit" novalidate>
 
-<div class="alert alert-warning text-center" role="alert">
-	<input type="hidden" value="0" id="bond" name="bond">
-	<input class="form-check-input" type="checkbox" <?php if ($wine->bond ==1) { echo "checked"; } ?> id="bond" name="bond" value="1"> WINE IN-BOND
+<div class="row">
+	<div class="alert alert-warning text-center" role="alert">
+		<input type="hidden" value="0" id="bond" name="bond">
+		<input class="form-check-input" type="checkbox" <?php if ($wine->bond ==1) { echo "checked"; } ?> id="bond" name="bond" value="1"> WINE IN-BOND
+	</div>
 </div>
 
 <div class="row">
@@ -85,7 +87,9 @@ if ($pageType == "add") {
 			</div>
 		</div>
 	</div>
-	
+</div>
+
+<div class="row">
 	<div class="col">
 		<div class="card mb-3">
 			<div class="card-body">
@@ -170,7 +174,7 @@ if ($pageType == "add") {
 		<div class="card mb-3">
 			<img src="<?php echo $wine->photograph(); ?>" class="card-img-top" alt="...">
 			<div class="card-body">
-				Image
+				<input class="form-control" type="file" id="photograph" name="photograph">
 			</div>
 		</div>
 		
@@ -185,6 +189,11 @@ if ($pageType == "add") {
 	<button type="button" class="btn btn-lg btn-primary" data-wineuid="<?php echo $wine->uid; ?>" onClick="submitWine(this)">Save</button>
 	
 	<input type="hidden" id="cellar_uid" name="cellar_uid" value="<?php echo $cellar->uid; ?>">
+	<?php
+	if ($pageType == "edit") {
+		echo "<input type=\"hidden\" id=\"uid\" name=\"uid\" value=\"" . $wine->uid . "\">";
+	}
+	?>
 </div>
 </form>
 
@@ -214,39 +223,25 @@ function submitWine(button) {
 	// Retrieve the data attributes
 	var wine_uid = button.getAttribute('data-wineuid');
 	
-	// Prepare the data to be sent
-	let params = [];
-	
-	if (wine_uid) {
-		params.push('uid=' + encodeURIComponent(<?php echo $wine->uid; ?>));
-	} else {
-		
-	}
-	
 	// Create a new XMLHttpRequest object
 	var xhr = new XMLHttpRequest();
 
 	// Configure it: POST-request for the URL /submit-data
 	xhr.open('POST', 'actions/wine_edit.php', true);
-	xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 
+	// Get the form element
+	var form = document.getElementById('wine_addEdit');
 	
 	// add additional form data to submission
 	var formData = new FormData(wine_addEdit);
 	
-	// iterate through the name-value pairs
-	for (var pair of formData.entries()) {
-		params.push(pair[0] + '=' + encodeURIComponent(pair[1]));
-	}
-	
-	let text = params.join("&");
-
-	
-	// Send the request over the network
-	xhr.send(text);
+	// Send the request with the FormData object
+	xhr.send(formData);
 
 	// This will be called after the request is completed
 	xhr.onload = function() {
+		//alert(xhr.responseText);
+		
 		if (xhr.status != 200) { // analyze HTTP response status
 			alert('Error ' + xhr.status + ': ' + xhr.statusText); // e.g. 404: Not Found
 		} else {

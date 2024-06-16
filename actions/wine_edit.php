@@ -5,14 +5,10 @@ if (isset($_POST['uid'])) {
 	$wineUID = filter_var($_POST['uid'], FILTER_SANITIZE_NUMBER_INT);
 	
 	$wine = new wine($wineUID);
-	
 	$wine->update($_POST);
 } else {
 	// creating new wine
-	echo "creating new wine ";
-	
 	$wine = new wine();
-	
 	$wine->create($_POST);
 }
 
