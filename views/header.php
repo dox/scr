@@ -31,7 +31,7 @@
 					$output .= "<a class=\"nav-link\" aria-current=\"page\" href=\"" . $value['url'] . "\">";
 					$output .= $value['icon'];
 					$output .= " " . $value['name'];
-					$output .= "</li>";
+					$output .= "</a></li>";
 
 					echo $output;
 				}
