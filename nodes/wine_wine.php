@@ -33,11 +33,6 @@ if ($wine->bond == 1) {
 	<div class="col">
 		<div class="card mb-3">
 			<div class="card-body">
-				<div class="btn-group-vertical btn-group-sm float-end" role="group" aria-label="Vertical radio toggle button group">
-				  <button type="button" class="btn btn-outline-primary">+1</button>
-				  <button type="button" class="btn btn-outline-primary">-1</button>
-				</div>
-				
 				<h5 class="card-title"><?php echo $wine->qty; ?></h5>
 				<h6 class="card-subtitle mb-2 text-body-secondary">Bottles</h6>
 			</div>
