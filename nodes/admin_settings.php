@@ -123,6 +123,7 @@ $iconsArray = array(
   "dark-mode" => "Dark Mode",
   "light-mode" => "Light Mode",
   "auto-mode" => "Auto Mode",
+  "basket" => "Shopping Basket",
   "blank" => "Blank"
 );
 
@@ -137,7 +138,7 @@ foreach ($iconsArray AS $icon => $name) {
   $output .= "<span><svg width=\"3em\" height=\"3em\">";
   $output .= "<use xlink:href=\"img/icons.svg#" . $icon . "\"/>";
   $output .= "</svg></span>";
-  $output .= "<p class=\"card-text text-muted\">" . $name . "</p>";
+  $output .= "<p class=\"card-text pt-3 text-muted\">" . $name . "</p>";
   $output .= "</div>";
   $output .= "</div>";
   $output .= "</div>";

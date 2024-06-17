@@ -6,7 +6,7 @@ $cleanUID = filter_var($_GET['uid'], FILTER_SANITIZE_NUMBER_INT);
 $wine = new wine($cleanUID);
 $cellar = new cellar($wine->cellar_uid);
 
-$title = $wine->name;
+$title = $wine->bin . ": " . $wine->name;
 $subtitle = $wine->grape . ", " . $wine->country_of_origin;
 $icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#plus-circle\"/></svg> Add To List", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#favListModal\"");
 $icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#plus-circle\"/></svg> Edit Wine", "value" => "onclick=\"location.href='index.php?n=wine_edit&edit=edit&uid=" . $wine->uid . "'\"");
