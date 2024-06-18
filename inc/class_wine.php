@@ -603,9 +603,66 @@ class wine_list extends wineClass {
     echo $sql;
     
     $results = $db->query($sql);
+  }  
+}
+
+class wine_transactions extends wineClass {
+  protected static $table_name = "wine_transactions";
+  
+  public function create($array) {
+    global $db, $logsClass;
+    
+    foreach (array_keys($array['uid']) AS $uid) {
+      $wineItems[] = array(
+        'uid' => $array['uid'][$uid],
+        'qty' => $array['qty'][$uid],
+        'price' => $array['price'][$uid]
+      );
+    }
+    
+    $wineJSON = json_encode($wineItems);
+    
+    // Construct the final UPDATE query
+    $sql  = "INSERT INTO " . self::$table_name;
+    $sql .= " SET username = '" . $_SESSION['username'] . "',";
+    $sql .= " reference = '" . $array['reference'] . "',";
+    $sql .= " customer = '" . $array['customer'] . "',";
+    $sql .= " contents = '" . $wineJSON . "',";
+    $sql .= " notes = '" . $array['notes'] . "'";
+    
+    //echo $sql;
+    
+    $update = $db->query($sql);
+    
+    $logArray['category'] = "wine";
+    $logArray['result'] = "success";
+    $logArray['description'] = "Created new wine transaction with fields TBC";
+    $logsClass->create($logArray);
+    
+    return true;
   }
   
+  public function getTransaction($uid) {
+    global $db;
   
+    $sql  = "SELECT * FROM " . self::$table_name;
+    $sql .= " WHERE uid = '" . $uid ."'";
+  
+    $result = $db->query($sql)->fetchArray();
+    
+    return $result;
+  }
+  
+  public function getAllTransactions() {
+    global $db;
+  
+    $sql  = "SELECT * FROM " . self::$table_name;
+    $sql .= " ORDER BY date DESC";
+  
+    $results = $db->query($sql)->fetchAll();
+    
+    return $results;
+  }
   
 }
 ?>

@@ -6,7 +6,7 @@ $cleanUID = filter_var($_GET['uid'], FILTER_SANITIZE_NUMBER_INT);
 $wine = new wine($cleanUID);
 $cellar = new cellar($wine->cellar_uid);
 
-$title = "Wine Checkout";
+$title = "Wine Posting";
 //$subtitle = $wine->grape . ", " . $wine->country_of_origin;
 //$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#plus-circle\"/></svg> Add To List", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#favListModal\"");
 //$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#plus-circle\"/></svg> Edit Wine", "value" => "onclick=\"location.href='index.php?n=wine_edit&edit=edit&uid=" . $wine->uid . "'\"");
@@ -16,7 +16,7 @@ echo makeTitle($title, $subtitle, $icons);
 <nav aria-label="breadcrumb">
 	<ol class="breadcrumb">
 		<li class="breadcrumb-item"><a href="index.php?n=wine_index">Wine</a></li>
-		<li class="breadcrumb-item active">Checkout</li>
+		<li class="breadcrumb-item active">Posting</li>
 	</ol>
 </nav>
 
@@ -32,9 +32,19 @@ echo makeTitle($title, $subtitle, $icons);
 <hr class="pb-3" />
 
 <form method="post" id="termUpdate" action="<?php echo $_SERVER['REQUEST_URI']; ?>" class="needs-validation" novalidate>
-<?php printArray($_POST); ?>
+<?php
+if (isset($_POST['uid'])) {
+	printArray($_POST);
+	$transaction = new wine_transactions();
+	
+	$transaction->create($_POST);
+}
+
+?>
+
 <div class="row">
 	<div class="col-xl-8">
+		<label for="selected-items" class="form-label">Wines</label>
 		<div id="selected-items"></div>
 		
 		<button type="submit" class="btn btn-primary">Save</button>
@@ -101,6 +111,7 @@ document.getElementById('wine_search').addEventListener('keyup', function() {
 					listItem.addEventListener('click', function() {
 						fetchDetails(item.uid);
 						resultsDiv.innerHTML = ''; // Clear results on click
+						document.getElementById('wine_search').value = '';
 					});
 					resultsDiv.appendChild(listItem);
 				});
@@ -112,14 +123,20 @@ document.getElementById('wine_search').addEventListener('keyup', function() {
 	xhr.send();
 });
 
+let selectedUIDS = [];
+
 function fetchDetails(uid) {
+	selectedUIDS.push(uid);
+	
 	let xhr = new XMLHttpRequest();
-	xhr.open('GET', 'nodes/widgets/_wineCheckout.php?uid=' + encodeURIComponent(uid), true);
+	xhr.open('GET', 'nodes/widgets/_wineCheckout.php?uids=' + encodeURIComponent(selectedUIDS.join(',')), true);
 	xhr.onload = function() {
 		if (xhr.status === 200) {
-			document.getElementById('selected-items').innerHTML = document.getElementById('selected-items').innerHTML + xhr.responseText;
+			document.getElementById('selected-items').innerHTML = xhr.responseText;
 		}
 	};
 	xhr.send();
 }
 </script>
+
+

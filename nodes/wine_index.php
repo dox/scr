@@ -4,7 +4,7 @@ pageAccessCheck("wine");
 $title = "Wine Management";
 $subtitle = "BETA FEATURE!";
 $icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#plus-circle\"/></svg> Add Wine", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#deleteTermModal\"");
-$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#basket\"/></svg> Add Checkout", "value" => "onclick=\"location.href='index.php?n=wine_checkout'\"");
+$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#basket\"/></svg> Add Posting", "value" => "onclick=\"location.href='index.php?n=wine_posting'\"");
 
 echo makeTitle($title, $subtitle, $icons);
 
@@ -59,6 +59,37 @@ $wineClass = new wineClass();
 <div id="chart"></div>
 
 <div class="row">
+	<h1>Recent Postings</h1>
+	<?php
+	$wineTransactions = new wine_transactions();
+	
+	$output = "<ul class=\"list-group\">";
+	foreach ($wineTransactions->getAllTransactions() AS $transaction) {
+		$contents = json_decode($transaction['contents']);
+		
+		$totalBottles = 0;
+		foreach ($contents AS $item) {
+			$totalBottles = $totalBottles + $item->qty;
+		}
+		
+		$totalWines = count($contents);
+		
+		$output .= "<li  class=\"list-group-item\">";
+		$output .= "<a href=\"index.php?n=wine_invoice&uid=" . $transaction['uid'] . "\">";
+		$output .= dateDisplay($transaction['date']) . $transaction['customer'] . $transaction['reference'];
+		$output .= "Wines: " . $totalWines;
+		$output .= "Bottles: " . $totalBottles;
+		$output .= "</a>";
+		
+		$output .= "</li>";
+	}
+	$output .= "</ul>";
+	echo $output;
+
+	?>
+</div>
+
+<div class="row">
 	<h1>My Lists</h1>
 	<?php
 	$output = "<ul class=\"list-group\">";
@@ -80,49 +111,55 @@ $wineClass = new wineClass();
 </div>
 
 <script>
-	document.getElementById('wine_search').addEventListener('keyup', function() {
-		let query = this.value;
-		
-		// Create a new XMLHttpRequest object
-		let xhr = new XMLHttpRequest();
-		
-		// Configure it: GET-request for the URL with the query
-		xhr.open('GET', 'actions/wine_search.php?q=' + encodeURIComponent(query), true);
-		
-		// Set up the callback function
-		xhr.onload = function() {
-			if (xhr.status === 200) {
-				// Parse JSON response
-				let response = JSON.parse(xhr.responseText);
+document.getElementById('wine_search').addEventListener('keyup', function() {
+	let query = this.value;
+	let resultsDiv = document.getElementById('wine_search_results');
+
+	// Clear the results if the input is empty
+	if (query.trim() === '') {
+		resultsDiv.innerHTML = '';
+		return;
+	}
+	
+	// Create a new XMLHttpRequest object
+	let xhr = new XMLHttpRequest();
+	
+	// Configure it: GET-request for the URL with the query
+	xhr.open('GET', 'actions/wine_search.php?q=' + encodeURIComponent(query), true);
+	
+	// Set up the callback function
+	xhr.onload = function() {
+		if (xhr.status === 200) {
+			// Parse JSON response
+			let response = JSON.parse(xhr.responseText);
+			
+			// Display the results
+			resultsDiv.innerHTML = '';
+
+			if (response.data.length === 0) {
+				let listItem = document.createElement('li');
+				listItem.className = "list-group-item";
+				listItem.textContent = 'No results found';
 				
-				// Display the results
-				let resultsDiv = document.getElementById('wine_search_results');
-				resultsDiv.innerHTML = '';
-		
-				if (response.data.length === 0) {
+				resultsDiv.appendChild(listItem);
+			} else {
+				response.data.forEach(function(item) {
 					let listItem = document.createElement('li');
 					listItem.className = "list-group-item";
-					listItem.textContent = 'No results found';
+					var link = document.createElement("a");
+					link.href = "index.php?n=wine_wine&uid=" + item.uid;
+					link.textContent = item.name;
+					listItem.appendChild(link);
 					
 					resultsDiv.appendChild(listItem);
-				} else {
-					response.data.forEach(function(item) {
-						let listItem = document.createElement('li');
-						listItem.className = "list-group-item";
-						var link = document.createElement("a");
-						link.href = "index.php?n=wine_wine&uid=" + item.uid; // Replace "https://example.com" with your actual URL
-						link.textContent = item.name;
-						listItem.appendChild(link);
-						
-						resultsDiv.appendChild(listItem);
-					});
-				}
+				});
 			}
-		};
-		
-		// Send the request
-		xhr.send();
-	});
+		}
+	};
+	
+	// Send the request
+	xhr.send();
+});
 </script>
 
 <?php
@@ -142,10 +179,10 @@ var options = {
 },
 chart: {
   height: 350,
-  type: 'treemap'
-},
-title: {
-  text: 'Basic Treemap'
+  type: 'treemap',
+  toolbar: {
+	  show: false
+  }
 }
 };
 
