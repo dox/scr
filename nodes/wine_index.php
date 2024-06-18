@@ -4,7 +4,7 @@ pageAccessCheck("wine");
 $title = "Wine Management";
 $subtitle = "BETA FEATURE!";
 $icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#plus-circle\"/></svg> Add Wine", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#deleteTermModal\"");
-$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#journal-text\"/></svg> Add Order", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#deleteTermModal\"");
+$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#basket\"/></svg> Add Checkout", "value" => "onclick=\"location.href='index.php?n=wine_checkout'\"");
 
 echo makeTitle($title, $subtitle, $icons);
 
@@ -49,20 +49,10 @@ $wineClass = new wineClass();
 	?>
 </div>
 
-<style>
-	#wine_search_results {
-		position: absolute;
-		z-index: 1;
-		max-height: 200px;
-		overflow-y: auto;
-	}
-</style>
-
 <div class="row">
 	<div class="col">
 		<input type="text" id="wine_search" class="form-control form-control-lg" placeholder="Quick search" autocomplete="off" spellcheck="false" aria-describedby="wine_searchHelp">
 		<ul id="wine_search_results" class="list-group"></ul>
-		
 	</div>
 </div>
 

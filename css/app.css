@@ -20,3 +20,9 @@ body {
 #checkboxes {
   display: none;
 }
+#wine_search_results {
+  position: absolute;
+  z-index: 1;
+  max-height: 200px;
+  overflow-y: auto;
+}
