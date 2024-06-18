@@ -18,6 +18,10 @@ if ($searchFilter == "list") {
 	$wines = $wineClass->getAllWinesByFilter($searchFilter, $searchValue);
 } elseif ($searchFilter == "vintage") {
 	$wines = $wineClass->getAllWinesByFilter($searchFilter, $searchValue);
+} elseif ($searchFilter == "grape") {
+	$wines = $wineClass->getAllWinesByFilter($searchFilter, $searchValue);
+} elseif ($searchFilter == "country_of_origin") {
+	$wines = $wineClass->getAllWinesByFilter($searchFilter, $searchValue);
 } else {
 	die("Search filter not recognised");
 }
