@@ -101,7 +101,7 @@ if ($pageType == "add") {
 	<div class="col">
 		<div class="card mb-3">
 			<div class="card-body">
-				<input type="text" class="form-control" id="price_purchase" name="price_purchase" value="<?php echo $wine->pricePerBottle("Purchase"); ?>">
+				<input type="text" class="form-control" id="price_purchase" name="price_purchase" value="<?php echo $wine->pricePerBottle("Purchase"); ?>" required>
 				<label for="price_purchase" class="form-label">Purchase Price</label>
 			</div>
 		</div>
@@ -111,10 +111,10 @@ if ($pageType == "add") {
 			<div class="card-body">
 				<div class="row">
 					<div class="col-sm">
-						<input type="text" class="form-control" id="price_internal" name="price_internal" value="<?php echo $wine->pricePerBottle("Internal"); ?>">
+						<input type="text" class="form-control" id="price_internal" name="price_internal" value="<?php echo $wine->pricePerBottle("Internal"); ?>" required>
 					</div>
 					<div class="col-sm">
-						<input type="text" class="form-control" id="price_external" name="price_external" value="<?php echo $wine->pricePerBottle("External"); ?>">
+						<input type="text" class="form-control" id="price_external" name="price_external" value="<?php echo $wine->pricePerBottle("External"); ?>" required>
 					</div>
 				</div>
 				<label for="price_internal" class="form-label">Internal/External Price</label>
@@ -124,7 +124,7 @@ if ($pageType == "add") {
 	<div class="col">
 		<div class="card mb-3">
 			<div class="card-body">
-				<input type="text" class="form-control" id="vintage" name="vintage" value="<?php echo $wine->vintage; ?>">
+				<input type="text" class="form-control" id="vintage" name="vintage" value="<?php echo $wine->vintage; ?>" required>
 				<label for="price_purchvintagease" class="form-label">Vintage</label>
 			</div>
 		</div>
@@ -132,7 +132,7 @@ if ($pageType == "add") {
 	<div class="col">
 		<div class="card mb-3">
 			<div class="card-body">
-				<input type="text" class="form-control" id="code" name="code" list="codes-list" value="<?php echo $wine->code; ?>">
+				<input type="text" class="form-control" id="code" name="code" list="codes-list" value="<?php echo $wine->code; ?>" required>
 				<label for="code" class="form-label">Wine Code</label>
 				<datalist id="codes-list">
 					<?php

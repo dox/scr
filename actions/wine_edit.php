@@ -6,6 +6,7 @@ if (isset($_POST['uid'])) {
 	
 	$wine = new wine($wineUID);
 	$wine->update($_POST);
+	echo "UPDATE";
 } else {
 	// creating new wine
 	$wine = new wine();

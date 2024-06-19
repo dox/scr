@@ -340,7 +340,7 @@ class wine extends wineClass {
     //remove the uid
     unset($array['uid']);
     
-    if (isset($_FILES['photograph'])) {
+    if (!empty($_FILES['photograph']['name'])) {
       
       $target_dir = "/var/www/scr2.seh.ox.ac.uk/public_html/img/wines/";
       $target_file = $target_dir . basename($_FILES["photograph"]["name"]);
@@ -615,12 +615,14 @@ class wine_transactions extends wineClass {
     foreach (array_keys($array['uid']) AS $uid) {
       $wineItems[] = array(
         'uid' => $array['uid'][$uid],
+        'name' => $array['name'][$uid],
+        'grape' => $array['grape'][$uid],
         'qty' => $array['qty'][$uid],
         'price' => $array['price'][$uid]
       );
     }
     
-    $wineJSON = json_encode($wineItems);
+    $wineJSON = json_encode($wineItems, JSON_UNESCAPED_UNICODE);
     
     // Construct the final UPDATE query
     $sql  = "INSERT INTO " . self::$table_name;

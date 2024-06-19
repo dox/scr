@@ -42,7 +42,10 @@ echo makeTitle($title, $subtitle, $icons);
 				<div class="text-muted">
 					<h5 class="mb-3">Billed To:</h5>
 					<h5 class="mb-3"><?php echo $transaction['customer']; ?></h5>
-					<p class="mb-3"><?php echo $transaction['notes']; ?></p>
+					<?php if (!empty($transaction['notes'])) {
+						echo "<p>" . $transaction['notes'] . "</p>";
+					}
+					?>
 				</div>
 			</div>
 			<div class="col-sm-6">
@@ -51,10 +54,13 @@ echo makeTitle($title, $subtitle, $icons);
 						<h5 class="font-size-15 mb-1">Invoice Date:</h5>
 						<p><?php echo dateDisplay($transaction['date'], true); ?></p>
 					</div>
-					<div class="mt-4">
-						<h5 class="font-size-15 mb-1">Customer Reference No:</h5>
-						<p><?php echo $transaction['reference']; ?></p>
-					</div>
+					<?php if (!empty($transaction['reference'])) {
+						echo "<div class=\"mt-4\">";
+						echo "<h5 class=\"mb-1\">Customer Reference No:</h5>";
+						echo "<p>" . $transaction['reference'] . "</p>";
+						echo "</div>";
+					}
+					?>
 				</div>
 			</div>
 		</div>
@@ -86,8 +92,8 @@ echo makeTitle($title, $subtitle, $icons);
 							$output .= "<th scope=\"row\">" . $i . "</th>";
 							$output .= "<td>";
 							$output .= "<div>";
-							$output .= "<h5 class=\"text-truncate mb-1\">" . $wine->name . "</h5>";
-							$output .= "<p class=\"text-muted mb-0\">" . $wine->grape . "</p>";
+							$output .= "<h5 class=\"text-truncate mb-1\">" . $item->name . "</h5>";
+							$output .= "<p class=\"text-muted mb-0\">" . $item->grape . "</p>";
 							$output .= "</div>";
 							$output .= "</td>";
 							$output .= "<td>" . currencyDisplay($item->price) . "</td>";

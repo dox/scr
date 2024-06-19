@@ -17,7 +17,9 @@ function wineListItem($wineUID) {
 	$output  = "<div class=\"card mb-3\">";
 	$output .= "<div class=\"card-body\">";
 	$output .= "<h5 class=\"card-title\">" . $wine->name . "</h5>";
-	
+	$output .= "<input type=\"hidden\" id=\"name\" name=\"name[]\" value=\"" . $wine->name . "\">";
+	$output .= "<input type=\"hidden\" id=\"grape\" name=\"grape[]\" value=\"" . $wine->grape . "\">";
+
 	$output .= "<p class=\"card-text\">";
 	$output .= "<div class=\"row\">";
 	$output .= "<div class=\"col\">";

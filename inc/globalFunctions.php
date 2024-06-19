@@ -289,6 +289,7 @@ function makeTitle($title = null, $subtitle = nulll, $iconsArray = null) {
 		$output .= $icon['name'];
 		$output .= "</button>";
 	}
+	
 	$output .= "</div>";
 
 	return $output;
