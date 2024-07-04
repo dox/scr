@@ -103,7 +103,7 @@
 				}
 				
 				// needs allowing for checkpoint_charlie("wine") when ready
-				if($_SESSION["username"] == "BREAKSPEAR") {
+				if(checkpoint_charlie("wine")) {
 					echo "<a class=\"dropdown-item\" href=\"index.php?n=wine_index\">Wine</a>";
 				}
 				
