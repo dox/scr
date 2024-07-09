@@ -29,66 +29,110 @@ if ($wine->bond == 1) {
 }
 ?>
 
-<div class="row">
-	<div class="col">
-		<div class="card mb-3">
-			<div class="card-body">
-				<h5 class="card-title"><?php echo $wine->qty; ?></h5>
-				<h6 class="card-subtitle mb-2 text-body-secondary">Bottles</h6>
-			</div>
-		</div>
-	</div>
-	<div class="col">
-		<div class="card mb-3">
-			<div class="card-body">
-				<h5 class="card-title"><?php echo currencyDisplay($wine->pricePerBottle("Purchase")); ?></h5>
-				<h6 class="card-subtitle mb-2 text-body-secondary">Purchase Price</h6>
-			</div>
-		</div>
-	</div>
-	<div class="col">
-		<div class="card mb-3">
-			<div class="card-body">
-				<h5 class="card-title"><?php echo currencyDisplay($wine->pricePerBottle("Internal")) . " / " . currencyDisplay($wine->pricePerBottle("External")); ?></h5>
-				<h6 class="card-subtitle mb-2 text-body-secondary">Internal/External Price</h6>
-			</div>
-		</div>
-	</div>
-	<div class="col">
-		<div class="card mb-3">
-			<div class="card-body">
-				<h5 class="card-title"><a href="index.php?n=wine_search&filter=vintage&value=<?php echo $wine->vintage; ?>"><?php echo $wine->vintage; ?></a></h5>
-				<h6 class="card-subtitle mb-2 text-body-secondary">Vintage</h6>
-			</div>
-		</div>
-	</div>
-	<div class="col">
-		<div class="card mb-3">
-			<div class="card-body">
-				<h5 class="card-title"><a href="index.php?n=wine_search&filter=code&value=<?php echo $wine->code; ?>"><?php echo $wine->code; ?></a></h5>
-				<h6 class="card-subtitle mb-2 text-body-secondary">Wine Code</h6>
-			</div>
-		</div>
-	</div>
-</div>
+<ul class="nav nav-tabs nav-fill" id="myTab" role="tablist">
+  <li class="nav-item" role="presentation">
+	<button class="nav-link active" id="information-tab" data-bs-toggle="tab" data-bs-target="#information-tab-pane" type="button" role="tab" aria-controls="information-tab-pane" aria-selected="true">Information</button>
+  </li>
+  <li class="nav-item" role="presentation">
+	<button class="nav-link" id="history-tab" data-bs-toggle="tab" data-bs-target="#history-tab-pane" type="button" role="tab" aria-controls="history-tab-pane" aria-selected="false">History</button>
+  </li>
+</ul>
 
-<div class="row">
-	<div class="col-xl-8">
-		<div class="card mb-3">
-			<div class="card-body">
-				<h5 class="card-title">Tasting Notes</h5>
-				<?php echo $wine->tasting; ?>
-			</div>
-		</div>
-		
-		<div class="card mb-3">
-			<div class="card-body">
-				<h5 class="card-title">Private Notes</h5>
-				<?php echo $wine->notes; ?>
-			</div>
-		</div>
-		
-		<div class="card mb-3">
+<div class="tab-content pt-3" id="myTabContent">
+  <div class="tab-pane fade show active" id="information-tab-pane" role="tabpanel" aria-labelledby="information-tab" tabindex="0">
+	  <div class="row">
+		  <div class="col">
+			  <div class="card mb-3">
+				  <div class="card-body">
+					  <h5 class="card-title"><?php echo $wine->qty; ?></h5>
+					  <h6 class="card-subtitle mb-2 text-body-secondary">Bottles</h6>
+				  </div>
+			  </div>
+		  </div>
+		  <div class="col">
+			  <div class="card mb-3">
+				  <div class="card-body">
+					  <h5 class="card-title"><?php echo currencyDisplay($wine->pricePerBottle("Purchase")); ?></h5>
+					  <h6 class="card-subtitle mb-2 text-body-secondary">Purchase Price</h6>
+				  </div>
+			  </div>
+		  </div>
+		  <div class="col">
+			  <div class="card mb-3">
+				  <div class="card-body">
+					  <h5 class="card-title"><?php echo currencyDisplay($wine->pricePerBottle("Internal")) . " / " . currencyDisplay($wine->pricePerBottle("External")); ?></h5>
+					  <h6 class="card-subtitle mb-2 text-body-secondary">Internal/External Price</h6>
+				  </div>
+			  </div>
+		  </div>
+		  <div class="col">
+			  <div class="card mb-3">
+				  <div class="card-body">
+					  <h5 class="card-title"><a href="index.php?n=wine_search&filter=vintage&value=<?php echo $wine->vintage; ?>"><?php echo $wine->vintage; ?></a></h5>
+					  <h6 class="card-subtitle mb-2 text-body-secondary">Vintage</h6>
+				  </div>
+			  </div>
+		  </div>
+		  <div class="col">
+			  <div class="card mb-3">
+				  <div class="card-body">
+					  <h5 class="card-title"><a href="index.php?n=wine_search&filter=code&value=<?php echo $wine->code; ?>"><?php echo $wine->code; ?></a></h5>
+					  <h6 class="card-subtitle mb-2 text-body-secondary">Wine Code</h6>
+				  </div>
+			  </div>
+		  </div>
+	  </div>
+	  
+	  <div class="row">
+		  <div class="col-xl-8">
+			  <div class="card mb-3">
+				  <div class="card-body">
+					  <h5 class="card-title">Tasting Notes</h5>
+					  <?php echo $wine->tasting; ?>
+				  </div>
+			  </div>
+			  
+			  <div class="card mb-3">
+				  <div class="card-body">
+					  <h5 class="card-title">Private Notes</h5>
+					  <?php echo $wine->notes; ?>
+				  </div>
+			  </div>
+			  
+			  <div class="card mb-3">
+				  <div class="card-body">
+					  <?php
+					  printArray($wine);
+					  ?>
+				  </div>
+			  </div>
+		  </div>
+		  <div class="col-xl-4">
+			  <div class="card mb-3">
+					<img src="<?php echo $wine->photograph(); ?>" class="card-img-top" alt="...">
+					<div class="card-body">
+						Image
+					</div>
+			   </div>
+				
+				<div class="card mb-3">
+					  <div class="card-body">
+						  <h5 class="card-title">Supplier</h5>
+						  <?php echo $wine->supplier; ?>
+					  </div>
+				  </div>
+			  
+			  <div class="card mb-3">
+				  <img src="https://as1.ftcdn.net/v2/jpg/00/91/94/40/1000_F_91944058_7lRk2ok81t7vS6JsVP81BL9Jp6VajrSh.jpg" class="card-img-top" alt="...">
+				  <div class="card-body">
+					  Wine Origin
+				  </div>
+			  </div>
+		  </div>
+	  </div>
+  </div>
+  <div class="tab-pane fade" id="history-tab-pane" role="tabpanel" aria-labelledby="history-tab" tabindex="0">
+	  <div class="card mb-3">
 			<div class="card-body">
 				<h5 class="card-title">History</h5>
 				
@@ -101,31 +145,10 @@ if ($wine->bond == 1) {
 				</ul>
 			</div>
 		</div>
-		
-		<div class="card mb-3">
-			<div class="card-body">
-				<?php
-				printArray($wine);
-				?>
-			</div>
-		</div>
-	</div>
-	<div class="col-xl-4">
-		<div class="card mb-3">
-			<img src="<?php echo $wine->photograph(); ?>" class="card-img-top" alt="...">
-			<div class="card-body">
-				Image
-			</div>
-		</div>
-		
-		<div class="card mb-3">
-			<img src="https://as1.ftcdn.net/v2/jpg/00/91/94/40/1000_F_91944058_7lRk2ok81t7vS6JsVP81BL9Jp6VajrSh.jpg" class="card-img-top" alt="...">
-			<div class="card-body">
-				Wine Origin
-			</div>
-		</div>
-	</div>
+  </div>
 </div>
+
+
 
 <div class="modal fade" id="favListModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog">

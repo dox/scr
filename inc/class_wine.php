@@ -131,11 +131,14 @@ class wineClass {
     return $results;
   }
   
-  public function stats_winesByGrape() {
+  public function stats_winesByGrape($cellarUID = null) {
     global $db;
   
     $sql  = "SELECT grape, COUNT(*) AS totalBins FROM wine_wines";
     $sql .= " WHERE grape <> ''";
+    if ($cellarUID != null) {
+      $sql .= " AND cellar_uid = '" . $cellarUID . "'";
+    }
     $sql .= " GROUP BY grape";
   
     $results = $db->query($sql)->fetchAll();
@@ -328,6 +331,20 @@ class wine extends wineClass {
     return true;
   }
   
+  public function friendly_name($full = false) {
+    $output  = $this->name;
+    
+    if ($full == true) {
+      $cellar = new cellar($this->cellar_uid);
+      
+      $output = $cellar->name . " > " . $this->name;
+    } else {
+      $output  = $this->name;
+    }
+    
+    return $output;
+  }
+  
   public function update($array) {
     global $db, $logsClass;
     
@@ -451,7 +468,7 @@ class wine extends wineClass {
   public function photograph() {
     $image = "img/blank.jpg";
     
-    if (isset($this->photograph)) {
+    if (!empty($this->photograph)) {
       $image = "img/wines/" . $this->photograph;
     }
     

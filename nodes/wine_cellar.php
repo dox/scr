@@ -20,6 +20,8 @@ echo makeTitle($title, $subtitle, $icons);
 
 <hr class="pb-3" />
 
+<div id="chart"></div>
+
 <?php
 echo "<p>Total purchase value: " . currencyDisplay($cellar->totalPurchaseValue()) . "</p>";
 ?>
@@ -34,3 +36,38 @@ foreach ($cellar->getBins() AS $bin) {
 	?>
 </div>
 
+<?php
+$wineClass = new wineClass;
+foreach ($wineClass->stats_winesByGrape($cellar->uid
+) AS $grape => $count) {
+	$data[] = "{ x: '" . $grape . "', y: " . $count . "}";
+}
+?>
+<script>
+var options = {
+  series: [
+  {
+	data: [<?php echo implode(",", $data); ?>]
+  }
+],
+  legend: {
+  show: false
+},
+chart: {
+  height: 350,
+  type: 'treemap',
+  toolbar: {
+	  show: false
+  },
+  events: {
+	  click(event, chartContext, opts) {
+		  var clicked_grape = opts.config.series[opts.seriesIndex].data[opts.dataPointIndex].x;
+		  window.location.href = 'index.php?n=wine_search&filter=grape&value=' + clicked_grape;
+	  }
+  }
+}
+};
+
+var chart = new ApexCharts(document.querySelector("#chart"), options);
+chart.render();
+</script>

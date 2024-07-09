@@ -111,7 +111,7 @@ document.getElementById('wine_search').addEventListener('keyup', function() {
 					
 					let listItem = document.createElement('li');
 					listItem.className = "list-group-item";
-					listItem.textContent = `${item.uid}: ${item.name}`;
+					listItem.textContent = `${item.name}`;
 					listItem.style.cursor = 'pointer';
 					listItem.addEventListener('click', function() {
 						fetchDetails(item.uid);

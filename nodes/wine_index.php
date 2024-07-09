@@ -18,6 +18,64 @@ $wineClass = new wineClass();
 
 <hr class="pb-3" />
 
+<div class="row pb-3">
+	<div class="col">
+		<input type="text" id="wine_search" class="form-control form-control-lg" placeholder="Quick search" autocomplete="off" spellcheck="false" aria-describedby="wine_searchHelp">
+		<ul id="wine_search_results" class="list-group"></ul>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col">
+		<div class="card mb-3">
+			<div class="card-body">
+				<h5 class="card-title"><?php echo "??"; ?></h5>
+				<h6 class="card-subtitle mb-2 text-body-secondary">Stats</h6>
+			</div>
+		</div>
+	</div>
+	<div class="col">
+		<div class="card mb-3">
+			<div class="card-body">
+				<h5 class="card-title"><?php echo "??"; ?></h5>
+				<h6 class="card-subtitle mb-2 text-body-secondary">Stats</h6>
+			</div>
+		</div>
+	</div>
+	<div class="col">
+		<div class="card mb-3">
+			<div class="card-body">
+				<h5 class="card-title"><?php echo "??"; ?></h5>
+				<h6 class="card-subtitle mb-2 text-body-secondary">Stats</h6>
+			</div>
+		</div>
+	</div>
+	<div class="col">
+		<div class="card mb-3">
+			<div class="card-body">
+				<h5 class="card-title"><?php echo "??"; ?></h5>
+				<h6 class="card-subtitle mb-2 text-body-secondary">Stats</h6>
+			</div>
+		</div>
+	</div>
+	<div class="col">
+		<div class="card mb-3">
+			<div class="card-body">
+				<h5 class="card-title"><?php echo "??"; ?></h5>
+				<h6 class="card-subtitle mb-2 text-body-secondary">Stats</h6>
+			</div>
+		</div>
+	</div>
+	<div class="col">
+		<div class="card mb-3">
+			<div class="card-body">
+				<h5 class="card-title"><?php echo "??"; ?></h5>
+				<h6 class="card-subtitle mb-2 text-body-secondary">Stats</h6>
+			</div>
+		</div>
+	</div>
+</div>
+
 <div class="row">
 	<?php
 	foreach ($wineClass->getAllCellars() AS $cellar) {
@@ -49,65 +107,58 @@ $wineClass = new wineClass();
 </div>
 
 <div class="row">
-	<div class="col">
-		<input type="text" id="wine_search" class="form-control form-control-lg" placeholder="Quick search" autocomplete="off" spellcheck="false" aria-describedby="wine_searchHelp">
-		<ul id="wine_search_results" class="list-group"></ul>
+	<div class="col-6">
+		<h1>Recent Postings</h1>
+		<?php
+		$wineTransactions = new wine_transactions();
+		
+		$output = "<ul class=\"list-group\">";
+		foreach ($wineTransactions->getAllTransactions() AS $transaction) {
+			$contents = json_decode($transaction['contents']);
+			
+			$totalBottles = 0;
+			foreach ($contents AS $item) {
+				$totalBottles = $totalBottles + $item->qty;
+			}
+			
+			$totalWines = count($contents);
+			
+			$output .= "<li  class=\"list-group-item\">";
+			$output .= "<a href=\"index.php?n=wine_invoice&uid=" . $transaction['uid'] . "\">";
+			$output .= dateDisplay($transaction['date']) . " " . $transaction['customer'] . " " . $transaction['reference'];
+			$output .= " Wines: " . $totalWines;
+			$output .= " Bottles: " . $totalBottles;
+			$output .= "</a>";
+			
+			$output .= "</li>";
+		}
+		$output .= "</ul>";
+		echo $output;
+		
+		?>
+	</div>
+	<div class="col-6">
+		<h1>My Lists</h1>
+		<?php
+		$output = "<ul class=\"list-group\">";
+		foreach ($wineClass->getAllLists() AS $list) {
+			$list = new wine_list($list['uid']);
+			
+			$output .= "<li  class=\"list-group-item\">";
+			$output .= "<svg width=\"1em\" height=\"1em\" class=\"text-muted\"><use xlink:href=\"img/icons.svg#heart-full\"/></svg> ";
+			$output .= "<a href=\"index.php?n=wine_search&filter=list&value=" . $list->uid . "\">";
+			$output .= $list->name_full();
+			$output .= "</a>";
+			
+			$output .= "</li>";
+		}
+		$output .= "</ul>";
+		echo $output;
+		
+		?>
 	</div>
 </div>
 
-<div id="chart"></div>
-
-<div class="row">
-	<h1>Recent Postings</h1>
-	<?php
-	$wineTransactions = new wine_transactions();
-	
-	$output = "<ul class=\"list-group\">";
-	foreach ($wineTransactions->getAllTransactions() AS $transaction) {
-		$contents = json_decode($transaction['contents']);
-		
-		$totalBottles = 0;
-		foreach ($contents AS $item) {
-			$totalBottles = $totalBottles + $item->qty;
-		}
-		
-		$totalWines = count($contents);
-		
-		$output .= "<li  class=\"list-group-item\">";
-		$output .= "<a href=\"index.php?n=wine_invoice&uid=" . $transaction['uid'] . "\">";
-		$output .= dateDisplay($transaction['date']) . $transaction['customer'] . $transaction['reference'];
-		$output .= "Wines: " . $totalWines;
-		$output .= "Bottles: " . $totalBottles;
-		$output .= "</a>";
-		
-		$output .= "</li>";
-	}
-	$output .= "</ul>";
-	echo $output;
-
-	?>
-</div>
-
-<div class="row">
-	<h1>My Lists</h1>
-	<?php
-	$output = "<ul class=\"list-group\">";
-	foreach ($wineClass->getAllLists() AS $list) {
-		$list = new wine_list($list['uid']);
-		
-		$output .= "<li  class=\"list-group-item\">";
-		$output .= "<svg width=\"1em\" height=\"1em\" class=\"text-muted\"><use xlink:href=\"img/icons.svg#heart-full\"/></svg> ";
-		$output .= "<a href=\"index.php?n=wine_search&filter=list&value=" . $list->uid . "\">";
-		$output .= $list->name_full();
-		$output .= "</a>";
-		
-		$output .= "</li>";
-	}
-	$output .= "</ul>";
-	echo $output;
-
-	?>
-</div>
 
 <script>
 document.getElementById('wine_search').addEventListener('keyup', function() {
@@ -159,32 +210,4 @@ document.getElementById('wine_search').addEventListener('keyup', function() {
 	// Send the request
 	xhr.send();
 });
-</script>
-
-<?php
-foreach ($wineClass->stats_winesByGrape() AS $grape => $count) {
-	$data[] = "{ x: '" . $grape . "', y: " . $count . "}";
-}
-?>
-<script>
-var options = {
-  series: [
-  {
-	data: [<?php echo implode(",", $data); ?>]
-  }
-],
-  legend: {
-  show: false
-},
-chart: {
-  height: 350,
-  type: 'treemap',
-  toolbar: {
-	  show: false
-  }
-}
-};
-
-var chart = new ApexCharts(document.querySelector("#chart"), options);
-chart.render();
 </script>

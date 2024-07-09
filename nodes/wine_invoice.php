@@ -28,7 +28,7 @@ echo makeTitle($title, $subtitle, $icons);
 		<div class="invoice-title">
 			<h4 class="float-end">Invoice #<?php echo $transaction['uid']; ?> <span class="badge bg-success ms-2">Posted</span></h4>
 			<div class="mb-4">
-				<h2 class="mb-1 text-muted"><?php echo site_name; ?></h2>
+				<h2 class="mb-1 text-muted"><?php echo site_name; ?>: Wine</h2>
 			</div>
 			<div class="text-muted">
 				<p class="mb-1">Posted by: <?php echo $transaction['username']; ?></p>
@@ -56,7 +56,7 @@ echo makeTitle($title, $subtitle, $icons);
 					</div>
 					<?php if (!empty($transaction['reference'])) {
 						echo "<div class=\"mt-4\">";
-						echo "<h5 class=\"mb-1\">Customer Reference No:</h5>";
+						echo "<h5 class=\"mb-1\">Customer Reference:</h5>";
 						echo "<p>" . $transaction['reference'] . "</p>";
 						echo "</div>";
 					}

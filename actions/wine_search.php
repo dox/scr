@@ -16,7 +16,12 @@ if (checkpoint_charlie("wine")) {
 		$wines = $wineClass->searchAllWines($queryArray, $resultsLimit);
 		
 		foreach ($wines AS $wine) {
-			$data[] = array("uid" => $wine['uid'], "name" => $wine['name']);
+			$wine = new wine($wine['uid']);
+			
+			$data[] = array(
+				"uid" => $wine->uid,
+				"name" => $wine->friendly_name(true)
+			);
 		}
 		
 		echo json_encode(['data' => $data]);

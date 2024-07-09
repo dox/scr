@@ -62,6 +62,12 @@ if ($pageType == "add") {
 						<input type="text" class="form-control" id="name" name="name" value="<?php echo $wine->name; ?>" required>
 					</div>
 				</div>
+				<div class="row">
+					<div class="col">
+						<label for="name" class="form-label">Supplier</label>
+						<input type="text" class="form-control" id="supplier" name="supplier" value="<?php echo $wine->supplier; ?>" required>
+					</div>
+				</div>
 				<div class="mb-3">
 					<label for="name" class="form-label">Grape</label>
 					<input type="text" class="form-control" id="grape" name="grape" list="codes-grapes" value="<?php echo $wine->grape; ?>" required>
@@ -159,14 +165,6 @@ if ($pageType == "add") {
 			<div class="card-body">
 				<h5 class="card-title">Private Notes</h5>
 				<textarea class="form-control" id="notes" name="notes" rows="3"><?php echo $wine->notes; ?></textarea>
-			</div>
-		</div>
-		
-		<div class="card mb-3">
-			<div class="card-body">
-				<?php
-				printArray($wine);
-				?>
 			</div>
 		</div>
 	</div>
