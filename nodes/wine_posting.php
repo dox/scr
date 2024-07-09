@@ -34,7 +34,7 @@ echo makeTitle($title, $subtitle, $icons);
 <form method="post" id="termUpdate" action="<?php echo $_SERVER['REQUEST_URI']; ?>" class="needs-validation" novalidate>
 <?php
 if (isset($_POST['uid'])) {
-	printArray($_POST);
+	//printArray($_POST);
 	$transaction = new wine_transactions();
 	
 	$transaction->create($_POST);
@@ -52,7 +52,7 @@ if (isset($_POST['uid'])) {
 	</div>
 	<div class="col-xl-4">
 		<div class="mb-3">
-			<label for="reference" class="form-label">Checkout Reference</label>
+			<label for="reference" class="form-label">Customer Reference</label>
 			<input type="text" class="form-control" id="reference" name="reference">
 		</div>
 		
@@ -62,8 +62,13 @@ if (isset($_POST['uid'])) {
 		</div>
 		
 		<div class="mb-3">
-			<label for="notes" class="form-label">Notes</label>
+			<label for="notes" class="form-label">Notes (Public)</label>
 			<textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
+		</div>
+		
+		<div class="mb-3">
+			<label for="customer" class="form-label">VAT Rate %</label>
+			<input type="number" class="form-control" id="vat_rate" name="vat_rate" value="<?php echo $settingsClass->value('vat_rate');?>">
 		</div>
 	</div>
 </div>
@@ -123,16 +128,21 @@ document.getElementById('wine_search').addEventListener('keyup', function() {
 	xhr.send();
 });
 
-let selectedUIDS = [];
+//let selectedUIDS = [];
 
 function fetchDetails(uid) {
-	selectedUIDS.push(uid);
 	
 	let xhr = new XMLHttpRequest();
-	xhr.open('GET', 'nodes/widgets/_wineCheckout.php?uids=' + encodeURIComponent(selectedUIDS.join(',')), true);
+	xhr.open('GET', 'nodes/widgets/_wineCheckout.php?uid=' + encodeURIComponent(uid), true);
 	xhr.onload = function() {
 		if (xhr.status === 200) {
-			document.getElementById('selected-items').innerHTML = xhr.responseText;
+			
+			// Create a container for the new content
+			let container = document.createElement('div');
+			container.innerHTML = xhr.responseText;
+			
+			// Append the new content container to the selected-items element
+			document.getElementById('selected-items').appendChild(container);
 		}
 	};
 	xhr.send();

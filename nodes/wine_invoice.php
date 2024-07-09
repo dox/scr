@@ -113,10 +113,30 @@ echo makeTitle($title, $subtitle, $icons);
 							$i++;
 						}
 						?>
+						
 						<tr>
-							<th scope="row" colspan="4" class="border-0 text-end">Total</th>
+							<th scope="row" colspan="4" class="border-0 text-end">Total ex VAT</th>
 							<td class="border-0 text-end">
 								<h4 class="m-0 fw-semibold"><?php echo currencyDisplay($runningTotal); ?></h4>
+							</td>
+						</tr>
+						
+						<tr>
+							<?php
+							$vat_rate = $transaction['vat_rate'];
+							$vat_total = $runningTotal * ($vat_rate/100);
+							$incVATtotal = $runningTotal + $vat_total;
+							?>
+							<th scope="row" colspan="4" class="border-0 text-end">VAT (<?php echo $vat_rate;?>%)</th>
+							<td class="border-0 text-end">
+								<h4 class="m-0 fw-semibold"><?php echo currencyDisplay($vat_total); ?></h4>
+							</td>
+						</tr>
+						
+						<tr>
+							<th scope="row" colspan="4" class="border-0 text-end">Total inc VAT</th>
+							<td class="border-0 text-end">
+								<h4 class="m-0 fw-semibold"><?php echo currencyDisplay($incVATtotal); ?></h4>
 							</td>
 						</tr>
 					</tbody>

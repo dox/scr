@@ -1,13 +1,9 @@
 <?php
 include_once("../../inc/autoload.php");
 
-$uids = explode(",", $_GET['uids']);
+$cleanUID = filter_var($_GET['uid'], FILTER_SANITIZE_NUMBER_INT);
 
-foreach ($uids AS $uid) {
-	$cleanUID = filter_var($uid, FILTER_SANITIZE_NUMBER_INT);
-	
-	echo wineListItem($cleanUID);
-}
+echo wineListItem($cleanUID);
 
 
 
@@ -33,7 +29,7 @@ function wineListItem($wineUID) {
 	$output .= "<label for=\"price\" class=\"form-label\">Price/each</label>";
 	$output .= "<input type=\"number\" class=\"form-control\" id=\"price\" name=\"price[]\" placeholder=\"Price/each\" value=\"" . $wine->price_external . "\">";
 	$output .= "<div id=\"priceHelpBlock\" class=\"form-text\">";
-	$output .= "Internal / External Price: " . currencyDisplay($wine->price_internal) . " / " . currencyDisplay($wine->price_external);
+	$output .= "Internal: " . currencyDisplay($wine->price_internal) . " / External: " . currencyDisplay($wine->price_external);
 	$output .= "</div>";
 	$output .= "</div>";
 	$output .= "</div>";

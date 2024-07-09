@@ -610,7 +610,7 @@ class wine_transactions extends wineClass {
   protected static $table_name = "wine_transactions";
   
   public function create($array) {
-    global $db, $logsClass;
+    global $db, $logsClass, $settingsClass;
     
     foreach (array_keys($array['uid']) AS $uid) {
       $wineItems[] = array(
@@ -627,6 +627,7 @@ class wine_transactions extends wineClass {
     // Construct the final UPDATE query
     $sql  = "INSERT INTO " . self::$table_name;
     $sql .= " SET username = '" . $_SESSION['username'] . "',";
+    $sql .= " vat_rate = '" . $settingsClass->value('vat_rate') . "',";
     $sql .= " reference = '" . $array['reference'] . "',";
     $sql .= " customer = '" . $array['customer'] . "',";
     $sql .= " contents = '" . $wineJSON . "',";
