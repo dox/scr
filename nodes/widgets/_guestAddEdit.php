@@ -92,7 +92,7 @@ if (isset($_GET['guestUID'])) {
   
   
   
-    <form method="post" class="needs-validation" action="../actions/booking_add_guest.php">
+    <form method="post" class="needs-validation" novalidate action="../actions/booking_add_guest.php">
       <div class="form-group mb-3">
         <label for="name">Guest Name</label>
         <input type="text" class="form-control" name="guest_name" id="guest_name" aria-describedby="termNameHelp" value="<?php echo htmlspecialchars_decode($guestObject->guest_name); ?>" required>
@@ -149,8 +149,12 @@ if (isset($_GET['guestUID'])) {
         <label class="row">
           <div>
             <label for="guest_charge_to" class="form-label">Charge Guest Booking To</label>
-            <select class="form-select mb-3" id="guest_charge_to" name="guest_charge_to" aria-label="Charge To">
+            <select class="form-select mb-3" id="guest_charge_to" name="guest_charge_to" required aria-label="Charge To">
+              
               <?php
+              if ($mode == "add") {
+                echo "<option selected></option>";
+              }
               $chargeToOptions = explode(",", $settingsClass->value('booking_guest_charge-to'));
               
               foreach ($chargeToOptions AS $chargeToOption) {
@@ -237,3 +241,24 @@ if (isset($_GET['guestUID'])) {
   ?>
 </div>
 
+<script>
+// Example starter JavaScript for disabling form submissions if there are invalid fields
+(() => {
+  'use strict'
+
+  // Fetch all the forms we want to apply custom Bootstrap validation styles to
+  const forms = document.querySelectorAll('.needs-validation')
+
+  // Loop over them and prevent submission
+  Array.from(forms).forEach(form => {
+    form.addEventListener('submit', event => {
+      if (!form.checkValidity()) {
+        event.preventDefault()
+        event.stopPropagation()
+      }
+
+      form.classList.add('was-validated')
+    }, false)
+  })
+})()
+</script>

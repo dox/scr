@@ -12,7 +12,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <link href="css/app.css" rel="stylesheet">
-<script src="js/app2.js"></script>
+<script src="js/app.js"></script>
 
 <!-- Favicons -->
 <link rel="apple-touch-icon" sizes="57x57" href="/img/favicons/apple-icon-57x57.png">
