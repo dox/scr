@@ -169,8 +169,8 @@ class member {
         if ($this->$field != $newValue) {
           
             // Sanitize the field and value to prevent SQL injection
-            //$field = mysqli_real_escape_string($conn, $field);
-            //$newValue = mysqli_real_escape_string($conn, $newValue);
+            $field = escape($field);
+            $newValue = escape($newValue);
             // Add to the set part
             $setParts[$field] = "`$field` = '$newValue'";
         }
