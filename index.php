@@ -107,8 +107,10 @@ function attemptLogin($username, $password, $remember_me = false) {
         $token_expiry =  date('c', strtotime("1 month"));
         
         $sql = "REPLACE INTO tokens (token, member_uid, token_expiry) VALUES ('" . $token . "', '" . $memberObject->uid . "', '" . $token_expiry . "')";
-        
         $tokenCreate = $db->query($sql);
+        
+        $sql = "UPDATE members SET date_lastlogon = '" . date('Y-m-d H:i:s') . "' WHERE uid = '" . $memberObject->uid . "' LIMIT 1";
+        $userUpdate = $db->query($sql);
         
         setcookie ("username_uid", $memberObject->uid, time()+ 3600);
         setcookie ("token", $token, time()+ 3600);      
@@ -139,6 +141,9 @@ function attemptLoginByCookie() {
   
   if (strtotime($token_session['token_expiry']) > strtotime('now')) {
     $memberObject = new member($clean_username_uid);
+    
+    $sql = "UPDATE members SET date_lastlogon = '" . date('Y-m-d H:i:s') . "' WHERE uid = '" . $memberObject->uid . "' LIMIT 1";
+    $userUpdate = $db->query($sql);
     
     $_SESSION['logon'] = true;
     $_SESSION['enabled'] = $memberObject->enabled;
