@@ -1,8 +1,6 @@
 <?php
 include_once("inc/autoload.php");
 
-echo time();
-
 $_SESSION['logon_error'] = null;
 
 $logArray['category'] = "logon";
