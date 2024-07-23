@@ -21,6 +21,15 @@
 							?>
 						</div>
 						
+						<div class="pt-1 mb-4 d-grid gap-2">
+							<?php
+							if (debug) {
+								$output  = "<div class=\"alert alert-warning\" role=\"alert\"><strong>DEBUG MODE</strong> IS ENABLED</div>";
+								echo $output;
+							}
+							?>
+						</div>
+						
 						<div class=" mb-4">
 							<label class="form-label" for="username">Username</label>
 							<input type="text" id="username" name="username" class="form-control" required />
@@ -40,18 +49,6 @@
 							<button class="btn btn-primary" type="submit">Login</button>
 							<p class="mb-4 pb-lg-2"><a class="text-muted" href="<?php echo reset_url; ?>">Forgot password?</a></p>
 						</div>
-						
-						<div class="pt-1 mb-4 d-grid gap-2">
-							<p class="text-muted small">Developed by <a href="https://github.com/dox">Andrew Breakspear</a>
-							<?php
-							if (debug) {
-								$output  = "<span class=\"badge text-bg-warning\">DEBUG MODE</span>";
-								echo $output;
-							}
-							?>
-							</p>
-						</div>
-						
 					</form>
 				</div>
 			</div>

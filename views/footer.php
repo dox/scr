@@ -5,13 +5,17 @@
       <svg width="1em" height="1em" class="text-muted">
 				<use xlink:href="img/icons.svg#chough"/>
 			</svg>
-      <a class="link-secondary" href="https://github.com/dox/scr"><?php echo site_name; ?></a>
+      <a class="link-secondary" href="https://github.com/dox/scr"><?php echo site_name; ?></a> developed by <a href="https://github.com/dox" class="link-secondary">Andrew Breakspear</a>
       <small class="d-block mb-3 text-muted">&copy; 2008-<?php echo date('Y'); ?></small>
     </div>
     <div class="col-6 text-end">
-      <ul class="list-unstyled text-small">
-        <li><a class="link-secondary" href="index.php?n=accessibility">Accessibility Statement</a></li>
-      </ul>
+      <?php
+      if (isLoggedIn()) {
+        echo "<ul class=\"list-unstyled text-small\">";
+        echo "<li><a class=\"link-secondary\" href=\"index.php?n=accessibility\">Accessibility Statement</a></li>";
+        echo "</ul>";
+      }
+      ?>
     </div>
   </div>
 </footer>
