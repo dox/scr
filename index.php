@@ -39,40 +39,18 @@ if (isLoggedIn()) {
     // attempt login with submitted credentials
     if (attemptLogin($_POST['username'], $_POST['password'], $_POST['remember_me'])) {
       // logged in with submitted credentials
-      
-      $logArray['result'] = "success";
-      $logArray['description'] = $_POST['username'] . " logon success";
-      if (isset($_POST['remember_me'])) {
-        $logArray['description'] .= " (remember me: " . $_POST['remember_me'] . ")";
-      }
-      $logsClass->create($logArray);
       $node = "nodes/index.php";
     } else {
       // failed login with submitted credentials
-    
-      $_SESSION['logon_error'] = "Username/password incorrect";
-      
-      $logArray['result'] = "warning";
-      $logArray['description'] = $_POST['username'] . " logon failed";
-      $logsClass->create($logArray);
     }
 } else {
   // not currently logged in, try with cookies
   if (isset($_COOKIE["username_uid"]) && isset($_COOKIE["token"])) {
     if (attemptLoginByCookie()) {
       // logged in via remember me credentials
-      
-      $logArray['result'] = "success";
-      $logArray['description'] = $_SESSION['username'] . " logon success with cookies";
-      $logsClass->create($logArray);
-      
       $node = "nodes/index.php";
     } else {
       // cookie log-in failed
-      
-      $logArray['result'] = "warning";
-      $logArray['description'] = $_COOKIE['username_uid'] . " logon failed with cookies";
-      $logsClass->create($logArray);
     }
   }
 }
@@ -89,7 +67,7 @@ function attemptLogin($username, $password, $remember_me = false) {
     $ldapUser = $ldap_connection->query()->where('samaccountname', '=', $clean_username)->get();
     
     // Attempt to match the user in the SCR table
-    $sql = "SELECT * FROM members where ldap = '" . $ldapUser[0]['samaccountname'][0] . "' LIMIT 1";
+    $sql = "SELECT * FROM members where LOWER(ldap) = LOWER('" . $ldapUser[0]['samaccountname'][0] . "') LIMIT 1";
     $memberLookup = $db->query($sql)->fetchArray();
     
     if (isset($memberLookup['uid'])) {
@@ -117,6 +95,13 @@ function attemptLogin($username, $password, $remember_me = false) {
         setcookie ("token", $token, time() + $expire);      
       }
       
+      $logArray['result'] = "success";
+      $logArray['description'] = $memberObject->displayName() . " logon success";
+      if (isset($_POST['remember_me'])) {
+        $logArray['description'] .= " (remember me: " . $_POST['remember_me'] . ")";
+      }
+      $logsClass->create($logArray);
+      
       return true;
     } else {
       $logArray['result'] = "warning";
@@ -124,15 +109,21 @@ function attemptLogin($username, $password, $remember_me = false) {
       $logsClass->create($logArray);
       
       $_SESSION['logon_error'] = "You have not been granted access to the SCR Booking System yet.  Please contact <a href=\"mailto:principals.ea@seh.ox.ac.uk\">principals.ea@seh.ox.ac.uk</a> if you believe this is in error";
+      
       return false;
     }
   } else {
+    $_SESSION['logon_error'] = "Username/password incorrect";
+    
+    $logArray['result'] = "warning";
+    $logArray['description'] = $_POST['username'] . " logon failed";
+    $logsClass->create($logArray);
     return false;
   }
 }
 
 function attemptLoginByCookie() {
-  global $db;
+  global $db, $logsClass;
   
   $clean_username_uid = escape($_COOKIE['username_uid']);
   $clean_token = $_COOKIE['token'];
@@ -153,9 +144,18 @@ function attemptLoginByCookie() {
     $_SESSION['category'] = $memberObject->category;
     $_SESSION['permissions'] = explode(",", $memberObject->permissions);
     
+    $logArray['result'] = "success";
+    $logArray['description'] = $_SESSION['username'] . " logon success with cookies";
+    $logsClass->create($logArray);
+    
     return true;
   } else {
     // token expired
+    
+    $logArray['result'] = "warning";
+    $logArray['description'] = $_COOKIE['username_uid'] . " logon failed with cookies";
+    $logsClass->create($logArray);
+    
     return false;
   }
 }
