@@ -1,6 +1,8 @@
 <?php
 include_once("inc/autoload.php");
 
+echo time();
+
 $_SESSION['logon_error'] = null;
 
 $logArray['category'] = "logon";
@@ -112,8 +114,9 @@ function attemptLogin($username, $password, $remember_me = false) {
         $sql = "UPDATE members SET date_lastlogon = '" . date('Y-m-d H:i:s') . "' WHERE uid = '" . $memberObject->uid . "' LIMIT 1";
         $userUpdate = $db->query($sql);
         
-        setcookie ("username_uid", $memberObject->uid, time()+ 3600);
-        setcookie ("token", $token, time()+ 3600);      
+        $expire = 30*24*3600; // 1 month
+        setcookie ("username_uid", $memberObject->uid, time() + $expire);
+        setcookie ("token", $token, time() + $expire);      
       }
       
       return true;
