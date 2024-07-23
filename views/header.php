@@ -128,7 +128,7 @@
 				}
 				?>
 	            <div class="dropdown-divider"></div>
-	            <a class="dropdown-item" href="logon.php?logout=true">Logout</a>
+	            <a class="dropdown-item" href="index.php?logout=true">Logout</a>
 	          </div>
 	        </li>
 	      </ul>

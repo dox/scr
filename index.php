@@ -1,56 +1,161 @@
 <?php
 include_once("inc/autoload.php");
 
-if (!empty($_POST['inputUsername']) && !empty($_POST['inputPassword']) && $_SESSION['logon'] != 1) {
-  // first LDAP auth this user...
-  $ldapLookupUsername = escape($_POST['inputUsername']) . LDAP_ACCOUNT_SUFFIX;
-  $ldapLookupPassword = $_POST['inputPassword'];
-  if ($ldap_connection->auth()->attempt($ldapLookupUsername, $ldapLookupPassword, $stayAuthenticated = true)) {
-    // LDAP authentication correct, get the LDAP user
-    $ldapUser = $ldap_connection->query()->where('samaccountname', '=', $_POST['inputUsername'])->get();
+$_SESSION['logon_error'] = null;
 
-    // Attempt to match the user in the SCR table
-    $sql = "SELECT * FROM members where ldap = '" . $ldapUser[0]['samaccountname'][0] . "';";
-    $memberLookup = $db->query($sql)->fetchArray();
+$logArray['category'] = "logon";
 
-    if (!isset($memberLookup['uid'])) {
-      $memberObject = new member();
+$node = "nodes/logon.php";
 
-      // NEW user.  Create them and assume they are MCR...
-      $NEWUSER['title'] = "";
-      $NEWUSER['enabled'] = "1";
-      $NEWUSER['ldap'] = strtolower($ldapUser[0]['samaccountname'][0]);
-      $NEWUSER['firstname'] = addslashes($ldapUser[0]['givenname'][0]);
-      $NEWUSER['lastname'] = addslashes($ldapUser[0]['sn'][0]);
-      $NEWUSER['category'] = "Student";
-      $NEWUSER['type'] = "MCR";
-      $NEWUSER['email'] = $ldapUser[0]['mail'][0];
-      $NEWUSER['enabled'] = "1";
-      $NEWUSER['date_lastlogon'] = date('c');
-      $NEWUSER['calendar_hash'] = crypt($NEWUSER['ldap'], salt);
+if (isset($_GET['logout'])) {
+  $logArray['result'] = "success";
+  $logArray['description'] = $_SESSION['username'] . " logout";
+  $logsClass->create($logArray);
+  
+  session_destroy();
+  $_SESSION = null;
+  unset($_COOKIE['username']);
+  unset($_COOKIE['password']);
+  unset($_COOKIE['token']);
+  
+  setcookie ("username", "", -1); 
+  setcookie ("password", "", -1);
+  setcookie ("token", "", -1);
+}
 
-      $memberObject->create($NEWUSER, false);
+
+
+
+
+if (isLoggedIn()) {
+  // already logged in
+  if (isset($_GET['n'])) {
+    $node = "nodes/" . $_GET['n'] . ".php";
+  } else {
+    $node = "nodes/index.php";
+  }
+  
+} elseif (!empty($_POST['username']) && !empty($_POST['password'])) {
+    // attempt login with submitted credentials
+    if (attemptLogin($_POST['username'], $_POST['password'], $_POST['remember_me'])) {
+      // logged in with submitted credentials
       
-      $sql = "SELECT * FROM members where ldap = '" . $ldapUser[0]['samaccountname'][0] . "';";
-      $memberLookup = $db->query($sql)->fetchArray();
-      $memberObject = new member($memberLookup['uid']);
+      $logArray['result'] = "success";
+      $logArray['description'] = $_POST['username'] . " logon success";
+      if (isset($_POST['remember_me'])) {
+        $logArray['description'] .= " (remember me: " . $_POST['remember_me'] . ")";
+      }
+      $logsClass->create($logArray);
+      $node = "nodes/index.php";
     } else {
+      // failed login with submitted credentials
+    
+      $_SESSION['logon_error'] = "Username/password incorrect";
+      
+      $logArray['result'] = "warning";
+      $logArray['description'] = $_POST['username'] . " logon failed";
+      $logsClass->create($logArray);
+    }
+} else {
+  // not currently logged in, try with cookies
+  if (isset($_COOKIE["username_uid"]) && isset($_COOKIE["token"])) {
+    if (attemptLoginByCookie()) {
+      // logged in via remember me credentials
+      
+      $logArray['result'] = "success";
+      $logArray['description'] = $_SESSION['username'] . " logon success with cookies";
+      $logsClass->create($logArray);
+      
+      $node = "nodes/index.php";
+    } else {
+      // cookie log-in failed
+      
+      $logArray['result'] = "warning";
+      $logArray['description'] = $_COOKIE['username_uid'] . " logon failed with cookies";
+      $logsClass->create($logArray);
+    }
+  }
+}
+
+function attemptLogin($username, $password, $remember_me = false) {
+  global $ldap_connection, $db, $logsClass;
+  
+  // first LDAP auth this user...
+  $clean_username = escape($username);
+  $clean_password = $password;
+  
+  if ($ldap_connection->auth()->attempt($clean_username . LDAP_ACCOUNT_SUFFIX, $clean_password, $stayAuthenticated = true)) {
+    // LDAP authentication correct, get the LDAP user
+    $ldapUser = $ldap_connection->query()->where('samaccountname', '=', $clean_username)->get();
+    
+    // Attempt to match the user in the SCR table
+    $sql = "SELECT * FROM members where ldap = '" . $ldapUser[0]['samaccountname'][0] . "' LIMIT 1";
+    $memberLookup = $db->query($sql)->fetchArray();
+    
+    if (isset($memberLookup['uid'])) {
       $memberObject = new member($memberLookup['uid']);
       
-      // EXISTING user, fill our their missing details
-      $UPDATEUSER['memberUID'] = $memberLookup['uid'];
-      if (empty($memberLookup['firstname'])) {
-        $UPDATEUSER['firstname'] = addslashes($ldapUser[0]['givenname'][0]);
+      $_SESSION['logon'] = true;
+      $_SESSION['enabled'] = $memberObject->enabled;
+      $_SESSION['username'] = strtoupper($memberObject->ldap);
+      $_SESSION['type'] = $memberObject->type;
+      $_SESSION['category'] = $memberObject->category;
+      $_SESSION['permissions'] = explode(",", $memberObject->permissions);
+      
+      if($remember_me == true) {
+        $token = bin2hex(random_bytes(16));
+        $token_expiry =  date('c', strtotime("1 month"));
+        
+        $sql = "REPLACE INTO tokens (token, member_uid, token_expiry) VALUES ('" . $token . "', '" . $memberObject->uid . "', '" . $token_expiry . "')";
+        
+        $tokenCreate = $db->query($sql);
+        
+        setcookie ("username_uid", $memberObject->uid, time()+ 3600);
+        setcookie ("token", $token, time()+ 3600);      
       }
-      if (empty($memberLookup['lastname'])) {
-        $UPDATEUSER['lastname'] = addslashes($ldapUser[0]['sn'][0]);
-      }
-      if (empty($memberLookup['email'])) {
-        $UPDATEUSER['email'] = $ldapUser[0]['mail'][0];
-      }
-      $memberObject->updateLastLoginDate();
-      $memberObject->update($UPDATEUSER, false);
+      
+      return true;
+    } else {
+      $logArray['result'] = "warning";
+      $logArray['description'] = $clean_username . " authenticated, but did not have access";
+      $logsClass->create($logArray);
+      
+      $_SESSION['logon_error'] = "You have not been granted access to the SCR Booking System yet.  Please contact <a href=\"mailto:principals.ea@seh.ox.ac.uk\">principals.ea@seh.ox.ac.uk</a> if you believe this is in error";
+      return false;
     }
+  } else {
+    return false;
+  }
+}
+
+function attemptLoginByCookie() {
+  global $db;
+  
+  $clean_username_uid = escape($_COOKIE['username_uid']);
+  $clean_token = $_COOKIE['token'];
+  
+  $sql = "SELECT * FROM tokens WHERE member_uid = '" . $clean_username_uid . "' AND token = '" . $clean_token . "' ORDER BY token_expiry DESC LIMIT 1";
+  $token_session = $db->query($sql)->fetchArray();
+  
+  if (strtotime($token_session['token_expiry']) > strtotime('now')) {
+    $memberObject = new member($clean_username_uid);
+    
+    $_SESSION['logon'] = true;
+    $_SESSION['enabled'] = $memberObject->enabled;
+    $_SESSION['username'] = strtoupper($memberObject->ldap);
+    $_SESSION['type'] = $memberObject->type;
+    $_SESSION['category'] = $memberObject->category;
+    $_SESSION['permissions'] = explode(",", $memberObject->permissions);
+    
+    return true;
+  } else {
+    // token expired
+    return false;
+  }
+}
+
+/*if (!empty($_POST['inputUsername']) && !empty($_POST['inputPassword']) && $_SESSION['logon'] != 1) {
+  
 
     // build the $_SESSION array
     $_SESSION['logon'] = true;
@@ -86,10 +191,8 @@ if (!empty($_POST['inputUsername']) && !empty($_POST['inputPassword']) && $_SESS
     $logsClass->create($logArray);
   }
 }
-if ($_SESSION['logon'] != true) {
-  header("Location: " . siteURL() . "/logon.php");
-  exit;
-}
+*/
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -99,19 +202,16 @@ if ($_SESSION['logon'] != true) {
 
 <body class="bg-body-tertiary">
     <?php
-    include_once("views/header.php");
+    if (isLoggedIn()) {
+      include_once("views/header.php");
+    }
     ?>
 
     <div class="container">
       <?php
-      $node = "nodes/index.php";
-        if (isset($_GET['n'])) {
-          $node = "nodes/" . $_GET['n'] . ".php";
-
-          if (!file_exists($node)) {
-            $node = "nodes/404.php";
-          }
-        }
+      if (!file_exists($node)) {
+        $node = "nodes/404.php";
+      }
       include_once($node);
       ?>
     </div>

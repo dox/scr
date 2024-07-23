@@ -227,24 +227,34 @@ function available_permissions() {
 	return $availablePermissions;
 }
 
+function isLoggedIn() {
+  if ($_SESSION['logon'] == 1) {
+	return true;
+  } else {
+	return false;
+  }
+}
+
 function checkpoint_charlie($arrayOfAcceptablePermissions = null) {
 	$return = false;
 	
-	if (!is_array($arrayOfAcceptablePermissions)) {
-		$arrayOfAcceptablePermissions = explode(",", $arrayOfAcceptablePermissions);
-	}
-	
-	// if a member only has 1 permission, make this an array anyway
-	if (!is_array($_SESSION['permissions'])) {
-		$_SESSION['permissions'] = array($_SESSION['permissions']);
-	}
-	
-	if (in_array("global_admin", $_SESSION['permissions'])) {
-		$return = true;
-	} else {
-		foreach ($arrayOfAcceptablePermissions AS $permission) {
-			if (in_array($permission, $_SESSION['permissions'])) {
-				$return = true;
+	if (isLoggedIn()) {
+		if (!is_array($arrayOfAcceptablePermissions)) {
+			$arrayOfAcceptablePermissions = explode(",", $arrayOfAcceptablePermissions);
+		}
+		
+		// if a member only has 1 permission, make this an array anyway
+		if (!is_array($_SESSION['permissions'])) {
+			$_SESSION['permissions'] = array($_SESSION['permissions']);
+		}
+		
+		if (in_array("global_admin", $_SESSION['permissions'])) {
+			$return = true;
+		} else {
+			foreach ($arrayOfAcceptablePermissions AS $permission) {
+				if (in_array($permission, $_SESSION['permissions'])) {
+					$return = true;
+				}
 			}
 		}
 	}
