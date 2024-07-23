@@ -162,17 +162,21 @@ class logs {
   }
 
   public function purge() {
-		global $db, $settingsClass;
+	global $db, $settingsClass;
 
     $logs_retention = $settingsClass->value('logs_retention');
 
     //fetch COUNT of how many logs we need to delete
-		$sql = "SELECT COUNT(*) AS totalLogs FROM " . self::$table_name . " WHERE DATE(date) < '" . date('Y-m-d', strtotime('-' . $logs_retention . ' days')) . "'";
-		$logsToDelete = $db->query($sql)->fetchAll()[0]['totalLogs'];
-
+	$sql = "SELECT COUNT(*) AS totalLogs FROM " . self::$table_name . " WHERE DATE(date) < '" . date('Y-m-d', strtotime('-' . $logs_retention . ' days')) . "'";
+	$logsToDelete = $db->query($sql)->fetchAll()[0]['totalLogs'];
+  
     // if there are logs to delete, delete them!
-		if ($logsToDelete > 0) {
-			$sql = "DELETE FROM " . self::$table_name . " WHERE DATE(date) < '" . date('Y-m-d', strtotime('-' . $logs_retention . ' days')) . "'";
+	if ($logsToDelete > 0) {
+	  $sql = "DELETE FROM " . self::$table_name . " WHERE DATE(date) < '" . date('Y-m-d', strtotime('-' . $logs_retention . ' days')) . "'";
+      $db->query($sql);
+      
+      // also delete old tokens
+      $sql = "DELETE FROM tokens WHERE '" . date('Y-m-d') . "' > DATE(token_expiry)";
       $db->query($sql);
 
       //log that we did this
