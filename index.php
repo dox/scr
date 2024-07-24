@@ -14,18 +14,12 @@ if (isset($_GET['logout'])) {
   
   session_destroy();
   $_SESSION = null;
-  unset($_COOKIE['username']);
-  unset($_COOKIE['password']);
+  unset($_COOKIE['username_uid']);
   unset($_COOKIE['token']);
   
-  setcookie ("username", "", -1); 
-  setcookie ("password", "", -1);
+  setcookie ("username_uid", "", -1); 
   setcookie ("token", "", -1);
 }
-
-
-
-
 
 if (isLoggedIn()) {
   // already logged in
@@ -159,46 +153,6 @@ function attemptLoginByCookie() {
     return false;
   }
 }
-
-/*if (!empty($_POST['inputUsername']) && !empty($_POST['inputPassword']) && $_SESSION['logon'] != 1) {
-  
-
-    // build the $_SESSION array
-    $_SESSION['logon'] = true;
-    $_SESSION['enabled'] = $memberObject->enabled;
-    $_SESSION['username'] = strtoupper($ldapUser[0]['samaccountname'][0]);
-    $_SESSION['type'] = $memberObject->type;
-    $_SESSION['category'] = $memberObject->category;
-    $_SESSION['permissions'] = explode(",", $memberObject->permissions);
-    
-    // build this out one day when I have time :-s
-    if(!empty($_POST["inputRemember"])) {
-      //setcookie ("username",$_SESSION['username'],time()+ 3600);
-      //setcookie ("password",$_POST['inputPassword'],time()+ 3600);      
-      //echo "Cookies Set Successfuly";
-    } else {
-      //setcookie("username","");
-      //setcookie("password","");
-      //echo "Cookies Not Set";
-    }
-
-    $logArray['category'] = "logon";
-    $logArray['result'] = "success";
-    $logArray['description'] = "[memberUID:" . $memberObject->uid . "] (" . $memberObject->displayName() . ") logon succesful";
-    $logsClass->create($logArray);
-  } else {
-    // Username or password is incorrect.
-    //session_destroy();
-    $_SESSION['logon_error'] = "Incorrect username/password";
-
-    $logArray['category'] = "logon";
-    $logArray['result'] = "warning";
-    $logArray['description'] = $_POST['inputUsername'] . " logon failed";
-    $logsClass->create($logArray);
-  }
-}
-*/
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
