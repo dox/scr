@@ -29,7 +29,7 @@ $wineClass = new wineClass();
 	<div class="col">
 		<div class="card mb-3">
 			<div class="card-body">
-				<h5 class="card-title"><?php echo "??"; ?></h5>
+				<h5 class="card-title countup" akhi="<?php echo rand(0,3000); ?>">0</h5>
 				<h6 class="card-subtitle mb-2 text-body-secondary">Stats</h6>
 			</div>
 		</div>
@@ -37,7 +37,7 @@ $wineClass = new wineClass();
 	<div class="col">
 		<div class="card mb-3">
 			<div class="card-body">
-				<h5 class="card-title"><?php echo "??"; ?></h5>
+				<h5 class="card-title countup" akhi="<?php echo rand(0,3000); ?>">0</h5>
 				<h6 class="card-subtitle mb-2 text-body-secondary">Stats</h6>
 			</div>
 		</div>
@@ -45,7 +45,7 @@ $wineClass = new wineClass();
 	<div class="col">
 		<div class="card mb-3">
 			<div class="card-body">
-				<h5 class="card-title"><?php echo "??"; ?></h5>
+				<h5 class="card-title countup" akhi="<?php echo rand(0,3000); ?>">0</h5>
 				<h6 class="card-subtitle mb-2 text-body-secondary">Stats</h6>
 			</div>
 		</div>
@@ -53,7 +53,7 @@ $wineClass = new wineClass();
 	<div class="col">
 		<div class="card mb-3">
 			<div class="card-body">
-				<h5 class="card-title"><?php echo "??"; ?></h5>
+				<h5 class="card-title countup" akhi="<?php echo rand(0,3000); ?>">0</h5>
 				<h6 class="card-subtitle mb-2 text-body-secondary">Stats</h6>
 			</div>
 		</div>
@@ -61,7 +61,7 @@ $wineClass = new wineClass();
 	<div class="col">
 		<div class="card mb-3">
 			<div class="card-body">
-				<h5 class="card-title"><?php echo "??"; ?></h5>
+				<h5 class="card-title countup" akhi="<?php echo rand(0,3000); ?>">0</h5>
 				<h6 class="card-subtitle mb-2 text-body-secondary">Stats</h6>
 			</div>
 		</div>
@@ -69,7 +69,7 @@ $wineClass = new wineClass();
 	<div class="col">
 		<div class="card mb-3">
 			<div class="card-body">
-				<h5 class="card-title"><?php echo "??"; ?></h5>
+				<h5 class="card-title countup" akhi="<?php echo rand(0,3000); ?>">0</h5>
 				<h6 class="card-subtitle mb-2 text-body-secondary">Stats</h6>
 			</div>
 		</div>
@@ -209,5 +209,29 @@ document.getElementById('wine_search').addEventListener('keyup', function() {
 	
 	// Send the request
 	xhr.send();
+});
+</script>
+
+
+<script>
+const counters = document.querySelectorAll('.countup');
+const speed = 200;
+
+counters.forEach( counter => {
+   const animate = () => {
+	  const value = +counter.getAttribute('akhi');
+	  const data = +counter.innerText;
+	 
+	  const time = value / speed;
+	 if(data < value) {
+		  counter.innerText = Math.ceil(data + time).toLocaleString();
+		  setTimeout(animate, 1);
+		}else{
+		  counter.innerText = value.toLocaleString();
+		}
+	 
+   }
+   
+   animate();
 });
 </script>
