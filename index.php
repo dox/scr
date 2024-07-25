@@ -14,11 +14,19 @@ if (isset($_GET['logout'])) {
   
   session_destroy();
   $_SESSION = null;
-  unset($_COOKIE['username_uid']);
-  unset($_COOKIE['token']);
   
-  setcookie ("username_uid", "", -1); 
-  setcookie ("token", "", -1);
+  // Delete any tokens that may exist
+  if (isset($_COOKIE['username_uid']) || isset($_COOKIE['token'])) {
+    $sql = "DELETE FROM tokens where member_uid = '" . $_COOKIE['username_uid'] . "' AND token='" . $_COOKIE['token'] . "' LIMIT 1";
+    $deleteToken = $db->query($sql);
+    
+    
+    unset($_COOKIE['username_uid']);
+    unset($_COOKIE['token']);
+    
+    setcookie ("username_uid", "", -1); 
+    setcookie ("token", "", -1);
+  }
 }
 
 if (isLoggedIn()) {
