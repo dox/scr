@@ -153,7 +153,7 @@ function itterate() {
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-          <div class="mb-12">
+          <div class="col-12 mb-3">
             <label for="title" class="form-label">Title</label>
             <select class="form-select" name="title" id="title" required>
               <?php
@@ -169,7 +169,7 @@ function itterate() {
             </div>
           </div>
 
-          <div class="mb-12">
+          <div class="col-12 mb-3">
             <label for="firstname" class="form-label">First name</label>
             <input type="text" class="form-control" name="firstname" id="firstname" required>
             <div class="invalid-feedback">
@@ -177,7 +177,7 @@ function itterate() {
             </div>
           </div>
 
-          <div class="col-12">
+          <div class="col-12 mb-3">
             <label for="lastname" class="form-label">Last name</label>
             <input type="text" class="form-control" name="lastname" id="lastname" required>
             <div class="invalid-feedback">
@@ -185,7 +185,7 @@ function itterate() {
             </div>
           </div>
 
-          <div class="col-12">
+          <div class="col-12 mb-3">
             <label for="ldap" class="form-label">LDAP Username</label>
             <div class="input-group">
               <span class="input-group-text" onclick="ldapLookup()">@</span>
@@ -196,7 +196,7 @@ function itterate() {
             </div>
           </div>
 
-          <div class="col-12">
+          <div class="col-12 mb-3">
             <label for="category" class="form-label">Member Category</label>
             <select class="form-select" name="category" id="category" required>
               <?php
@@ -212,7 +212,7 @@ function itterate() {
             </div>
           </div>
 
-          <div class="col-12">
+          <div class="col-12 mb-3">
             <label for="email" class="form-label">Email <span class="text-muted">(Optional)</span></label>
             <input type="email" class="form-control" name="email" id="email">
             <div class="invalid-feedback">
@@ -220,7 +220,7 @@ function itterate() {
             </div>
           </div>
 
-          <div class="col-12">
+          <div class="col-12 mb-3">
             <label for="enabled" class="form-label">Enabled/Disabled Status</label>
             <select class="form-select" name="enabled" id="enabled" required>
               <option value="1" selected>Enabled</option>
