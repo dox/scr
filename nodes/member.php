@@ -395,7 +395,7 @@ function fetchAndDisplay(filePath, clickedLink) {
         
         <?php
         // only show permissions to global admins
-        if (checkpoint_charlie("global_admin,members")) {
+        if (checkpoint_charlie("global_admin")) {
         ?>
         <hr />
         <div>
