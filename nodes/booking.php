@@ -110,7 +110,7 @@ if (isset($bookingByMember)) {
               // we're already booked on for dessert
               $dessertChecked = "checked";
               
-              if ($mealObject->allowed_dessert == 1 && $mealObject->check_cutoff_ok(true) && $mealObject->total_dessert_bookings_this_meal() < $mealObject->scr_dessert_capacity) {
+              if ($mealObject->allowed_dessert == 1 && $mealObject->check_cutoff_ok(true)) {
                 $dessertDisabledCheck = "";
               } else {
                 if (checkpoint_charlie("bookings")) {
@@ -125,7 +125,6 @@ if (isset($bookingByMember)) {
               }
               
               // check if dessert capacity is reached
-              
               if (($mealObject->total_dessert_bookings_this_meal() + count($bookingObject->guestsArray()) + 1) > $mealObject->scr_dessert_capacity) {
                 if (checkpoint_charlie("bookings")) {
                 } else {
@@ -137,7 +136,6 @@ if (isset($bookingByMember)) {
             
             //admin override for dessert booking!
             if (checkpoint_charlie("bookings")) {
-            } else {
               $dessertDisabledCheck = "";
             }
             ?>
