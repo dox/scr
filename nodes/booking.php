@@ -110,7 +110,7 @@ if (isset($bookingByMember)) {
               // we're already booked on for dessert
               $dessertChecked = "checked";
               
-              if ($mealObject->allowed_dessert == 1 && $mealObject->check_cutoff_ok(true)) {
+              if ($mealObject->allowed_dessert == 1 && $mealObject->check_cutoff_ok(true) && $mealObject->total_dessert_bookings_this_meal() < $mealObject->scr_dessert_capacity) {
                 $dessertDisabledCheck = "";
               } else {
                 if (checkpoint_charlie("bookings")) {
