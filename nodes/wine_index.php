@@ -29,48 +29,48 @@ $wineClass = new wineClass();
 	<div class="col">
 		<div class="card mb-3">
 			<div class="card-body">
-				<h5 class="card-title countup" akhi="<?php echo rand(0,3000); ?>">0</h5>
-				<h6 class="card-subtitle mb-2 text-body-secondary">Stats</h6>
+				<h5 class="card-title countup" akhi="<?php echo $wineClass->getAllWineBottlesTotal(); ?>">0</h5>
+				<h6 class="card-subtitle mb-2 text-body-secondary">Bottles</h6>
 			</div>
 		</div>
 	</div>
 	<div class="col">
 		<div class="card mb-3">
 			<div class="card-body">
-				<h5 class="card-title countup" akhi="<?php echo rand(0,3000); ?>">0</h5>
-				<h6 class="card-subtitle mb-2 text-body-secondary">Stats</h6>
+				<h5 class="card-title countup" akhi="<?php echo count($wineClass->getAllWinesByFilter("type", "White")); ?>">0</h5>
+				<h6 class="card-subtitle mb-2 text-body-secondary">White Wines</h6>
 			</div>
 		</div>
 	</div>
 	<div class="col">
 		<div class="card mb-3">
 			<div class="card-body">
-				<h5 class="card-title countup" akhi="<?php echo rand(0,3000); ?>">0</h5>
-				<h6 class="card-subtitle mb-2 text-body-secondary">Stats</h6>
+				<h5 class="card-title countup" akhi="<?php echo count($wineClass->getAllWinesByFilter("type", "Red")); ?>">0</h5>
+				<h6 class="card-subtitle mb-2 text-body-secondary">Red Wines</h6>
 			</div>
 		</div>
 	</div>
 	<div class="col">
 		<div class="card mb-3">
 			<div class="card-body">
-				<h5 class="card-title countup" akhi="<?php echo rand(0,3000); ?>">0</h5>
-				<h6 class="card-subtitle mb-2 text-body-secondary">Stats</h6>
+				<h5 class="card-title countup" akhi="<?php echo count($wineClass->getAllWinesByFilter("type", "Sparkling")); ?>">0</h5>
+				<h6 class="card-subtitle mb-2 text-body-secondary">Sparkling Wines</h6>
 			</div>
 		</div>
 	</div>
 	<div class="col">
 		<div class="card mb-3">
 			<div class="card-body">
-				<h5 class="card-title countup" akhi="<?php echo rand(0,3000); ?>">0</h5>
-				<h6 class="card-subtitle mb-2 text-body-secondary">Stats</h6>
+				<h5 class="card-title countup" akhi="<?php echo count($wineClass->getAllWinesByFilter("type", "Port")); ?>">0</h5>
+				<h6 class="card-subtitle mb-2 text-body-secondary">Port</h6>
 			</div>
 		</div>
 	</div>
 	<div class="col">
 		<div class="card mb-3">
 			<div class="card-body">
-				<h5 class="card-title countup" akhi="<?php echo rand(0,3000); ?>">0</h5>
-				<h6 class="card-subtitle mb-2 text-body-secondary">Stats</h6>
+				<h5 class="card-title countup" akhi="<?php echo count($wineClass->getAllWinesByFilter("type", "Other")); ?>">0</h5>
+				<h6 class="card-subtitle mb-2 text-body-secondary">Other</h6>
 			</div>
 		</div>
 	</div>
@@ -215,22 +215,29 @@ document.getElementById('wine_search').addEventListener('keyup', function() {
 
 <script>
 const counters = document.querySelectorAll('.countup');
-const speed = 200;
+const duration = 2000;  // Duration of the animation in milliseconds (2 seconds)
+const frameRate = 30;   // Time between updates in milliseconds (~33 frames per second)
+const totalFrames = duration / frameRate;  // Total number of frames/steps
 
-counters.forEach( counter => {
+counters.forEach(counter => {
+   const value = +counter.getAttribute('akhi');  // Target value
+   let currentFrame = 0;  // Keep track of the current frame
    const animate = () => {
-	  const value = +counter.getAttribute('akhi');
-	  const data = +counter.innerText;
-	 
-	  const time = value / speed;
-	 if(data < value) {
-		  counter.innerText = Math.ceil(data + time).toLocaleString();
-		  setTimeout(animate, 1);
-		}else{
-		  counter.innerText = value.toLocaleString();
-		}
-	 
-   }
+	  currentFrame++;  // Increment frame count
+
+	  // Calculate the progress as a percentage of total frames (0 to 1)
+	  const progress = Math.min(currentFrame / totalFrames, 1);  // Clamp progress at 1
+
+	  // Use progress to interpolate between 0 and the target value
+	  const currentValue = Math.ceil(progress * value);
+	  
+	  counter.innerText = currentValue.toLocaleString();
+
+	  // Continue animating until progress reaches 100%
+	  if (progress < 1) {
+		 setTimeout(animate, frameRate);
+	  }
+   };
    
    animate();
 });
