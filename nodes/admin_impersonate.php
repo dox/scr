@@ -44,7 +44,7 @@ echo makeTitle($title, $subtitle);
       <div class="form-check mb-3">
         <input class="form-check-input" type="checkbox" value="1" id="maintainAdminAccess" name="maintainAdminAccess" checked <?php echo $disabledStatus; ?>>
         <label class="form-check-label" for="maintainAdminAccess">
-          Maintain Administrative Access*
+          Maintain Current Access Level*
         </label>
       </div>
 
@@ -65,7 +65,7 @@ echo makeTitle($title, $subtitle);
       </div>
 
       <div class="d-grid gap-2">
-        <p><small>*By default when you impersonate another member, you also maintain full administrative access.  Uncheck this option if you want to see this site with the same permissions as the other member.</small></p>
+        <p><small>*By default when you impersonate another member, you maintain your current level of access.  Uncheck this option to see this site with the same permissions as the other member.</small></p>
       </div>
   </div>
 </div>
