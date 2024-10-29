@@ -147,7 +147,7 @@ function attemptLoginByCookie() {
     $_SESSION['permissions'] = explode(",", $memberObject->permissions);
     
     $logArray['result'] = "success";
-    $logArray['description'] = $_SESSION['username'] . " logon success with cookies";
+    $logArray['description'] = $memberObject->displayName() . " logon success with cookies";
     $logsClass->create($logArray);
     
     return true;
