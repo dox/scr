@@ -20,11 +20,66 @@ echo makeTitle($title, $subtitle, $icons);
 
 <hr class="pb-3" />
 
+<div class="row pb-3">
+	<div class="col">
+		<input type="text" id="wine_search" class="form-control form-control-lg" placeholder="Quick search" autocomplete="off" spellcheck="false" aria-describedby="wine_searchHelp">
+		<ul id="wine_search_results" class="list-group"></ul>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col">
+		<div class="card mb-3">
+			<div class="card-body">
+				<h5 class="card-title countup"><?php echo currencyDisplay($cellar->totalPurchaseValue()); ?></h5>
+				<h6 class="card-subtitle mb-2 text-body-secondary">Total Value</h6>
+			</div>
+		</div>
+	</div>
+	<div class="col">
+		<div class="card mb-3">
+			<div class="card-body">
+				<h5 class="card-title countup"><?php echo currencyDisplay($cellar->totalPurchaseValue()); ?></h5>
+				<h6 class="card-subtitle mb-2 text-body-secondary">Total Value</h6>
+			</div>
+		</div>
+	</div>
+	<div class="col">
+		<div class="card mb-3">
+			<div class="card-body">
+				<h5 class="card-title countup"><?php echo currencyDisplay($cellar->totalPurchaseValue()); ?></h5>
+				<h6 class="card-subtitle mb-2 text-body-secondary">Total Value</h6>
+			</div>
+		</div>
+	</div>
+	<div class="col">
+		<div class="card mb-3">
+			<div class="card-body">
+				<h5 class="card-title countup"><?php echo currencyDisplay($cellar->totalPurchaseValue()); ?></h5>
+				<h6 class="card-subtitle mb-2 text-body-secondary">Total Value</h6>
+			</div>
+		</div>
+	</div>
+	<div class="col">
+		<div class="card mb-3">
+			<div class="card-body">
+				<h5 class="card-title countup"><?php echo currencyDisplay($cellar->totalPurchaseValue()); ?></h5>
+				<h6 class="card-subtitle mb-2 text-body-secondary">Total Value</h6>
+			</div>
+		</div>
+	</div>
+	<div class="col">
+		<div class="card mb-3">
+			<div class="card-body">
+				<h5 class="card-title countup"><?php echo currencyDisplay($cellar->totalPurchaseValue()); ?></h5>
+				<h6 class="card-subtitle mb-2 text-body-secondary">Total Value</h6>
+			</div>
+		</div>
+	</div>
+</div>
+
 <div id="chart"></div>
 
-<?php
-echo "<p>Total purchase value: " . currencyDisplay($cellar->totalPurchaseValue()) . "</p>";
-?>
 <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
 
 <?php
@@ -35,6 +90,58 @@ foreach ($cellar->getBins() AS $bin) {
 }
 	?>
 </div>
+
+<script>
+document.getElementById('wine_search').addEventListener('keyup', function() {
+	let query = this.value;
+	let resultsDiv = document.getElementById('wine_search_results');
+
+	// Clear the results if the input is empty
+	if (query.trim() === '') {
+		resultsDiv.innerHTML = '';
+		return;
+	}
+	
+	// Create a new XMLHttpRequest object
+	let xhr = new XMLHttpRequest();
+	
+	// Configure it: GET-request for the URL with the query
+	xhr.open('GET', 'actions/wine_search.php?c=<?php echo $cellar->uid;?>&q=' + encodeURIComponent(query), true);
+	
+	// Set up the callback function
+	xhr.onload = function() {
+		if (xhr.status === 200) {
+			// Parse JSON response
+			let response = JSON.parse(xhr.responseText);
+			
+			// Display the results
+			resultsDiv.innerHTML = '';
+
+			if (response.data.length === 0) {
+				let listItem = document.createElement('li');
+				listItem.className = "list-group-item";
+				listItem.textContent = 'No results found';
+				
+				resultsDiv.appendChild(listItem);
+			} else {
+				response.data.forEach(function(item) {
+					let listItem = document.createElement('li');
+					listItem.className = "list-group-item";
+					var link = document.createElement("a");
+					link.href = "index.php?n=wine_wine&uid=" + item.uid;
+					link.textContent = item.name;
+					listItem.appendChild(link);
+					
+					resultsDiv.appendChild(listItem);
+				});
+			}
+		}
+	};
+	
+	// Send the request
+	xhr.send();
+});
+</script>
 
 <?php
 $wineClass = new wineClass;

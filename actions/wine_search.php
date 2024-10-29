@@ -11,9 +11,14 @@ if (checkpoint_charlie("wine")) {
 	if (isset($_GET['q'])) {
 		$queryArray["name"] = $_GET['q'];
 		
+		$cellarUID = null;
+		if (isset($_GET['c'])) {
+			$cellarUID = filter_var($_GET['c'], FILTER_VALIDATE_INT);
+		}
+		
 		$resultsLimit = 4;
 		
-		$wines = $wineClass->searchAllWines($queryArray, $resultsLimit);
+		$wines = $wineClass->searchAllWines($queryArray, $cellarUID, $resultsLimit);
 		
 		foreach ($wines AS $wine) {
 			$wine = new wine($wine['uid']);

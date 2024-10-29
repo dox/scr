@@ -55,15 +55,18 @@ class wineClass {
     return $result['total'];
   }
   
-  public function searchAllWines($searchArray = null, $limit = null) {
+  public function searchAllWines($searchArray = null, $cellarUID = null, $limit = null) {
     global $db;
     
     foreach ($searchArray AS $searchKey => $searchString) {
       $searchStatements[] = $searchKey . " LIKE '%" . $searchString . "%'";
     }
     
-    $sql  = "SELECT * FROM wine_wines";
-    $sql .= " WHERE " . implode(" OR ", $searchStatements);
+    $sql  = "SELECT * FROM wine_wines WHERE";
+    if (isset($cellarUID)) {
+      $sql .= " cellar_uid = '" . $cellarUID . "' AND ";
+    }
+    $sql .= "(" . implode(" OR ", $searchStatements) . ")";
     $sql .= " ORDER BY name ASC";
     
     if ($limit) {
