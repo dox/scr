@@ -36,7 +36,9 @@ class booking {
   }
 
   public function addGuest($newGuestArray = null) {
-	  global $db, $logsClass;
+	global $db, $logsClass;
+    
+    $memberObject = new member($this->member_ldap);
 
     $guest_uid = "x" . bin2hex(random_bytes(5));
     $guest['guest_uid'] = $guest_uid;
@@ -57,7 +59,7 @@ class booking {
 
     $logArray['category'] = "booking";
     $logArray['result'] = "success";
-    $logArray['description'] = "Guest '" . $newGuestArray['guest_name'] . "' added to [bookingUID:" . $this->uid . "] for [mealUID:" . $this->meal_uid . "]. Wine: " . $newGuestArray['guest_wine'];
+    $logArray['description'] = "Guest '" . $newGuestArray['guest_name'] . "' of " . $memberObject->displayName() . " added to [bookingUID:" . $this->uid . "] for [mealUID:" . $this->meal_uid . "]. Dessert: " . $this->dessert . " Wine: " . $newGuestArray['guest_wine'];
     $logsClass->create($logArray);
 
 	  return $this->guests_array;
@@ -92,12 +94,13 @@ class booking {
     global $db, $logsClass;
     
     $bookingsCheck = new bookings();
+    $memberObject = new member($array['member_ldap']);
     
     // check if already booked onto this meal
     if ($bookingsCheck->bookingExistCheck($array['meal_uid'], $array['member_ldap'])) {
       $logArray['category'] = "booking";
       $logArray['result'] = "warning";
-      $logArray['description'] = $array['member_ldap'] . " attempted to book twice for [mealUID:" . $array['meal_uid'] . "]";
+      $logArray['description'] = $memberObject->displayName() . " attempted to book twice for [mealUID:" . $array['meal_uid'] . "]";
       $logsClass->create($logArray);
       
       return false;
@@ -116,7 +119,7 @@ class booking {
       
       $logArray['category'] = "booking";
       $logArray['result'] = "success";
-      $logArray['description'] = "[bookingUID:" . $create->lastInsertID() . "] made for " . $_SESSION['username'] . " for [mealUID:" . $array['meal_uid'] . "].  Dessert: " . $array['dessert'] . " Wine: " . $array['wine'];
+      $logArray['description'] = "[bookingUID:" . $create->lastInsertID() . "] made for " . $memberObject->displayName() . " for [mealUID:" . $array['meal_uid'] . "].  Dessert: " . $array['dessert'] . " Wine: " . $array['wine'];
       $logsClass->create($logArray);
       
       return $create;
@@ -125,7 +128,9 @@ class booking {
 
   public function update($array = null) {
     global $db, $logsClass, $settingsClass;
-
+    
+    $memberObject = new member($this->member_ldap);
+    
     $sql  = "UPDATE " . self::$table_name;
 
     foreach ($array AS $updateItem => $value) {
@@ -133,7 +138,7 @@ class booking {
         $sqlUpdate[] = $updateItem ." = '" . $value . "' ";
       }
     }
-
+    
     $sql .= " SET " . implode(", ", $sqlUpdate);
     $sql .= " WHERE uid = '" . $this->uid . "' ";
     $sql .= " LIMIT 1";
@@ -143,7 +148,8 @@ class booking {
 
     $logArray['category'] = "booking";
     $logArray['result'] = "success";
-    $logArray['description'] = "[bookingUID:" .  $this->uid  . "] updated by " . $_SESSION['username'] . " for [mealUID:" . $this->meal_uid . "]";
+    $logArray['description'] = "[bookingUID:" .  $this->uid  . "] updated for " . $memberObject->displayName() . " for [mealUID:" . $this->meal_uid . "]";
+    $logArray['description'] = $logArray['description'] . implode(", ", $sqlUpdate);
     $logsClass->create($logArray);
 
     return $update;
@@ -154,6 +160,8 @@ class booking {
 
     $bookingUID = $this->uid;
     $mealUID = $this->meal_uid;
+    
+    $memberObject = new member($this->member_ldap);
 
     $sql  = "DELETE FROM " . self::$table_name;
     $sql .= " WHERE uid = '" . $this->uid . "' ";
@@ -164,28 +172,27 @@ class booking {
 
     $logArray['category'] = "booking";
     $logArray['result'] = "success";
-    $logArray['description'] = "[bookingUID:" .  $bookingUID  . "] deleted by " . $_SESSION['username'] . " for [mealUID:" . $mealUID . "]";
+    $logArray['description'] = "[bookingUID:" .  $bookingUID  . "] deleted for " . $memberObject->displayName() . " for [mealUID:" . $mealUID . "]";
     $logsClass->create($logArray);
 
     return $delete;
   }
 
   public function deleteGuest($guest_uid = null) {
-    global $db;
-    global $logsClass;
+    global $db, $logsClass;
+    
+    $memberObject = new member($this->member_ldap);
 
     $sql  = "UPDATE " . self::$table_name;
     $sql .= " SET guests_array = JSON_REMOVE(guests_array, '$." . $guest_uid . "')";
     $sql .= " WHERE uid = '" . $this->uid . "' ";
     $sql .= " LIMIT 1";
-    
-    echo $sql;
 
     $delete = $db->query($sql);
 
     $logArray['category'] = "booking";
     $logArray['result'] = "success";
-    $logArray['description'] = "Guest deleted from [bookingUID:" .  $this->uid  . "] for [mealUID:" . $this->meal_uid . "]";
+    $logArray['description'] = "Guest of " . $memberObject->displayName() . " deleted from [bookingUID:" .  $this->uid  . "] for [mealUID:" . $this->meal_uid . "]";
     $logsClass->create($logArray);
 
     return $delete;

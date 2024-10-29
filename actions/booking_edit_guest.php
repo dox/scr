@@ -27,8 +27,7 @@ $newGuest = array(
 	'guest_dietary' => $guestDietary,
 	'guest_charge_to' => $_POST['guest_charge_to'],
 	'guest_domus_reason' => $_POST['guest_domus_reason'],
-	'guest_wine' => $guestWine,
-	'guest_dessert' => $guestDessert
+	'guest_wine' => $guestWine
 );
 
 $bookingObject->updateGuest($newGuest);
