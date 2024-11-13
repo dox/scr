@@ -167,12 +167,12 @@ class logs {
     $logs_retention = $settingsClass->value('logs_retention');
 
     //fetch COUNT of how many logs we need to delete
-	$sql = "SELECT COUNT(*) AS totalLogs FROM " . self::$table_name . " WHERE DATE(date) < '" . date('Y-m-d', strtotime('-' . $logs_retention . ' days')) . "'";
+	$sql = "SELECT COUNT(*) AS totalLogs FROM " . self::$table_name . " WHERE DATE(date) < '" . date('Y-m-d', strtotime('-' . $logs_retention . ' days')) . "' AND NOT category = 'wine'";
 	$logsToDelete = $db->query($sql)->fetchAll()[0]['totalLogs'];
   
     // if there are logs to delete, delete them!
 	if ($logsToDelete > 0) {
-	  $sql = "DELETE FROM " . self::$table_name . " WHERE DATE(date) < '" . date('Y-m-d', strtotime('-' . $logs_retention . ' days')) . "'";
+	  $sql = "DELETE FROM " . self::$table_name . " WHERE DATE(date) < '" . date('Y-m-d', strtotime('-' . $logs_retention . ' days')) . "' AND NOT category = 'wine'";
       $db->query($sql);
       
       // also delete old tokens
