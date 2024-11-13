@@ -334,6 +334,27 @@ class wine extends wineClass {
     return true;
   }
   
+  public function deduct($qtyToDeduct) {
+    global $logsClass;
+    
+    $currentTotalBottles = $this->qty;
+    $targetTotalBottles = max(0, ($currentTotalBottles - $qtyToDeduct));
+    
+    if ($targetTotalBottles > 0) {
+      $array = array("qty" => $targetTotalBottles);
+      $this->update($array);
+      
+      return true;
+    } else {
+      $logArray['category'] = "wine";
+      $logArray['result'] = "warning";
+      $logArray['description'] = "Failiure to deduct from [wineUID:" . $this->uid . "]. Current total: " . $currentTotalBottles . ", attempted to deduct " . $qtyToDeduct;
+      $logsClass->create($logArray);
+      
+      return false;
+    }
+  }
+  
   public function friendly_name($full = false) {
     $output  = $this->name;
     
@@ -351,8 +372,8 @@ class wine extends wineClass {
   public function update($array) {
     global $db, $logsClass;
     
-    printArray($array);
-    printArray($_FILES);
+    //printArray($array);
+    //printArray($_FILES);
     
     // Initialize the set part of the query
     $setParts = [];
@@ -440,13 +461,11 @@ class wine extends wineClass {
     $sql .= " WHERE uid = '" . $this->uid . "' ";
     $sql .= " LIMIT 1";
     
-    echo $sql;
-    
     $update = $db->query($sql);
     
-    $logArray['category'] = "member";
+    $logArray['category'] = "wine";
     $logArray['result'] = "success";
-    $logArray['description'] = "Updated wine with fields " . $setString;
+    $logArray['description'] = "Updated [wineUID:" . $this->uid . "] with fields " . $setString;
     $logsClass->create($logArray);
     
     return true;
@@ -633,6 +652,9 @@ class wine_transactions extends wineClass {
     global $db, $logsClass, $settingsClass;
     
     foreach (array_keys($array['uid']) AS $uid) {
+      $wine = new wine($uid);
+      $wine->deduct($array['qty'][$uid]);
+      
       $wineItems[] = array(
         'uid' => $array['uid'][$uid],
         'name' => $array['name'][$uid],
