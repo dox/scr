@@ -338,21 +338,21 @@ class wine extends wineClass {
     global $logsClass;
     
     $currentTotalBottles = $this->qty;
-    $targetTotalBottles = max(0, ($currentTotalBottles - $qtyToDeduct));
+    $targetTotalBottles = $currentTotalBottles - $qtyToDeduct;
+    $actualTargetTotalBottles = max(0, ($targetTotalBottles)); // don't allow less than 0 bottles
     
-    if ($targetTotalBottles > 0) {
-      $array = array("qty" => $targetTotalBottles);
-      $this->update($array);
-      
-      return true;
-    } else {
+    $array = array("qty" => $actualTargetTotalBottles);
+    $this->update($array);
+    
+    if ($targetTotalBottles < 0) {
+      // an attempt to deduct more bottles than there were... so log this
       $logArray['category'] = "wine";
       $logArray['result'] = "warning";
-      $logArray['description'] = "Failiure to deduct from [wineUID:" . $this->uid . "]. Current total: " . $currentTotalBottles . ", attempted to deduct " . $qtyToDeduct;
+      $logArray['description'] = "Attempted to deduct " . $qtyToDeduct . " from [wineUID:" . $this->uid . "] when only " . $currentTotalBottles . " existed";
       $logsClass->create($logArray);
-      
-      return false;
     }
+    
+    return true;
   }
   
   public function friendly_name($full = false) {
