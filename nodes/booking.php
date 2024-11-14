@@ -35,9 +35,9 @@ if (isset($_POST['guest_name'])) {
 $title = "Week " . $term->whichWeek($mealObject->date_meal) . " " . $mealObject->name;
 $subtitle = $mealObject->type . ": " . $mealObject->location . ", " . dateDisplay($mealObject->date_meal, true);
 
-if (checkpoint_charlie("meals") && $mealObject->total_dessert_bookings_this_meal() > $mealObject->scr_dessert_capacity)  {
+if ($mealObject->total_dessert_bookings_this_meal() > $mealObject->scr_dessert_capacity)  {
   $subtitle .= " <span class=\"badge rounded-pill bg-danger text-dark\">Dessert over capacity</span>";
-} elseif (checkpoint_charlie("meals") && $mealObject->$scr_dessert_capacity > 0 && $mealObject->total_dessert_bookings_this_meal() == $mealObject->$scr_dessert_capacity) {
+} elseif ($mealObject->scr_dessert_capacity > 0 && $mealObject->total_dessert_bookings_this_meal() == $mealObject->scr_dessert_capacity) {
   $subtitle .= " <span class=\"badge rounded-pill bg-warning text-dark\">Dessert at capacity</span>";
 }
 

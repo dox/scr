@@ -67,10 +67,11 @@ class meal {
 
     $output .= "</ul>";
     
-    if (checkpoint_charlie("meals") && $this->total_dessert_bookings_this_meal() > $this->scr_dessert_capacity)  {
-      $output .= "<span class=\"badge rounded-pill bg-danger text-dark\">Dessert over capacity</span>";
-    } elseif (checkpoint_charlie("meals") && $this->$scr_dessert_capacity > 0 && $this->total_dessert_bookings_this_meal() == $this->$scr_dessert_capacity) {
-      $output .= "<span class=\"badge rounded-pill bg-warning text-dark\">Dessert at capacity</span>";
+    $dessertCapacityMet = "";
+    if ($this->total_dessert_bookings_this_meal() > $this->scr_dessert_capacity)  {
+      $dessertCapacityMet = "<span class=\"badge rounded-pill bg-danger text-dark\">Dessert over capacity</span>";
+    } elseif ($this->scr_dessert_capacity > 0 && $this->total_dessert_bookings_this_meal() == $this->scr_dessert_capacity) {
+      $dessertCapacityMet = "<span class=\"badge rounded-pill bg-warning text-dark\">Dessert at capacity</span>";
     }
 
     $output .= "</p>";
@@ -81,7 +82,7 @@ class meal {
     if ($this->total_bookings_this_meal('MCR') > 0 || $this->totalCapacity('MCR') > 0) {
       $mcrCapacity = "(MCR " . $this->total_bookings_this_meal('MCR') . "/" . $this->totalCapacity('MCR') . ")";
     }
-    $output .= "<small class=\"d-block\">Bookings: " . $scrCapacity . "  " .  $mcrCapacity . "</small>";
+    $output .= "<small class=\"d-block\">Bookings: " . $scrCapacity . "  " .  $mcrCapacity . $dessertCapacityMet . "</small>";
 
     $output .= "</div>";
     $output .= "<div class=\"card-footer bg-white border-0 px-0 py-0\">";

@@ -80,6 +80,8 @@ $bookingsClass = new bookings();
             $exceededClass = "";
             if ($mealObject->total_dessert_bookings_this_meal('SCR') > $mealObject->scr_dessert_capacity) {
               $exceededClass = " text-danger";
+            } elseif ($mealObject->total_dessert_bookings_this_meal('SCR') == $mealObject->scr_dessert_capacity) {
+              $exceededClass = " text-warning";
             }
             ?>
             <div class="h1 mb-3 <?php echo $exceededClass; ?>"><?php echo $mealObject->total_dessert_bookings_this_meal('SCR'); ?></div>
