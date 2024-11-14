@@ -106,31 +106,42 @@ if (isset($bookingByMember)) {
             $dessertHelper = "";
             $dessertChecked = "";
             $dessertDisabledCheck = " disabled";
-            if ($bookingObject->dessert == "1") {
-              // we're already booked on for dessert
-              $dessertChecked = "checked";
+            if ($mealObject->allowed_dessert == 0) {
+              // dessert for this meal not available
+              $dessertHelper = "Dessert not available";
               
-              if ($mealObject->allowed_dessert == 1 && $mealObject->check_cutoff_ok(true)) {
-                $dessertDisabledCheck = "";
-              } else {
-                if (checkpoint_charlie("bookings")) {
-                } else {
-                  $dessertHelper = "Deadline passed";
-                }
+              if ($bookingObject->dessert == "1") {
+                // we're already booked on for dessert
+                $dessertChecked = "checked";
               }
             } else {
-              // we're not yet booked on for dessert
-              if ($mealObject->allowed_dessert == 1 && $mealObject->check_cutoff_ok(true)) {
-                $dessertDisabledCheck = "";
-              }
-              
-              // check if dessert capacity is reached
-              if (($mealObject->total_dessert_bookings_this_meal() + count($bookingObject->guestsArray()) + 1) > $mealObject->scr_dessert_capacity) {
-                if (checkpoint_charlie("bookings")) {
+              // dessert for this meal is available
+              if ($bookingObject->dessert == "1") {
+                // we're already booked on for dessert
+                $dessertChecked = "checked";
+                
+                if ($mealObject->allowed_dessert == 1 && $mealObject->check_cutoff_ok(true)) {
+                  $dessertDisabledCheck = "";
                 } else {
-                  $dessertDisabledCheck = " disabled";
+                  if (checkpoint_charlie("bookings")) {
+                  } else {
+                    $dessertHelper = "Deadline passed";
+                  }
                 }
-                $dessertHelper =  "(capacity for dessert reached)";
+              } else {
+                // we're not yet booked on for dessert
+                if ($mealObject->allowed_dessert == 1 && $mealObject->check_cutoff_ok(true)) {
+                  $dessertDisabledCheck = "";
+                }
+                
+                // check if dessert capacity is reached
+                if (($mealObject->total_dessert_bookings_this_meal() + count($bookingObject->guestsArray()) + 1) > $mealObject->scr_dessert_capacity) {
+                  if (checkpoint_charlie("bookings")) {
+                  } else {
+                    $dessertDisabledCheck = " disabled";
+                  }
+                  $dessertHelper =  "(capacity for dessert reached)";
+                }
               }
             }
             
@@ -145,7 +156,7 @@ if (isset($bookingByMember)) {
                 <input class="form-check-input" <?php echo $dessertDisabledCheck; ?> id="dessert" name="dessert" value="1" type="checkbox" <?php echo $dessertChecked; ?>>
                 <?php
                 // include the dessert value in POST if the checkbox is disabled (otherwise dessert resets to 0)
-                if ($dessertDisabledCheck == " disabled") { echo "<input type=\"hidden\" id=\"dessert\" name=\"dessert\" value=\"1\" />"; } ?>
+                if ($dessertDisabledCheck == " disabled") { echo "<input type=\"hidden\" id=\"dessert\" name=\"dessert\" value=\"" . $bookingObject->dessert . "\" />"; } ?>
               </label>
             </span>
           </label>
