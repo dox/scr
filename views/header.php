@@ -5,6 +5,11 @@
 			<svg width="1.3em" height="1.3em">
 				<use xlink:href="img/icons.svg#chough"/>
 			</svg> <?php echo site_name; ?></a>
+			<?php
+			if (debug) {
+				echo "<span class=\"badge rounded-pill text-bg-warning\">DEBUG</span>";
+			}
+			?>
 	  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarLinkCollapse" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
 	    <span class="navbar-toggler-icon"></span>
 	  </button>

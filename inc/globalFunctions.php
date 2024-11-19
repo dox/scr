@@ -370,16 +370,25 @@ function sendMail($subject = "No Subject Specified", $recipients = NULL, $body =
 	$mail->Body    = $body;
 	//$mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
 	
-	if($mail->Send()) {
+	if (debug) {
+		// don't email when we are in debug mode!
 		$logArray['category'] = "email";
 		$logArray['result'] = "success";
-		$logArray['description'] = "Email sent to " . implode(", ",array_keys($mail->getAllRecipientAddresses())) . ". Subject: " . $subject;
+		$logArray['description'] = "DEBUG MODE ON, but otherwise email would have been sent to " . implode(", ",array_keys($mail->getAllRecipientAddresses())) . ". Subject: " . $subject;
 		$logsClass->create($logArray);
 	} else {
-		$logArray['category'] = "email";
-		$logArray['result'] = "danger";
-		$logArray['description'] = "Email could not be sent to " . implode(", ",array_keys($mail->getAllRecipientAddresses())) . " <code>" . $mail->ErrorInfo . "</code>";
-		$logsClass->create($logArray);
+		if($mail->Send()) {
+			$logArray['category'] = "email";
+			$logArray['result'] = "success";
+			$logArray['description'] = "Email sent to " . implode(", ",array_keys($mail->getAllRecipientAddresses())) . ". Subject: " . $subject;
+			$logsClass->create($logArray);
+		} else {
+			$logArray['category'] = "email";
+			$logArray['result'] = "danger";
+			$logArray['description'] = "Email could not be sent to " . implode(", ",array_keys($mail->getAllRecipientAddresses())) . " <code>" . $mail->ErrorInfo . "</code>";
+			$logsClass->create($logArray);
+		}
 	}
+	
 }
 ?>
