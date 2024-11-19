@@ -65,7 +65,18 @@ if ($pageType == "add") {
 				<div class="row">
 					<div class="col mb-3">
 						<label for="name" class="form-label">Supplier</label>
-						<input type="text" class="form-control" id="supplier" name="supplier" value="<?php echo $wine->supplier; ?>" required>
+						<input type="text" class="form-control" id="supplier" name="supplier" value="<?php echo $wine->supplier; ?>" list="suppliers">
+						<datalist id="suppliers">
+							<?php
+							foreach ($wine->getAllSuppliers() AS $supplier) {
+								echo "<option id=\"" . $supplier . "\" value=\"" . $supplier . "\"></option>";
+							}
+							?>
+						</datalist>
+					</div>
+					<div class="col mb-3">
+						<label for="name" class="form-label">Supplier Order Reference</label>
+						<input type="text" class="form-control" id="supplier_ref" name="supplier_ref" value="<?php echo $wine->supplier_ref; ?>">
 					</div>
 				</div>
 				<div class="row">

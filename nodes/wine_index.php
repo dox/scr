@@ -3,7 +3,7 @@ pageAccessCheck("wine");
 
 $title = "Wine Management";
 $subtitle = "BETA FEATURE!";
-$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#basket\"/></svg> Add Posting", "value" => "onclick=\"location.href='index.php?n=wine_posting'\"");
+//$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#basket\"/></svg> Add Posting", "value" => "onclick=\"location.href='index.php?n=wine_posting'\"");
 
 echo makeTitle($title, $subtitle, $icons);
 
@@ -108,26 +108,18 @@ $wineClass = new wineClass();
 
 <div class="row">
 	<div class="col-6">
-		<h1>Recent Postings</h1>
+		<h1>Recent Transactions</h1>
 		<?php
 		$wineTransactions = new wine_transactions();
 		
 		$output = "<ul class=\"list-group\">";
 		foreach ($wineTransactions->getAllTransactions() AS $transaction) {
-			$contents = json_decode($transaction['contents']);
 			
-			$totalBottles = 0;
-			foreach ($contents AS $item) {
-				$totalBottles = $totalBottles + $item->qty;
-			}
-			
-			$totalWines = count($contents);
 			
 			$output .= "<li  class=\"list-group-item\">";
-			$output .= "<a href=\"index.php?n=wine_invoice&uid=" . $transaction['uid'] . "\">";
-			$output .= dateDisplay($transaction['date']) . " " . $transaction['customer'] . " " . $transaction['reference'];
-			$output .= " Wines: " . $totalWines;
-			$output .= " Bottles: " . $totalBottles;
+			$output .= "<a href=\"index.php?n=wine_wine&uid=" . $transaction['wine_uid'] . "\">";
+			$output .= dateDisplay($transaction['date']) . " " . $transaction['wine_uid'] . " " . $transaction['cellar_uid'];
+			$output .= $transaction['description'];
 			$output .= "</a>";
 			
 			$output .= "</li>";

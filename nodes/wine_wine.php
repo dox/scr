@@ -4,6 +4,16 @@ pageAccessCheck("wine");
 $cleanUID = filter_var($_GET['uid'], FILTER_SANITIZE_NUMBER_INT);
 
 $wine = new wine($cleanUID);
+
+$array = array(
+	"type" => "test",
+	"cellar_uid" => "1",
+	"wine_uid" => $wine->uid,
+	"value" => "-1",
+	"description" => "test"
+);
+//$wine->create_transaction($array);
+
 $cellar = new cellar($wine->cellar_uid);
 
 $title = $wine->bin . ": " . $wine->name;
@@ -30,12 +40,15 @@ if ($wine->bond == 1) {
 ?>
 
 <ul class="nav nav-tabs nav-fill" id="myTab" role="tablist">
-  <li class="nav-item" role="presentation">
-	<button class="nav-link active" id="information-tab" data-bs-toggle="tab" data-bs-target="#information-tab-pane" type="button" role="tab" aria-controls="information-tab-pane" aria-selected="true">Information</button>
-  </li>
-  <li class="nav-item" role="presentation">
-	<button class="nav-link" id="history-tab" data-bs-toggle="tab" data-bs-target="#history-tab-pane" type="button" role="tab" aria-controls="history-tab-pane" aria-selected="false">History</button>
-  </li>
+	<li class="nav-item" role="presentation">
+		<button class="nav-link active" id="information-tab" data-bs-toggle="tab" data-bs-target="#information-tab-pane" type="button" role="tab" aria-controls="information-tab-pane" aria-selected="true">Information</button>
+	</li>
+	<li class="nav-item" role="presentation">
+		<button class="nav-link" id="transactions-tab" data-bs-toggle="tab" data-bs-target="#transactions-tab-pane" type="button" role="tab" aria-controls="transactions-tab-pane" aria-selected="false">Transactions</button>
+	</li>
+	<li class="nav-item" role="presentation">
+		<button class="nav-link" id="logs-tab" data-bs-toggle="tab" data-bs-target="#logs-tab-pane" type="button" role="tab" aria-controls="logs-tab-pane" aria-selected="false">Logs</button>
+	</li>
 </ul>
 
 <div class="tab-content pt-3" id="myTabContent">
@@ -118,8 +131,17 @@ if ($wine->bond == 1) {
 				<div class="card mb-3">
 					  <div class="card-body">
 						  <h5 class="card-title">Supplier</h5>
-						  <?php echo $wine->supplier; ?>
+						  <?php
+						  if (!empty($wine->supplier)) {
+							echo "<p class=\"card-text\">" . $wine->supplier . "</p>";
+							}
+							?>
 					  </div>
+					  <?php
+					  if (!empty($wine->supplier)) {
+						  echo "<ul class=\"list-group list-group-flush\"><li class=\"list-group-item\">Ref: " . $wine->supplier_ref . "</li></ul>";
+						}
+						?>
 				  </div>
 			  
 			  <div class="card mb-3">
@@ -131,20 +153,53 @@ if ($wine->bond == 1) {
 		  </div>
 	  </div>
   </div>
-  <div class="tab-pane fade" id="history-tab-pane" role="tabpanel" aria-labelledby="history-tab" tabindex="0">
+  <div class="tab-pane fade" id="transactions-tab-pane" role="tabpanel" aria-labelledby="transactions-tab" tabindex="0">
 	  <div class="card mb-3">
 			<div class="card-body">
-				<h5 class="card-title">History</h5>
+				<h5 class="card-title">Transactions</h5>
 				
-				<ul class="list-unstyled">
-				<?php
-				foreach($wine->logs() AS $log) {
-					echo "<li>" . dateDisplay($log['date']) . " - " .  $log['username'] . " " . $log['description'] . "</li>";
-				}
-				?>
-				</ul>
+				<table class="table">
+				<thead>
+				  <tr>
+					<th scope="col">Date</th>
+					<th scope="col">Username</th>
+					<th scope="col">Type</th>
+					<th scope="col">Value</th>
+					<th scope="col">Description</th>
+				  </tr>
+				</thead>
+				<tbody>
+					<?php
+					foreach($wine->transactions() AS $transaction) {
+						$valueClass = "";
+						if ($transaction['value'] < 0) {
+							$valueClass = "text-danger";
+						} elseif($transaction['value'] > 0) {
+							$valueClass = "text-success";
+						}
+						$output  = "<tr>";
+						$output .= "<td>" . dateDisplay($transaction['date']) . " " . timeDisplay($transaction['date']) . "</td>";
+						$output .= "<td>" . $transaction['username'] . "</td>";
+						$output .= "<td>" . $transaction['type'] . "</td>";
+						$output .= "<td class=\"" . $valueClass . "\">" . $transaction['value'] . "</td>";
+						$output .= "<td>" . $transaction['description'] . "</td>";
+						$output .= "";
+						$output .= "</tr>";
+						
+						echo $output;
+					}
+					?>
+				</tbody>
+				</table>
 			</div>
 		</div>
+  </div>
+  <div class="tab-pane fade" id="logs-tab-pane" role="tabpanel" aria-labelledby="logs-tab" tabindex="0">
+	  <?php
+	  foreach ($wine->logs() AS $log) {
+		  printArray($log);
+	  }
+	  ?>
   </div>
 </div>
 
