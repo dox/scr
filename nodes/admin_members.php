@@ -236,6 +236,7 @@ function itterate() {
         <button type="submit" class="btn btn-primary"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#person-plus"/></svg> Add Member</button>
         <input type="hidden" name="memberNew" value="true" />
         <input type="hidden" name="precedence" value="999" />
+        <input type="hidden" name="calendar_hash" value="<?php echo bin2hex(random_bytes(12)); ?>" />
         <input type="hidden" name="type" value="SCR" />
       </div>
       </form>
