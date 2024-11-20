@@ -82,15 +82,15 @@ function attemptLogin($username, $password, $remember_me = false) {
       $_SESSION['category'] = $memberObject->category;
       $_SESSION['permissions'] = explode(",", $memberObject->permissions);
       
+      $sql = "UPDATE members SET date_lastlogon = '" . date('Y-m-d H:i:s') . "' WHERE uid = '" . $memberObject->uid . "' LIMIT 1";
+      $userUpdate = $db->query($sql);
+      
       if($remember_me == true) {
         $token = bin2hex(random_bytes(16));
         $token_expiry =  date('c', strtotime("1 month"));
         
         $sql = "INSERT INTO tokens (token, member_uid, token_expiry) VALUES ('" . $token . "', '" . $memberObject->uid . "', '" . $token_expiry . "')";
         $tokenCreate = $db->query($sql);
-        
-        $sql = "UPDATE members SET date_lastlogon = '" . date('Y-m-d H:i:s') . "' WHERE uid = '" . $memberObject->uid . "' LIMIT 1";
-        $userUpdate = $db->query($sql);
         
         $expire = 30*24*3600; // 1 month
         setcookie ("username_uid", $memberObject->uid, time() + $expire);
