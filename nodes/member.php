@@ -506,6 +506,9 @@ var options = {
     height: '300px',
     toolbar: {
       show: false
+    },
+    zoom: {
+      enabled: false,
     }
   },
   

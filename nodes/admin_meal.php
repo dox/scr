@@ -479,6 +479,9 @@ var options = {
     toolbar: {
       show: false
     },
+    zoom: {
+      enabled: false,
+    },
     background: 'transparent'
   },
   grid: {
