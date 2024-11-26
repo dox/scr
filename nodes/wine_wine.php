@@ -18,8 +18,9 @@ $cellar = new cellar($wine->cellar_uid);
 
 $title = $wine->bin . ": " . $wine->name;
 $subtitle = "<a href=\"index.php?n=wine_search&filter=grape&value=" . $wine->grape . "\">" . $wine->grape . "</a>, " . "<a href=\"index.php?n=wine_search&filter=country_of_origin&value=" . $wine->country_of_origin . "\">" . $wine->country_of_origin . "</a>";
-$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#plus-circle\"/></svg> Add To List", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#favListModal\"");
-$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#plus-circle\"/></svg> Edit Wine", "value" => "onclick=\"location.href='index.php?n=wine_edit&edit=edit&uid=" . $wine->uid . "'\"");
+$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#heart-empty\"/></svg> Add To List", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#favListModal\"");
+$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#journal-text\"/></svg> Edit Wine", "value" => "onclick=\"location.href='index.php?n=wine_edit&edit=edit&uid=" . $wine->uid . "'\"");
+$icons[] = array("class" => "btn-success", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#plus-circle\"/></svg> Create Transaction", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#transactionModal\"");
 echo makeTitle($title, $subtitle, $icons);
 ?>
 
@@ -114,6 +115,7 @@ if ($wine->status <> 1) {
 			  
 			  <div class="card mb-3">
 				  <div class="card-body">
+				  	<h5 class="card-title">Debug Array</h5>
 					  <?php
 					  printArray($wine);
 					  ?>
@@ -143,13 +145,6 @@ if ($wine->status <> 1) {
 						}
 						?>
 				  </div>
-			  
-			  <div class="card mb-3">
-				  <img src="https://as1.ftcdn.net/v2/jpg/00/91/94/40/1000_F_91944058_7lRk2ok81t7vS6JsVP81BL9Jp6VajrSh.jpg" class="card-img-top" alt="...">
-				  <div class="card-body">
-					  Wine Origin
-				  </div>
-			  </div>
 		  </div>
 	  </div>
   </div>
@@ -164,7 +159,9 @@ if ($wine->status <> 1) {
 					<th scope="col">Date</th>
 					<th scope="col">Username</th>
 					<th scope="col">Type</th>
-					<th scope="col">Value</th>
+					<th scope="col">Bottles</th>
+					<th scope="col">£/Bottle</th>
+					<th scope="col">Event</th>
 					<th scope="col">Description</th>
 				  </tr>
 				</thead>
@@ -172,16 +169,18 @@ if ($wine->status <> 1) {
 					<?php
 					foreach($wine->transactions() AS $transaction) {
 						$valueClass = "";
-						if ($transaction['value'] < 0) {
-							$valueClass = "text-danger";
-						} elseif($transaction['value'] > 0) {
-							$valueClass = "text-success";
+						if ($transaction['bottles'] < 0) {
+							$bottlesClass = "text-danger";
+						} elseif($transaction['bottles'] > 0) {
+							$bottlesClass = "text-success";
 						}
 						$output  = "<tr>";
 						$output .= "<td>" . dateDisplay($transaction['date']) . " " . timeDisplay($transaction['date']) . "</td>";
 						$output .= "<td>" . $transaction['username'] . "</td>";
-						$output .= "<td>" . $transaction['type'] . "</td>";
-						$output .= "<td class=\"" . $valueClass . "\">" . $transaction['value'] . "</td>";
+						$output .= "<td><span class=\"badge rounded-pill text-bg-info\">" . $transaction['type'] . "</span></td>";
+						$output .= "<td class=\"" . $bottlesClass . "\">" . $transaction['bottles'] . "</td>";
+						$output .= "<td>" . currencyDisplay($transaction['price_per_bottle']) . "</td>";
+						$output .= "<td>" . $transaction['event'] . "</td>";
 						$output .= "<td>" . $transaction['description'] . "</td>";
 						$output .= "";
 						$output .= "</tr>";
@@ -203,7 +202,46 @@ if ($wine->status <> 1) {
   </div>
 </div>
 
-
+<div class="modal fade" id="transactionModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+	<div class="modal-content">
+	  <div class="modal-header">
+		<h1 class="modal-title fs-5" id="exampleModalLabel">Create Transaction</h1>
+		<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+	  </div>
+	  <div class="modal-body">
+		  <div class="alert alert-danger" role="alert">
+			NOT IN USE YET!!!
+		  </div>
+		  <form>
+			  <div class="row">
+				  <div class="col-3">
+					  <div class="mb-3">
+						  <label for="transaction_total" class="form-label">Bottles</label>
+						  <input type="number" class="form-control" id="transaction_total">
+						</div>
+				</div>
+					<div class="col-9">
+						<div class="mb-3">
+						  <label for="transaction_event" class="form-label">Event</label>
+						  <input type="text" class="form-control" id="transaction_event" placeholder="e.g. Formal Hall">
+						</div>
+					</div>
+			  </div>
+			  
+			  
+			  <div class="mb-3">
+				<label for="transaction_notes" class="form-label">Notes</label>
+				<textarea class="form-control" id="transaction_notes" rows="3"></textarea>
+			  </div>
+		  </form>
+	  </div>
+	  <div class="modal-footer">
+		<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+	  </div>
+	</div>
+  </div>
+</div>
 
 <div class="modal fade" id="favListModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog">

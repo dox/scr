@@ -178,7 +178,7 @@ if ($pageType == "add") {
 		<div class="card mb-3">
 			<div class="card-body">
 				<input type="text" class="form-control" id="price_purchase" name="price_purchase" value="<?php echo $wine->pricePerBottle("Purchase"); ?>" required>
-				<label for="price_purchase" class="form-label">Purchase Price</label>
+				<label for="price_purchase" class="form-label">Purchase Price <a href="#" data-bs-toggle="tooltip" data-bs-title="All prices are ex VAT"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#info-circle"></use></svg></a></label>
 			</div>
 		</div>
 	</div>
@@ -193,7 +193,7 @@ if ($pageType == "add") {
 						<input type="text" class="form-control" id="price_external" name="price_external" value="<?php echo $wine->pricePerBottle("External"); ?>" required>
 					</div>
 				</div>
-				<label for="price_internal" class="form-label">Internal/External Price</label>
+				<label for="price_internal" class="form-label">Internal/External Price <a href="#" data-bs-toggle="tooltip" data-bs-title="All prices are ex VAT"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#info-circle"></use></svg></a></label>
 			</div>
 		</div>
 	</div>
@@ -245,13 +245,6 @@ if ($pageType == "add") {
 				<input class="form-control" type="file" id="photograph" name="photograph">
 			</div>
 		</div>
-		
-		<div class="card mb-3">
-			<img src="https://as1.ftcdn.net/v2/jpg/00/91/94/40/1000_F_91944058_7lRk2ok81t7vS6JsVP81BL9Jp6VajrSh.jpg" class="card-img-top" alt="...">
-			<div class="card-body">
-				Wine Origin
-			</div>
-		</div>
 	</div>
 	
 	<button type="button" class="btn btn-lg btn-primary" data-wineuid="<?php echo $wine->uid; ?>" onClick="submitWine(this)">Save</button>
@@ -265,6 +258,9 @@ if ($pageType == "add") {
 </form>
 
 <script>
+const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+
 function submitWine(button) {
 	var safeToContinue = true;
 	

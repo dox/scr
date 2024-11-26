@@ -279,7 +279,7 @@ class wine extends wineClass {
 	  $description = $this->name;
 	}
 	
-	if ($this->bond == 1) {
+	if ($this->status == "In-Bond") {
 	  $binName = "<a href=\"" . $url . "\" type=\"button\" class=\"btn btn-primary position-relative\">" . $this->bin . "<span class=\"position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning\">In-Bond</span></a>";
 	  $cardClass = " border-warning ";
 	} else {
