@@ -216,6 +216,40 @@ class wineClass {
   
     return $returnArray;
   }
+  
+  public function stats_winesByRegion() {
+    global $db;
+  
+    $sql  = "SELECT region_of_origin, COUNT(*) AS totalBins FROM wine_wines";
+    $sql .= " WHERE region_of_origin <> ''";
+    $sql .= " GROUP BY region_of_origin";
+    $sql .= " ORDER BY region_of_origin ASC";
+  
+    $results = $db->query($sql)->fetchAll();
+        
+    foreach ($results AS $result) {
+      $returnArray[$result['region_of_origin']] = $result['totalBins'];
+    }
+  
+    return $returnArray;
+  }
+  
+  public function stats_transactionsByDate($daysToInclude = null) {
+    global $db;
+    
+    $sql  = "SELECT date(date) AS date, COUNT(date(date)) AS dateTransactionTotals, SUM(ABS(value)) AS transactionBottleTotals";
+    $sql .= " FROM wine_transactions";
+    
+    if ($daysToInclude != null) {
+      $sql .= " WHERE date > (curdate() - interval " . $daysToInclude . " day)";
+    }
+    
+    $sql .=  " GROUP BY date(date)";
+    
+    $results = $db->query($sql)->fetchAll();
+        
+    return $results;
+  }
 }
 
 

@@ -34,8 +34,8 @@ echo makeTitle($title, $subtitle, $icons);
 <hr class="pb-3" />
 
 <?php
-if ($wine->bond == 1) {
-	echo "<div class=\"alert alert-warning text-center\" role=\"alert\">WINE IN-BOND</div>";
+if ($wine->status <> 1) {
+	echo "<div class=\"alert alert-warning text-center\" role=\"alert\">WINE IN-STATUS</div>";
 }
 ?>
 

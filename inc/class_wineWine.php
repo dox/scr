@@ -6,7 +6,7 @@ class wine extends wineClass {
   public $code;
   public $cellar_uid;
   public $bin;
-  public $bond;
+  public $status;
   public $name;
   public $qty;
   public $category;

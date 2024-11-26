@@ -109,6 +109,7 @@ $wineClass = new wineClass();
 <div class="row">
 	<div class="col-6">
 		<h1>Recent Transactions</h1>
+		<div id="chart_transactions_by_day"></div>
 		<?php
 		$wineTransactions = new wine_transactions();
 		
@@ -233,4 +234,50 @@ counters.forEach(counter => {
    
    animate();
 });
+</script>
+
+
+
+<?php
+$wineClass = new wineClass;
+foreach ($wineClass->stats_transactionsByDate(30) AS $date) {
+	$transactions[] = $date['dateTransactionTotals'];
+	$bottles[] = $date['transactionBottleTotals'];
+	$series[] = "'" . date('m/d/Y', strtotime($date['date'])) . "'";
+}
+?>
+<script>
+var options = {
+  series: [{
+	  name:'Total Transactions',
+	  data: [<?php echo implode(",", $transactions); ?>]
+  }, {
+	  name:'Total Bottles',
+		data: [<?php echo implode(",", $bottles); ?>]
+  }],
+  legend: {
+  show: false
+},
+chart: {
+  height: 350,
+  type: 'bar',
+  stacked: true,
+  toolbar: {
+	  show: false
+  },
+  zoom: {
+	  enabled: false,
+  }
+},
+dataLabels: {
+	enabled: false
+},
+xaxis: {
+  type: 'datetime',
+  categories: [<?php echo implode(",", $series); ?>]
+},
+};
+
+var chart = new ApexCharts(document.querySelector("#chart_transactions_by_day"), options);
+chart.render();
 </script>

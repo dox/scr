@@ -43,9 +43,54 @@ if ($pageType == "add") {
 
 <form class="needs-validation" id="wine_addEdit" novalidate>
 
-<div class="alert alert-warning text-center" role="alert">
-	<input type="hidden" value="0" id="bond" name="bond">
-	<input class="form-check-input" type="checkbox" <?php if ($wine->bond ==1) { echo "checked"; } ?> id="bond" name="bond" value="1"> WINE IN-BOND
+<div class="card mb-3">
+	<div class="card-body">
+		<div class="row">
+			<div class="col-4 mb-3">
+				<label for="type" class="form-label">Cellar</label>
+				<select class="form-select" id="cellar_uid" name="cellar_uid" required>
+					<?php
+					$wineClass = new wineClass();
+					foreach ($wineClass->getAllCellars() AS $cellar) {
+						if ($wine->cellar_uid == $cellar['uid']) {
+							echo "<option value=\"" . $cellar['uid'] . "\" selected>" . $cellar['name'] . "</option>";
+						} else {
+							echo "<option value=\"" . $cellar['uid'] . "\">" . $cellar['name'] . "</option>";
+						}
+					}
+					?>
+				</select>
+			</div>
+			<div class="col-4 mb-3">
+				<label for="type" class="form-label">Status</label>
+				<select class="form-select" id="status" name="status" required>
+					<?php
+					foreach (explode(",", $settingsClass->value('wine_status')) AS $wine_status) {
+						if (isset($wine->status) && $wine->status == $wine_status) {
+							echo "<option selected>" . $wine_status . "</option>";
+						} else {
+							echo "<option>" . $wine_status . "</option>";
+						}
+					}
+					?>
+				</select>
+			</div>
+			<div class="col-4 mb-3">
+				<label for="type" class="form-label">Type</label>
+				<select class="form-select" id="type" name="type" required>
+					<?php
+					foreach (explode(",", $settingsClass->value('wine_type')) AS $wine_type) {
+						if (isset($wine->type) && $wine->type == $wine_type) {
+							echo "<option selected>" . $wine_type . "</option>";
+						} else {
+							echo "<option>" . $wine_type . "</option>";
+						}
+					}
+					?>
+				</select>
+			</div>
+		</div>
+	</div>
 </div>
 
 <div class="row">
@@ -81,34 +126,8 @@ if ($pageType == "add") {
 				</div>
 				<div class="row">
 					<div class="col-4 mb-3">
-						<label for="type" class="form-label">Type</label>
-						<select class="form-select" id="type" name="type" required>
-							<option></option>
-							<?php
-							foreach (explode(",", $settingsClass->value('wine_type')) AS $wine_type) {
-								if (isset($wine->type) && $wine->type == $wine_type) {
-									echo "<option selected>" . $wine_type . "</option>";
-								} else {
-									echo "<option>" . $wine_type . "</option>";
-								}
-							}
-							?>
-						</select>
-					</div>
-					<div class="col-4 mb-3">
-						<label for="name" class="form-label">Grape</label>
-						<input type="text" class="form-control" id="grape" name="grape" list="codes-grapes" value="<?php echo $wine->grape; ?>" required>
-						<datalist id="codes-grapes">
-							<?php
-							foreach ($wine->stats_winesByGrape() AS $grape => $value) {
-								echo "<option id=\"" . $grape . "\" value=\"" . $grape . "\"></option>";
-							}
-							?>
-						</datalist>
-					</div>
-					<div class="col-4 mb-3">
 						<label for="name" class="form-label">Country of Origin</label>
-						<input type="text" class="form-control" id="country_of_origin" name="country_of_origin" list="codes-countries" value="<?php echo $wine->country_of_origin; ?>" required>
+						<input type="text" class="form-control" id="country_of_origin" name="country_of_origin" list="codes-countries" value="<?php echo $wine->country_of_origin; ?>">
 						<datalist id="codes-countries">
 							<?php
 							foreach ($wine->stats_winesByCountry() AS $country_of_origin => $value) {
@@ -117,6 +136,29 @@ if ($pageType == "add") {
 							?>
 						</datalist>
 					</div>
+					<div class="col-4 mb-3">
+						<label for="name" class="form-label">Region of Origin</label>
+						<input type="text" class="form-control" id="region_of_origin" name="region_of_origin" list="codes-regions" value="<?php echo $wine->region_of_origin; ?>">
+						<datalist id="codes-regions">
+							<?php
+							foreach ($wine->stats_winesByRegion() AS $region_of_origin => $value) {
+								echo "<option id=\"" . $region_of_origin . "\" value=\"" . $region_of_origin . "\"></option>";
+							}
+							?>
+						</datalist>
+					</div>
+					<div class="col-4 mb-3">
+						<label for="name" class="form-label">Grape</label>
+						<input type="text" class="form-control" id="grape" name="grape" list="codes-grapes" value="<?php echo $wine->grape; ?>">
+						<datalist id="codes-grapes">
+							<?php
+							foreach ($wine->stats_winesByGrape() AS $grape => $value) {
+								echo "<option id=\"" . $grape . "\" value=\"" . $grape . "\"></option>";
+							}
+							?>
+						</datalist>
+					</div>
+					
 				</div>
 			</div>
 		</div>
@@ -214,7 +256,6 @@ if ($pageType == "add") {
 	
 	<button type="button" class="btn btn-lg btn-primary" data-wineuid="<?php echo $wine->uid; ?>" onClick="submitWine(this)">Save</button>
 	
-	<input type="hidden" id="cellar_uid" name="cellar_uid" value="<?php echo $cellar->uid; ?>">
 	<?php
 	if ($pageType == "edit") {
 		echo "<input type=\"hidden\" id=\"uid\" name=\"uid\" value=\"" . $wine->uid . "\">";
