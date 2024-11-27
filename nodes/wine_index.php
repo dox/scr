@@ -3,7 +3,7 @@ pageAccessCheck("wine");
 
 $title = "Wine Management";
 $subtitle = "BETA FEATURE!";
-//$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#basket\"/></svg> Add Posting", "value" => "onclick=\"location.href='index.php?n=wine_posting'\"");
+$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#plus-circle\"/></svg> Add Wine", "value" => "onclick=\"location.href='index.php?n=wine_edit&edit=add&cellar_uid=1'\"");
 
 echo makeTitle($title, $subtitle, $icons);
 

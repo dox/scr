@@ -31,8 +31,8 @@ echo makeTitle($title, $subtitle, $icons);
 	<div class="col">
 		<div class="card mb-3">
 			<div class="card-body">
-				<h5 class="card-title countup"><?php echo currencyDisplay($cellar->totalPurchaseValue()); ?></h5>
-				<h6 class="card-subtitle mb-2 text-body-secondary">Total Value</h6>
+				<h5 class="card-title countup"><?php echo $cellar->getAllWineBottlesTotal(); ?></h5>
+				<h6 class="card-subtitle mb-2 text-body-secondary">Bottles</h6>
 			</div>
 		</div>
 	</div>

@@ -77,36 +77,41 @@ class wine extends wineClass {
 	return true;
   }
   
-  public function create_transaction($array = null) {
-	  $wineTransaction = new wine_transactions();
-	  
-	  $wineTransaction->create($array);
-	  $this->deduct($array['value']);
-  }
-  
   public function deduct($qtyToDeduct) {
-	global $logsClass;
-	
-	// turn positive numbers into negative numbers
-	$qtyToDeduct = $qtyToDeduct <= 0 ? $qtyToDeduct : -$qtyToDeduct ;
-	
-	$currentTotalBottles = $this->qty;
-	$targetTotalBottles = $currentTotalBottles + $qtyToDeduct;
-	$actualTargetTotalBottles = max(0, ($targetTotalBottles)); // don't allow less than 0 bottles
-	
-	$array = array("qty" => $actualTargetTotalBottles);
-	$this->update($array);
-	
-	if ($targetTotalBottles < 0) {
-	  // an attempt to deduct more bottles than there were... so log this
-	  $logArray['category'] = "wine";
-	  $logArray['result'] = "warning";
-	  $logArray['description'] = "Attempted to deduct " . $qtyToDeduct . " from [wineUID:" . $this->uid . "] when only " . $currentTotalBottles . " existed";
-	  $logsClass->create($logArray);
+	  global $logsClass;
+	  
+	  // turn positive numbers into negative numbers
+	  $qtyToDeduct = $qtyToDeduct <= 0 ? $qtyToDeduct : -$qtyToDeduct ;
+	  
+	  $currentTotalBottles = $this->qty;
+	  $targetTotalBottles = $currentTotalBottles + $qtyToDeduct;
+	  $actualTargetTotalBottles = max(0, ($targetTotalBottles)); // don't allow less than 0 bottles
+	  
+	  $array = array("qty" => $actualTargetTotalBottles);
+	  $this->update($array);
+	  
+	  if ($targetTotalBottles < 0) {
+		// an attempt to deduct more bottles than there were... so log this
+		$logArray['category'] = "wine";
+		$logArray['result'] = "warning";
+		$logArray['description'] = "Attempted to deduct " . $qtyToDeduct . " from [wineUID:" . $this->uid . "] when only " . $currentTotalBottles . " existed";
+		$logsClass->create($logArray);
+	  }
+	  
+	  return true;
 	}
 	
-	return true;
-  }
+	public function import($qtyToImport) {
+		global $logsClass;
+		
+		$currentTotalBottles = $this->qty;
+		$targetTotalBottles = $currentTotalBottles + $qtyToImport;
+		
+		$array = array("qty" => $targetTotalBottles);
+		$this->update($array);
+		
+		return true;
+	  }
   
   public function friendly_name($full = false) {
 	$output  = $this->name;
@@ -240,7 +245,7 @@ class wine extends wineClass {
 	return $results['total_wines'];
   }
   
-  public function photograph() {
+  public function photographURL() {
 	$image = "img/blank.jpg";
 	
 	if (!empty($this->photograph)) {
@@ -249,7 +254,7 @@ class wine extends wineClass {
 	
 	return $image;
   }
-  
+	
   public function pricePerBottle($target = "Internal") {
 	if ($target == "Internal") {
 	  $value = $this->price_internal;

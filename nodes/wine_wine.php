@@ -124,7 +124,7 @@ if ($wine->status <> 1) {
 		  </div>
 		  <div class="col-xl-4">
 			  <div class="card mb-3">
-					<img src="<?php echo $wine->photograph(); ?>" class="card-img-top" alt="...">
+					<img src="<?php echo $wine->photographURL(); ?>" class="card-img-top" alt="...">
 					<div class="card-body">
 						Image
 					</div>
@@ -161,7 +161,7 @@ if ($wine->status <> 1) {
 					<th scope="col">Type</th>
 					<th scope="col">Bottles</th>
 					<th scope="col">£/Bottle</th>
-					<th scope="col">Event</th>
+					<th scope="col">Name</th>
 					<th scope="col">Description</th>
 				  </tr>
 				</thead>
@@ -180,9 +180,8 @@ if ($wine->status <> 1) {
 						$output .= "<td><span class=\"badge rounded-pill text-bg-info\">" . $transaction['type'] . "</span></td>";
 						$output .= "<td class=\"" . $bottlesClass . "\">" . $transaction['bottles'] . "</td>";
 						$output .= "<td>" . currencyDisplay($transaction['price_per_bottle']) . "</td>";
-						$output .= "<td>" . $transaction['event'] . "</td>";
+						$output .= "<td>" . $transaction['name'] . "</td>";
 						$output .= "<td>" . $transaction['description'] . "</td>";
-						$output .= "";
 						$output .= "</tr>";
 						
 						echo $output;
@@ -210,33 +209,49 @@ if ($wine->status <> 1) {
 		<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	  </div>
 	  <div class="modal-body">
-		  <div class="alert alert-danger" role="alert">
-			NOT IN USE YET!!!
-		  </div>
 		  <form>
 			  <div class="row">
-				  <div class="col-3">
+				  <div class="col-4">
 					  <div class="mb-3">
 						  <label for="transaction_total" class="form-label">Bottles</label>
-						  <input type="number" class="form-control" id="transaction_total">
+						  <input type="number" class="form-control" id="transaction_bottles" value="1">
 						</div>
 				</div>
-					<div class="col-9">
+					
+					<div class="col-4">
 						<div class="mb-3">
-						  <label for="transaction_event" class="form-label">Event</label>
-						  <input type="text" class="form-control" id="transaction_event" placeholder="e.g. Formal Hall">
+						  <label for="transaction_price" class="form-label">£/bottle</label>
+						  <input type="number" class="form-control" id="transaction_price_per_bottle" value="<?php echo $wine->price_internal; ?>">
+						  <div id="transaction_price_per_bottleHelp" class="form-text"><?php echo currencyDisplay($wine->price_internal) . " / " . currencyDisplay($wine->price_external); ?></div>
+						</div>
+					</div>
+					<div class="col-4">
+						<div class="mb-3">
+						  <label for="transaction_type" class="form-label">Type</label>
+						  <select class="form-select" aria-label="Default select example" id="transaction_type">
+							<option value="transaction" selected>Transaction</option>
+							<option value="import">Import</option>
+							<option value="wastage">Wastage</option>
+						  </select>
+						</div>
+					</div>
+					<div class="col-12">
+						<div class="mb-3">
+						  <label for="transaction_event" class="form-label">Name</label>
+						  <input type="text" class="form-control" id="transaction_name" placeholder="e.g. Formal Hall">
 						</div>
 					</div>
 			  </div>
 			  
 			  
 			  <div class="mb-3">
-				<label for="transaction_notes" class="form-label">Notes</label>
-				<textarea class="form-control" id="transaction_notes" rows="3"></textarea>
+				<label for="transaction_description" class="form-label">Description</label>
+				<textarea class="form-control" id="transaction_description" rows="3"></textarea>
 			  </div>
 		  </form>
 	  </div>
 	  <div class="modal-footer">
+		<button type="button" class="btn btn-success" onClick="createTransaction(this)" data-bs-dismiss="modal" data-wineuid="<?php echo $wine->uid; ?>">Create</button>
 		<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
 	  </div>
 	</div>
@@ -306,6 +321,43 @@ function handleButtonClick(button) {
 	xhr.onerror = function() {
 		alert('Request failed');
 	};
+};
+
+
+
+function createTransaction(button) {
+	// Create a new XMLHttpRequest object
+	var xhr = new XMLHttpRequest();
+	
+	// Configure it: POST-request for the URL
+	xhr.open('POST', 'actions/wine_transactionCreate.php', true);
+	
+	// Optional: Add a callback to handle the response
+	xhr.onreadystatechange = function () {
+		if (xhr.readyState === 4) { // Request is complete
+			if (xhr.status === 200) {
+				// Success! Handle the response
+				console.log('Success:', xhr.responseText);
+			} else {
+				// Error! Handle the error
+				console.error('Error:', xhr.status, xhr.statusText);
+			}
+		}
+	};
+	
+	// Create a new FormData object
+	var formData = new FormData();
+	
+	// Append your parameters to the FormData object
+	formData.append('wine_uid', button.getAttribute('data-wineuid'));
+	formData.append('bottles', document.getElementById('transaction_bottles').value);
+	formData.append('name', document.getElementById('transaction_name').value);
+	formData.append('price_per_bottle', document.getElementById('transaction_price_per_bottle').value);
+	formData.append('type', document.getElementById('transaction_type').value);
+	formData.append('description', document.getElementById('transaction_description').value);
+	
+	// Send the request over the network
+	xhr.send(formData);
 };
 
 </script>

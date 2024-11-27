@@ -169,7 +169,12 @@ if ($pageType == "add") {
 	<div class="col">
 		<div class="card mb-3">
 			<div class="card-body">
-				<input type="text" class="form-control" id="qty" name="qty" value="<?php echo $wine->qty; ?>" required>
+				<?php
+				if ($pageType == "edit") {
+					$disabledCheck = " disabled";	
+				}
+				?>
+				<input type="text" class="form-control" id="qty" name="qty" value="<?php echo $wine->qty; ?>" <?php echo $disabledCheck; ?> required>
 				<label for="qty" class="form-label">Bottles Qty.</label>
 			</div>
 		</div>
@@ -240,7 +245,7 @@ if ($pageType == "add") {
 	</div>
 	<div class="col-xl-4">
 		<div class="card mb-3">
-			<img src="<?php echo $wine->photograph(); ?>" class="card-img-top" alt="...">
+			<img src="<?php echo $wine->photographURL(); ?>" class="card-img-top" alt="...">
 			<div class="card-body">
 				<input class="form-control" type="file" id="photograph" name="photograph">
 			</div>

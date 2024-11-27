@@ -237,7 +237,7 @@ class wineClass {
   public function stats_transactionsByDate($daysToInclude = null) {
     global $db;
     
-    $sql  = "SELECT date(date) AS date, COUNT(date(date)) AS dateTransactionTotals, SUM(ABS(value)) AS transactionBottleTotals";
+    $sql  = "SELECT date(date) AS date, COUNT(date(date)) AS dateTransactionTotals, SUM(ABS(bottles)) AS transactionBottleTotals";
     $sql .= " FROM wine_transactions";
     
     if ($daysToInclude != null) {

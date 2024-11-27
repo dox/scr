@@ -6,16 +6,28 @@ class wine_transactions extends wineClass {
 	global $db, $logsClass;
 	
 	$wine = new wine($array['wine_uid']);
-	$wine->deduct($array['qty']);
+	
+	
+	// check if we are deducting, or adding bottles
+	if ($array['type'] == "transaction" || $array['type'] == "wastage") {
+		$wine->deduct($array['bottles']);
+		$bottles = $array['bottles'] <= 0 ? $array['bottles'] : -$array['bottles'];
+	} else {
+		$wine->import($array['bottles']);
+		$bottles = $array['bottles'];
+	}
+	
 	
 	// Construct the transaction query
 	$sql  = "INSERT INTO " . self::$table_name;
 	$sql .= " SET username = '" . $_SESSION['username'] . "',";
 	$sql .= " type = '" . $array['type'] . "',";
-	$sql .= " cellar_uid = '" . $array['cellar_uid'] . "',";
-	$sql .= " wine_uid = '" . $array['wine_uid'] . "',";
-	$sql .= " value = '" . $array['value'] . "',";
-	$sql .= " description = '" . $array['description'] . "'";
+	$sql .= " cellar_uid = '" . $wine->cellar_uid . "',";
+	$sql .= " wine_uid = '" . $wine->uid . "',";
+	$sql .= " bottles = '" . $bottles . "',";
+	$sql .= " price_per_bottle = '" . $array['price_per_bottle'] . "',";
+	$sql .= " description = '" . $array['description'] . "', ";
+	$sql .= " snapshot = '" . str_replace("'", "", json_encode($wine)) . "'";
 	
 	$create_transaction = $db->query($sql);
 	
