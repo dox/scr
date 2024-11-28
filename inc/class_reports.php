@@ -4,6 +4,7 @@ class reports {
 
   public $uid;
   public $type;
+  public $category;
   public $admin_only;
   public $name;
   public $file;
@@ -12,13 +13,36 @@ class reports {
 
   public function all() {
     global $db;
-
+  
     $sql  = "SELECT * FROM " . self::$table_name;
     $sql .= " ORDER BY name ASC";
-
+  
     $reports = $db->query($sql)->fetchAll();
-
+  
     return $reports;
+  }
+  
+  public function allByCategory($category) {
+    global $db;
+  
+    $sql  = "SELECT * FROM " . self::$table_name;
+    $sql .= " WHERE category = '" . $category . "'";
+    $sql .= " ORDER BY name ASC";
+  
+    $reports = $db->query($sql)->fetchAll();
+  
+    return $reports;
+  }
+  
+  public function categories() {
+    global $db;
+  
+    $sql  = "SELECT DISTINCT category FROM " . self::$table_name;
+    $sql .= " ORDER BY category ASC";
+  
+    $categories = $db->query($sql)->fetchAll();
+  
+    return $categories;
   }
 
   public function one($uid = null) {
@@ -102,23 +126,30 @@ class reports {
   }
 
   public function displayTable() {
-    $output  = "<table id=\"myTable\" class=\"table\">";
-    $output .= "<thead>";
-    $output .= "<th>" . "Name" . "</th>";
-    $output .= "<th>" . "Type" . "</th>";
-    $output .= "<th>" . "Access" . "</th>";
-    $output .= "<th>" . "Last Run" . "</th>";
-    $output .= "<th>" . "Action" . "</th>";
-    $output .= "</thead>";
-
-    $output .= "<tbody>";
-
-    foreach ($this->all() AS $report) {
-      $output .= $this->displayRow($report);
+    $output  = "";
+    
+    foreach ($this->categories() AS $category) {
+      $output .= "<h2>" . $category['category'] . "</h2>";
+      $output .= "<table id=\"myTable\" class=\"table\">";
+      $output .= "<thead>";
+      $output .= "<th>" . "Name" . "</th>";
+      $output .= "<th>" . "Type" . "</th>";
+      $output .= "<th>" . "Access" . "</th>";
+      $output .= "<th>" . "Last Run" . "</th>";
+      $output .= "<th>" . "Action" . "</th>";
+      $output .= "</thead>";
+      
+      $output .= "<tbody>";
+      
+      foreach ($this->allByCategory($category['category']) AS $report) {
+        $output .= $this->displayRow($report);
+      }
+      
+      $output .= "</tbody>";
+      $output .= "</table>";
     }
-
-    $output .= "</tbody>";
-    $output .= "</table>";
+    
+    
 
     return $output;
   }

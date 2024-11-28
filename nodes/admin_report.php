@@ -40,7 +40,7 @@ echo makeTitle($title, $subtitle);
     <h4 class="mb-3">Report</h4>
     <form method="post" id="termUpdate" action="<?php echo $_SERVER['REQUEST_URI']; ?>" class="needs-validation" novalidate>
       <div class="row">
-        <div class="col-3 mb-3">
+        <div class="col-4 mb-3">
           <label for="type" class="form-label">Type</label>
           <select class="form-select" name="type" id="type" required>
             <option value="CSV" <?php if ($report['type'] == "CSV") { echo " selected"; } ?>>CSV</option>
@@ -51,24 +51,38 @@ echo makeTitle($title, $subtitle);
             Valid report type is required.
           </div>
         </div>
-        <div class="col-9 mb-3">
-          <label for="name" class="form-label">Name</label>
-          <input type="text" class="form-control" name="name" id="name" value="<?php echo $report['name']; ?>" required>
-          <div class="invalid-feedback">
-            Valid report name is required.
-          </div>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-3 mb-3">
+        <div class="col-4 mb-3">
           <label for="admin_only" class="form-label">Admin Only</label>
           <select class="form-select" name="admin_only" id="admin_only" required>
             <option value="1" <?php if ($report['admin_only'] == "1") { echo " selected"; } ?>>Admin Only</option>
             <option value="0" <?php if ($report['admin_only'] == "0") { echo " selected"; } ?>>Member Access</option>
           </select>
         </div>
-        <div class="col-9 mb-3">
+        <div class="col-4 mb-3">
+          <label for="category" class="form-label">Category</label>
+          <select class="form-select" name="category" id="category" required>
+            <?php
+            foreach ($reportsClass->categories() AS $category) {
+              $selected = "";
+              if ($category['category'] == $report['category']) {
+                $selected = " selected";
+              }
+              echo "<option value=\"" . $category['category'] . "\"" . $selected . ">" . $category['category'] . "</option>";
+            }
+            ?>
+          </select>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-12 mb-3">
+          <label for="name" class="form-label">Name</label>
+          <input type="text" class="form-control" name="name" id="name" value="<?php echo $report['name']; ?>" required>
+          <div class="invalid-feedback">
+            Valid report name is required.
+          </div>
+        </div>
+        <div class="col-12 mb-3">
           <label for="file" class="form-label">File</label>
           <input type="text" class="form-control" name="file" id="file" value="<?php echo $report['file']; ?>">
         </div>
