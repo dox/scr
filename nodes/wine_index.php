@@ -37,7 +37,7 @@ $wineClass = new wineClass();
 	<div class="col">
 		<div class="card mb-3">
 			<div class="card-body">
-				<h5 class="card-title countup" akhi="<?php echo count($wineClass->getAllWinesByFilter("type", "White")); ?>">0</h5>
+				<h5 class="card-title countup" akhi="<?php echo count($wineClass->getAllWinesByFilter("category", "White")); ?>">0</h5>
 				<h6 class="card-subtitle mb-2 text-body-secondary">White Wines</h6>
 			</div>
 		</div>
@@ -45,7 +45,7 @@ $wineClass = new wineClass();
 	<div class="col">
 		<div class="card mb-3">
 			<div class="card-body">
-				<h5 class="card-title countup" akhi="<?php echo count($wineClass->getAllWinesByFilter("type", "Red")); ?>">0</h5>
+				<h5 class="card-title countup" akhi="<?php echo count($wineClass->getAllWinesByFilter("category", "Red")); ?>">0</h5>
 				<h6 class="card-subtitle mb-2 text-body-secondary">Red Wines</h6>
 			</div>
 		</div>
@@ -53,7 +53,7 @@ $wineClass = new wineClass();
 	<div class="col">
 		<div class="card mb-3">
 			<div class="card-body">
-				<h5 class="card-title countup" akhi="<?php echo count($wineClass->getAllWinesByFilter("type", "Sparkling")); ?>">0</h5>
+				<h5 class="card-title countup" akhi="<?php echo count($wineClass->getAllWinesByFilter("category", "Sparkling")); ?>">0</h5>
 				<h6 class="card-subtitle mb-2 text-body-secondary">Sparkling Wines</h6>
 			</div>
 		</div>
@@ -61,7 +61,7 @@ $wineClass = new wineClass();
 	<div class="col">
 		<div class="card mb-3">
 			<div class="card-body">
-				<h5 class="card-title countup" akhi="<?php echo count($wineClass->getAllWinesByFilter("type", "Port")); ?>">0</h5>
+				<h5 class="card-title countup" akhi="<?php echo count($wineClass->getAllWinesByFilter("category", "Port")); ?>">0</h5>
 				<h6 class="card-subtitle mb-2 text-body-secondary">Port</h6>
 			</div>
 		</div>
@@ -69,7 +69,7 @@ $wineClass = new wineClass();
 	<div class="col">
 		<div class="card mb-3">
 			<div class="card-body">
-				<h5 class="card-title countup" akhi="<?php echo count($wineClass->getAllWinesByFilter("type", "Other")); ?>">0</h5>
+				<h5 class="card-title countup" akhi="<?php echo count($wineClass->getAllWinesByFilter("category", "Other")); ?>">0</h5>
 				<h6 class="card-subtitle mb-2 text-body-secondary">Other</h6>
 			</div>
 		</div>

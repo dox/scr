@@ -47,7 +47,7 @@ if ($pageType == "add") {
 	<div class="card-body">
 		<div class="row">
 			<div class="col-4 mb-3">
-				<label for="type" class="form-label">Cellar</label>
+				<label for="cellar_uid" class="form-label">Cellar</label>
 				<select class="form-select" id="cellar_uid" name="cellar_uid" required>
 					<?php
 					$wineClass = new wineClass();
@@ -62,7 +62,7 @@ if ($pageType == "add") {
 				</select>
 			</div>
 			<div class="col-4 mb-3">
-				<label for="type" class="form-label">Status</label>
+				<label for="status" class="form-label">Status</label>
 				<select class="form-select" id="status" name="status" required>
 					<?php
 					foreach (explode(",", $settingsClass->value('wine_status')) AS $wine_status) {
@@ -76,14 +76,14 @@ if ($pageType == "add") {
 				</select>
 			</div>
 			<div class="col-4 mb-3">
-				<label for="type" class="form-label">Type</label>
-				<select class="form-select" id="type" name="type" required>
+				<label for="category" class="form-label">Category</label>
+				<select class="form-select" id="category" name="category" required>
 					<?php
-					foreach (explode(",", $settingsClass->value('wine_type')) AS $wine_type) {
-						if (isset($wine->type) && $wine->type == $wine_type) {
-							echo "<option selected>" . $wine_type . "</option>";
+					foreach (explode(",", $settingsClass->value('wine_category')) AS $wine_category) {
+						if (isset($wine->category) && $wine->category == $wine_category) {
+							echo "<option selected>" . $wine_category . "</option>";
 						} else {
-							echo "<option>" . $wine_type . "</option>";
+							echo "<option>" . $wine_category . "</option>";
 						}
 					}
 					?>
