@@ -38,7 +38,7 @@ $wineClass = new wineClass();
 		<div class="card mb-3">
 			<div class="card-body">
 				<h5 class="card-title countup" akhi="<?php echo count($wineClass->getAllWinesByFilter("category", "White")); ?>">0</h5>
-				<h6 class="card-subtitle mb-2 text-body-secondary">White Wines</h6>
+				<h6 class="card-subtitle text-truncate mb-2 text-body-secondary">White Wines</h6>
 			</div>
 		</div>
 	</div>
@@ -46,7 +46,7 @@ $wineClass = new wineClass();
 		<div class="card mb-3">
 			<div class="card-body">
 				<h5 class="card-title countup" akhi="<?php echo count($wineClass->getAllWinesByFilter("category", "Red")); ?>">0</h5>
-				<h6 class="card-subtitle mb-2 text-body-secondary">Red Wines</h6>
+				<h6 class="card-subtitle text-truncate mb-2 text-body-secondary">Red Wines</h6>
 			</div>
 		</div>
 	</div>
@@ -54,7 +54,7 @@ $wineClass = new wineClass();
 		<div class="card mb-3">
 			<div class="card-body">
 				<h5 class="card-title countup" akhi="<?php echo count($wineClass->getAllWinesByFilter("category", "Sparkling")); ?>">0</h5>
-				<h6 class="card-subtitle mb-2 text-body-secondary">Sparkling Wines</h6>
+				<h6 class="card-subtitle text-truncate mb-2 text-body-secondary">Sparkling Wines</h6>
 			</div>
 		</div>
 	</div>
@@ -62,7 +62,7 @@ $wineClass = new wineClass();
 		<div class="card mb-3">
 			<div class="card-body">
 				<h5 class="card-title countup" akhi="<?php echo count($wineClass->getAllWinesByFilter("category", "Port")); ?>">0</h5>
-				<h6 class="card-subtitle mb-2 text-body-secondary">Port</h6>
+				<h6 class="card-subtitle text-truncate mb-2 text-body-secondary">Port</h6>
 			</div>
 		</div>
 	</div>
@@ -70,7 +70,7 @@ $wineClass = new wineClass();
 		<div class="card mb-3">
 			<div class="card-body">
 				<h5 class="card-title countup" akhi="<?php echo count($wineClass->getAllWinesByFilter("category", "Other")); ?>">0</h5>
-				<h6 class="card-subtitle mb-2 text-body-secondary">Other</h6>
+				<h6 class="card-subtitle text-truncate mb-2 text-body-secondary">Other</h6>
 			</div>
 		</div>
 	</div>
@@ -81,7 +81,7 @@ $wineClass = new wineClass();
 	foreach ($wineClass->getAllCellars() AS $cellar) {
 		$cellar = new cellar($cellar['uid']);
 		
-		$output  = "<div class=\"col mb-3\">";
+		$output  = "<div class=\"col-sm-12 col-md-6 mb-3\">";
 		$output .= "<div class=\"card shadow-sm\">";
 		$output .= "<img src=\"" . $cellar->photograph . "\" class=\"card-img-top\" alt=\"Cellar photograph\">";
 		$output .= "<div class=\"card-body\">";
@@ -107,7 +107,7 @@ $wineClass = new wineClass();
 </div>
 
 <div class="row">
-	<div class="col-6">
+	<div class="col-sm-12 col-md-6 mb-3">
 		<h1>Recent Transactions</h1>
 		<div id="chart_transactions_by_day"></div>
 		<?php
@@ -130,7 +130,7 @@ $wineClass = new wineClass();
 		
 		?>
 	</div>
-	<div class="col-6">
+	<div class="col-sm-12 col-md-6">
 		<h1>My Lists</h1>
 		<?php
 		$output = "<ul class=\"list-group\">";
@@ -243,7 +243,7 @@ $wineClass = new wineClass;
 foreach ($wineClass->stats_transactionsByDate(30) AS $date) {
 	$transactions[] = $date['dateTransactionTotals'];
 	$bottles[] = $date['transactionBottleTotals'];
-	$series[] = "'" . date('m/d/Y', strtotime($date['date'])) . "'";
+	$series[] = "'" . $date['date'] . "'";
 }
 ?>
 <script>

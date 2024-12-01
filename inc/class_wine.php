@@ -237,6 +237,21 @@ class wineClass {
   public function stats_transactionsByDate($daysToInclude = null) {
     global $db;
     
+    $dateArray = [];
+    
+    // Loop through the last $daysToInclude days
+    for ($i = 0; $i < $daysToInclude; $i++) {
+      // Generate the date string for $i days ago
+      $date = date('Y-m-d', strtotime("-$i days"));
+    
+      // Assign the date as a key in the array with a default value
+      $dateArray[$date] = array(
+        'date'=>$date,
+        'dateTransactionTotals'=>'0',
+        'transactionBottleTotals'=>'0'
+      ); // Set value to null or any default value
+    }
+    
     $sql  = "SELECT date(date) AS date, COUNT(date(date)) AS dateTransactionTotals, SUM(ABS(bottles)) AS transactionBottleTotals";
     $sql .= " FROM wine_transactions";
     
@@ -247,8 +262,12 @@ class wineClass {
     $sql .=  " GROUP BY date(date)";
     
     $results = $db->query($sql)->fetchAll();
+    
+    foreach ($results AS $result) {
+      $dateArray[$result['date']] = $result;
+    }
         
-    return $results;
+    return $dateArray;
   }
 }
 
