@@ -61,18 +61,23 @@ class wine extends wineClass {
 	
 	// Construct the final UPDATE query
 	$sql = "INSERT INTO wine_wines SET " . $setString;
-	
 	$insert = $db->query($sql);
-	
-	//log a transaction
-	//$wine_transactions->create();
+	$newWineUID = $db->lastInsertID();
 	
 	$logArray['category'] = "wine";
 	$logArray['result'] = "success";
 	$logArray['description'] = "Created new wine with fields " . $setString;
 	$logsClass->create($logArray);
 	
+	//log a transaction
+	$data['wine_uid'] = $newWineUID;
+	$data['type'] = "import";
+	$data['bottles'] = $array['qty'];
+	$data['price_per_bottle'] = $array['price_purchase'];
+	$data['description'] = "Original import into system";
 	
+	$wine_transactions = new wine_transactions();
+	$wine_transactions->create($data);
 	
 	return true;
   }
@@ -285,10 +290,10 @@ class wine extends wineClass {
 	}
 	
 	if ($this->status == "In-Bond") {
-	  $binName = "<a href=\"" . $url . "\" type=\"button\" class=\"btn btn-primary position-relative\">" . $this->bin . "<span class=\"position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning\">In-Bond</span></a>";
+	  $binName = "<a href=\"" . $url . "\" type=\"button\" class=\"btn btn-primary position-relative\">" . $cellar->short_code . " > " . $this->bin . "<span class=\"position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning\">In-Bond</span></a>";
 	  $cardClass = " border-warning ";
 	} else {
-	  $binName = "<a href=\"" . $url . "\" type=\"button\" class=\"btn btn-primary position-relative\">" . $this->bin . "</a>";
+	  $binName = "<a href=\"" . $url . "\" type=\"button\" class=\"btn btn-primary position-relative\">" . $cellar->short_code . " > " . $this->bin . "</a>";
 	  $cardClass = "";
 	}
 	
@@ -322,7 +327,7 @@ class wine extends wineClass {
   public function logs() {
 	global $db;
 	
-	$sql  = "SELECT * FROM logs";
+	$sql  = "SELECT uid, INET_NTOA(ip) AS ip, username, date, result, category, description  FROM logs";
 	$sql .= " WHERE category = 'wine'";
 	$sql .= " AND description LIKE '%[wineUID:" . $this->uid . "]%'";
 	$sql .= " ORDER BY date DESC";

@@ -36,46 +36,27 @@ echo makeTitle($title, $subtitle, $icons);
 			</div>
 		</div>
 	</div>
-	<div class="col">
-		<div class="card mb-3">
-			<div class="card-body">
-				<h5 class="card-title countup"><?php echo currencyDisplay($cellar->totalPurchaseValue()); ?></h5>
-				<h6 class="card-subtitle mb-2 text-body-secondary">Total Value</h6>
-			</div>
-		</div>
-	</div>
-	<div class="col">
-		<div class="card mb-3">
-			<div class="card-body">
-				<h5 class="card-title countup"><?php echo currencyDisplay($cellar->totalPurchaseValue()); ?></h5>
-				<h6 class="card-subtitle mb-2 text-body-secondary">Total Value</h6>
-			</div>
-		</div>
-	</div>
-	<div class="col">
-		<div class="card mb-3">
-			<div class="card-body">
-				<h5 class="card-title countup"><?php echo currencyDisplay($cellar->totalPurchaseValue()); ?></h5>
-				<h6 class="card-subtitle mb-2 text-body-secondary">Total Value</h6>
-			</div>
-		</div>
-	</div>
-	<div class="col">
-		<div class="card mb-3">
-			<div class="card-body">
-				<h5 class="card-title countup"><?php echo currencyDisplay($cellar->totalPurchaseValue()); ?></h5>
-				<h6 class="card-subtitle mb-2 text-body-secondary">Total Value</h6>
-			</div>
-		</div>
-	</div>
-	<div class="col">
-		<div class="card mb-3">
-			<div class="card-body">
-				<h5 class="card-title countup"><?php echo currencyDisplay($cellar->totalPurchaseValue()); ?></h5>
-				<h6 class="card-subtitle mb-2 text-body-secondary">Total Value</h6>
-			</div>
-		</div>
-	</div>
+	<?php
+	$categories = array_slice(explode(",", $settingsClass->value('wine_category')), 0, 5, true);
+	
+	foreach ($categories AS $wine_category) {
+		$winesByCategory = $cellar->getAllWineBottlesByCategoryTotal($wine_category);
+		
+		if (count($winesByCategory) > 0) {
+			$output  = "<div class=\"col\">";
+			$output .= "<div class=\"card mb-3\">";
+			$output .= "<div class=\"card-body\">";
+			$output .= "<h5 class=\"card-title countup\">" . count($winesByCategory) . "</h5>";
+			$output .= "<h6 class=\"card-subtitle mb-2 text-truncate text-body-secondary\">" . $wine_category . "</h6>";
+			$output .= "</div>";
+			$output .= "</div>";
+			$output .= "</div>";
+			
+			echo $output;
+		}
+		
+	}
+	?>
 </div>
 
 <div id="chart"></div>

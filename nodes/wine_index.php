@@ -29,51 +29,32 @@ $wineClass = new wineClass();
 	<div class="col">
 		<div class="card mb-3">
 			<div class="card-body">
-				<h5 class="card-title countup" akhi="<?php echo $wineClass->getAllWineBottlesTotal(); ?>">0</h5>
+				<h5 class="card-title"><?php echo $wineClass->getAllWineBottlesTotal(); ?></h5>
 				<h6 class="card-subtitle mb-2 text-body-secondary">Bottles</h6>
 			</div>
 		</div>
 	</div>
-	<div class="col">
-		<div class="card mb-3">
-			<div class="card-body">
-				<h5 class="card-title countup" akhi="<?php echo count($wineClass->getAllWinesByFilter("category", "White")); ?>">0</h5>
-				<h6 class="card-subtitle text-truncate mb-2 text-body-secondary">White Wines</h6>
-			</div>
-		</div>
-	</div>
-	<div class="col">
-		<div class="card mb-3">
-			<div class="card-body">
-				<h5 class="card-title countup" akhi="<?php echo count($wineClass->getAllWinesByFilter("category", "Red")); ?>">0</h5>
-				<h6 class="card-subtitle text-truncate mb-2 text-body-secondary">Red Wines</h6>
-			</div>
-		</div>
-	</div>
-	<div class="col">
-		<div class="card mb-3">
-			<div class="card-body">
-				<h5 class="card-title countup" akhi="<?php echo count($wineClass->getAllWinesByFilter("category", "Sparkling")); ?>">0</h5>
-				<h6 class="card-subtitle text-truncate mb-2 text-body-secondary">Sparkling Wines</h6>
-			</div>
-		</div>
-	</div>
-	<div class="col">
-		<div class="card mb-3">
-			<div class="card-body">
-				<h5 class="card-title countup" akhi="<?php echo count($wineClass->getAllWinesByFilter("category", "Port")); ?>">0</h5>
-				<h6 class="card-subtitle text-truncate mb-2 text-body-secondary">Port</h6>
-			</div>
-		</div>
-	</div>
-	<div class="col">
-		<div class="card mb-3">
-			<div class="card-body">
-				<h5 class="card-title countup" akhi="<?php echo count($wineClass->getAllWinesByFilter("category", "Other")); ?>">0</h5>
-				<h6 class="card-subtitle text-truncate mb-2 text-body-secondary">Other</h6>
-			</div>
-		</div>
-	</div>
+	<?php
+	$categories = array_slice(explode(",", $settingsClass->value('wine_category')), 0, 5, true);
+	
+	foreach ($categories AS $wine_category) {
+		$winesByCategory = $wineClass->getAllWinesByFilter('category', $wine_category);
+		
+		if (count($winesByCategory) > 0) {
+			$output  = "<div class=\"col\">";
+			$output .= "<div class=\"card mb-3\">";
+			$output .= "<div class=\"card-body\">";
+			$output .= "<h5 class=\"card-title\">" . count($winesByCategory) . "</h5>";
+			$output .= "<h6 class=\"card-subtitle mb-2 text-truncate text-body-secondary\">" . $wine_category . "</h6>";
+			$output .= "</div>";
+			$output .= "</div>";
+			$output .= "</div>";
+			
+			echo $output;
+		}
+		
+	}
+	?>
 </div>
 
 <div class="row">
@@ -87,10 +68,7 @@ $wineClass = new wineClass();
 		$output .= "<div class=\"card-body\">";
 		$output .= "<p class=\"card-text\">" . $cellar->name . "</p>";
 		$output .= "<div class=\"d-flex justify-content-between align-items-center\">";
-		$output .= "<div class=\"btn-group\">";
-		$output .= "<a href=\"index.php?n=wine_cellar&uid=" . $cellar->uid . "\" type=\"button\" class=\"btn btn-sm btn-outline-secondary\">View</a>";
-		$output .= "<a href=\"index.php?n=wine_cellar&uid=" . $cellar->uid . "\" type=\"button\" class=\"btn btn-sm btn-outline-secondary\">Edit</a>";
-		$output .= "</div>";
+		$output .= "<a href=\"index.php?n=wine_cellar&uid=" . $cellar->uid . "\" type=\"button\" class=\"btn btn-sm btn-outline-secondary stretched-link\">View</a>";
 		$output .= "<small class=\"text-body-secondary\">";
 		$output .= count($cellar->getBins()) . autoPluralise(" bin", " bins", count($cellar->getBins()));
 		$output .= " / ";
@@ -204,39 +182,6 @@ document.getElementById('wine_search').addEventListener('keyup', function() {
 	xhr.send();
 });
 </script>
-
-
-<script>
-const counters = document.querySelectorAll('.countup');
-const duration = 2000;  // Duration of the animation in milliseconds (2 seconds)
-const frameRate = 30;   // Time between updates in milliseconds (~33 frames per second)
-const totalFrames = duration / frameRate;  // Total number of frames/steps
-
-counters.forEach(counter => {
-   const value = +counter.getAttribute('akhi');  // Target value
-   let currentFrame = 0;  // Keep track of the current frame
-   const animate = () => {
-	  currentFrame++;  // Increment frame count
-
-	  // Calculate the progress as a percentage of total frames (0 to 1)
-	  const progress = Math.min(currentFrame / totalFrames, 1);  // Clamp progress at 1
-
-	  // Use progress to interpolate between 0 and the target value
-	  const currentValue = Math.ceil(progress * value);
-	  
-	  counter.innerText = currentValue.toLocaleString();
-
-	  // Continue animating until progress reaches 100%
-	  if (progress < 1) {
-		 setTimeout(animate, frameRate);
-	  }
-   };
-   
-   animate();
-});
-</script>
-
-
 
 <?php
 $wineClass = new wineClass;

@@ -7,16 +7,18 @@ class wine_transactions extends wineClass {
 	
 	$wine = new wine($array['wine_uid']);
 	
-	
-	// check if we are deducting, or adding bottles
-	if ($array['type'] == "transaction" || $array['type'] == "wastage") {
-		$wine->deduct($array['bottles']);
-		$bottles = $array['bottles'] <= 0 ? $array['bottles'] : -$array['bottles'];
+	// work out if this is an import, or a deduction
+	$transactionTypes = $wine->transactionsTypes();
+	if ($transactionTypes[$array['type']] == "import") {
+		$bottles = abs($array['bottles']);
+	} elseif ($transactionTypes[$array['type']] == "deduct") {
+		$bottles = -$array['bottles'];
 	} else {
-		$wine->import($array['bottles']);
-		$bottles = $array['bottles'];
+		$logArray['category'] = "wine";
+		$logArray['result'] = "danger";
+		$logArray['description'] = "Attempted to create a transaction for [wineUID:" . $wine->uid . "] but didn't know what qty bottles: " . $array['bottles'];
+		$logsClass->create($logArray);
 	}
-	
 	
 	// Construct the transaction query
 	$sql  = "INSERT INTO " . self::$table_name;

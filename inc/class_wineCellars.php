@@ -43,19 +43,31 @@ class cellar extends wineClass {
   }
   
   public function getAllWineBottlesTotal() {
-	global $db;
-  
-	$sql  = "SELECT SUM(qty) AS total_wines FROM wine_wines";
-	$sql .= " WHERE cellar_uid = '" . $this->uid . "'";
+	  global $db;
 	
-	$results = $db->query($sql)->fetchArray();
-	
-	if (!$results['total_wines'] > 0) {
-	  $results['total_wines'] = 0;
+	  $sql  = "SELECT SUM(qty) AS total_wines FROM wine_wines";
+	  $sql .= " WHERE cellar_uid = '" . $this->uid . "'";
+	  
+	  $results = $db->query($sql)->fetchArray();
+	  
+	  if (!$results['total_wines'] > 0) {
+		$results['total_wines'] = 0;
+	  }
+	  
+	  return $results['total_wines'];
 	}
 	
-	return $results['total_wines'];
-  }
+	public function getAllWineBottlesByCategoryTotal($category) {
+		global $db;
+	  
+		$sql  = "SELECT * FROM wine_wines";
+		$sql .= " WHERE cellar_uid = '" . $this->uid . "'";
+		$sql .= " AND category = '" . $category . "'";
+		
+		$results = $db->query($sql)->fetchAll();
+				
+		return $results;
+	  }
   
   public function totalPurchaseValue() {
 	global $db;

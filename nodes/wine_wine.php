@@ -194,9 +194,7 @@ if ($wine->status <> 1) {
   </div>
   <div class="tab-pane fade" id="logs-tab-pane" role="tabpanel" aria-labelledby="logs-tab" tabindex="0">
 	  <?php
-	  foreach ($wine->logs() AS $log) {
-		  printArray($log);
-	  }
+	  echo $logsClass->displayTable($wine->logs());
 	  ?>
   </div>
 </div>

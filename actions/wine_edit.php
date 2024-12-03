@@ -13,8 +13,6 @@ if (isset($_POST['uid'])) {
 	$wine->create($_POST);
 }
 
-//die("DIE");
-
 $logArray['category'] = "wine";
 $logArray['result'] = "warning";
 $logArray['description'] = "Attempted to add/edit wine with " . count($_POST) . " fields";

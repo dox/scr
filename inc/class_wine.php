@@ -269,6 +269,14 @@ class wineClass {
         
     return $dateArray;
   }
+  
+  public function transactionsTypes() {
+    $array['import'] = "import";
+    $array['transaction'] = "deduct";
+    $array['wastage'] = "deduct";
+    
+    return $array;
+  }
 }
 
 

@@ -6,7 +6,7 @@ $pageType = filter_var($_GET['edit'], FILTER_SANITIZE_STRING);
 if ($pageType == "add") {
 	$cleanCellarUID = filter_var($_GET['cellar_uid'], FILTER_SANITIZE_NUMBER_INT);
 	$wine = new wine();
-	
+		
 	$title = "Add New Wine";
 	//$subtitle = $wine->grape . ", " . $wine->country_of_origin;
 	//$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#plus-circle\"/></svg> Add To List", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#deleteTermModal\"");
@@ -314,7 +314,9 @@ function submitWine(button) {
 			alert('Error ' + xhr.status + ': ' + xhr.statusText); // e.g. 404: Not Found
 		} else {
 			//alert('Success: ' + xhr.responseText); // response is the server
-			location.reload();
+			//location.reload();
+			var cellar_uid = document.getElementById('cellar_uid').value;
+			location.href = "index.php?n=wine_cellar&uid=" + cellar_uid;
 		}
 	};
 
