@@ -3,12 +3,11 @@ include_once("inc/autoload.php");
 
 $_SESSION['logon_error'] = null;
 
-$logArray['category'] = "logon";
-
 $node = "nodes/logon.php";
 
-if (isset($_GET['logout'])) {
+if (isset($_GET['logout']) && isset($_SESSION['username'])) {
   $logArray['result'] = "success";
+  $logArray['category'] = "logon";
   $logArray['description'] = $_SESSION['username'] . " logout";
   $logsClass->create($logArray);
   
@@ -98,6 +97,7 @@ function attemptLogin($username, $password, $remember_me = false) {
       }
       
       $logArray['result'] = "success";
+      $logArray['category'] = "logon";
       $logArray['description'] = $memberObject->displayName() . " logon success";
       if (isset($_POST['remember_me'])) {
         $logArray['description'] .= " (remember me: " . $_POST['remember_me'] . ")";
@@ -107,6 +107,7 @@ function attemptLogin($username, $password, $remember_me = false) {
       return true;
     } else {
       $logArray['result'] = "warning";
+      $logArray['category'] = "logon";
       $logArray['description'] = $clean_username . " authenticated, but did not have access";
       $logsClass->create($logArray);
       
@@ -118,6 +119,7 @@ function attemptLogin($username, $password, $remember_me = false) {
     $_SESSION['logon_error'] = "Username/password incorrect";
     
     $logArray['result'] = "warning";
+    $logArray['category'] = "logon";
     $logArray['description'] = $_POST['username'] . " logon failed";
     $logsClass->create($logArray);
     return false;
@@ -147,6 +149,7 @@ function attemptLoginByCookie() {
     $_SESSION['permissions'] = explode(",", $memberObject->permissions);
     
     $logArray['result'] = "success";
+    $logArray['category'] = "logon";
     $logArray['description'] = $memberObject->displayName() . " logon success with cookies";
     $logsClass->create($logArray);
     
@@ -155,12 +158,14 @@ function attemptLoginByCookie() {
     // token expired
     
     $logArray['result'] = "warning";
+    $logArray['category'] = "logon";
     $logArray['description'] = $_COOKIE['username_uid'] . " logon failed with cookies";
     $logsClass->create($logArray);
     
     return false;
   }
 }
+printArray($logArray);
 ?>
 <!DOCTYPE html>
 <html lang="en">
