@@ -165,7 +165,6 @@ function attemptLoginByCookie() {
     return false;
   }
 }
-printArray($logArray);
 ?>
 <!DOCTYPE html>
 <html lang="en">
