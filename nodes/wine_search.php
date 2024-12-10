@@ -13,15 +13,15 @@ if ($searchFilter == "list") {
 		die("This list is private!");
 	}
 	
-	$wines = $wineClass->getAllWinesFromList($wineList->wine_uids);
+	$wines = $wineClass->winesByUIDs($wineList->wine_uids);
 } elseif ($searchFilter == "code") {
-	$wines = $wineClass->getAllWinesByFilter($searchFilter, $searchValue);
+	$wines = $wineClass->allWines(array($searchFilter => $searchValue));
 } elseif ($searchFilter == "vintage") {
-	$wines = $wineClass->getAllWinesByFilter($searchFilter, $searchValue);
+	$wines = $wineClass->allWines(array($searchFilter => $searchValue));
 } elseif ($searchFilter == "grape") {
-	$wines = $wineClass->getAllWinesByFilter($searchFilter, $searchValue);
+	$wines = $wineClass->allWines(array($searchFilter => $searchValue));
 } elseif ($searchFilter == "country_of_origin") {
-	$wines = $wineClass->getAllWinesByFilter($searchFilter, $searchValue);
+	$wines = $wineClass->allWines(array($searchFilter => $searchValue));
 } else {
 	die("Search filter not recognised");
 }
@@ -50,7 +50,7 @@ echo makeTitle($title, $subtitle, $icons);
 foreach ($wines AS $wine) {
 	$wine = new wine($wine['uid']);
 	
-	echo $wine->binCard();
+	echo $wine->card();
 }
 
 ?>

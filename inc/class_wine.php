@@ -1,365 +1,132 @@
 <?php
-class wineClass {
-  public function getAllCellars() {
-    global $db;
-  
-    $sql  = "SELECT * FROM wine_cellars";
-    $sql .= " ORDER BY name ASC";
-  
-    $results = $db->query($sql)->fetchAll();
-  
-    return $results;
-  }
-  
-  public function getAllBins($includeEmpty = false) {
-    global $db;
-  
-    $sql  = "SELECT * FROM wine_bins";
-    if ($includeEmpty != true) {
-      $sql .= " WHERE qty > 0";
-    }
-    $sql .= " ORDER BY name ASC";
-  
-    $results = $db->query($sql)->fetchAll();
-  
-    return $results;
-  }
-  
-  public function getAllWines($includeEmpty = false) {
-    global $db;
-  
-    $sql  = "SELECT * FROM wine_wines";
-    
-    if ($includeEmpty != true) {
-      $sql .= " WHERE qty > 0";
-    }
-    $sql .= " ORDER BY name ASC";
-  
-    $results = $db->query($sql)->fetchAll();
-  
-    return $results;
-  }
-  
-  public function getAllSuppliers() {
-    global $db;
-  
-    $sql  = "SELECT DISTINCT supplier FROM wine_wines";
-    $sql .= " ORDER BY supplier ASC";
-  
-    $results = $db->query($sql)->fetchAll();
-    
-    foreach ($results AS $result) {
-      $returnArray[] = $result['supplier'];
-    }
-  
-    return $returnArray;
-  }
-  
-  public function getAllWinesByFilter($filter, $value, $includeEmpty = false) {
-    global $db;
-  
-    $sql  = "SELECT * FROM wine_wines";
-    $sql .= " WHERE " . $filter . " = '" . $value . "'";
-    if ($includeEmpty != true) {
-      $sql .= " AND qty > 0";
-    }
-    $sql .= " ORDER BY name ASC";
-  
-    $results = $db->query($sql)->fetchAll();
-  
-    return $results;
-  }
-  
-  public function getAllWineBottlesTotal() {
-    global $db;
-    
-    $sql  = "SELECT SUM(qty) AS total FROM wine_wines";
-    
-    $result = $db->query($sql)->fetchArray();
-    
-    return $result['total'];
-  }
-  
-  public function searchAllWines($searchArray = null, $cellarUID = null, $limit = null) {
-    global $db;
-    
-    foreach ($searchArray AS $searchKey => $searchString) {
-      $searchStatements[] = $searchKey . " LIKE '%" . $searchString . "%'";
-    }
-    
-    $sql  = "SELECT * FROM wine_wines WHERE";
-    if (isset($cellarUID)) {
-      $sql .= " cellar_uid = '" . $cellarUID . "' AND ";
-    }
-    $sql .= "(" . implode(" OR ", $searchStatements) . ")";
-    $sql .= " ORDER BY name ASC";
-    
-    if ($limit) {
-      $sql .= " LIMIT " . $limit;
-    }
-    
-    $results = $db->query($sql)->fetchAll();
-  
-    return $results;
-  }
-  
-  public function getAllLists() {
-    global $db;
-    
-    // return private lists first, then public
-    // return more recently updated lists at the top
-    // then return by name
-  
-    $sql  = "SELECT * FROM wine_lists";
-    $sql .= " WHERE type = 'public' OR member_ldap = '" . $_SESSION['username'] . "'";
-    $sql .= " ORDER BY type ASC, last_updated DESC, name ASC";
-    
-    $results = $db->query($sql)->fetchAll();
-    
-    foreach ($results AS $result) {
-      if ($result['type'] == "public" && $result['member_ldap'] != $_SESSION['username']) {
-        $listName = $result['member_ldap'] . " " . $result['name'];
-        $returnArray[] = array("uid" => $result['uid'], "name" => $listName, "type" => $result['type'], "member_ldap" => $result['member_ldap'], "wine_uids" => $result['wine_uids']);
-      } else {
-        $returnArray[] = array("uid" => $result['uid'], "name" => $result['name'], "type" => $result['type'], "member_ldap" => $result['member_ldap'], "wine_uids" => $result['wine_uids']);
-      }
-    }
-  
-    return $returnArray;
-  }
-  
-  public function getAllMemberLists($memberLDAP) {
-    global $db;
-  
-    $sql  = "SELECT * FROM wine_lists";
-    $sql .= " WHERE member_uid = '" . $memberLDAP . "'";
-    $sql .= " ORDER BY name ASC";
-    
-    $results = $db->query($sql)->fetchAll();
-  
-    return $results;
-  }
-  
-  public function getAllWinesFromList($wine_uids_array) {
-    global $db;
-    
-    
-    
-    if (!empty($wine_uids_array)){ 
-      $sql  = "SELECT * FROM wine_wines";
-      $sql .= " WHERE uid IN (" . $wine_uids_array . ")";
-      $sql .= " ORDER BY name ASC";
-      
-      $results = $db->query($sql)->fetchAll();
-    } else {
-      return array();
-    }
-    
-  
-    return $results;
-  }
-  
-  public function stats_winesByGrape($cellarUID = null, $includeEmpty = false) {
-    global $db;
-  
-    $sql  = "SELECT grape, COUNT(*) AS totalBins FROM wine_wines";
-    $sql .= " WHERE grape <> ''";
-    if ($cellarUID != null) {
-      $sql .= " AND cellar_uid = '" . $cellarUID . "'";
-    }
-    if ($includeEmpty != true) {
-      $sql .= " AND qty > 0";
-    }
-    $sql .= " GROUP BY grape";
-  
-    $results = $db->query($sql)->fetchAll();
-        
-    foreach ($results AS $result) {
-      $returnArray[$result['grape']] = $result['totalBins'];
-    }
-  
-    return $returnArray;
-  }
-  
-  public function stats_winesByCode($includeEmpty = false) {
-    global $db;
-  
-    $sql  = "SELECT code, COUNT(*) AS totalBins FROM wine_wines";
-    $sql .= " WHERE code <> ''";
-    if ($includeEmpty != true) {
-      $sql .= " AND qty > 0";
-    }
-    $sql .= " GROUP BY code";
-  
-    $results = $db->query($sql)->fetchAll();
-        
-    foreach ($results AS $result) {
-      $returnArray[$result['code']] = $result['totalBins'];
-    }
-  
-    return $returnArray;
-  }
-  
-  public function stats_winesByCountry() {
-    global $db;
-  
-    $sql  = "SELECT country_of_origin, COUNT(*) AS totalBins FROM wine_wines";
-    $sql .= " WHERE country_of_origin <> ''";
-    $sql .= " GROUP BY country_of_origin";
-    $sql .= " ORDER BY country_of_origin ASC";
-  
-    $results = $db->query($sql)->fetchAll();
-        
-    foreach ($results AS $result) {
-      $returnArray[$result['country_of_origin']] = $result['totalBins'];
-    }
-  
-    return $returnArray;
-  }
-  
-  public function stats_winesByRegion() {
-    global $db;
-  
-    $sql  = "SELECT region_of_origin, COUNT(*) AS totalBins FROM wine_wines";
-    $sql .= " WHERE region_of_origin <> ''";
-    $sql .= " GROUP BY region_of_origin";
-    $sql .= " ORDER BY region_of_origin ASC";
-  
-    $results = $db->query($sql)->fetchAll();
-        
-    foreach ($results AS $result) {
-      $returnArray[$result['region_of_origin']] = $result['totalBins'];
-    }
-  
-    return $returnArray;
-  }
-  
-  public function stats_transactionsByDate($daysToInclude = null) {
-    global $db;
-    
-    $dateArray = [];
-    
-    // Loop through the last $daysToInclude days
-    for ($i = 0; $i < $daysToInclude; $i++) {
-      // Generate the date string for $i days ago
-      $date = date('Y-m-d', strtotime("-$i days"));
-    
-      // Assign the date as a key in the array with a default value
-      $dateArray[$date] = array(
-        'date'=>$date,
-        'dateTransactionTotals'=>'0',
-        'transactionBottleTotals'=>'0'
-      ); // Set value to null or any default value
-    }
-    
-    $sql  = "SELECT date(date) AS date, COUNT(date(date)) AS dateTransactionTotals, SUM(ABS(bottles)) AS transactionBottleTotals";
-    $sql .= " FROM wine_transactions";
-    
-    if ($daysToInclude != null) {
-      $sql .= " WHERE date > (curdate() - interval " . $daysToInclude . " day)";
-    }
-    
-    $sql .=  " GROUP BY date(date)";
-    
-    $results = $db->query($sql)->fetchAll();
-    
-    foreach ($results AS $result) {
-      $dateArray[$result['date']] = $result;
-    }
-        
-    return $dateArray;
-  }
-  
-  public function transactionsTypes() {
-    $array['import'] = "import";
-    $array['transaction'] = "deduct";
-    $array['wastage'] = "deduct";
-    
-    return $array;
-  }
+class wine {
+	protected static $table_name = "wine_wines";
+	
+	public $uid;
+	public $code;
+	public $cellar_uid;
+	public $bin_uid;
+	public $status;
+	public $name;
+	public $supplier;
+	public $supplier_ref;
+	public $qty;
+	public $category;
+	public $grape;
+	public $country_of_origin;
+	public $region_of_origin;
+	public $vintage;
+	public $price_purchase;
+	public $price_internal;
+	public $price_external;
+	public $tasting;
+	public $notes;
+	public $photograph;
+	
+	function __construct($cellarUID = null) {
+		global $db;
+	  
+		$sql  = "SELECT * FROM " . self::$table_name;
+		$sql .= " WHERE uid = '" . $cellarUID . "'";
+		
+		$results = $db->query($sql)->fetchArray();
+		
+		foreach ($results AS $key => $value) {
+			$this->$key = $value;
+		}
+	}
+	
+	public function clean_name($full = false) {
+		$output  = $this->name;
+		
+		if ($full == true) {
+		  $cellar = new cellar($this->cellar_uid);
+		  
+		  $output = $cellar->name . " > " . $this->name;
+		} else {
+		  $output  = $this->name;
+		}
+		
+		return $output;
+	}
+	
+	public function photographURL() {
+		$image = "img/blank.jpg";
+		
+		if (!empty($this->photograph)) {
+			$image = "img/wines/" . $this->photograph;
+		}
+		
+		return $image;
+	}
+	
+	public function pricePerBottle($target = "Internal") {
+		if ($target == "Internal") {
+		  $value = $this->price_internal;
+		} elseif ($target == "External") {
+		  if (isset($this->price_external)) {
+			$value = $this->price_external;
+		  } else {
+			$value = $this->price_internal;
+		  }
+		} elseif ($target == "Purchase") {
+		  $value = $this->price_purchase;
+		} else {
+		  $value = 999;
+		}
+	  
+		return $value;
+	}
+	
+	public function transactions() {
+		$wineClass = new wineClass();
+		
+		$transactions = $wineClass->allTransactions(array('wine_uid' => $this->uid));
+		
+		return $transactions;
+	}
+	
+	public function logs() {
+		global $db;
+		
+		$sql  = "SELECT uid, INET_NTOA(ip) AS ip, username, date, result, category, description  FROM logs";
+		$sql .= " WHERE category = 'wine'";
+		$sql .= " AND description LIKE '%[wineUID:" . $this->uid . "]%'";
+		$sql .= " ORDER BY date DESC";
+		
+		$results = $db->query($sql)->fetchAll();
+		
+		return $results;
+	}
+	
+	public function card() {
+		$cellar = new cellar($this->cellar_uid);
+		
+		if ($this->status == "In-Bond") {
+		  $binName = "<a href=\"" . $url . "\" type=\"button\" class=\"btn btn-primary position-relative\">" . $cellar->short_code . " > " . $cellar->name . "<span class=\"position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning\">In-Bond</span></a>";
+		  $cardClass = " border-warning ";
+		} else {
+		  $binName = "<a href=\"" . $url . "\" type=\"button\" class=\"btn btn-primary position-relative\">" . $cellar->short_code . " > " . $this->bin . "</a>";
+		  $cardClass = "";
+		}
+		
+		$output  = "<div class=\"col\">";
+		$output .= "<div class=\"card " . $cardClass . " shadow-sm\">";
+		$output .= "<div class=\"card-body\">";
+		$output .= "<h5 class=\"card-title\">" . $binName . "</h5>";
+		$output .= "<p class=\"card-text text-truncate\">" . $description . "</p>";
+		$output .= "<div class=\"d-flex justify-content-between align-items-center\">";
+		$output .= "<div class=\"btn-group\">";
+		$output .= "<a href=\"index.php?n=wine_search&filter=code&value=" . $this->code . "\" type=\"button\" class=\"btn btn-sm btn-outline-secondary\">" . $this->code . "</a>";
+		$output .= "<a href=\"index.php?n=wine_search&filter=vintage&value=" . $this->vintage . "\" type=\"button\" class=\"btn btn-sm btn-outline-secondary\">" . $this->vintage . "</a>";
+		$output .= "</div>";
+		$output .= "<small class=\"text-body-secondary\">" . $this->qty . autoPluralise(" bottle", " bottles", $this->qty) . " </small>";
+		$output .= "</div>";
+		$output .= "</div>";
+		$output .= "</div>";
+		$output .= "</div>";
+		
+		return $output;
+	}
 }
-
-
-  
-
-
-class wine_list extends wineClass {
-  protected static $table_name = "wine_lists";
-  
-  function __construct($listUID = null) {
-    global $db;
-  
-    $sql  = "SELECT * FROM " . self::$table_name;
-    $sql .= " WHERE uid = '" . $listUID . "'";
-  
-    $results = $db->query($sql)->fetchArray();
-  
-    foreach ($results AS $key => $value) {
-      $this->$key = $value;
-    }
-  }
-  
-  public function name_full() {
-    $output  = $this->name;
-    $output .= " <small>(" . count($this->winesInList()) . autoPluralise(" wine", " wines", count($this->winesInList())) . ")</small>";
-    
-    if ($this->member_ldap != $_SESSION['username']) {
-      $output .= " <span class=\"badge text-bg-info\">" . $this->member_ldap . "</span>";
-    }
-    if ($this->type == "private") {
-      $output .= " <span class=\"badge text-bg-secondary\">Private</span>";
-    }
-    
-    return $output;
-  }
-  
-  public function winesInList() {
-    
-    if (!empty($this->wine_uids) ){
-      $winesInList = explode(",", $this->wine_uids);
-    } else {
-      $winesInList = array();
-    }
-    
-    return $winesInList;
-  }
-  
-  public function isWineInList($wineUID = null) {
-    $inList = false;
-    
-    if (in_array($wineUID, explode(",", $this->wine_uids))) {
-      $inList = true;
-    }
-    
-    return $inList;
-  }
-  
-  public function addToList($wineUID = null) {
-    global $db;
-    
-    $sql  = "UPDATE " . self::$table_name;
-    $sql .= " SET wine_uids = CONCAT(wine_uids, '," . $wineUID . "')";
-    $sql .= ", last_updated = '" . date(c) . "'";
-    $sql .= " WHERE uid = '" . $this->uid . "'";
-    
-    echo $sql;
-    
-    $results = $db->query($sql)->fetchArray();
-  }
-  
-  public function updateList($wineUIDSArray = null) {
-    global $db;
-    
-    $sql  = "UPDATE " . self::$table_name;
-    $sql .= " SET wine_uids = '" . implode(",", $wineUIDSArray) . "'";
-    $sql .= ", last_updated = '" . date('c') . "'";
-    $sql .= " WHERE uid = '" . $this->uid . "'";
-    
-    echo $sql;
-    
-    $results = $db->query($sql);
-  }  
-}
-
-
 ?>

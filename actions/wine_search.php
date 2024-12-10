@@ -25,7 +25,7 @@ if (checkpoint_charlie("wine")) {
 			
 			$data[] = array(
 				"uid" => $wine->uid,
-				"name" => $wine->friendly_name(true)
+				"name" => $wine->clean_name(true)
 			);
 		}
 		

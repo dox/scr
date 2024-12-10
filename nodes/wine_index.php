@@ -29,7 +29,7 @@ $wineClass = new wineClass();
 	<div class="col">
 		<div class="card mb-3">
 			<div class="card-body">
-				<h5 class="card-title"><?php echo $wineClass->getAllWineBottlesTotal(); ?></h5>
+				<h5 class="card-title"><?php echo $wineClass->wineBottlesTotal(); ?></h5>
 				<h6 class="card-subtitle mb-2 text-body-secondary">Bottles</h6>
 			</div>
 		</div>
@@ -38,7 +38,7 @@ $wineClass = new wineClass();
 	$categories = array_slice(explode(",", $settingsClass->value('wine_category')), 0, 5, true);
 	
 	foreach ($categories AS $wine_category) {
-		$winesByCategory = $wineClass->getAllWinesByFilter('category', $wine_category);
+		$winesByCategory = $wineClass->allWines(array('category' => $wine_category));
 		
 		if (count($winesByCategory) > 0) {
 			$output  = "<div class=\"col\">";
@@ -52,34 +52,16 @@ $wineClass = new wineClass();
 			
 			echo $output;
 		}
-		
 	}
 	?>
 </div>
 
 <div class="row">
 	<?php
-	foreach ($wineClass->getAllCellars() AS $cellar) {
+	foreach ($wineClass->allCellars() AS $cellar) {
 		$cellar = new cellar($cellar['uid']);
 		
-		$output  = "<div class=\"col-sm-12 col-md-6 mb-3\">";
-		$output .= "<div class=\"card shadow-sm\">";
-		$output .= "<img src=\"" . $cellar->photograph . "\" class=\"card-img-top\" alt=\"Cellar photograph\">";
-		$output .= "<div class=\"card-body\">";
-		$output .= "<p class=\"card-text\">" . $cellar->name . "</p>";
-		$output .= "<div class=\"d-flex justify-content-between align-items-center\">";
-		$output .= "<a href=\"index.php?n=wine_cellar&uid=" . $cellar->uid . "\" type=\"button\" class=\"btn btn-sm btn-outline-secondary stretched-link\">View</a>";
-		$output .= "<small class=\"text-body-secondary\">";
-		$output .= count($cellar->getBins()) . autoPluralise(" bin", " bins", count($cellar->getBins()));
-		$output .= " / ";
-		$output .= $cellar->getAllWineBottlesTotal() . autoPluralise(" wine", " wines", $cellar->getAllWineBottlesTotal());
-		$output .= "</small>";
-		$output .= "</div>";
-		$output .= "</div>";
-		$output .= "</div>";
-		$output .= "</div>";
-		
-		echo $output;
+		echo $cellar->card();
 	}
 	?>
 </div>
@@ -89,12 +71,8 @@ $wineClass = new wineClass();
 		<h1>Recent Transactions</h1>
 		<div id="chart_transactions_by_day"></div>
 		<?php
-		$wineTransactions = new wine_transactions();
-		
 		$output = "<ul class=\"list-group\">";
-		foreach ($wineTransactions->getAllTransactions() AS $transaction) {
-			
-			
+		foreach ($wineClass->allTransactions() AS $transaction) {
 			$output .= "<li  class=\"list-group-item\">";
 			$output .= "<a href=\"index.php?n=wine_wine&uid=" . $transaction['wine_uid'] . "\">";
 			$output .= dateDisplay($transaction['date']) . " " . $transaction['wine_uid'] . " " . $transaction['cellar_uid'];
@@ -112,13 +90,13 @@ $wineClass = new wineClass();
 		<h1>My Lists</h1>
 		<?php
 		$output = "<ul class=\"list-group\">";
-		foreach ($wineClass->getAllLists() AS $list) {
-			$list = new wine_list($list['uid']);
+		foreach ($wineClass->allLists(array('member_ldap' => $_SESSION['username'])) AS $list) {
+			//$list = new wine_list($list['uid']);
 			
 			$output .= "<li  class=\"list-group-item\">";
 			$output .= "<svg width=\"1em\" height=\"1em\" class=\"text-muted\"><use xlink:href=\"img/icons.svg#heart-full\"/></svg> ";
-			$output .= "<a href=\"index.php?n=wine_search&filter=list&value=" . $list->uid . "\">";
-			$output .= $list->name_full();
+			$output .= "<a href=\"index.php?n=wine_search&filter=list&value=" . $list['uid'] . "\">";
+			$output .= $list['name'];
 			$output .= "</a>";
 			
 			$output .= "</li>";
@@ -184,21 +162,40 @@ document.getElementById('wine_search').addEventListener('keyup', function() {
 </script>
 
 <?php
-$wineClass = new wineClass;
-foreach ($wineClass->stats_transactionsByDate(30) AS $date) {
-	$transactions[] = $date['dateTransactionTotals'];
-	$bottles[] = $date['transactionBottleTotals'];
-	$series[] = "'" . $date['date'] . "'";
+$daysToInclude = 10;
+$dateArray = array();
+for ($i = 0; $i < $daysToInclude; $i++) {
+  // Generate the date string for $i days ago
+  $date = date('Y-m-d', strtotime("-$i days"));
+
+  // Assign the date as a key in the array with a default value
+  $dateArray[] = $date;
+}
+
+foreach ($dateArray AS $date) {
+	$transactions = $wineClass->allTransactions(array('DATE(date)' => $date));
+	
+	$bottlesTotal = 0;
+	foreach ($transactions AS $transaction) {
+		if (isset($transaction)) {
+			$bottlesTotal= $bottlesTotal + $transaction['bottles'];
+		}
+		
+	}
+	//printArray($transactions);
+	$series[$date] = "'" . $date . "'";
+	$transactionsTotal[$date] = count($transactions);
+	$transactionsBottlesTotal[$date] = $bottlesTotal[$date] + $bottlesTotal;
 }
 ?>
 <script>
 var options = {
   series: [{
 	  name:'Total Transactions',
-	  data: [<?php echo implode(",", $transactions); ?>]
+	  data: [<?php echo implode(",", $transactionsTotal); ?>]
   }, {
 	  name:'Total Bottles',
-		data: [<?php echo implode(",", $bottles); ?>]
+		data: [<?php echo implode(",", $transactionsBottlesTotal); ?>]
   }],
   legend: {
   show: false

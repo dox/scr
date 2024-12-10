@@ -3,6 +3,7 @@ pageAccessCheck("wine");
 
 $cleanUID = filter_var($_GET['uid'], FILTER_SANITIZE_NUMBER_INT);
 
+$wineClass = new wineClass();
 $cellar = new cellar($cleanUID);
 
 $title = $cellar->name . " Wine Cellar";
@@ -31,7 +32,7 @@ echo makeTitle($title, $subtitle, $icons);
 	<div class="col">
 		<div class="card mb-3">
 			<div class="card-body">
-				<h5 class="card-title countup"><?php echo $cellar->getAllWineBottlesTotal(); ?></h5>
+				<h5 class="card-title countup"><?php echo $cellar->allBottles(); ?></h5>
 				<h6 class="card-subtitle mb-2 text-body-secondary">Bottles</h6>
 			</div>
 		</div>
@@ -40,13 +41,13 @@ echo makeTitle($title, $subtitle, $icons);
 	$categories = array_slice(explode(",", $settingsClass->value('wine_category')), 0, 5, true);
 	
 	foreach ($categories AS $wine_category) {
-		$winesByCategory = $cellar->getAllWineBottlesByCategoryTotal($wine_category);
+		$winesByCategory = $cellar->allBottles(array('category' => $wine_category));
 		
-		if (count($winesByCategory) > 0) {
+		if ($winesByCategory > 0) {
 			$output  = "<div class=\"col\">";
 			$output .= "<div class=\"card mb-3\">";
 			$output .= "<div class=\"card-body\">";
-			$output .= "<h5 class=\"card-title countup\">" . count($winesByCategory) . "</h5>";
+			$output .= "<h5 class=\"card-title countup\">" . $winesByCategory . "</h5>";
 			$output .= "<h6 class=\"card-subtitle mb-2 text-truncate text-body-secondary\">" . $wine_category . "</h6>";
 			$output .= "</div>";
 			$output .= "</div>";
@@ -61,16 +62,11 @@ echo makeTitle($title, $subtitle, $icons);
 
 <div id="chart"></div>
 
-<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
 
 <?php
-foreach ($cellar->getBins() AS $bin) {
-	$wine = new wine($bin['uid']);
-	
-	echo $wine->binCard();
-}
-	?>
-</div>
+echo $cellar->binsTable($cellar->allBins());
+?>
+<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
 
 <script>
 document.getElementById('wine_search').addEventListener('keyup', function() {
@@ -125,9 +121,7 @@ document.getElementById('wine_search').addEventListener('keyup', function() {
 </script>
 
 <?php
-$wineClass = new wineClass;
-foreach ($wineClass->stats_winesByGrape($cellar->uid
-) AS $grape => $count) {
+foreach ($cellar->allBottlesByGrape() AS $grape => $count) {
 	$data[] = "{ x: '" . $grape . "', y: " . $count . "}";
 }
 ?>

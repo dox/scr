@@ -1,36 +1,10 @@
 <?php
 pageAccessCheck("wine");
 
-$cleanUID = filter_var($_GET['uid'], FILTER_SANITIZE_NUMBER_INT);
-
-$wine = new wine($cleanUID);
-
-$array = array(
-	"type" => "test",
-	"cellar_uid" => "1",
-	"wine_uid" => $wine->uid,
-	"value" => "-1",
-	"description" => "test"
-);
-//$wine->create_transaction($array);
-
+$wine = new wine($tempWineUID);
 $cellar = new cellar($wine->cellar_uid);
 
-$title = $wine->bin . ": " . $wine->name;
-$subtitle = "<a href=\"index.php?n=wine_search&filter=grape&value=" . $wine->grape . "\">" . $wine->grape . "</a>, " . "<a href=\"index.php?n=wine_search&filter=country_of_origin&value=" . $wine->country_of_origin . "\">" . $wine->country_of_origin . "</a>";
-$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#heart-empty\"/></svg> Add To List", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#favListModal\"");
-$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#journal-text\"/></svg> Edit Wine", "value" => "onclick=\"location.href='index.php?n=wine_edit&edit=edit&uid=" . $wine->uid . "'\"");
-$icons[] = array("class" => "btn-success", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#plus-circle\"/></svg> Create Transaction", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#transactionModal\"");
-echo makeTitle($title, $subtitle, $icons);
 ?>
-
-<nav aria-label="breadcrumb">
-	<ol class="breadcrumb">
-		<li class="breadcrumb-item"><a href="index.php?n=wine_index">Wine</a></li>
-		<li class="breadcrumb-item"><a href="index.php?n=wine_cellar&uid=<?php echo $cellar->uid?>"><?php echo $cellar->name; ?></a></li>
-		<li class="breadcrumb-item active"><?php echo $wine->bin; ?></li>
-	</ol>
-</nav>
 
 <hr class="pb-3" />
 
@@ -38,6 +12,8 @@ echo makeTitle($title, $subtitle, $icons);
 if ($wine->status <> 1) {
 	echo "<div class=\"alert alert-warning text-center\" role=\"alert\">WINE IN-STATUS</div>";
 }
+
+echo "UID: " . $wine->uid;
 ?>
 
 <ul class="nav nav-tabs nav-fill" id="myTab" role="tablist">
@@ -115,7 +91,7 @@ if ($wine->status <> 1) {
 			  
 			  <div class="card mb-3">
 				  <div class="card-body">
-				  	<h5 class="card-title">Debug Array</h5>
+					  <h5 class="card-title">Debug Array</h5>
 					  <?php
 					  printArray($wine);
 					  ?>
@@ -266,7 +242,7 @@ if ($wine->status <> 1) {
 	  <div class="modal-body">
 		<ul class="list-group list-group-flush">
 			  <?php
-			  foreach ($wine->getAllLists() AS $list) {
+			  foreach ($wineClass->allLists() AS $list) {
 				  $list = new wine_list($list['uid']);
 				  
 				  $listIcon = "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#heart-empty\"/></svg> ";
