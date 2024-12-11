@@ -21,11 +21,96 @@ class cellar {
 		}
 	}
 	
+	public function create() {
+		global $db, $logsClass;
+		
+		$data = [];
+		foreach (get_object_vars($this) as $key => $value) {
+			// Skip private or protected properties
+			if (property_exists($this, $key) && $key !== 'uid') {
+				$data[$key] = "'" . str_replace('\'', '', $value) . "'";
+			}
+		}
+		
+		// Prepare the query
+		$columns = implode(", ", array_keys($data));
+		$placeholders = implode(", ", $data);
+		
+		$sql = "INSERT INTO " . self::$table_name . " ($columns) VALUES ($placeholders)";
+		
+		$db->query($sql);
+		
+		$logArray['category'] = "wine";
+		$logArray['result'] = "success";
+		$logArray['description'] = "Created [cellarUID:" . $db->lastInsertID() . "] (" . $this->name . ")";
+		$logsClass->create($logArray);
+	}
+	
+	public function update($array) {
+		global $db, $logsClass;
+		
+		// Initialize the set part of the query
+		$setParts = [];
+		
+		//remove the uid
+		unset($array['uid']);
+		
+		// Loop through the new values array
+		foreach ($array as $field => $newValue) {
+		  if (is_array($newValue)) {
+			$newValue = implode(",", $newValue);
+		  }
+			// Check if the field exists in the current values and if the values are different
+			if ($this->$field != $newValue) {
+			  
+				// Sanitize the field and value to prevent SQL injection
+				//$field = mysqli_real_escape_string($conn, $field);
+				//$newValue = mysqli_real_escape_string($conn, $newValue);
+				// Add to the set part
+				$setParts[$field] = "`$field` = '$newValue'";
+			}
+		}
+		
+		// If there are no changes, return null
+		if (empty($setParts)) {
+			return null;
+		}
+		
+		// Combine the set parts into a single string
+		$setString = implode(", ", $setParts);
+		
+		// Construct the final UPDATE query
+		$sql = "UPDATE wine_cellars SET " . $setString;
+		$sql .= " WHERE uid = '" . $this->uid . "' ";
+		$sql .= " LIMIT 1";
+		
+		$update = $db->query($sql);
+		
+		$logArray['category'] = "wine";
+		$logArray['result'] = "success";
+		$logArray['description'] = "Updated [binUID:" . $this->uid . "] with fields " . $setString;
+		$logsClass->create($logArray);
+		
+		return true;
+	  }
+	
+	public function photographURL() {
+		$image = "img/cards/wine.png";
+		
+		if (!empty($this->photograph)) {
+			if (file_exists($this->photograph)) {
+				$image = $this->photograph;
+			}
+		}
+		
+		return $image;
+	}
+	
 	public function card() {
 		
 		$output  = "<div class=\"col-sm-12 col-md-6 mb-3\">";
 		$output .= "<div class=\"card shadow-sm\">";
-		$output .= "<img src=\"" . $this->photograph . "\" class=\"card-img-top\" alt=\"Cellar photograph\">";
+		$output .= "<img src=\"" . $this->photographURL() . "\" class=\"card-img-top\" alt=\"Cellar photograph\">";
 		$output .= "<div class=\"card-body\">";
 		$output .= "<p class=\"card-text\">" . $this->name . "</p>";
 		$output .= "<div class=\"d-flex justify-content-between align-items-center\">";
@@ -107,9 +192,9 @@ class cellar {
 				$output .= "<table class=\"table\">";
 				$output .= "<thead>";
 				$output .= "<tr>";
-				$output .= "<th scope=\"col\">Bin</th>";
+				$output .= "<th style=\"width: 10%;\" scope=\"col\">Bin</th>";
 				$output .= "<th scope=\"col\">Wine</th>";
-				$output .= "<th scope=\"col\">Handle</th>";
+				$output .= "<th style=\"width: 10%;\" scope=\"col\">Bottles</th>";
 				$output .= "</tr>";
 				$output .= "</thead>";
 				$output .= "<tbody>";
@@ -130,10 +215,23 @@ class cellar {
 	private function binTableRow($bin) {
 		$bin = new bin($bin['uid']);
 		
+		$class = "";
+		if ($bin->currentWinesCount() == 1) {
+			$url = "index.php?n=wine_wine&wine_uid=" . $bin->currentWines()[0]['uid'];
+		} elseif ($bin->currentWinesCount() == 0) {
+			$class = " text-muted";
+			$url = "index.php?n=wine_bin&bin_uid=" . $bin->uid;
+		} elseif ($bin->currentWinesCount() > 0) {
+			$class = " text-warning";
+			$url = "index.php?n=wine_bin&bin_uid=" . $bin->uid;
+		} else {
+			$url = "index.php?n=wine_bin&bin_uid=" . $bin->uid;
+		}
+		
 		$output  = "<tr>";
-		$output .= "<th scope=\"row\"><a href=\"index.php?n=wine_bin&uid=" . $bin->uid . "\">" . $bin->name . "</a></th>";
-		$output .= "<td>" . $bin->currentWineName() . "</td>";
-		$output .= "<td>" . $bin->name . "</td>";
+		$output .= "<th scope=\"row\"><a href=\"" . $url . "\">" . $bin->name . "</a></th>";
+		$output .= "<td class=\"" . $class . "\">" . $bin->currentWineName() . "</td>";
+		$output .= "<td>" . $bin->currentBottlesCount() . "</td>";
 		$output .= "</tr>";
 		
 		return $output;

@@ -9,7 +9,7 @@ if (checkpoint_charlie("wine")) {
 	$data = array();
 	
 	if (isset($_GET['q'])) {
-		$queryArray["name"] = $_GET['q'];
+		$queryArray["wine_wines.name"] = $_GET['q'];
 		
 		$cellarUID = null;
 		if (isset($_GET['c'])) {

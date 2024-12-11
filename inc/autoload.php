@@ -55,7 +55,7 @@ require_once($root . '/inc/class_wines.php');
 require_once($root . '/inc/class_wine.php');
 require_once($root . '/inc/class_wineCellar.php');
 require_once($root . '/inc/class_wineBin.php');
-require_once($root . '/inc/class_wineTransactions.php');
+require_once($root . '/inc/class_wineTransaction.php');
 require_once($root . '/inc/class_wineList.php');
 require_once($root . '/inc/class_reports.php');
 require_once($root . '/inc/PHPMailer/Exception.php');

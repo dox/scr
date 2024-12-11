@@ -4,7 +4,6 @@ class wine {
 	
 	public $uid;
 	public $code;
-	public $cellar_uid;
 	public $bin_uid;
 	public $status;
 	public $name;
@@ -23,11 +22,11 @@ class wine {
 	public $notes;
 	public $photograph;
 	
-	function __construct($cellarUID = null) {
+	function __construct($wineUID = null) {
 		global $db;
 	  
 		$sql  = "SELECT * FROM " . self::$table_name;
-		$sql .= " WHERE uid = '" . $cellarUID . "'";
+		$sql .= " WHERE uid = '" . $wineUID . "'";
 		
 		$results = $db->query($sql)->fetchArray();
 		
@@ -40,11 +39,12 @@ class wine {
 		$output  = $this->name;
 		
 		if ($full == true) {
-		  $cellar = new cellar($this->cellar_uid);
-		  
-		  $output = $cellar->name . " > " . $this->name;
+			$bin = new bin($this->bin_uid);
+			$cellar = new cellar($bin->cellar_uid);
+			
+			$output = $cellar->name . " > " . $this->name;
 		} else {
-		  $output  = $this->name;
+			$output  = $this->name;
 		}
 		
 		return $output;
@@ -100,26 +100,31 @@ class wine {
 	}
 	
 	public function card() {
-		$cellar = new cellar($this->cellar_uid);
+		$bin = new bin($this->bin_uid);
+		$cellar = new cellar($bin->cellar_uid);
 		
-		if ($this->status == "In-Bond") {
-		  $binName = "<a href=\"" . $url . "\" type=\"button\" class=\"btn btn-primary position-relative\">" . $cellar->short_code . " > " . $cellar->name . "<span class=\"position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning\">In-Bond</span></a>";
+		$url = "index.php?n=wine_wine&wine_uid=" . $this->uid;
+		$title = "<a href=\"" . $url . "\">" . $this->name . "</a>";
+		
+		if ($this->status <> "In Use") {
 		  $cardClass = " border-warning ";
 		} else {
-		  $binName = "<a href=\"" . $url . "\" type=\"button\" class=\"btn btn-primary position-relative\">" . $cellar->short_code . " > " . $this->bin . "</a>";
 		  $cardClass = "";
 		}
 		
 		$output  = "<div class=\"col\">";
 		$output .= "<div class=\"card " . $cardClass . " shadow-sm\">";
 		$output .= "<div class=\"card-body\">";
-		$output .= "<h5 class=\"card-title\">" . $binName . "</h5>";
-		$output .= "<p class=\"card-text text-truncate\">" . $description . "</p>";
+		$output .= "<h5 class=\"card-title\">" . $title . "</h5>";
+		$output .= "<p class=\"card-text text-truncate\">" . $cellar->name . " / " . $bin->name . "</p>";
 		$output .= "<div class=\"d-flex justify-content-between align-items-center\">";
 		$output .= "<div class=\"btn-group\">";
 		$output .= "<a href=\"index.php?n=wine_search&filter=code&value=" . $this->code . "\" type=\"button\" class=\"btn btn-sm btn-outline-secondary\">" . $this->code . "</a>";
 		$output .= "<a href=\"index.php?n=wine_search&filter=vintage&value=" . $this->vintage . "\" type=\"button\" class=\"btn btn-sm btn-outline-secondary\">" . $this->vintage . "</a>";
 		$output .= "</div>";
+		if ($this->status <> "In Use") {
+			$output .= "<span class=\"badge rounded-pill text-bg-warning\">" . strtoupper($this->status) . "</span>";
+		}
 		$output .= "<small class=\"text-body-secondary\">" . $this->qty . autoPluralise(" bottle", " bottles", $this->qty) . " </small>";
 		$output .= "</div>";
 		$output .= "</div>";
@@ -128,5 +133,166 @@ class wine {
 		
 		return $output;
 	}
+	
+	public function updatePhotograph($file) {
+		global $db;
+		
+		if (!empty($file['photograph']['name'])) {
+			$uploadOk = 1;
+			
+			$target_dir = "../img/wines/";
+			$imageFileType = strtolower(pathinfo($file['photograph']['name'],PATHINFO_EXTENSION));
+			$newFileName = "wine_" . $this->uid . '.' . $imageFileType;
+			$target_file = $target_dir . $newFileName;
+			
+			
+
+			// Check if image file is a actual image or fake image
+			$check = getimagesize($file["photograph"]["tmp_name"]);
+			if($check == false) {
+				$uploadOk = 0;
+			}
+			
+			// Check if file already exists
+			if (file_exists($target_file)) {
+				unlink($target_file);
+			}
+			if (file_exists($target_dir . $this->photograph)) {
+				unlink($target_dir . $this->photograph);
+			}
+			
+			// Check file size
+			if ($file["photograph"]["size"] > 5000000) {
+				echo "Sorry, your file is too large.";
+				$uploadOk = 0;
+			}
+			
+			// Allow only certain file formats
+			if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" && $imageFileType != "gif" ) {
+				echo "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
+				$uploadOk = 0;
+			}
+			
+			// Check if $uploadOk is set to 0 by an error
+			if ($uploadOk == 0) {
+				echo "Sorry, your file was not uploaded.";
+				// if everything is ok, try to upload file
+			} else {
+				if (move_uploaded_file($file["photograph"]["tmp_name"], $target_file)) {
+					$array['photograph'] = basename($file["photograph"]["name"]);
+					echo "The file ". htmlspecialchars( basename( $file["photograph"]["name"])). " has been uploaded.";
+					
+					// Construct the final UPDATE query
+					$sql = "UPDATE wine_wines SET photograph = '" . $newFileName . "'";
+					$sql .= " WHERE uid = '" . $this->uid . "' ";
+					$sql .= " LIMIT 1";
+					
+					$update = $db->query($sql);
+				} else {
+					echo "Sorry, there was an error uploading your file.";
+				}
+			}
+		}
+	}
+	
+	public function update($array) {
+		global $db, $logsClass;
+		
+		// Initialize the set part of the query
+		$setParts = [];
+		
+		//remove the uid
+		unset($array['uid']);
+		
+		//upload photo (if empty no worries)
+		$this->updatePhotograph($_FILES);
+		
+		// Loop through the new values array
+		foreach ($array as $field => $newValue) {
+		  if (is_array($newValue)) {
+			$newValue = implode(",", $newValue);
+		  }
+			// Check if the field exists in the current values and if the values are different
+			if ($this->$field != $newValue) {
+			  
+				// Sanitize the field and value to prevent SQL injection
+				//$field = mysqli_real_escape_string($conn, $field);
+				//$newValue = mysqli_real_escape_string($conn, $newValue);
+				// Add to the set part
+				$setParts[$field] = "`$field` = '$newValue'";
+			}
+		}
+		
+		// If there are no changes, return null
+		if (empty($setParts)) {
+			return null;
+		}
+		
+		// Combine the set parts into a single string
+		$setString = implode(", ", $setParts);
+		
+		// Construct the final UPDATE query
+		$sql = "UPDATE wine_wines SET " . $setString;
+		$sql .= " WHERE uid = '" . $this->uid . "' ";
+		$sql .= " LIMIT 1";
+		
+		$update = $db->query($sql);
+		
+		$logArray['category'] = "wine";
+		$logArray['result'] = "success";
+		$logArray['description'] = "Updated [wineUID:" . $this->uid . "] with fields " . $setString;
+		$logsClass->create($logArray);
+		
+		return true;
+	  }
+	  
+	  public function create($array) {
+		  global $db, $logsClass;
+		  
+		  // Initialize the set part of the query
+		  $setParts = [];
+		  
+		  //remove the memberUID
+		  unset($array['uid']);
+		  
+		  // Loop through the new values array
+		  foreach ($array as $field => $newValue) {
+			if (is_array($newValue)) {
+			  $newValue = implode(",", $newValue);
+			}
+			
+			$setParts[$field] = "`$field` = '$newValue'";
+		  }
+		  
+		  // If there are no changes, return null
+		  if (empty($setParts)) {
+			  return null;
+		  }
+		  
+		  // Combine the set parts into a single string
+		  $setString = implode(", ", $setParts);
+		  
+		  // Construct the final UPDATE query
+		  $sql = "INSERT INTO wine_wines SET " . $setString;
+		  $insert = $db->query($sql);
+		  $newWineUID = $db->lastInsertID();
+		  
+		  $logArray['category'] = "wine";
+		  $logArray['result'] = "success";
+		  $logArray['description'] = "Created new wine with fields " . $setString;
+		  $logsClass->create($logArray);
+		  
+		  //log a transaction
+		  $data['wine_uid'] = $newWineUID;
+		  $data['type'] = "import";
+		  $data['bottles'] = $array['qty'];
+		  $data['price_per_bottle'] = $array['price_purchase'];
+		  $data['description'] = "Original import into system";
+		  
+		  $transaction = new transaction();
+		  $transaction->create($data);
+		  
+		  return true;
+		}
 }
 ?>

@@ -2,17 +2,28 @@
 pageAccessCheck("wine");
 
 $title = "Wine Management";
-$subtitle = "BETA FEATURE!";
-$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#plus-circle\"/></svg> Add Wine", "value" => "onclick=\"location.href='index.php?n=wine_edit&edit=add&cellar_uid=1'\"");
+$subtitle = "Manage wine stock and create transactions";
+$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#plus-circle\"/></svg> Add Cellar", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#newCellarModal\"");
 
 echo makeTitle($title, $subtitle, $icons);
 
 $wineClass = new wineClass();
+
+// check if we need to create a new bin
+if (isset($_POST['name'])) {
+	$newCellar = new cellar();
+	$newCellar->name = $_POST['name'];
+	$newCellar->short_code = $_POST['short_code'];
+	$newCellar->notes = $_POST['notes'];
+	
+	$newCellar->create();
+}
 ?>
 
 <nav aria-label="breadcrumb">
 	<ol class="breadcrumb">
 		<li class="breadcrumb-item"><a href="index.php?n=wine_index">Wine</a></li>
+		<li class="breadcrumb-item active">Index</li>
 	</ol>
 </nav>
 
@@ -38,7 +49,7 @@ $wineClass = new wineClass();
 	$categories = array_slice(explode(",", $settingsClass->value('wine_category')), 0, 5, true);
 	
 	foreach ($categories AS $wine_category) {
-		$winesByCategory = $wineClass->allWines(array('category' => $wine_category));
+		$winesByCategory = $wineClass->allWines(array('wine_wines.category' => $wine_category));
 		
 		if (count($winesByCategory) > 0) {
 			$output  = "<div class=\"col\">";
@@ -72,7 +83,9 @@ $wineClass = new wineClass();
 		<div id="chart_transactions_by_day"></div>
 		<?php
 		$output = "<ul class=\"list-group\">";
-		foreach ($wineClass->allTransactions() AS $transaction) {
+		$subsetOfTransactions = array_slice($wineClass->allTransactions(), 0, 10, true);
+		
+		foreach ($subsetOfTransactions AS $transaction) {
 			$output .= "<li  class=\"list-group-item\">";
 			$output .= "<a href=\"index.php?n=wine_wine&uid=" . $transaction['wine_uid'] . "\">";
 			$output .= dateDisplay($transaction['date']) . " " . $transaction['wine_uid'] . " " . $transaction['cellar_uid'];
@@ -108,6 +121,38 @@ $wineClass = new wineClass();
 	</div>
 </div>
 
+
+<form method="post" id="bin_new" action="<?php echo $_SERVER['REQUEST_URI']; ?>">
+<div class="modal fade" id="newCellarModal" tabindex="-1" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Add New Cellar</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<div class="mb-3">
+					<label for="name" class="form-label">Cellar Name</label>
+					<input type="text" class="form-control" id="name" name="name">
+				</div>
+				<div class="mb-3">
+					<label for="short_code" class="form-label">Cellar Short Code</label>
+					<input type="text" class="form-control" id="short_code" name="short_code">
+				</div>
+				<div class="mb-3">
+					<label for="description" class="form-label">Cellar Notes</label>
+					<textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-link text-muted" data-bs-dismiss="modal">Close</button>
+				<button type="submit" name="submit" class="btn btn-primary">Add Cellar</button>
+			</div>
+			
+		</div>
+	</div>
+</div>
+</form>
 
 <script>
 document.getElementById('wine_search').addEventListener('keyup', function() {
@@ -146,7 +191,7 @@ document.getElementById('wine_search').addEventListener('keyup', function() {
 					let listItem = document.createElement('li');
 					listItem.className = "list-group-item";
 					var link = document.createElement("a");
-					link.href = "index.php?n=wine_wine&uid=" + item.uid;
+					link.href = "index.php?n=wine_wine&wine_uid=" + item.uid;
 					link.textContent = item.name;
 					listItem.appendChild(link);
 					

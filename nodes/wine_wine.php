@@ -1,27 +1,41 @@
 <?php
 pageAccessCheck("wine");
 
-$wine = new wine($tempWineUID);
-$cellar = new cellar($wine->cellar_uid);
+$wineClass = new wineClass();
 
+$wineUID = filter_var($_GET['wine_uid'], FILTER_SANITIZE_NUMBER_INT);
+
+$wine = new wine($wineUID);
+$bin = new bin($wine->bin_uid);
+$cellar = new cellar($bin->cellar_uid);
+
+$title = $wine->name;
+$subtitle = $bin->category;
+$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#journal-text\"/></svg> Edit Wine", "value" => "onclick=\"location.href='index.php?n=wine_edit&edit=edit&uid=" . $wine->uid . "'\"");
+
+echo makeTitle($title, $subtitle, $icons);
 ?>
+
+<nav aria-label="breadcrumb">
+	<ol class="breadcrumb">
+		<li class="breadcrumb-item"><a href="index.php?n=wine_index">Wine</a></li>
+		<li class="breadcrumb-item"><a href="index.php?n=wine_cellar&uid=<?php echo $cellar->uid?>"><?php echo $cellar->name; ?></a></li>
+		<li class="breadcrumb-item"><a href="index.php?n=wine_bin&bin_uid=<?php echo $bin->uid?>"><?php echo $bin->name; ?></a></li>
+		<li class="breadcrumb-item active"><?php echo $wine->name; ?></li>
+	</ol>
+</nav>
 
 <hr class="pb-3" />
 
 <?php
-if ($wine->status <> 1) {
-	echo "<div class=\"alert alert-warning text-center\" role=\"alert\">WINE IN-STATUS</div>";
+if ($wine->status <> "In Use") {
+	echo "<div class=\"alert alert-warning text-center\" role=\"alert\">WINE " . strtoupper($wine->status) . "</div>";
 }
-
-echo "UID: " . $wine->uid;
 ?>
 
 <ul class="nav nav-tabs nav-fill" id="myTab" role="tablist">
 	<li class="nav-item" role="presentation">
 		<button class="nav-link active" id="information-tab" data-bs-toggle="tab" data-bs-target="#information-tab-pane" type="button" role="tab" aria-controls="information-tab-pane" aria-selected="true">Information</button>
-	</li>
-	<li class="nav-item" role="presentation">
-		<button class="nav-link" id="transactions-tab" data-bs-toggle="tab" data-bs-target="#transactions-tab-pane" type="button" role="tab" aria-controls="transactions-tab-pane" aria-selected="false">Transactions</button>
 	</li>
 	<li class="nav-item" role="presentation">
 		<button class="nav-link" id="logs-tab" data-bs-toggle="tab" data-bs-target="#logs-tab-pane" type="button" role="tab" aria-controls="logs-tab-pane" aria-selected="false">Logs</button>
@@ -83,27 +97,58 @@ echo "UID: " . $wine->uid;
 			  </div>
 			  
 			  <div class="card mb-3">
+					<div class="card-body">
+						<h5 class="card-title">Private Notes</h5>
+						<?php echo $wine->notes; ?>
+					</div>
+			</div>
+			<div class="card mb-3">
 				  <div class="card-body">
-					  <h5 class="card-title">Private Notes</h5>
-					  <?php echo $wine->notes; ?>
-				  </div>
-			  </div>
-			  
-			  <div class="card mb-3">
-				  <div class="card-body">
-					  <h5 class="card-title">Debug Array</h5>
-					  <?php
-					  printArray($wine);
-					  ?>
+					  <h5 class="card-title">Transactions</h5>
+					  <table class="table">
+					  <thead>
+						<tr>
+						  <th scope="col">Date</th>
+						  <th scope="col">Username</th>
+						  <th scope="col">Type</th>
+						  <th scope="col">Bottles</th>
+						  <th scope="col">£/Bottle</th>
+						  <th scope="col">Name</th>
+						  <th scope="col">Description</th>
+						</tr>
+					  </thead>
+					  <tbody>
+						  <?php
+						  foreach($wine->transactions() AS $transaction) {
+							  $valueClass = "";
+							  if ($transaction['bottles'] < 0) {
+								  $bottlesClass = "text-danger";
+							  } elseif($transaction['bottles'] > 0) {
+								  $bottlesClass = "text-success";
+							  }
+							  $output  = "<tr>";
+							  $output .= "<td>" . dateDisplay($transaction['date']) . " " . timeDisplay($transaction['date']) . "</td>";
+							  $output .= "<td>" . $transaction['username'] . "</td>";
+							  $output .= "<td><span class=\"badge rounded-pill text-bg-info\">" . $transaction['type'] . "</span></td>";
+							  $output .= "<td class=\"" . $bottlesClass . "\">" . $transaction['bottles'] . "</td>";
+							  $output .= "<td>" . currencyDisplay($transaction['price_per_bottle']) . "</td>";
+							  $output .= "<td>" . $transaction['name'] . "</td>";
+							  $output .= "<td>" . $transaction['description'] . "</td>";
+							  $output .= "</tr>";
+							  
+							  echo $output;
+						  }
+						  ?>
+					  </tbody>
+					  </table>
 				  </div>
 			  </div>
 		  </div>
 		  <div class="col-xl-4">
-			  <div class="card mb-3">
-					<img src="<?php echo $wine->photographURL(); ?>" class="card-img-top" alt="...">
-					<div class="card-body">
-						Image
-					</div>
+			   <div class="card mb-3">
+				 <img src="<?php echo $wine->photographURL(); ?>" class="card-img" alt="...">
+				 <div class="card-img-overlay">
+				 </div>
 			   </div>
 				
 				<div class="card mb-3">
@@ -124,50 +169,7 @@ echo "UID: " . $wine->uid;
 		  </div>
 	  </div>
   </div>
-  <div class="tab-pane fade" id="transactions-tab-pane" role="tabpanel" aria-labelledby="transactions-tab" tabindex="0">
-	  <div class="card mb-3">
-			<div class="card-body">
-				<h5 class="card-title">Transactions</h5>
-				
-				<table class="table">
-				<thead>
-				  <tr>
-					<th scope="col">Date</th>
-					<th scope="col">Username</th>
-					<th scope="col">Type</th>
-					<th scope="col">Bottles</th>
-					<th scope="col">£/Bottle</th>
-					<th scope="col">Name</th>
-					<th scope="col">Description</th>
-				  </tr>
-				</thead>
-				<tbody>
-					<?php
-					foreach($wine->transactions() AS $transaction) {
-						$valueClass = "";
-						if ($transaction['bottles'] < 0) {
-							$bottlesClass = "text-danger";
-						} elseif($transaction['bottles'] > 0) {
-							$bottlesClass = "text-success";
-						}
-						$output  = "<tr>";
-						$output .= "<td>" . dateDisplay($transaction['date']) . " " . timeDisplay($transaction['date']) . "</td>";
-						$output .= "<td>" . $transaction['username'] . "</td>";
-						$output .= "<td><span class=\"badge rounded-pill text-bg-info\">" . $transaction['type'] . "</span></td>";
-						$output .= "<td class=\"" . $bottlesClass . "\">" . $transaction['bottles'] . "</td>";
-						$output .= "<td>" . currencyDisplay($transaction['price_per_bottle']) . "</td>";
-						$output .= "<td>" . $transaction['name'] . "</td>";
-						$output .= "<td>" . $transaction['description'] . "</td>";
-						$output .= "</tr>";
-						
-						echo $output;
-					}
-					?>
-				</tbody>
-				</table>
-			</div>
-		</div>
-  </div>
+  
   <div class="tab-pane fade" id="logs-tab-pane" role="tabpanel" aria-labelledby="logs-tab" tabindex="0">
 	  <?php
 	  echo $logsClass->displayTable($wine->logs());

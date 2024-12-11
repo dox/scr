@@ -195,7 +195,8 @@ class logs {
     $patternArray['/\[notificationUID:([0-9]+)\]/'] = "<code><a href=\"index.php?n=admin_notification&notificationUID=$1\" class=\"text-decoration-none\">[notificationUID:$1]</a></code>";
     $patternArray['/\[settingUID:([0-9]+)\]/'] = "<code><a href=\"index.php?n=admin_settings&settingUID=$1\" class=\"text-decoration-none\">[settingUID:$1]</a></code>";
     $patternArray['/\[reportUID:([0-9]+)\]/'] = "<code><a href=\"index.php?n=admin_report&reportUID=$1\" class=\"text-decoration-none\">[reportUID:$1]</a></code>";
-    $patternArray['/\[wineUID:([0-9]+)\]/'] = "<code><a href=\"index.php?n=wine_wine&uid=$1\" class=\"text-decoration-none\">[wineUID:$1]</a></code>";
+    $patternArray['/\[wineUID:([0-9]+)\]/'] = "<code><a href=\"index.php?n=wine_wine&wine_uid=$1\" class=\"text-decoration-none\">[wineUID:$1]</a></code>";
+    $patternArray['/\[binUID:([0-9]+)\]/'] = "<code><a href=\"index.php?n=wine_bin&bin_uid=$1\" class=\"text-decoration-none\">[binUID:$1]</a></code>";
 
     foreach ($patternArray AS $pattern => $replace) {
       //echo $pattern . $replace;

@@ -54,8 +54,9 @@ class wineClass {
 	
 	public function allWines($whereFilterArray = null) {
 		global $db;
-		
-		$sql  = "SELECT * FROM " . self::$table_wines;
+
+		$sql  = "SELECT wine_wines.*, wine_bins.cellar_uid FROM " . self::$table_wines;
+		$sql .= " LEFT JOIN wine_bins ON wine_wines.bin_uid = wine_bins.uid";
 		
 		if (!empty($whereFilterArray)) {
 			$conditions = [];
@@ -144,14 +145,16 @@ class wineClass {
 			$searchStatements[] = $searchKey . " LIKE '%" . $searchString . "%'";
 		}
 		
-		$sql  = "SELECT * FROM wine_wines WHERE";
+		$sql  = "SELECT wine_wines.*, wine_bins.cellar_uid";
+		$sql .= " FROM wine_wines LEFT JOIN wine_bins ON wine_wines.bin_uid = wine_bins.uid";
+		$sql .= " WHERE";
 		
 		if (isset($cellarUID)) {
-			$sql .= " cellar_uid = '" . $cellarUID . "' AND ";
+			$sql .= " cellar_uid = '" . $cellarUID ."' AND ";
 		}
 		
 		$sql .= "(" . implode(" OR ", $searchStatements) . ")";
-		$sql .= " ORDER BY name ASC";
+		$sql .= " ORDER BY wine_wines.name ASC";
 		
 		if ($limit) {
 			$sql .= " LIMIT " . $limit;
@@ -183,5 +186,35 @@ class wineClass {
 		return $wines['total'];
 	}
 	
+	public function listFromWines($columnName, $whereFilterArray = null) {
+		global $db;
+		
+		$sql  = "SELECT DISTINCT " . $columnName . " FROM " . self::$table_wines;
+		
+		if (!empty($whereFilterArray)) {
+			$conditions = [];
+			foreach ($whereFilterArray as $key => $value) {
+				// Escaping the key and value for safety
+				$escapedKey = addslashes($key);
+				$escapedValue = addslashes($value);
+				$conditions[] = "$escapedKey = '$escapedValue'";
+			}
+			$sql .= " WHERE " . implode(' AND ', $conditions);
+		}
+		
+		$sql .= " ORDER BY " . $columnName . " ASC";
+		
+		$results = $db->query($sql)->fetchAll();
+		
+		return $results;
+	}
+	
+	public function transactionsTypes() {
+		$array['import'] = "import";
+		$array['transaction'] = "deduct";
+		$array['wastage'] = "deduct";
+		
+		return $array;
+	}
 }
 ?>
