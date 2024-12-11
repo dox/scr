@@ -174,7 +174,7 @@ class cellar {
 		$wineClass = new wineClass();
 		
 		foreach ($this->allWines() AS $wine) {
-			$grapArray[$wine['grape']] = $grapArray[$wine['grape']] + 1;
+			$grapArray[$wine['grape']] = $grapArray[$wine['grape']] + $wine['qty'];
 		}
 		
 		return $grapArray;
@@ -214,23 +214,32 @@ class cellar {
 	
 	private function binTableRow($bin) {
 		$bin = new bin($bin['uid']);
+		$currentWines = $bin->currentWines();
 		
 		$class = "";
 		if ($bin->currentWinesCount() == 1) {
 			$url = "index.php?n=wine_wine&wine_uid=" . $bin->currentWines()[0]['uid'];
+			$title = $bin->currentWineName();
+			
+			if ($bin->currentWines()[0]['category'] != $bin->category) {
+				$title = $title . " <span class=\"text-warning\">(" . $bin->currentWines()[0]['category'] . ")</strong>";
+			}
 		} elseif ($bin->currentWinesCount() == 0) {
 			$class = " text-muted";
 			$url = "index.php?n=wine_bin&bin_uid=" . $bin->uid;
+			$title = $bin->currentWineName();
 		} elseif ($bin->currentWinesCount() > 0) {
 			$class = " text-warning";
 			$url = "index.php?n=wine_bin&bin_uid=" . $bin->uid;
+			$title = $bin->currentWineName();
 		} else {
 			$url = "index.php?n=wine_bin&bin_uid=" . $bin->uid;
+			$title = $bin->currentWineName();
 		}
 		
 		$output  = "<tr>";
 		$output .= "<th scope=\"row\"><a href=\"" . $url . "\">" . $bin->name . "</a></th>";
-		$output .= "<td class=\"" . $class . "\">" . $bin->currentWineName() . "</td>";
+		$output .= "<td class=\"" . $class . "\">" . $title . "</td>";
 		$output .= "<td>" . $bin->currentBottlesCount() . "</td>";
 		$output .= "</tr>";
 		

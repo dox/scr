@@ -96,8 +96,6 @@ class bin {
 		
 		$sql = "INSERT INTO " . self::$table_name . " ($columns) VALUES ($placeholders)";
 		
-		echo $sql;
-		
 		$db->query($sql);
 		
 		$logArray['category'] = "wine";

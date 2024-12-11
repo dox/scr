@@ -9,8 +9,10 @@ $wine = new wine($wineUID);
 $bin = new bin($wine->bin_uid);
 $cellar = new cellar($bin->cellar_uid);
 
+$urlGrape = "index.php?n=wine_search&filter=grape&value=" . $wine->grape;
+$urlCategory = "index.php?n=wine_search&filter=category&value=" . $wine->category;
 $title = $wine->name;
-$subtitle = $bin->category;
+$subtitle = "<a href=\"" . $urlGrape . "\">" . $wine->grape . "</a>, <a href=\"" . $urlCategory . "\">" . $wine->category . "</a>";
 $icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#journal-text\"/></svg> Edit Wine", "value" => "onclick=\"location.href='index.php?n=wine_edit&edit=edit&uid=" . $wine->uid . "'\"");
 
 echo makeTitle($title, $subtitle, $icons);
