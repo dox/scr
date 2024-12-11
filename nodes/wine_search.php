@@ -22,6 +22,8 @@ if ($searchFilter == "list") {
 	$wines = $wineClass->allWines(array($searchFilter => $searchValue));
 } elseif ($searchFilter == "country_of_origin") {
 	$wines = $wineClass->allWines(array($searchFilter => $searchValue));
+} elseif ($searchFilter == "category") {
+	$wines = $wineClass->allWines(array("wine_wines.category" => $searchValue));
 } else {
 	die("Search filter not recognised");
 }

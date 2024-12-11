@@ -137,7 +137,7 @@ echo $cellar->binsTable($cellar->allBins());
 				</div>
 			</div>
 			<div class="modal-footer">
-				<input type="hidden" id="addBin" name="editCellar" />
+				<input type="hidden" id="addBin" name="addBin" />
 				<button type="button" class="btn btn-link text-muted" data-bs-dismiss="modal">Close</button>
 				<button type="submit" name="submit" class="btn btn-primary">Add Bin</button>
 			</div>

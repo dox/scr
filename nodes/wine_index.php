@@ -52,11 +52,12 @@ if (isset($_POST['name'])) {
 		$winesByCategory = $wineClass->allWines(array('wine_wines.category' => $wine_category));
 		
 		if (count($winesByCategory) > 0) {
+			$url = "index.php?n=wine_search&filter=category&value=" . $wine_category;
 			$output  = "<div class=\"col\">";
 			$output .= "<div class=\"card mb-3\">";
 			$output .= "<div class=\"card-body\">";
 			$output .= "<h5 class=\"card-title\">" . count($winesByCategory) . "</h5>";
-			$output .= "<h6 class=\"card-subtitle mb-2 text-truncate text-body-secondary\">" . $wine_category . "</h6>";
+			$output .= "<h6 class=\"card-subtitle mb-2 text-truncate text-body-secondary\"><a href=\"" . $url . "\">" . $wine_category . "</a></h6>";
 			$output .= "</div>";
 			$output .= "</div>";
 			$output .= "</div>";
@@ -131,16 +132,22 @@ if (isset($_POST['name'])) {
 				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
 			<div class="modal-body">
-				<div class="mb-3">
-					<label for="name" class="form-label">Cellar Name</label>
-					<input type="text" class="form-control" id="name" name="name">
+				<div class="row">
+					<div class="col-3">
+						<div class="mb-3">
+							<label for="short_code" class="form-label">Short Code</label>
+							<input type="text" class="form-control" id="short_code" name="short_code" maxlength="2">
+						</div>
+					</div>
+					<div class="col-9">
+						<div class="mb-3">
+							<label for="name" class="form-label">Cellar Name</label>
+							<input type="text" class="form-control" id="name" name="name">
+						</div>
+					</div>
 				</div>
 				<div class="mb-3">
-					<label for="short_code" class="form-label">Cellar Short Code</label>
-					<input type="text" class="form-control" id="short_code" name="short_code">
-				</div>
-				<div class="mb-3">
-					<label for="description" class="form-label">Cellar Notes</label>
+					<label for="description" class="form-label">Notes</label>
 					<textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
 				</div>
 			</div>
