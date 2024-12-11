@@ -67,6 +67,9 @@ if ($pageType == "add") {
 				<select class="form-select" id="bin_uid" name="bin_uid" required>
 					<option></option>
 					<?php
+					if (isset($_GET['bin_uid'])) {
+						$wine->bin_uid = $_GET['bin_uid'];
+					}
 					foreach ($wineClass->allBins(array('cellar_uid' => $cellar->uid)) AS $binOption) {
 						if ($binOption['uid'] == $wine->bin_uid) {
 							echo "<option value=\"" . $binOption['uid'] . "\" selected>" . $binOption['name'] . "</option>";
