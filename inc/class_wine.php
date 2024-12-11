@@ -115,7 +115,7 @@ class wine {
 		$output  = "<div class=\"col\">";
 		$output .= "<div class=\"card " . $cardClass . " shadow-sm\">";
 		$output .= "<div class=\"card-body\">";
-		$output .= "<h5 class=\"card-title\">" . $title . "</h5>";
+		$output .= "<h5 class=\"card-title text-truncate\">" . $title . "</h5>";
 		$output .= "<p class=\"card-text text-truncate\">" . $cellar->name . " / " . $bin->name . "</p>";
 		$output .= "<div class=\"d-flex justify-content-between align-items-center\">";
 		$output .= "<div class=\"btn-group\">";
