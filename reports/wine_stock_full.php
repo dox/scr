@@ -26,18 +26,19 @@ $columns = array(
 );
 
 
-$allWines = $wineClass->getAllWines();
+$allWines = $wineClass->allWines();
 
 foreach ($allWines AS $wine) {
   $row = null;
   
   $wine = new wine($wine['uid']);
-  $cellar = new cellar($wine->cellar_uid);
+  $bin = new bin($wine->bin_uid);
+  $cellar = new cellar($bin->cellar_uid);
 
   $row['wine_uid'] = $wine->uid;
   $row['code'] = $wine->code;
   $row['cellar'] = $cellar->name;
-  $row['bin'] = $wine->bin;
+  $row['bin'] = $bin->name;
   $row['status'] = $wine->status;
   $row['name'] = $wine->name;
   $row['supplier'] = $wine->supplier;
