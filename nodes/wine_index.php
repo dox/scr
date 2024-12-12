@@ -52,11 +52,15 @@ if (isset($_POST['name'])) {
 		$winesByCategory = $wineClass->allWines(array('wine_wines.category' => $wine_category));
 		
 		if (count($winesByCategory) > 0) {
+			$wineBottlesCount = 0;
+			foreach($winesByCategory AS $wine) {
+				$wineBottlesCount = $wineBottlesCount + $wine['qty'];
+			}
 			$url = "index.php?n=wine_search&filter=category&value=" . $wine_category;
 			$output  = "<div class=\"col\">";
 			$output .= "<div class=\"card mb-3\">";
 			$output .= "<div class=\"card-body\">";
-			$output .= "<h5 class=\"card-title\">" . count($winesByCategory) . "</h5>";
+			$output .= "<h5 class=\"card-title\">" . $wineBottlesCount . "</h5>";
 			$output .= "<h6 class=\"card-subtitle mb-2 text-truncate text-body-secondary\"><a href=\"" . $url . "\">" . $wine_category . "</a></h6>";
 			$output .= "</div>";
 			$output .= "</div>";

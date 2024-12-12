@@ -216,8 +216,8 @@ class wine {
 			if ($this->$field != $newValue) {
 			  
 				// Sanitize the field and value to prevent SQL injection
-				//$field = mysqli_real_escape_string($conn, $field);
-				//$newValue = mysqli_real_escape_string($conn, $newValue);
+				$field = htmlspecialchars($field);
+				$newValue = htmlspecialchars($newValue);
 				// Add to the set part
 				$setParts[$field] = "`$field` = '$newValue'";
 			}
@@ -261,6 +261,10 @@ class wine {
 			  $newValue = implode(",", $newValue);
 			}
 			
+			// Sanitize the field and value to prevent SQL injection
+			$field = htmlspecialchars($field);
+			$newValue = htmlspecialchars($newValue);
+			// Add to the set part
 			$setParts[$field] = "`$field` = '$newValue'";
 		  }
 		  

@@ -28,7 +28,7 @@ class cellar {
 		foreach (get_object_vars($this) as $key => $value) {
 			// Skip private or protected properties
 			if (property_exists($this, $key) && $key !== 'uid') {
-				$data[$key] = "'" . str_replace('\'', '', $value) . "'";
+				$data[$key] = "'" . htmlspecialchars($value) . "'";
 			}
 		}
 		
@@ -64,8 +64,8 @@ class cellar {
 			if ($this->$field != $newValue) {
 			  
 				// Sanitize the field and value to prevent SQL injection
-				//$field = mysqli_real_escape_string($conn, $field);
-				//$newValue = mysqli_real_escape_string($conn, $newValue);
+				$field = htmlspecialchars($field);
+				$newValue = htmlspecialchars($newValue);
 				// Add to the set part
 				$setParts[$field] = "`$field` = '$newValue'";
 			}

@@ -11,10 +11,7 @@ if (isset($_POST['uid'])) {
 	// creating new wine
 	$wine = new wine();
 	$wine->create($_POST);
-}
+	echo "ADD";
 
-$logArray['category'] = "wine";
-$logArray['result'] = "warning";
-$logArray['description'] = "Attempted to add/edit wine with " . count($_POST) . " fields";
-$logsClass->create($logArray);
+}
 ?>

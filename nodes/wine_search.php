@@ -6,6 +6,11 @@ $searchValue = filter_var($_GET['value'], FILTER_SANITIZE_STRING);
 
 $wineClass = new wineClass();
 
+if (isset($_GET['cellar_uid'])) {
+	$cellarUID = filter_var($_GET['cellar_uid'], FILTER_SANITIZE_STRING);
+	$filterArray['cellar_uid'] = $cellarUID;
+}
+
 if ($searchFilter == "list") {
 	$wineList = new wine_list($searchValue);
 	
@@ -15,21 +20,30 @@ if ($searchFilter == "list") {
 	
 	$wines = $wineClass->winesByUIDs($wineList->wine_uids);
 } elseif ($searchFilter == "code") {
-	$wines = $wineClass->allWines(array($searchFilter => $searchValue));
+	$filterArray[$searchFilter] = $searchValue;
+	$wines = $wineClass->allWines($filterArray);
 } elseif ($searchFilter == "vintage") {
-	$wines = $wineClass->allWines(array($searchFilter => $searchValue));
+	$filterArray[$searchFilter] = $searchValue;
+	$wines = $wineClass->allWines($filterArray);
 } elseif ($searchFilter == "grape") {
-	$wines = $wineClass->allWines(array($searchFilter => $searchValue));
+	$filterArray[$searchFilter] = $searchValue;
+	$wines = $wineClass->allWines($filterArray);
 } elseif ($searchFilter == "country_of_origin") {
-	$wines = $wineClass->allWines(array($searchFilter => $searchValue));
+	$filterArray[$searchFilter] = $searchValue;
+	$wines = $wineClass->allWines($filterArray);
 } elseif ($searchFilter == "category") {
-	$wines = $wineClass->allWines(array("wine_wines.category" => $searchValue));
+	$filterArray['wine_wines.category'] = $searchValue;
+	$wines = $wineClass->allWines($filterArray);
 } else {
 	die("Search filter not recognised");
 }
 
 $title = "Wine Search";
 $subtitle = "Searching on '" . $searchFilter . "' for '" . $searchValue . "'";
+if (isset($_GET['cellar_uid'])) {
+	$cellar = new cellar($cellarUID);
+	$subtitle .= " (and limited to " . $cellar->name . " cellar)";
+}
 //$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#plus-circle\"/></svg> Add Cellar", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#deleteTermModal\"");
 echo makeTitle($title, $subtitle, $icons);
 

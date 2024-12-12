@@ -65,14 +65,20 @@ echo makeTitle($title, $subtitle, $icons);
 	$categories = array_slice(explode(",", $settingsClass->value('wine_category')), 0, 5, true);
 	
 	foreach ($categories AS $wine_category) {
-		$winesByCategory = $cellar->allBottles(array('wine_wines.category' => $wine_category));
+		$winesByCategory = $wineClass->allWines(array('cellar_uid' => $cellar->uid, 'wine_wines.category' => $wine_category));
 		
 		if ($winesByCategory > 0) {
+			$wineBottlesCount = 0;
+			foreach($winesByCategory AS $wine) {
+				$wineBottlesCount = $wineBottlesCount + $wine['qty'];
+			}
+			$url = "index.php?n=wine_search&filter=category&value=" . $wine_category . "&cellar_uid=" . $cellar->uid;
+			
 			$output  = "<div class=\"col\">";
 			$output .= "<div class=\"card mb-3\">";
 			$output .= "<div class=\"card-body\">";
-			$output .= "<h5 class=\"card-title countup\">" . $winesByCategory . "</h5>";
-			$output .= "<h6 class=\"card-subtitle mb-2 text-truncate text-body-secondary\">" . $wine_category . "</h6>";
+			$output .= "<h5 class=\"card-title\">" . $wineBottlesCount . "</h5>";
+			$output .= "<h6 class=\"card-subtitle mb-2 text-truncate text-body-secondary\"><a href=\"" . $url . "\">" . $wine_category . "</a></h6>";
 			$output .= "</div>";
 			$output .= "</div>";
 			$output .= "</div>";
@@ -162,7 +168,7 @@ echo $cellar->binsTable($cellar->allBins());
 				</div>
 				<div class="mb-3">
 					<label for="short_code" class="form-label">Cellar Short Code</label>
-					<input type="text" class="form-control" id="short_code" name="short_code" value="<?php echo $cellar->short_code; ?>">
+					<input type="text" class="form-control" id="short_code" name="short_code" value="<?php echo $cellar->short_code; ?>" maxlength="2">
 				</div>
 				<div class="mb-3">
 					<label for="description" class="form-label">Cellar Notes</label>
