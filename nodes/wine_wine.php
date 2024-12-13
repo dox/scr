@@ -13,6 +13,7 @@ $urlGrape = "index.php?n=wine_search&filter=grape&value=" . $wine->grape;
 $urlCategory = "index.php?n=wine_search&filter=category&value=" . $wine->category;
 $title = $wine->name;
 $subtitle = "<a href=\"" . $urlGrape . "\">" . $wine->grape . "</a>, <a href=\"" . $urlCategory . "\">" . $wine->category . "</a>";
+$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#plus-circle\"/></svg> Add Transaction", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#transactionModal\"");
 $icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#journal-text\"/></svg> Edit Wine", "value" => "onclick=\"location.href='index.php?n=wine_edit&edit=edit&uid=" . $wine->uid . "'\"");
 
 echo makeTitle($title, $subtitle, $icons);
@@ -206,10 +207,12 @@ if ($wine->status <> "In Use") {
 					<div class="col-4">
 						<div class="mb-3">
 						  <label for="transaction_type" class="form-label">Type</label>
-						  <select class="form-select" aria-label="Default select example" id="transaction_type">
-							<option value="transaction" selected>Transaction</option>
-							<option value="import">Import</option>
-							<option value="wastage">Wastage</option>
+						  <select class="form-select" id="transaction_type">
+							  <?php
+							  foreach ($wineClass->transactionsTypes() AS $transactionType => $value) {
+								  echo "<option value=\"" . $transactionType . "\">" . $transactionType . "</option>";
+							  }
+							  ?>
 						  </select>
 						</div>
 					</div>
@@ -313,9 +316,12 @@ function createTransaction(button) {
 	// Optional: Add a callback to handle the response
 	xhr.onreadystatechange = function () {
 		if (xhr.readyState === 4) { // Request is complete
+			alert(xhr.responseText);
 			if (xhr.status === 200) {
 				// Success! Handle the response
 				console.log('Success:', xhr.responseText);
+				
+				location.reload();
 			} else {
 				// Error! Handle the error
 				console.error('Error:', xhr.status, xhr.statusText);

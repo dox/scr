@@ -53,10 +53,11 @@ class transaction {
 		$sql .= " SET username = '" . $_SESSION['username'] . "',";
 		$sql .= " type = '" . $array['type'] . "',";
 		$sql .= " cellar_uid = '" . $cellar->uid . "',";
+		$sql .= " name = '" . htmlspecialchars($array['name']) . "',";
+		$sql .= " description = '" . htmlspecialchars($array['description']) . "',";
 		$sql .= " wine_uid = '" . $wine->uid . "',";
 		$sql .= " bottles = '" . $bottles . "',";
 		$sql .= " price_per_bottle = '" . $array['price_per_bottle'] . "',";
-		$sql .= " description = '" . $array['description'] . "', ";
 		$sql .= " snapshot = '" . str_replace("'", "", json_encode($wine)) . "'";
 		
 		$create_transaction = $db->query($sql);

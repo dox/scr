@@ -246,19 +246,19 @@ class wine {
 		return true;
 	  }
 	  
-	  public function create($array) {
-		  global $db, $logsClass;
+	public function create($array) {
+		global $db, $logsClass;
 		  
-		  // Initialize the set part of the query
-		  $setParts = [];
-		  
-		  //remove the memberUID
-		  unset($array['uid']);
-		  
-		  // Loop through the new values array
-		  foreach ($array as $field => $newValue) {
+		// Initialize the set part of the query
+		$setParts = [];
+		
+		//remove the memberUID
+		unset($array['uid']);
+		
+		// Loop through the new values array
+		foreach ($array as $field => $newValue) {
 			if (is_array($newValue)) {
-			  $newValue = implode(",", $newValue);
+				$newValue = implode(",", $newValue);
 			}
 			
 			// Sanitize the field and value to prevent SQL injection
@@ -266,37 +266,73 @@ class wine {
 			$newValue = htmlspecialchars($newValue);
 			// Add to the set part
 			$setParts[$field] = "`$field` = '$newValue'";
-		  }
-		  
-		  // If there are no changes, return null
-		  if (empty($setParts)) {
-			  return null;
-		  }
-		  
-		  // Combine the set parts into a single string
-		  $setString = implode(", ", $setParts);
-		  
-		  // Construct the final UPDATE query
-		  $sql = "INSERT INTO wine_wines SET " . $setString;
-		  $insert = $db->query($sql);
-		  $newWineUID = $db->lastInsertID();
-		  
-		  $logArray['category'] = "wine";
-		  $logArray['result'] = "success";
-		  $logArray['description'] = "Created new wine with fields " . $setString;
-		  $logsClass->create($logArray);
-		  
-		  //log a transaction
-		  $data['wine_uid'] = $newWineUID;
-		  $data['type'] = "import";
-		  $data['bottles'] = $array['qty'];
-		  $data['price_per_bottle'] = $array['price_purchase'];
-		  $data['description'] = "Original import into system";
-		  
-		  $transaction = new transaction();
-		  $transaction->create($data);
-		  
-		  return true;
 		}
+		
+		// If there are no changes, return null
+		if (empty($setParts)) {
+			return null;
+		}
+		
+		// Combine the set parts into a single string
+		$setString = implode(", ", $setParts);
+		
+		// Construct the final UPDATE query
+		$sql = "INSERT INTO wine_wines SET " . $setString;
+		$insert = $db->query($sql);
+		$newWineUID = $db->lastInsertID();
+		
+		$logArray['category'] = "wine";
+		$logArray['result'] = "success";
+		$logArray['description'] = "Created new wine with fields " . $setString;
+		$logsClass->create($logArray);
+		
+		//log a transaction
+		$data['wine_uid'] = $newWineUID;
+		$data['type'] = "import";
+		$data['bottles'] = $array['qty'];
+		$data['price_per_bottle'] = $array['price_purchase'];
+		$data['description'] = "Original import into system";
+		
+		$transaction = new transaction();
+		$transaction->create($data);
+		
+		return true;
+	}
+	
+	public function deduct($qtyToDeduct) {
+	  global $logsClass;
+	  
+	  // turn positive numbers into negative numbers
+	  $qtyToDeduct = $qtyToDeduct <= 0 ? $qtyToDeduct : -$qtyToDeduct ;
+	  
+	  $currentTotalBottles = $this->qty;
+	  $targetTotalBottles = $currentTotalBottles + $qtyToDeduct;
+	  $actualTargetTotalBottles = max(0, ($targetTotalBottles)); // don't allow less than 0 bottles
+	  
+	  $array = array("qty" => $actualTargetTotalBottles);
+	  $this->update($array);
+	  
+	  if ($targetTotalBottles < 0) {
+		// an attempt to deduct more bottles than there were... so log this
+		$logArray['category'] = "wine";
+		$logArray['result'] = "warning";
+		$logArray['description'] = "Attempted to deduct " . $qtyToDeduct . " from [wineUID:" . $this->uid . "] when only " . $currentTotalBottles . " existed";
+		$logsClass->create($logArray);
+	  }
+	  
+	  return true;
+	}
+	
+	public function import($qtyToImport) {
+		global $logsClass;
+		
+		$currentTotalBottles = $this->qty;
+		$targetTotalBottles = $currentTotalBottles + $qtyToImport;
+		
+		$array = array("qty" => $targetTotalBottles);
+		$this->update($array);
+		
+		return true;
+	}
 }
 ?>

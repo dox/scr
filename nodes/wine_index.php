@@ -234,7 +234,7 @@ foreach ($dateArray AS $date) {
 	$bottlesTotal = 0;
 	foreach ($transactions AS $transaction) {
 		if (isset($transaction)) {
-			$bottlesTotal= $bottlesTotal + $transaction['bottles'];
+			$bottlesTotal= $bottlesTotal + abs($transaction['bottles']);
 		}
 		
 	}
