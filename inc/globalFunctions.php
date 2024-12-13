@@ -292,16 +292,46 @@ function makeTitle($title = null, $subtitle = nulll, $iconsArray = null) {
 	}
 
 	$output .= "</div>";
-
-	$output .= "<div class=\"pb-3 text-end\">";
-	foreach ($iconsArray AS $icon) {
-		$output .= "<button type=\"button\" class=\"btn btn-sm ms-1 " . $icon['class'] . "\"" . $icon['value'] . ">";
-		$output .= $icon['name'];
-		$output .= "</button>";
-	}
 	
+	$output .= "<div class=\"pb-3 text-end\">";
+	$output .= makeTitleActionButton($iconsArray);
 	$output .= "</div>";
 
+	return $output;
+}
+
+function makeTitleActionButton($iconsArray) {
+	$output = "";
+	
+	if (!is_array($iconsArray)) {
+		return false;
+	}
+	
+	if (count($iconsArray) == 1) {
+		$output .= "<button type=\"button\" class=\"btn btn-sm ms-1 " . $iconsArray[0]['class'] . "\"" . $iconsArray[0]['value'] . ">";
+		$output .= $iconsArray[0]['name'];
+		$output .= "</button>";
+	} elseif (count($iconsArray) > 1) {
+		
+		$output .= "<div class=\"dropdown\">";
+		$output .= "<button class=\"btn btn-sm btn-secondary dropdown-toggle\" type=\"button\" data-bs-toggle=\"dropdown\" aria-expanded=\"false\">Actions</button>";
+		$output .= "<ul class=\"dropdown-menu\">";
+		
+		foreach ($iconsArray AS $icon) {
+			$output .= "<li class=\"dropdown-item " . $icon['class'] . "\"" . $icon['value'] . ">";
+			$output .= $icon['name'];
+			$output .= "</li>";
+		}
+		
+		$output .= "</ul>";
+		$output .= "</div>";
+		
+		
+	} else {
+		$output = "<span>Action Button Error</span>";
+	}
+	
+	
 	return $output;
 }
 
