@@ -13,7 +13,7 @@ $reportLogs = $logsClass->allWhereMatch("[reportUID:" . $report['uid'] . "]");
 $title = $report['name'];
 $subtitle = $report['description'];
 
-echo makeTitle($title, $subtitle);
+echo makeTitle($title, $subtitle, false, true);
 ?>
 <div class="row g-3">
   <div class="col-md-5 col-lg-4 order-md-last">

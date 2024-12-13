@@ -39,7 +39,7 @@ $title = "Members";
 $subtitle = "Members, and their order of precedence";
 $icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#person-plus\"/></svg> Add New", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#exampleModal\"");
 
-echo makeTitle($title, $subtitle, $icons);
+echo makeTitle($title, $subtitle, $icons, true);
 ?>
 
 <ul class="nav nav-tabs nav-fill" id="myTab" role="tablist">

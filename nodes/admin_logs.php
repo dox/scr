@@ -9,7 +9,7 @@ $logsByDay = $logsClass->byDay("logon");
 $title = "Logs";
 $subtitle = "Admin/User logs for the last " . $logsDisplay . " days";
 
-echo makeTitle($title, $subtitle);
+echo makeTitle($title, $subtitle, false, true);
 
 if (isset($_GET['p'])){
   $offset = filter_var($_GET['p'], FILTER_SANITIZE_NUMBER_INT);

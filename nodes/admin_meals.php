@@ -27,7 +27,7 @@ $subtitle = "All meals both past and present";
 $icons[] = array("class" => "btn-info", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#bullseye\"/></svg> Apply Template", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#exampleModal\"");
 $icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#plus-circle\"/></svg> Add New", "value" => "onclick=\"location.href='index.php?n=admin_meal&add'\"");
 
-echo makeTitle($title, $subtitle, $icons);
+echo makeTitle($title, $subtitle, $icons, true);
 ?>
 <div class="row g-3">
   <div class="col-md-5 col-lg-4 order-md-last">

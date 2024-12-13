@@ -283,7 +283,7 @@ function pageAccessCheck($arrayOfAcceptablePermissions = null) {
 	}
 }
 
-function makeTitle($title = null, $subtitle = nulll, $iconsArray = null) {
+function makeTitle($title = null, $subtitle = nulll, $iconsArray = null, $allowGrouping = false) {
 	$output  = "<div class=\"px-3 py-3 pt-md-5 pb-md-4 text-center\">";
 	$output .= "<h1 class=\"display-4\">" . $title . "</h1>";
 
@@ -294,31 +294,41 @@ function makeTitle($title = null, $subtitle = nulll, $iconsArray = null) {
 	$output .= "</div>";
 	
 	$output .= "<div class=\"pb-3 text-end\">";
-	$output .= makeTitleActionButton($iconsArray);
+	$output .= makeTitleActionButton($iconsArray, $allowGrouping);
 	$output .= "</div>";
 
 	return $output;
 }
 
-function makeTitleActionButton($iconsArray) {
+function makeTitleActionButton($iconsArray, $allowGrouping = false) {
 	$output = "";
 	
 	if (!is_array($iconsArray)) {
 		return false;
 	}
 	
-	$output .= "<div class=\"dropdown\">";
-	$output .= "<button class=\"btn btn-sm btn-secondary dropdown-toggle\" type=\"button\" data-bs-toggle=\"dropdown\" aria-expanded=\"false\">Actions</button>";
-	$output .= "<ul class=\"dropdown-menu\">";
-	
-	foreach ($iconsArray AS $icon) {
-		$output .= "<li class=\"dropdown-item " . $icon['class'] . "\"" . $icon['value'] . ">";
-		$output .= $icon['name'];
-		$output .= "</li>";
+	if ($allowGrouping == false) {
+		foreach ($iconsArray AS $icon) {
+			$output .= "<button type=\"button\" class=\"btn btn-sm ms-1 " . $icon['class'] . "\"" . $icon['value'] . ">";
+			$output .= $icon['name'];
+			$output .= "</button>";
+		}
+	} else {
+		$output .= "<div class=\"dropdown\">";
+		$output .= "<button class=\"btn btn-sm btn-secondary dropdown-toggle\" type=\"button\" data-bs-toggle=\"dropdown\" aria-expanded=\"false\">Actions</button>";
+		$output .= "<ul class=\"dropdown-menu\">";
+		
+		foreach ($iconsArray AS $icon) {
+			$output .= "<li class=\"dropdown-item " . $icon['class'] . "\"" . $icon['value'] . ">";
+			$output .= $icon['name'];
+			$output .= "</li>";
+		}
+		
+		$output .= "</ul>";
+		$output .= "</div>";
 	}
 	
-	$output .= "</ul>";
-	$output .= "</div>";
+	
 	
 	return $output;
 }

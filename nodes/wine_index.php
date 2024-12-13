@@ -5,7 +5,7 @@ $title = "Wine Management";
 $subtitle = "Manage wine stock and create transactions";
 $icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#plus-circle\"/></svg> Add Cellar", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#newCellarModal\"");
 
-echo makeTitle($title, $subtitle, $icons);
+echo makeTitle($title, $subtitle, $icons, true);
 
 $wineClass = new wineClass();
 

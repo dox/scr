@@ -45,7 +45,7 @@ if (isset($_GET['cellar_uid'])) {
 	$subtitle .= " (and limited to " . $cellar->name . " cellar)";
 }
 //$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#plus-circle\"/></svg> Add Cellar", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#deleteTermModal\"");
-echo makeTitle($title, $subtitle, $icons);
+echo makeTitle($title, $subtitle, $icons, true);
 
 
 ?>

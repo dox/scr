@@ -24,7 +24,7 @@ $title = $termObject->name;
 $subtitle = "From " . dateDisplay($termObject->date_start) . ", to " . dateDisplay($termObject->date_end);
 $icons[] = array("class" => "btn-danger", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#trash\"/></svg> Delete Term", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#deleteTermModal\"");
 
-echo makeTitle($title, $subtitle, $icons);
+echo makeTitle($title, $subtitle, $icons, true);
 ?>
 <div class="row g-3">
   <div class="col-md-5 col-lg-4 order-md-last">

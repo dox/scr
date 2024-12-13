@@ -38,7 +38,7 @@ if (count($bin->currentWines()) == 0) {
 }
 $icons[] = array("class" => "btn-info", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#journal-text\"/></svg> Edit Bin", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#editBinModal\"");
 
-echo makeTitle($title, $subtitle, $icons);
+echo makeTitle($title, $subtitle, $icons, true);
 ?>
 
 <nav aria-label="breadcrumb">

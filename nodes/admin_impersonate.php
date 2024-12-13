@@ -6,7 +6,7 @@ if (!isset($_SESSION['impersonating'])) {
 $title = "Impersonate";
 $subtitle = "Assume the identity of an SCR Member for the purposes of managing their meal bookings";
 
-echo makeTitle($title, $subtitle);
+echo makeTitle($title, $subtitle, false, true);
 ?>
 
 <div class="row justify-content-md-center">
