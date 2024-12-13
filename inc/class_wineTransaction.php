@@ -69,5 +69,11 @@ class transaction {
 		
 		return true;
 	}
+	
+	public function typeBadge() {
+		$output = "<span class=\"badge rounded-pill text-bg-info\">" . $this->type . "</span>";
+		
+		return $output;
+	}
 }
 ?>

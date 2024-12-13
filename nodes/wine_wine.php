@@ -123,20 +123,24 @@ if ($wine->status <> "In Use") {
 					  <tbody>
 						  <?php
 						  foreach($wine->transactions() AS $transaction) {
+							  $transaction = new transaction($transaction['uid']);
+							  
 							  $valueClass = "";
-							  if ($transaction['bottles'] < 0) {
+							  if ($transaction->bottles < 0) {
 								  $bottlesClass = "text-danger";
-							  } elseif($transaction['bottles'] > 0) {
+							  } elseif($transaction->bottles > 0) {
 								  $bottlesClass = "text-success";
+							  } else {
+								  $bottlesClass = "";
 							  }
 							  $output  = "<tr>";
-							  $output .= "<td>" . dateDisplay($transaction['date']) . " " . timeDisplay($transaction['date']) . "</td>";
-							  $output .= "<td>" . $transaction['username'] . "</td>";
-							  $output .= "<td><span class=\"badge rounded-pill text-bg-info\">" . $transaction['type'] . "</span></td>";
-							  $output .= "<td class=\"" . $bottlesClass . "\">" . $transaction['bottles'] . "</td>";
-							  $output .= "<td>" . currencyDisplay($transaction['price_per_bottle']) . "</td>";
-							  $output .= "<td>" . $transaction['name'] . "</td>";
-							  $output .= "<td>" . $transaction['description'] . "</td>";
+							  $output .= "<td>" . dateDisplay($transaction->date) . " " . timeDisplay($transaction->date) . "</td>";
+							  $output .= "<td>" . $transaction->username . "</td>";
+							  $output .= "<td>" . $transaction->typeBadge() . "</td>";
+							  $output .= "<td class=\"" . $bottlesClass . "\">" . $transaction->bottles . "</td>";
+							  $output .= "<td>" . currencyDisplay($transaction->price_per_bottle) . "</td>";
+							  $output .= "<td>" . $transaction->name . "</td>";
+							  $output .= "<td>" . $transaction->description . "</td>";
 							  $output .= "</tr>";
 							  
 							  echo $output;
@@ -159,7 +163,7 @@ if ($wine->status <> "In Use") {
 						  <h5 class="card-title">Supplier</h5>
 						  <?php
 						  if (!empty($wine->supplier)) {
-							echo "<p class=\"card-text\">" . $wine->supplier . "</p>";
+							echo "<p class=\"card-text\"><a href=\"index.php?n=wine_search&filter=supplier&value=" . $wine->supplier . "\">" . $wine->supplier . "</a></p>";
 							}
 							?>
 					  </div>

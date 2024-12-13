@@ -21,19 +21,22 @@ if ($searchFilter == "list") {
 	$wines = $wineClass->winesByUIDs($wineList->wine_uids);
 } elseif ($searchFilter == "code") {
 	$filterArray[$searchFilter] = $searchValue;
-	$wines = $wineClass->allWines($filterArray);
+	$wines = $wineClass->allWines($filterArray, true);
 } elseif ($searchFilter == "vintage") {
 	$filterArray[$searchFilter] = $searchValue;
-	$wines = $wineClass->allWines($filterArray);
+	$wines = $wineClass->allWines($filterArray, true);
 } elseif ($searchFilter == "grape") {
 	$filterArray[$searchFilter] = $searchValue;
-	$wines = $wineClass->allWines($filterArray);
+	$wines = $wineClass->allWines($filterArray, true);
 } elseif ($searchFilter == "country_of_origin") {
 	$filterArray[$searchFilter] = $searchValue;
-	$wines = $wineClass->allWines($filterArray);
+	$wines = $wineClass->allWines($filterArray, true);
 } elseif ($searchFilter == "category") {
 	$filterArray['wine_wines.category'] = $searchValue;
-	$wines = $wineClass->allWines($filterArray);
+	$wines = $wineClass->allWines($filterArray, true);
+} elseif ($searchFilter == "supplier") {
+	$filterArray['wine_wines.supplier'] = $searchValue;
+	$wines = $wineClass->allWines($filterArray, true);
 } else {
 	die("Search filter not recognised");
 }

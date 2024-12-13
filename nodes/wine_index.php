@@ -91,10 +91,14 @@ if (isset($_POST['name'])) {
 		$subsetOfTransactions = array_slice($wineClass->allTransactions(), 0, 10, true);
 		
 		foreach ($subsetOfTransactions AS $transaction) {
+			$wine = new wine($transaction['wine_uid']);
+			$transaction = new transaction($transaction['uid']);
+			
 			$output .= "<li  class=\"list-group-item\">";
-			$output .= "<a href=\"index.php?n=wine_wine&uid=" . $transaction['wine_uid'] . "\">";
-			$output .= dateDisplay($transaction['date']) . " " . $transaction['wine_uid'] . " " . $transaction['cellar_uid'];
-			$output .= $transaction['description'];
+			$output .= "<a href=\"index.php?n=wine_wine&wine_uid=" . $wine->uid . "\">";
+			$output .= dateDisplay($transaction->date) . " ";
+			$output .= $wine->name;
+			$output .= "<span class=\"float-end\">" . $transaction->typeBadge()  . "</span>";
 			$output .= "</a>";
 			
 			$output .= "</li>";
