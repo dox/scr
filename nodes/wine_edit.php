@@ -70,12 +70,28 @@ if ($pageType == "add") {
 					if (isset($_GET['bin_uid'])) {
 						$wine->bin_uid = $_GET['bin_uid'];
 					}
-					foreach ($wineClass->allBins(array('cellar_uid' => $cellar->uid)) AS $binOption) {
-						if ($binOption['uid'] == $wine->bin_uid) {
-							echo "<option value=\"" . $binOption['uid'] . "\" selected>" . $binOption['name'] . "</option>";
-						} else {
-							echo "<option value=\"" . $binOption['uid'] . "\">" . $binOption['name'] . "</option>";
+					
+					$categories = array_slice(explode(",", $settingsClass->value('wine_category')), 0, 5, true);
+					
+					foreach ($categories AS $wine_category) {
+						$output = "<optgroup label=\"" . $wine_category . "\">";
+						
+						$filter = array(
+							'cellar_uid' => $cellar->uid,
+							'category' => $wine_category
+						);
+						foreach ($wineClass->allBins($filter) AS $binOption) {
+							if ($binOption['uid'] == $wine->bin_uid) {
+								$output .= "<option value=\"" . $binOption['uid'] . "\" selected>" . $binOption['name'] . "</option>";
+							} else {
+								$output .= "<option value=\"" . $binOption['uid'] . "\">" . $binOption['name'] . "</option>";
+							}
 						}
+						
+						$output .= "</optgroup>";
+						
+						
+						echo $output;
 					}
 					?>
 				</select>
