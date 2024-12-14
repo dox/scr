@@ -196,8 +196,11 @@ if ($wine->status <> "In Use") {
 			  <div class="row">
 				  <div class="col-4">
 					  <div class="mb-3">
-						  <label for="transaction_total" class="form-label">Bottles</label>
+						  <label for="transaction_bottles" class="form-label">Bottles</label>
 						  <input type="number" class="form-control" id="transaction_bottles" value="1">
+						  <div id="transaction_bottlesHelp" class="form-text">
+							  <?php echo $wine->qty . " available"; ?>
+						  </div>
 						</div>
 				</div>
 					
@@ -320,7 +323,7 @@ function createTransaction(button) {
 	// Optional: Add a callback to handle the response
 	xhr.onreadystatechange = function () {
 		if (xhr.readyState === 4) { // Request is complete
-			alert(xhr.responseText);
+			//alert(xhr.responseText);
 			if (xhr.status === 200) {
 				// Success! Handle the response
 				console.log('Success:', xhr.responseText);

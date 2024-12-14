@@ -135,7 +135,7 @@ class wine {
 	}
 	
 	public function updatePhotograph($file) {
-		global $db;
+		global $db, $logsClass;
 		
 		if (!empty($file['photograph']['name'])) {
 			$uploadOk = 1;
@@ -176,6 +176,12 @@ class wine {
 			// Check if $uploadOk is set to 0 by an error
 			if ($uploadOk == 0) {
 				echo "Sorry, your file was not uploaded.";
+				
+				$logArray['category'] = "wine";
+				$logArray['result'] = "warning";
+				$logArray['description'] = "Could not upload photo for [wineUID:" . $this->uid . "]";
+				$logsClass->create($logArray);
+				
 				// if everything is ok, try to upload file
 			} else {
 				if (move_uploaded_file($file["photograph"]["tmp_name"], $target_file)) {
@@ -188,8 +194,18 @@ class wine {
 					$sql .= " LIMIT 1";
 					
 					$update = $db->query($sql);
+					
+					$logArray['category'] = "wine";
+					$logArray['result'] = "success";
+					$logArray['description'] = "Photo " . $newFileName . " uploaded  for [wineUID:" . $this->uid . "]";
+					$logsClass->create($logArray);
 				} else {
 					echo "Sorry, there was an error uploading your file.";
+					
+					$logArray['category'] = "wine";
+					$logArray['result'] = "warning";
+					$logArray['description'] = "Could not upload photo for [wineUID:" . $this->uid . "]";
+					$logsClass->create($logArray);
 				}
 			}
 		}
@@ -316,7 +332,7 @@ class wine {
 		// an attempt to deduct more bottles than there were... so log this
 		$logArray['category'] = "wine";
 		$logArray['result'] = "warning";
-		$logArray['description'] = "Attempted to deduct " . $qtyToDeduct . " from [wineUID:" . $this->uid . "] when only " . $currentTotalBottles . " existed";
+		$logArray['description'] = "Deducted " . $qtyToDeduct . " from [wineUID:" . $this->uid . "] when only " . $currentTotalBottles . " existed";
 		$logsClass->create($logArray);
 	  }
 	  
