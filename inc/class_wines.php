@@ -52,6 +52,38 @@ class wineClass {
 		return $bins;
 	}
 	
+	public function allWines($whereFilterArray = null, $inStock = false) {
+		global $db;
+	
+		$sql  = "SELECT wine_wines.*, wine_bins.cellar_uid FROM " . self::$table_wines;
+		$sql .= " LEFT JOIN wine_bins ON wine_wines.bin_uid = wine_bins.uid";
+		
+		$conditions = [];
+		
+		if ($inStock == true) {
+			$conditions[] = "qty > 0";
+		}
+		
+		if (!empty($whereFilterArray)) {
+			foreach ($whereFilterArray as $key => $value) {
+				// Escaping the key and value for safety
+				$escapedKey = addslashes($key);
+				$escapedValue = addslashes($value);
+				$conditions[] = "$escapedKey = '$escapedValue'";
+			}
+		}
+		
+		if (!empty($conditions)) {
+			$sql .= " WHERE " . implode(' AND ', $conditions);
+		}
+		
+		$sql .= " ORDER BY name ASC";
+		
+		$wines = $db->query($sql)->fetchAll();
+		
+		return $wines;
+	}
+	
 	public function allWinesSearch($whereFilterArray = null) {
 		global $db;
 	
