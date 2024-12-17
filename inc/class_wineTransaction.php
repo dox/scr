@@ -75,5 +75,64 @@ class transaction {
 		
 		return $output;
 	}
+	
+	public function transactionsTable($transactions) {
+		global $settingsClass;
+		
+		$output = "";
+		
+		if (count($transactions) > 0) {
+			$output .= "<table class=\"table\">";
+			$output .= "<thead>";
+			$output .= "<tr>";
+			$output .= "<th style=\"width: 20%;\" scope=\"col\">Date</th>";
+			$output .= "<th scope=\"col\">Username</th>";
+			$output .= "<th scope=\"col\">Type</th>";
+			$output .= "<th scope=\"col\">Bottles</th>";
+			$output .= "<th scope=\"col\">£/Bottle</th>";
+			$output .= "<th scope=\"col\">Name</th>";
+			$output .= "<th scope=\"col\">Description</th>";
+			$output .= "</tr>";
+			$output .= "</thead>";
+			$output .= "<tbody>";
+			
+			foreach ($transactions AS $transaction) {
+				$output .= $this->transactionTableRow($transaction);
+			}
+			
+			$output .= "</tbody>";
+			$output .= "</table>";
+		}
+		
+		return $output;
+	}
+	
+	private function transactionTableRow($transaction) {
+		$transaction = new transaction($transaction['uid']);
+		
+		if ($transaction->bottles < 0) {
+			$bottlesClass = "text-danger";
+		} elseif($transaction->bottles > 0) {
+			$bottlesClass = "text-success";
+		} else {
+			$bottlesClass = "";
+		}
+		
+		$output  = "<tr>";
+		$output .= "<th scope=\"row\">" . dateDisplay($transaction->date) . " " . timeDisplay($transaction->date) . "</th>";
+		$output .= "<td>" . $transaction->username . "</td>";
+		$output .= "<td>" . $transaction->typeBadge() . "</td>";
+		$output .= "<td class=\"" . $bottlesClass . "\">" . $transaction->bottles . "</td>";
+		$output .= "<td>" . currencyDisplay($transaction->price_per_bottle) . "</td>";
+		$output .= "<td>" . $transaction->name . "</td>";
+		$output .= "<td>" . $transaction->description . "</td>";
+		$output .= "</tr>";
+		
+		return $output;
+	}
+	
+	public function redOrGreen($value) {
+		
+	}
 }
 ?>

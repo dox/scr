@@ -4,6 +4,7 @@ pageAccessCheck("wine");
 $title = "Wine Management";
 $subtitle = "Manage wine stock and create transactions";
 $icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#plus-circle\"/></svg> Add Cellar", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#newCellarModal\"");
+$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#journal-text\"/></svg> Manage Lists", "value" => "onclick=\"location.href='index.php?n=wine_lists'\"");
 
 echo makeTitle($title, $subtitle, $icons, true);
 
@@ -31,7 +32,7 @@ if (isset($_POST['name'])) {
 
 <div class="row pb-3">
 	<div class="col">
-		<input type="text" id="wine_search" class="form-control form-control-lg" placeholder="Quick search" autocomplete="off" spellcheck="false" aria-describedby="wine_searchHelp">
+		<input type="text" id="wine_search" class="form-control form-control-lg" placeholder="Quick search all cellars" autocomplete="off" spellcheck="false" aria-describedby="wine_searchHelp">
 		<ul id="wine_search_results" class="list-group"></ul>
 	</div>
 </div>
@@ -82,51 +83,17 @@ if (isset($_POST['name'])) {
 	?>
 </div>
 
+<hr class="pb-3" />
+
 <div class="row">
-	<div class="col-sm-12 col-md-6 mb-3">
+	<div class="col">
 		<h1>Recent Transactions</h1>
 		<div id="chart_transactions_by_day"></div>
 		<?php
-		$output = "<ul class=\"list-group\">";
-		$subsetOfTransactions = array_slice($wineClass->allTransactions(), 0, 10, true);
-		
-		foreach ($subsetOfTransactions AS $transaction) {
-			$wine = new wine($transaction['wine_uid']);
-			$transaction = new transaction($transaction['uid']);
-			
-			$output .= "<li  class=\"list-group-item\">";
-			$output .= "<a href=\"index.php?n=wine_wine&wine_uid=" . $wine->uid . "\">";
-			$output .= dateDisplay($transaction->date) . " ";
-			$output .= $wine->name;
-			$output .= "<span class=\"float-end\">" . $transaction->typeBadge()  . "</span>";
-			$output .= "</a>";
-			
-			$output .= "</li>";
-		}
-		$output .= "</ul>";
-		echo $output;
-		
-		?>
-	</div>
-	<div class="col-sm-12 col-md-6">
-		<h1>My Lists</h1>
-		<?php
-		$output = "<ul class=\"list-group\">";
-		foreach ($wineClass->allLists(array('member_ldap' => $_SESSION['username'])) AS $list) {
-			//$list = new wine_list($list['uid']);
-			
-			$output .= "<li  class=\"list-group-item\">";
-			$output .= "<svg width=\"1em\" height=\"1em\" class=\"text-muted\"><use xlink:href=\"img/icons.svg#heart-full\"/></svg> ";
-			$output .= "<a href=\"index.php?n=wine_search&filter=list&value=" . $list['uid'] . "\">";
-			$output .= $list['name'];
-			$output .= "</a>";
-			
-			$output .= "</li>";
-		}
-		$output .= "</ul>";
-		echo $output;
-		
-		?>
+		  $transaction = new transaction();
+		  $subsetOfTransactions = array_slice($wineClass->allTransactions(), 0, 10, true);
+		  echo $transaction->transactionsTable($subsetOfTransactions);
+		  ?>
 	</div>
 </div>
 
