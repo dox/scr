@@ -108,46 +108,10 @@ if ($wine->status <> "In Use") {
 			<div class="card mb-3">
 				  <div class="card-body">
 					  <h5 class="card-title">Transactions</h5>
-					  <table class="table">
-					  <thead>
-						<tr>
-						  <th scope="col">Date</th>
-						  <th scope="col">Username</th>
-						  <th scope="col">Type</th>
-						  <th scope="col">Bottles</th>
-						  <th scope="col">£/Bottle</th>
-						  <th scope="col">Name</th>
-						  <th scope="col">Description</th>
-						</tr>
-					  </thead>
-					  <tbody>
-						  <?php
-						  foreach($wine->transactions() AS $transaction) {
-							  $transaction = new transaction($transaction['uid']);
-							  
-							  $valueClass = "";
-							  if ($transaction->bottles < 0) {
-								  $bottlesClass = "text-danger";
-							  } elseif($transaction->bottles > 0) {
-								  $bottlesClass = "text-success";
-							  } else {
-								  $bottlesClass = "";
-							  }
-							  $output  = "<tr>";
-							  $output .= "<td>" . dateDisplay($transaction->date) . " " . timeDisplay($transaction->date) . "</td>";
-							  $output .= "<td>" . $transaction->username . "</td>";
-							  $output .= "<td>" . $transaction->typeBadge() . "</td>";
-							  $output .= "<td class=\"" . $bottlesClass . "\">" . $transaction->bottles . "</td>";
-							  $output .= "<td>" . currencyDisplay($transaction->price_per_bottle) . "</td>";
-							  $output .= "<td>" . $transaction->name . "</td>";
-							  $output .= "<td>" . $transaction->description . "</td>";
-							  $output .= "</tr>";
-							  
-							  echo $output;
-						  }
-						  ?>
-					  </tbody>
-					  </table>
+					  <?php
+					  $transaction = new transaction();
+					  echo $transaction->transactionsTable($wine->transactions());
+					  ?>
 				  </div>
 			  </div>
 		  </div>

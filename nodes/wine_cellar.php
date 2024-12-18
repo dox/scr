@@ -47,7 +47,7 @@ echo makeTitle($title, $subtitle, $icons, true);
 
 <div class="row pb-3">
 	<div class="col">
-		<input type="text" id="wine_search" class="form-control form-control-lg" placeholder="Quick search" autocomplete="off" spellcheck="false" aria-describedby="wine_searchHelp">
+		<input type="text" id="wine_search" class="form-control form-control-lg" placeholder="Quick search <?php echo $cellar->name; ?> wine cellar" autocomplete="off" spellcheck="false" aria-describedby="wine_searchHelp">
 		<ul id="wine_search_results" class="list-group"></ul>
 	</div>
 </div>
