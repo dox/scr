@@ -69,7 +69,13 @@ echo makeTitle($title, $subtitle, $icons, true);
         $output  = "<li class=\"list-group-item d-flex justify-content-between lh-sm\">";
         $output .= "<div class=\"text-muted\">";
         $output .= "<h6 class=\"my-0\"><a href=\"index.php?n=member&memberUID=" . $memberObject->uid . "\" class=\"text-muted\">" . $memberObject->displayName() . "</a></h6>";
-        $output .= "<small class=\"text-muted\">" . dateDisplay($booking['date']) . " " . date('H:i:s', strtotime($booking['date'])) . "</small>";
+        
+        if (strtotime($booking['date']) > strtotime($mealObject->date_cutoff)) {
+          $class = "text-danger";
+        } else {
+          $class = "text-muted";
+        }
+        $output .= "<small class=\"" . $class . "\">" . dateDisplay($booking['date']) . " " . date('H:i:s', strtotime($booking['date'])) . "</small>";
         $output .= "</div>";
 
         if (count($guests) > 0) {
