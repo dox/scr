@@ -490,6 +490,12 @@ var options = {
     },
     background: 'transparent'
   },
+  
+  annotations: {
+    xaxis: [{
+      x: new Date('<?php echo $mealObject->date_cutoff; ?>').getTime(),
+    }]
+  },
   grid: {
     show: false
   },
