@@ -12,33 +12,33 @@ if (isset($_GET['cellar_uid'])) {
 }
 
 if ($searchFilter == "list") {
+	// Handle the special case for "list"
 	$wineList = new wine_list($searchValue);
-	
+
 	if ($wineList->type == "private" && $wineList->member_ldap != $_SESSION['username']) {
 		die("This list is private!");
 	}
-	
+
 	$wines = $wineClass->winesByUIDs($wineList->wine_uids);
-} elseif ($searchFilter == "code") {
-	$filterArray[$searchFilter] = $searchValue;
-	$wines = $wineClass->allWines($filterArray, true);
-} elseif ($searchFilter == "vintage") {
-	$filterArray[$searchFilter] = $searchValue;
-	$wines = $wineClass->allWines($filterArray, true);
-} elseif ($searchFilter == "grape") {
-	$filterArray[$searchFilter] = $searchValue;
-	$wines = $wineClass->allWines($filterArray, true);
-} elseif ($searchFilter == "country_of_origin") {
-	$filterArray[$searchFilter] = $searchValue;
-	$wines = $wineClass->allWines($filterArray, true);
-} elseif ($searchFilter == "category") {
-	$filterArray['wine_wines.category'] = $searchValue;
-	$wines = $wineClass->allWines($filterArray, true);
-} elseif ($searchFilter == "supplier") {
-	$filterArray['wine_wines.supplier'] = $searchValue;
-	$wines = $wineClass->allWines($filterArray, true);
 } else {
-	die("Search filter not recognised");
+	// Define a mapping of $searchFilter to filter array keys
+	$filterKeyMap = [
+		"code" => "code",
+		"vintage" => "vintage",
+		"grape" => "grape",
+		"country_of_origin" => "country_of_origin",
+		"category" => "wine_wines.category",
+		"supplier" => "wine_wines.supplier",
+		"price" => "wine_wines.price_purchase",
+	];
+
+	// Check if $searchFilter is recognized
+	if (array_key_exists($searchFilter, $filterKeyMap)) {
+		$filterArray[$filterKeyMap[$searchFilter]] = $searchValue;
+		$wines = $wineClass->allWines($filterArray, true);
+	} else {
+		die("Search filter not recognised");
+	}
 }
 
 $title = "Wine Search";

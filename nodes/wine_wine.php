@@ -51,7 +51,7 @@ if ($wine->status <> "In Use") {
 		  <div class="col">
 			  <div class="card mb-3">
 				  <div class="card-body">
-					  <h5 class="card-title"><?php echo $wine->qty; ?></h5>
+					  <h5 class="card-title"><?php echo $wine->currentQty(); ?></h5>
 					  <h6 class="card-subtitle mb-2 text-body-secondary">Bottles</h6>
 				  </div>
 			  </div>
@@ -193,6 +193,15 @@ if ($wine->status <> "In Use") {
 						  <input type="text" class="form-control" id="transaction_name" placeholder="e.g. Formal Hall">
 						</div>
 					</div>
+					<div class="col-12">
+						<div class="mb-3">
+						  <label for="transaction_date_posted" class="form-label">Posting Date</label>
+						  <div class="input-group">
+								<span class="input-group-text" id="transaction_date_posted-addon"><svg width="1em" height="1em" class="text-muted"><use xlink:href="img/icons.svg#calendar-plus"/></svg></span>
+								<input type="date" class="form-control" name="transaction_date_posted" id="transaction_date_posted" value="<?php echo date('Y-m-d'); ?>" aria-describedby="transaction_date_posted">
+							</div>
+						</div>
+					</div>
 			  </div>
 			  
 			  
@@ -306,6 +315,7 @@ function createTransaction(button) {
 	// Append your parameters to the FormData object
 	formData.append('wine_uid', button.getAttribute('data-wineuid'));
 	formData.append('bottles', document.getElementById('transaction_bottles').value);
+	formData.append('date_posted', document.getElementById('transaction_date_posted').value);
 	formData.append('name', document.getElementById('transaction_name').value);
 	formData.append('price_per_bottle', document.getElementById('transaction_price_per_bottle').value);
 	formData.append('type', document.getElementById('transaction_type').value);

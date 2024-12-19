@@ -4,6 +4,7 @@ class transaction {
 	
 	public $uid;
 	public $date;
+	public $date_posted;
 	public $username;
 	public $type;
 	public $cellar_uid;
@@ -44,7 +45,7 @@ class transaction {
 		} else {
 			$logArray['category'] = "wine";
 			$logArray['result'] = "danger";
-			$logArray['description'] = "Attempted to create a transaction for [wineUID:" . $wine->uid . "] but didn't know what qty bottles: " . $array['bottles'];
+			$logArray['description'] = "Attempted to create a transaction for [wineUID:" . $wine->uid . "] but didn't know what transaction type " . $array['type'] . " was.  Qty bottles: " . $array['bottles'];
 			$logsClass->create($logArray);
 		}
 		
@@ -52,6 +53,7 @@ class transaction {
 		$sql  = "INSERT INTO " . self::$table_name;
 		$sql .= " SET username = '" . $_SESSION['username'] . "',";
 		$sql .= " type = '" . $array['type'] . "',";
+		$sql .= " date_posted = '" . date('Y-m-d', strtotime($array['date_posted'])) . "',";
 		$sql .= " cellar_uid = '" . $cellar->uid . "',";
 		$sql .= " name = '" . htmlspecialchars($array['name']) . "',";
 		$sql .= " description = '" . htmlspecialchars($array['description']) . "',";
@@ -85,7 +87,7 @@ class transaction {
 			$output .= "<table class=\"table\">";
 			$output .= "<thead>";
 			$output .= "<tr>";
-			$output .= "<th style=\"width: 20%;\" scope=\"col\">Date</th>";
+			$output .= "<th style=\"width: 15%;\" scope=\"col\">Date</th>";
 			$output .= "<th scope=\"col\">Username</th>";
 			$output .= "<th scope=\"col\">Type</th>";
 			$output .= "<th scope=\"col\">Bottles</th>";
@@ -110,6 +112,11 @@ class transaction {
 	private function transactionTableRow($transaction) {
 		$transaction = new transaction($transaction['uid']);
 		
+		$rowClass = "";
+		if (date('Y-m-d', strtotime($transaction->date_posted)) > date('Y-m-d')) {
+			$rowClass = "table-info";
+		}
+		
 		if ($transaction->bottles < 0) {
 			$bottlesClass = "text-danger";
 		} elseif($transaction->bottles > 0) {
@@ -118,8 +125,8 @@ class transaction {
 			$bottlesClass = "";
 		}
 		
-		$output  = "<tr>";
-		$output .= "<th scope=\"row\">" . dateDisplay($transaction->date) . " " . timeDisplay($transaction->date) . "</th>";
+		$output  = "<tr class=\"" . $rowClass . "\">";
+		$output .= "<th scope=\"row\">" . dateDisplay($transaction->date_posted) . "</th>";
 		$output .= "<td>" . $transaction->username . "</td>";
 		$output .= "<td>" . $transaction->typeBadge() . "</td>";
 		$output .= "<td class=\"" . $bottlesClass . "\">" . $transaction->bottles . "</td>";

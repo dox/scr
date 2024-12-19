@@ -119,7 +119,7 @@ class wine {
 		$output .= "<p class=\"card-text text-truncate\">" . $cellar->name . " / " . $bin->name . "</p>";
 		$output .= "<div class=\"d-flex justify-content-between align-items-center\">";
 		$output .= "<div class=\"btn-group\">";
-		$output .= "<a href=\"index.php?n=wine_search&filter=code&value=" . $this->code . "\" type=\"button\" class=\"btn btn-sm btn-outline-secondary\">" . currencyDisplay($this->price_purchase) . "</a>";
+		$output .= "<a href=\"index.php?n=wine_search&filter=price&value=" . $this->price_purchase . "\" type=\"button\" class=\"btn btn-sm btn-outline-secondary\">" . currencyDisplay($this->price_purchase) . "</a>";
 		$output .= "<a href=\"index.php?n=wine_search&filter=code&value=" . $this->code . "\" type=\"button\" class=\"btn btn-sm btn-outline-secondary\">" . $this->code . "</a>";
 		$output .= "<a href=\"index.php?n=wine_search&filter=vintage&value=" . $this->vintage . "\" type=\"button\" class=\"btn btn-sm btn-outline-secondary\">" . $this->vintage . "</a>";
 		$output .= "</div>";
@@ -133,6 +133,40 @@ class wine {
 		$output .= "</div>";
 		
 		return $output;
+	}
+	
+	public function currentQty() {
+	$currentQty = 0;
+		foreach ($this->transactionsToDate() AS $transaction) {
+			$currentQty = $currentQty + $transaction['bottles'];
+		}
+		return $currentQty;
+	}
+	
+	public function transactionsInFuture() {
+		global $db;
+		
+		$sql  = "SELECT * FROM wine_transactions ";
+		$sql .= " WHERE wine_uid = '" . $this->uid . "'";
+		$sql .= " AND date_posted > '" . date('Y-m-d') . "'";
+		$sql .= " ORDER BY date_posted DESC";
+		
+		$results = $db->query($sql)->fetchAll();
+		
+		return $results;
+	}
+	
+	public function transactionsToDate() {
+		global $db;
+		
+		$sql  = "SELECT * FROM wine_transactions ";
+		$sql .= " WHERE wine_uid = '" . $this->uid . "'";
+		$sql .= " AND date_posted <= '" . date('Y-m-d') . "'";
+		$sql .= " ORDER BY date_posted DESC";
+		
+		$results = $db->query($sql)->fetchAll();
+		
+		return $results;
 	}
 	
 	public function updatePhotograph($file) {
@@ -305,7 +339,8 @@ class wine {
 		
 		//log a transaction
 		$data['wine_uid'] = $newWineUID;
-		$data['type'] = "import";
+		$data['type'] = "Import";
+		$data['date_posted'] = date('Y-m-d');
 		$data['bottles'] = $array['qty'];
 		$data['price_per_bottle'] = $array['price_purchase'];
 		$data['description'] = "Original import into system";

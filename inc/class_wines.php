@@ -154,7 +154,7 @@ class wineClass {
 			$sql .= " WHERE " . implode(' AND ', $conditions);
 		}
 		
-		$sql .= " ORDER BY date DESC";
+		$sql .= " ORDER BY date_posted DESC";
 		
 		$transactions = $db->query($sql)->fetchAll();
 		

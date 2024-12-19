@@ -6,8 +6,10 @@ $wineClass = new wineClass();
 
 if ($pageType == "add") {
 	$cleanCellarUID = filter_var($_GET['cellar_uid'], FILTER_SANITIZE_NUMBER_INT);
+	$cleanBinUID = filter_var($_GET['bin_uid'], FILTER_SANITIZE_NUMBER_INT);
 	$wine = new wine();
-		
+	$bin = new bin($cleanBinUID);
+	
 	$title = "Add New Wine";
 	//$subtitle = $wine->grape . ", " . $wine->country_of_origin;
 	//$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#plus-circle\"/></svg> Add To List", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#deleteTermModal\"");
@@ -124,11 +126,18 @@ if ($pageType == "add") {
 						<select class="form-select" id="category" name="category" required>
 							<?php
 							foreach (explode(",", $settingsClass->value('wine_category')) AS $wine_category) {
-								if (isset($wine->category) && $wine->category == $wine_category) {
-									echo "<option selected>" . $wine_category . "</option>";
+								$selected = "";
+								if ($pageType == "add") {
+									if ($wine_category == $bin->category) {
+										$selected = "selected";
+									}
 								} else {
-									echo "<option>" . $wine_category . "</option>";
+									if ($wine_category == $wine->category) {
+										$selected = "selected";
+									}
 								}
+								
+								echo "<option " . $selected . ">" . $wine_category . "</option>";
 							}
 							?>
 						</select>
@@ -237,7 +246,7 @@ if ($pageType == "add") {
 		<div class="card mb-3">
 			<div class="card-body">
 				<input type="text" class="form-control" id="vintage" name="vintage" value="<?php echo $wine->vintage; ?>">
-				<label for="price_purchvintagease" class="form-label">Vintage</label>
+				<label for="price_purchvintagease" class="form-label" required>Vintage</label>
 			</div>
 		</div>
 	</div>
