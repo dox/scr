@@ -26,7 +26,7 @@ class bin {
 		
 		$sql  = "SELECT * FROM wine_wines";
 		$sql .= " WHERE bin_uid = '" . $this->uid . "'";
-		$sql .= " AND qty > 0";
+		$sql .= " AND status != 'Closed'";
 		$sql .= " ORDER BY name ASC";
 		
 		$wines = $db->query($sql)->fetchAll();
@@ -39,7 +39,7 @@ class bin {
 		
 		$sql  = "SELECT COUNT(*) as total FROM wine_wines";
 		$sql .= " WHERE bin_uid = '" . $this->uid . "'";
-		$sql .= " AND qty > 0";
+		$sql .= " AND status != 'Closed'";
 		$sql .= " GROUP BY bin_uid";
 		
 		$wines = $db->query($sql)->fetchArray();
@@ -56,6 +56,7 @@ class bin {
 		
 		$sql  = "SELECT SUM(qty) as total FROM wine_wines";
 		$sql .= " WHERE bin_uid = '" . $this->uid . "'";
+		$sql .= " AND status != 'Closed'";
 		$sql .= " AND qty > 0";
 		$sql .= " GROUP BY bin_uid";
 		
@@ -71,7 +72,10 @@ class bin {
 	
 	public function currentWineName() {
 		if (count($this->currentWines()) > 1) {
-			return "Multiple Wines (" . count($this->currentWines()) . ")";
+			foreach ($this->currentWines() AS $wine) {
+				$wineNames[] = $wine['name'];
+			}
+			return "Multiple Wines (" . count($this->currentWines()) . ") " . implode(", ", $wineNames);
 		} elseif (count($this->currentWines()) == 0) {
 			return "Empty";
 		} else {

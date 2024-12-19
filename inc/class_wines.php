@@ -61,7 +61,7 @@ class wineClass {
 		$conditions = [];
 		
 		if ($inStock == true) {
-			$conditions[] = "qty > 0";
+			$conditions[] = "status != 'Closed'";
 		}
 		
 		if (!empty($whereFilterArray)) {
