@@ -245,8 +245,8 @@ if ($pageType == "add") {
 	<div class="col">
 		<div class="card mb-3">
 			<div class="card-body">
-				<input type="text" class="form-control" id="vintage" name="vintage" value="<?php echo $wine->vintage; ?>">
-				<label for="price_purchvintagease" class="form-label" required>Vintage</label>
+				<input type="text" class="form-control" id="vintage" name="vintage" value="<?php echo $wine->vintage; ?>" required>
+				<label for="price_purchvintagease" class="form-label">Vintage</label>
 			</div>
 		</div>
 	</div>
