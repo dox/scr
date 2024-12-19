@@ -154,7 +154,7 @@ class wineClass {
 			$sql .= " WHERE " . implode(' AND ', $conditions);
 		}
 		
-		$sql .= " ORDER BY date_posted DESC";
+		$sql .= " ORDER BY date_posted DESC, date DESC";
 		
 		$transactions = $db->query($sql)->fetchAll();
 		
@@ -228,24 +228,13 @@ class wineClass {
 	  }
 	
 	public function wineBottlesTotal($whereFilterArray = null) {
-		global $db;
-		
-		$sql  = "SELECT SUM(qty) AS total FROM " . self::$table_wines;
-		
-		if (!empty($whereFilterArray)) {
-			$conditions = [];
-			foreach ($whereFilterArray as $key => $value) {
-				// Escaping the key and value for safety
-				$escapedKey = addslashes($key);
-				$escapedValue = addslashes($value);
-				$conditions[] = "$escapedKey = '$escapedValue'";
-			}
-			$sql .= " WHERE " . implode(' AND ', $conditions);
+		$qty = 0;
+		foreach ($this->allCellars() AS $cellar) {
+			$cellar = new cellar($cellar['uid']);
+			
+			$qty = $qty + $cellar->allBottles();
 		}
-		
-		$wines = $db->query($sql)->fetchArray();
-		
-		return $wines['total'];
+		return $qty;
 	}
 	
 	public function listFromWines($columnName, $whereFilterArray = null) {

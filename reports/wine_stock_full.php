@@ -43,7 +43,7 @@ foreach ($allWines AS $wine) {
   $row['name'] = $wine->name;
   $row['supplier'] = $wine->supplier;
   $row['supplier_ref'] = $wine->supplier_ref;
-  $row['qty'] = $wine->qty;
+  $row['qty'] = $wine->currentQty();
   $row['category'] = $wine->category;
   $row['grape'] = $wine->grape;
   $row['country_of_origin'] = $wine->country_of_origin;

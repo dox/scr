@@ -126,7 +126,7 @@ class wine {
 		if ($this->status <> "In Use") {
 			$output .= "<span class=\"badge rounded-pill text-bg-warning\">" . strtoupper($this->status) . "</span>";
 		}
-		$output .= "<small class=\"text-body-secondary\">" . $this->qty . autoPluralise(" bottle", " bottles", $this->qty) . " </small>";
+		$output .= "<small class=\"text-body-secondary\">" . $this->currentQty() . autoPluralise(" bottle", " bottles", $this->currentQty()) . " </small>";
 		$output .= "</div>";
 		$output .= "</div>";
 		$output .= "</div>";
@@ -135,9 +135,9 @@ class wine {
 		return $output;
 	}
 	
-	public function currentQty() {
+	public function currentQty($filterDate = null) {
 	$currentQty = 0;
-		foreach ($this->transactionsToDate() AS $transaction) {
+		foreach ($this->transactionsToDate($filterDate) AS $transaction) {
 			$currentQty = $currentQty + $transaction['bottles'];
 		}
 		return $currentQty;
@@ -148,20 +148,24 @@ class wine {
 		
 		$sql  = "SELECT * FROM wine_transactions ";
 		$sql .= " WHERE wine_uid = '" . $this->uid . "'";
-		$sql .= " AND date_posted > '" . date('Y-m-d') . "'";
 		$sql .= " ORDER BY date_posted DESC";
 		
+		echo $sql;
 		$results = $db->query($sql)->fetchAll();
 		
 		return $results;
 	}
 	
-	public function transactionsToDate() {
+	public function transactionsToDate($filterDate = null) {
 		global $db;
 		
 		$sql  = "SELECT * FROM wine_transactions ";
 		$sql .= " WHERE wine_uid = '" . $this->uid . "'";
-		$sql .= " AND date_posted <= '" . date('Y-m-d') . "'";
+		if ($filterDate != null) {
+			$sql .= " AND date_posted <= '" . date('Y-m-d', strtotime($filterDate)) . "'";
+		} else {
+			$sql .= " AND date_posted <= '" . date('Y-m-d') . "'";
+		}
 		$sql .= " ORDER BY date_posted DESC";
 		
 		$results = $db->query($sql)->fetchAll();

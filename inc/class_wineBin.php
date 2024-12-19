@@ -34,39 +34,15 @@ class bin {
 		return $wines;
 	}
 	
-	public function currentWinesCount() {
-		global $db;
-		
-		$sql  = "SELECT COUNT(*) as total FROM wine_wines";
-		$sql .= " WHERE bin_uid = '" . $this->uid . "'";
-		$sql .= " AND status != 'Closed'";
-		$sql .= " GROUP BY bin_uid";
-		
-		$wines = $db->query($sql)->fetchArray();
-		
-		if (!isset($wines['total'])) {
-			$wines['total'] = 0;
-		}
-		
-		return $wines['total'];
-	}
-	
 	public function currentBottlesCount() {
-		global $db;
-		
-		$sql  = "SELECT SUM(qty) as total FROM wine_wines";
-		$sql .= " WHERE bin_uid = '" . $this->uid . "'";
-		$sql .= " AND status != 'Closed'";
-		$sql .= " AND qty > 0";
-		$sql .= " GROUP BY bin_uid";
-		
-		$wines = $db->query($sql)->fetchArray();
-		
-		if (!isset($wines['total'])) {
-			$wines['total'] = 0;
+		$qty = 0;
+		foreach ($this->currentWines() AS $wine) {
+			$wine = new wine($wine['uid']);
+			
+			$qty = $qty + $wine->currentQty();
 		}
 		
-		return $wines['total'];
+		return $qty;
 	}
 	
 	

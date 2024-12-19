@@ -164,7 +164,8 @@ class cellar {
 		
 		$bottles = 0;
 		foreach ($wines AS $wine) {
-			$bottles = $bottles + $wine['qty'];
+			$wine = new wine($wine['uid']);
+			$bottles = $bottles + $wine->currentQty();
 		}
 		
 		return $bottles;
@@ -217,18 +218,18 @@ class cellar {
 		$currentWines = $bin->currentWines();
 		
 		$class = "";
-		if ($bin->currentWinesCount() == 1) {
+		if (count($bin->currentWines()) == 1) {
 			$url = "index.php?n=wine_wine&wine_uid=" . $bin->currentWines()[0]['uid'];
 			$title = $bin->currentWineName();
 			
 			if ($bin->currentWines()[0]['category'] != $bin->category) {
 				$title = $title . " <span class=\"text-warning\">(" . $bin->currentWines()[0]['category'] . ")</strong>";
 			}
-		} elseif ($bin->currentWinesCount() == 0) {
+		} elseif (count($bin->currentWines()) == 0) {
 			$class = " text-muted";
 			$url = "index.php?n=wine_bin&bin_uid=" . $bin->uid;
 			$title = $bin->currentWineName();
-		} elseif ($bin->currentWinesCount() > 0) {
+		} elseif (count($bin->currentWines()) > 0) {
 			$class = " text-warning";
 			$url = "index.php?n=wine_bin&bin_uid=" . $bin->uid;
 			$title = $bin->currentWineName();

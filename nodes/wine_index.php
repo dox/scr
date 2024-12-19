@@ -55,7 +55,8 @@ if (isset($_POST['name'])) {
 		if (count($winesByCategory) > 0) {
 			$wineBottlesCount = 0;
 			foreach($winesByCategory AS $wine) {
-				$wineBottlesCount = $wineBottlesCount + $wine['qty'];
+				$wine = new wine($wine['uid']);
+				$wineBottlesCount = $wineBottlesCount + $wine->currentQty();
 			}
 			$url = "index.php?n=wine_search&filter=category&value=" . $wine_category;
 			$output  = "<div class=\"col\">";
