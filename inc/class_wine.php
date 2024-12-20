@@ -148,11 +148,18 @@ class wine {
 	}
 	
 	public function currentQty($filterDate = null) {
-	$currentQty = 0;
-		foreach ($this->transactionsToDate($filterDate) AS $transaction) {
-			$currentQty = $currentQty + $transaction['bottles'];
+		global $db;
+		
+		$sql  = "SELECT SUM(bottles) AS total FROM wine_transactions";
+		$sql .= " WHERE wine_uid = '" . $this->uid . "'";
+		
+		if (isset($filterDate)) {
+			$sql .= " AND date_posted <= '" . $filterDate . "'";
 		}
-		return $currentQty;
+		
+		$results = $db->query($sql)->fetchArray();
+		
+		return $results['total'];
 	}
 	
 	public function transactionsInFuture() {
@@ -161,8 +168,8 @@ class wine {
 		$sql  = "SELECT * FROM wine_transactions ";
 		$sql .= " WHERE wine_uid = '" . $this->uid . "'";
 		$sql .= " ORDER BY date_posted DESC";
+		$sql .= " AND date_posted > '" . date('Y-m-d') . "'";
 		
-		echo $sql;
 		$results = $db->query($sql)->fetchAll();
 		
 		return $results;
