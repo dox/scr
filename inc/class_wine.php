@@ -350,7 +350,7 @@ class wine {
 		
 		$logArray['category'] = "wine";
 		$logArray['result'] = "success";
-		$logArray['description'] = "Created new wine with fields " . $setString;
+		$logArray['description'] = "Created [wineUID:" . $newWineUID . "] with fields " . $setString;
 		$logsClass->create($logArray);
 		
 		//log a transaction
