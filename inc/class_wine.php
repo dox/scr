@@ -3,6 +3,8 @@ class wine {
 	protected static $table_name = "wine_wines";
 	
 	public $uid;
+	public $date_created;
+	public $date_updated;
 	public $code;
 	public $bin_uid;
 	public $status;
@@ -327,6 +329,7 @@ class wine {
 		}
 		
 		// Combine the set parts into a single string
+		$setParts['date_updated'] = "`date_updated` = '" . date('c') . "'";
 		$setString = implode(", ", $setParts);
 		
 		// Construct the final UPDATE query
