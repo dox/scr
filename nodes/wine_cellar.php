@@ -47,7 +47,10 @@ echo makeTitle($title, $subtitle, $icons, true);
 
 <div class="row pb-3">
 	<div class="col">
-		<input type="text" id="wine_search" class="form-control form-control-lg" placeholder="Quick search <?php echo $cellar->name; ?> wine cellar" autocomplete="off" spellcheck="false" aria-describedby="wine_searchHelp">
+		<div class="input-group mb-3">
+		  <input type="text" class="form-control form-control-lg" id="wine_search" placeholder="Quick search <?php echo $cellar->name; ?> wine cellar" autocomplete="off" spellcheck="false">
+		  <span class="input-group-text" id="basic-addon2"><input class="form-check-input mt-0 me-2" type="checkbox" id="wine_search_include_closed" value="true">include closed wines</span>
+		</div>
 		<ul id="wine_search_results" class="list-group"></ul>
 	</div>
 </div>
@@ -191,6 +194,8 @@ echo $cellar->binsTable($cellar->allBins());
 document.getElementById('wine_search').addEventListener('keyup', function() {
 	let query = this.value;
 	let resultsDiv = document.getElementById('wine_search_results');
+	
+	let include_closed = document.getElementById('wine_search_include_closed').checked;
 
 	// Clear the results if the input is empty
 	if (query.trim() === '') {
@@ -202,7 +207,7 @@ document.getElementById('wine_search').addEventListener('keyup', function() {
 	let xhr = new XMLHttpRequest();
 	
 	// Configure it: GET-request for the URL with the query
-	xhr.open('GET', 'actions/wine_search.php?c=<?php echo $cellar->uid;?>&q=' + encodeURIComponent(query), true);
+	xhr.open('GET', 'actions/wine_search.php?c=<?php echo $cellar->uid;?>&q=' + encodeURIComponent(query) + '&include=' + include_closed, true);
 	
 	// Set up the callback function
 	xhr.onload = function() {

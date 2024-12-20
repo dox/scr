@@ -18,7 +18,12 @@ if (checkpoint_charlie("wine")) {
 		
 		$resultsLimit = 4;
 		
-		$wines = $wineClass->searchAllWines($queryArray, $cellarUID, $resultsLimit);
+		// include closed wines or no
+		if (isset($_GET['include']) && $_GET['include'] == "true") {
+			$wines = $wineClass->searchAllWines($queryArray, $cellarUID, $resultsLimit, true);
+		} else {
+			$wines = $wineClass->searchAllWines($queryArray, $cellarUID, $resultsLimit);
+		}
 		
 		foreach ($wines AS $wine) {
 			$wine = new wine($wine['uid']);

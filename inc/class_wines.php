@@ -200,8 +200,8 @@ class wineClass {
 		return $results;
 	}
 	
-	public function searchAllWines($searchArray = null, $cellarUID = null, $limit = null) {
-		global $db;
+	public function searchAllWines($searchArray = null, $cellarUID = null, $limit = null, $closed = null) {
+		global $db, $logsClass;
 		
 		foreach ($searchArray AS $searchKey => $searchString) {
 			$searchStatements[] = $searchKey . " LIKE '%" . $searchString . "%'";
@@ -213,6 +213,12 @@ class wineClass {
 		
 		if (isset($cellarUID)) {
 			$sql .= " cellar_uid = '" . $cellarUID ."' AND ";
+		}
+		
+		if (isset($closed)) {
+			//$sql .= " wine_wines.status != 'Closed' AND ";
+		} else {
+			$sql .= " wine_wines.status != 'Closed' AND ";
 		}
 		
 		$sql .= "(" . implode(" OR ", $searchStatements) . ")";
