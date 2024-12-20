@@ -72,6 +72,7 @@ foreach ($allWines AS $wine) {
 <?php
 foreach ($allCellars AS $cellar) {
 	$cellar = new cellar($cellar['uid']);
+	$cellarTotal = 0;
 	
 	echo "<h2>" . $cellar->name . "</h2>";
 	
@@ -109,7 +110,14 @@ foreach ($allCellars AS $cellar) {
 		echo "<td>" . $totalBottles . "</td>";
 		echo "<td>" . currencyDisplay($totalPurchaseValue) . "</td>";
 		echo "</tr>";
+		
+		$cellarTotal = $cellarTotal + $totalPurchaseValue;
 	}
+	
+	echo "<tr>";
+	echo "<td colspan=\"3\"></td>";
+	echo "<td><strong>" . currencyDisplay($cellarTotal) . "</strong></td>";
+	echo "</tr>";
 	
 	echo "</tbody>";
 	echo "</table>";
