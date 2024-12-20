@@ -66,7 +66,7 @@ class transaction {
 		
 		$logArray['category'] = "wine";
 		$logArray['result'] = "success";
-		$logArray['description'] = "Created new wine transaction with fields TBC";
+		$logArray['description'] = "Created new wine transaction for [wineUID:" . $wine->uid . "].  Bottles: " . $bottles . " / Type: " . $array['type'];
 		$logsClass->create($logArray);
 		
 		return true;
