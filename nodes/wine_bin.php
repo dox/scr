@@ -33,7 +33,7 @@ if (!empty($bin->description)) {
 }
 $icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#plus-circle\"/></svg> Add Wine", "value" => "onclick=\"location.href='index.php?n=wine_edit&edit=add&cellar_uid=" . $cellar->uid . "&bin_uid=" . $bin->uid . "'\"");
 
-if (count($bin->currentWines()) == 0) {
+if (count($bin->currentWines()) == 0 && count($bin->closedWines()) == 0) {
 	$icons[] = array("class" => "btn-danger", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#journal-text\"/></svg> Delete Bin", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#deleteBinModal\"");
 }
 
