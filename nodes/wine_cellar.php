@@ -65,7 +65,7 @@ echo makeTitle($title, $subtitle, $icons, true);
 	$categories = array_slice(explode(",", $settingsClass->value('wine_category')), 0, 5, true);
 	
 	foreach ($categories AS $wine_category) {
-		$winesByCategory = $wineClass->allWines(array('cellar_uid' => $cellar->uid, 'wine_wines.category' => $wine_category));
+		$winesByCategory = $wineClass->allWines(array('cellar_uid' => $cellar->uid, 'wine_wines.category' => $wine_category), true);
 		
 		if ($winesByCategory > 0) {
 			$wineBottlesCount = 0;

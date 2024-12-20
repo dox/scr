@@ -149,7 +149,7 @@ class cellar {
 		} else {
 			$array = array('cellar_uid' => $this->uid);
 		}
-		$wines = $wineClass->allWines($array);
+		$wines = $wineClass->allWines($array, true);
 		
 		return $wines;
 	}
@@ -160,7 +160,7 @@ class cellar {
 		if (isset($whereFilterArray)) {
 			$array = array_merge($whereFilterArray, array('cellar_uid' => $this->uid));
 		}
-		$wines = $this->allWines($array);
+		$wines = $this->allWines($array, true);
 		
 		$bottles = 0;
 		foreach ($wines AS $wine) {
@@ -174,7 +174,7 @@ class cellar {
 	public function allBottlesByGrape() {
 		$wineClass = new wineClass();
 		
-		foreach ($this->allWines() AS $wine) {
+		foreach ($this->allWines(null, true) AS $wine) {
 			$grapArray[$wine['grape']] = $grapArray[$wine['grape']] + $wine['qty'];
 		}
 		

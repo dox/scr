@@ -106,7 +106,9 @@ class wine {
 		$url = "index.php?n=wine_wine&wine_uid=" . $this->uid;
 		$title = "<a href=\"" . $url . "\">" . $this->name . "</a>";
 		
-		if ($this->status <> "In Use") {
+		if ($this->status == "Closed") {
+		  $cardClass = " border-danger ";
+		} elseif ($this->status <> "In Use") {
 		  $cardClass = " border-warning ";
 		} else {
 		  $cardClass = "";
@@ -123,14 +125,24 @@ class wine {
 		$output .= "<a href=\"index.php?n=wine_search&filter=code&value=" . $this->code . "\" type=\"button\" class=\"btn btn-sm btn-outline-secondary\">" . $this->code . "</a>";
 		$output .= "<a href=\"index.php?n=wine_search&filter=vintage&value=" . $this->vintage . "\" type=\"button\" class=\"btn btn-sm btn-outline-secondary\">" . $this->vintage . "</a>";
 		$output .= "</div>";
-		if ($this->status <> "In Use") {
-			$output .= "<span class=\"badge rounded-pill text-bg-warning\">" . strtoupper($this->status) . "</span>";
-		}
+		$output .= $this->statusBadge();
 		$output .= "<small class=\"text-body-secondary\">" . $this->currentQty() . autoPluralise(" bottle", " bottles", $this->currentQty()) . " </small>";
 		$output .= "</div>";
 		$output .= "</div>";
 		$output .= "</div>";
 		$output .= "</div>";
+		
+		return $output;
+	}
+	
+	public function statusBadge() {
+		if ($this->status == "Closed") {
+		  $output = "<span class=\"badge rounded-pill text-bg-danger\">" . strtoupper($this->status) . "</span>";
+		} elseif ($this->status <> "In Use") {
+		  $output = "<span class=\"badge rounded-pill text-bg-warning\">" . strtoupper($this->status) . "</span>";
+		} else {
+		  $output = "";
+		}
 		
 		return $output;
 	}

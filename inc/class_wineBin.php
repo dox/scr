@@ -34,6 +34,19 @@ class bin {
 		return $wines;
 	}
 	
+	public function closedWines() {
+		global $db;
+		
+		$sql  = "SELECT * FROM wine_wines";
+		$sql .= " WHERE bin_uid = '" . $this->uid . "'";
+		$sql .= " AND status = 'Closed'";
+		$sql .= " ORDER BY name ASC";
+		
+		$wines = $db->query($sql)->fetchAll();
+		
+		return $wines;
+	}
+	
 	public function currentBottlesCount() {
 		$qty = 0;
 		foreach ($this->currentWines() AS $wine) {

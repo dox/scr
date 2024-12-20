@@ -36,7 +36,12 @@ $icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=
 if (count($bin->currentWines()) == 0) {
 	$icons[] = array("class" => "btn-danger", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#journal-text\"/></svg> Delete Bin", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#deleteBinModal\"");
 }
+
 $icons[] = array("class" => "btn-info", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#journal-text\"/></svg> Edit Bin", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#editBinModal\"");
+
+if (count($bin->closedWines()) > 0) {
+	$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#info-circle\"/></svg> Show closed wines (" . count($bin->closedWines()) . ")", "value" => "onclick=\"location.href='index.php?n=wine_bin&bin_uid=" . $bin->uid . "&closed=true'\"");
+}
 
 echo makeTitle($title, $subtitle, $icons, true);
 ?>
@@ -53,7 +58,12 @@ echo makeTitle($title, $subtitle, $icons, true);
 
 <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
 	<?php
-	foreach ($bin->currentWines() AS $wine) {
+	if (isset($_GET['closed']) && $_GET['closed'] == "true") {
+		$wines = $bin->closedWines();
+	} else {
+		$wines = $bin->currentWines();
+	}
+	foreach ($wines AS $wine) {
 		$wine = new wine($wine['uid']);
 		echo $wine->card();
 	}
