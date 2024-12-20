@@ -54,7 +54,9 @@ class wine {
 		$image = "img/blank.jpg";
 		
 		if (!empty($this->photograph)) {
-			$image = "img/wines/" . $this->photograph;
+			if (file_exists($this->photograph)) {
+				$image = "img/wines/" . $this->photograph;
+			}
 		}
 		
 		return $image;
