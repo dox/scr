@@ -31,9 +31,7 @@ echo makeTitle($title, $subtitle, $icons, true);
 <hr class="pb-3" />
 
 <?php
-if ($wine->status <> "In Use") {
-	echo "<div class=\"alert alert-warning text-center\" role=\"alert\">WINE " . strtoupper($wine->status) . "</div>";
-}
+echo $wine->statusBanner();
 ?>
 
 <ul class="nav nav-tabs nav-fill" id="myTab" role="tablist">

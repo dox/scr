@@ -147,6 +147,18 @@ class wine {
 		return $output;
 	}
 	
+	public function statusBanner() {
+		if ($this->status == "Closed") {
+		  $output = "<div class=\"alert alert-danger text-center\" role=\"alert\">STATUS: <strong>" . strtoupper($this->status) . "</strong></div>";
+		} elseif ($this->status <> "In Use") {
+		  $output = "<div class=\"alert alert-warning text-center\" role=\"alert\">STATUS: <strong>" . strtoupper($this->status) . "</strong></div>";
+		} else {
+		  $output = "";
+		}
+		
+		return $output;
+	}
+	
 	public function currentQty($filterDate = null) {
 		global $db;
 		
