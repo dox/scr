@@ -223,12 +223,22 @@ class wine {
 			if ($file["photograph"]["size"] > 5000000) {
 				echo "Sorry, your file is too large.";
 				$uploadOk = 0;
+				
+				$logArray['category'] = "wine";
+				$logArray['result'] = "warning";
+				$logArray['description'] = $file["photograph"]["size"] . " for [wineUID:" . $this->uid . "] is too large";
+				$logsClass->create($logArray);
 			}
 			
 			// Allow only certain file formats
 			if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" && $imageFileType != "gif" ) {
 				echo "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
 				$uploadOk = 0;
+				
+				$logArray['category'] = "wine";
+				$logArray['result'] = "warning";
+				$logArray['description'] = $file["photograph"]["size"] . " for [wineUID:" . $this->uid . "] has the wrong extension";
+				$logsClass->create($logArray);
 			}
 			
 			// Check if $uploadOk is set to 0 by an error
@@ -326,9 +336,6 @@ class wine {
 		// Initialize the set part of the query
 		$setParts = [];
 		
-		//remove the memberUID
-		unset($array['uid']);
-		
 		// Loop through the new values array
 		foreach ($array as $field => $newValue) {
 			if (is_array($newValue)) {
@@ -353,15 +360,18 @@ class wine {
 		// Construct the final UPDATE query
 		$sql = "INSERT INTO wine_wines SET " . $setString;
 		$insert = $db->query($sql);
-		$newWineUID = $db->lastInsertID();
+		$this->uid = $db->lastInsertID();
 		
 		$logArray['category'] = "wine";
 		$logArray['result'] = "success";
-		$logArray['description'] = "Created [wineUID:" . $newWineUID . "] with fields " . $setString;
+		$logArray['description'] = "Created [wineUID:" . $this->uid . "] with fields " . $setString;
 		$logsClass->create($logArray);
 		
+		//upload photo (if empty no worries)
+		$this->updatePhotograph($_FILES);
+		
 		//log a transaction
-		$data['wine_uid'] = $newWineUID;
+		$data['wine_uid'] = $this->uid;
 		$data['type'] = "Import";
 		$data['date_posted'] = date('Y-m-d');
 		$data['bottles'] = $array['qty'];
