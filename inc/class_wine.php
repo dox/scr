@@ -301,7 +301,7 @@ class wine {
 			  
 				// Sanitize the field and value to prevent SQL injection
 				$field = htmlspecialchars($field);
-				$newValue = htmlspecialchars($newValue);
+				$newValue = trim(htmlspecialchars($newValue));
 				// Add to the set part
 				$setParts[$field] = "`$field` = '$newValue'";
 			}
@@ -344,7 +344,7 @@ class wine {
 			
 			// Sanitize the field and value to prevent SQL injection
 			$field = htmlspecialchars($field);
-			$newValue = htmlspecialchars($newValue);
+			$newValue = trim(htmlspecialchars($newValue));
 			// Add to the set part
 			$setParts[$field] = "`$field` = '$newValue'";
 		}
