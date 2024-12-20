@@ -175,7 +175,8 @@ class cellar {
 		$wineClass = new wineClass();
 		
 		foreach ($this->allWines(null, true) AS $wine) {
-			$grapArray[$wine['grape']] = $grapArray[$wine['grape']] + $wine['qty'];
+			$wine = new wine($wine['uid']);
+			$grapArray[$wine->grape] = $grapArray[$wine->grape] + $wine->currentQty();
 		}
 		
 		return $grapArray;

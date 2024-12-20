@@ -11,7 +11,6 @@ class wine {
 	public $name;
 	public $supplier;
 	public $supplier_ref;
-	public $qty;
 	public $category;
 	public $grape;
 	public $country_of_origin;
@@ -371,6 +370,9 @@ class wine {
 			return null;
 		}
 		
+		// we don't want the qty for the wine record (only for the transaction)
+		unset($setParts['qty']);
+		
 		// Combine the set parts into a single string
 		$setString = implode(", ", $setParts);
 		
@@ -397,42 +399,6 @@ class wine {
 		
 		$transaction = new transaction();
 		$transaction->create($data);
-		
-		return true;
-	}
-	
-	public function deduct($qtyToDeduct) {
-	  global $logsClass;
-	  
-	  // turn positive numbers into negative numbers
-	  $qtyToDeduct = $qtyToDeduct <= 0 ? $qtyToDeduct : -$qtyToDeduct ;
-	  
-	  $currentTotalBottles = $this->qty;
-	  $targetTotalBottles = $currentTotalBottles + $qtyToDeduct;
-	  $actualTargetTotalBottles = max(0, ($targetTotalBottles)); // don't allow less than 0 bottles
-	  
-	  $array = array("qty" => $actualTargetTotalBottles);
-	  $this->update($array);
-	  
-	  if ($targetTotalBottles < 0) {
-		// an attempt to deduct more bottles than there were... so log this
-		$logArray['category'] = "wine";
-		$logArray['result'] = "warning";
-		$logArray['description'] = "Deducted " . $qtyToDeduct . " from [wineUID:" . $this->uid . "] when only " . $currentTotalBottles . " existed";
-		$logsClass->create($logArray);
-	  }
-	  
-	  return true;
-	}
-	
-	public function import($qtyToImport) {
-		global $logsClass;
-		
-		$currentTotalBottles = $this->qty;
-		$targetTotalBottles = $currentTotalBottles + $qtyToImport;
-		
-		$array = array("qty" => $targetTotalBottles);
-		$this->update($array);
 		
 		return true;
 	}

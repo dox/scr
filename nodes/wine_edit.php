@@ -214,7 +214,7 @@ if ($pageType == "add") {
 					$disabledCheck = " disabled";	
 				}
 				?>
-				<input type="text" class="form-control" id="qty" name="qty" value="<?php echo $wine->qty; ?>" <?php echo $disabledCheck; ?> required pattern="[0-9]*">
+				<input type="text" class="form-control" id="qty" name="qty" value="<?php echo $wine->currentQty(); ?>" <?php echo $disabledCheck; ?> required pattern="[0-9]*">
 				<label for="qty" class="form-label">Bottles Qty.</label>
 			</div>
 		</div>
