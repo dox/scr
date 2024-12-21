@@ -52,11 +52,12 @@ class wine {
 	}
 	
 	public function photographURL() {
+		$img_dir = "img/wines/";
 		$image = "img/blank.jpg";
 		
 		if (!empty($this->photograph)) {
-			if (file_exists($this->photograph)) {
-				$image = "img/wines/" . $this->photograph;
+			if (file_exists($img_dir . $this->photograph)) {
+				$image = $img_dir . $this->photograph;
 			}
 		}
 		
