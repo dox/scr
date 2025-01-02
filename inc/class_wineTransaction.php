@@ -125,6 +125,7 @@ class transaction {
 			$bottlesClass = "";
 		}
 		
+		$iconLink = "<a href=\"index.php?n=wine_transaction&uid=" . $transaction->uid . "\" class=\"float-end\"><svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#info-circle\"></use></svg></a>";
 		$output  = "<tr class=\"" . $rowClass . "\">";
 		$output .= "<th scope=\"row\">" . dateDisplay($transaction->date_posted) . "</th>";
 		$output .= "<td>" . $transaction->username . "</td>";
@@ -132,7 +133,8 @@ class transaction {
 		$output .= "<td class=\"" . $bottlesClass . "\">" . $transaction->bottles . "</td>";
 		$output .= "<td>" . currencyDisplay($transaction->price_per_bottle) . "</td>";
 		$output .= "<td>" . $transaction->name . "</td>";
-		$output .= "<td>" . $transaction->description . "</td>";
+		$output .= "<td>" . $transaction->description . $iconLink . "</td>";
+		
 		$output .= "</tr>";
 		
 		return $output;
