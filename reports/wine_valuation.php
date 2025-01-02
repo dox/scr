@@ -73,6 +73,7 @@ foreach ($allWines AS $wine) {
 foreach ($allCellars AS $cellar) {
 	$cellar = new cellar($cellar['uid']);
 	$cellarTotal = 0;
+	$totalBottlesByCellar = 0;
 	
 	echo "<h2>" . $cellar->name . "</h2>";
 	
@@ -94,20 +95,24 @@ foreach ($allCellars AS $cellar) {
 		);
 		$wines = $wineClass->allWines($filter, true);
 		
-		$totalBottles = 0;
+		$totalBottlesByCategory = 0;
 		$totalPurchaseValue = 0;
 		
 		foreach ($wines AS $wine) {
 			$wine = new wine($wine['uid']);
-			$totalBottles = $totalBottles + $wine->currentQty($_POST['filter_date']);
-			$totalPurchaseValue = $totalPurchaseValue + ($wine->currentQty($_POST['filter_date']) * $wine->price_purchase);
+			
+			$qty = $wine->currentQty($_POST['filter_date']);
+			$totalBottlesByCategory += $qty;
+			$totalPurchaseValue += ($qty * $wine->price_purchase);
+			
+			$totalBottlesByCellar += $qty;
 		}
 		
 		
 		echo "<tr>";
 		echo "<td scope=\"row\">" . $wine_category . "</td>";
 		echo "<td>" . count($cellar->allBins(array("category" => $wine_category))) . "</td>";
-		echo "<td>" . $totalBottles . "</td>";
+		echo "<td>" . $totalBottlesByCategory . "</td>";
 		echo "<td>" . currencyDisplay($totalPurchaseValue) . "</td>";
 		echo "</tr>";
 		
@@ -115,7 +120,8 @@ foreach ($allCellars AS $cellar) {
 	}
 	
 	echo "<tr>";
-	echo "<td colspan=\"3\"></td>";
+	echo "<td colspan=\"2\"></td>";
+	echo "<td><strong>" . $totalBottlesByCellar . "</strong></td>";
 	echo "<td><strong>" . currencyDisplay($cellarTotal) . "</strong></td>";
 	echo "</tr>";
 	
