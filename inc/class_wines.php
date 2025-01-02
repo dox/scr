@@ -247,7 +247,7 @@ class wineClass {
 		global $db;
 		
 		$sql  = "SELECT DISTINCT " . $columnName . " FROM " . self::$table_wines;
-		
+		$sql .= " WHERE status != 'Closed'";
 		if (!empty($whereFilterArray)) {
 			$conditions = [];
 			foreach ($whereFilterArray as $key => $value) {
@@ -256,7 +256,7 @@ class wineClass {
 				$escapedValue = addslashes($value);
 				$conditions[] = "$escapedKey = '$escapedValue'";
 			}
-			$sql .= " WHERE " . implode(' AND ', $conditions);
+			$sql .= " AND " . implode(' AND ', $conditions);
 		}
 		
 		$sql .= " ORDER BY " . $columnName . " ASC";
