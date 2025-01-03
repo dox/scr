@@ -34,7 +34,7 @@ if (isset($_POST['name'])) {
 	<div class="col">
 		<div class="input-group mb-3">
 		  <input type="text" class="form-control form-control-lg" id="wine_search" placeholder="Quick search all cellars" autocomplete="off" spellcheck="false">
-		  <span class="input-group-text" id="basic-addon2"><input class="form-check-input mt-0 me-2" type="checkbox" id="wine_search_include_closed" value="true">include closed wines</span>
+		  <span class="input-group-text" id="basic-addon2"><input class="form-check-input mt-0 me-2" type="checkbox" id="wine_search_include_closed" value="true">include closed</span>
 		</div>
 		<ul id="wine_search_results" class="list-group"></ul>
 	</div>

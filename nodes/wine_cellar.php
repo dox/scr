@@ -30,7 +30,7 @@ $subtitle = count($cellar->allBins()) . autoPluralise(" bin", " bins", count($ce
 if (!empty($cellar->notes)) {
 	$subtitle .= " <i>(" . $cellar->notes . ")</i>";
 }
-$icons[] = array("class" => "btn-info", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#plus-circle\"/></svg> Edit Cellar", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#editCellarModal\"");
+$icons[] = array("class" => "btn-info", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#journal-text\"/></svg> Edit Cellar", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#editCellarModal\"");
 $icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#plus-circle\"/></svg> Add Bin", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#newBinModal\"");
 $icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#plus-circle\"/></svg> Add Wine", "value" => "onclick=\"location.href='index.php?n=wine_edit&edit=add&cellar_uid=" . $cellar->uid . "'\"");
 echo makeTitle($title, $subtitle, $icons, true);
@@ -49,7 +49,7 @@ echo makeTitle($title, $subtitle, $icons, true);
 	<div class="col">
 		<div class="input-group mb-3">
 		  <input type="text" class="form-control form-control-lg" id="wine_search" placeholder="Quick search <?php echo $cellar->name; ?> wine cellar" autocomplete="off" spellcheck="false">
-		  <span class="input-group-text" id="basic-addon2"><input class="form-check-input mt-0 me-2" type="checkbox" id="wine_search_include_closed" value="true">include closed wines</span>
+		  <span class="input-group-text" id="basic-addon2"><input class="form-check-input mt-0 me-2" type="checkbox" id="wine_search_include_closed" value="true">include closed</span>
 		</div>
 		<ul id="wine_search_results" class="list-group"></ul>
 	</div>
