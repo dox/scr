@@ -31,25 +31,30 @@ if (isset($_POST['name'])) {
 
 <hr class="pb-3" />
 
-<?php
-$output = "<ul class=\"list-group\">";
-foreach ($wineClass->allLists(array('member_ldap' => $_SESSION['username'])) AS $list) {
-	$list = new wine_list($list['uid']);
-	
-	$output .= "<li  class=\"list-group-item\">";
-	$output .= "<svg width=\"1em\" height=\"1em\" class=\"text-muted\"><use xlink:href=\"img/icons.svg#heart-full\"/></svg> ";
-	$output .= "<a href=\"index.php?n=wine_search&filter=list&value=" . $list->uid . "\">";
-	$output .= $list->fullname();
-	$output .= "</a>";
-	
-	$output .= "</li>";
-}
-$output .= "</ul>";
-echo $output;
+<h3>My Lists</h3>
+  <ul class="list-group list-group-flush">
+	  <?php
+	  $myListsFilter[] = array("field" => "type", "operator" => "=", "value" => "private");
+	  $myListsFilter[] = array("field" => "member_ldap", "operator" => "=", "value" => $_SESSION['username']);
+	  foreach ($wineClass->allLists($myListsFilter) AS $list) {
+		  $list = new wine_list($list['uid']);
+		  
+		  echo $list->liItem($wine->uid);
+	  }
+	  ?>
+  </ul>
 
-?>
-
-
+<h3 class="pt-3">Public Lists</h3>
+  <ul class="list-group list-group-flush">
+	  <?php
+	  $publicListsFilter[] = array("field" => "type", "operator" => "=", "value" => "public");
+	  foreach ($wineClass->allLists($publicListsFilter) AS $list) {
+		  $list = new wine_list($list['uid']);
+		  
+		  echo $list->liItem($wine->uid);
+	  }
+	  ?>
+  </ul>
 
 <form method="post" id="bin_new" action="<?php echo $_SERVER['REQUEST_URI']; ?>">
 <div class="modal fade" id="newListModal" tabindex="-1" aria-hidden="true">
@@ -66,7 +71,7 @@ echo $output;
 							<label for="type" class="form-label">Type</label>
 							<select class="form-select" id="type" name="type" required>
 								<option value="private">private</option>
-								<option value="public">Public</option>
+								<option value="public">public</option>
 							</select>
 						</div>
 					</div>

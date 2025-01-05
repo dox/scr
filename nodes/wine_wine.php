@@ -15,6 +15,7 @@ $title = $wine->name;
 $subtitle = "<a href=\"" . $urlGrape . "\">" . $wine->grape . "</a>, <a href=\"" . $urlCategory . "\">" . $wine->category . "</a>";
 $icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#plus-circle\"/></svg> Add Transaction", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#transactionModal\"");
 $icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#journal-text\"/></svg> Edit Wine", "value" => "onclick=\"location.href='index.php?n=wine_edit&edit=edit&uid=" . $wine->uid . "'\"");
+$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#heart-empty\"/></svg> Add To List", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#listModal\"");
 
 echo makeTitle($title, $subtitle, $icons, true);
 ?>
@@ -217,28 +218,39 @@ echo $wine->statusBanner();
   </div>
 </div>
 
-<div class="modal fade" id="favListModal" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="listModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog">
 	<div class="modal-content">
 	  <div class="modal-header">
-		<h1 class="modal-title fs-5" id="exampleModalLabel">Wine Lists</h1>
+		<h1 class="modal-title fs-5" id="exampleModalLabel"> Lists</h1>
 		<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	  </div>
 	  <div class="modal-body">
-		<ul class="list-group list-group-flush">
+		  <h6>My Lists</h6>
+		  <ul class="list-group list-group-flush">
 			  <?php
-			  foreach ($wineClass->allLists() AS $list) {
+			  $myListsFilter[] = array("field" => "type", "operator" => "=", "value" => "private");
+			  $myListsFilter[] = array("field" => "member_ldap", "operator" => "=", "value" => $_SESSION['username']);
+			  foreach ($wineClass->allLists($myListsFilter) AS $list) {
 				  $list = new wine_list($list['uid']);
 				  
-				  $listIcon = "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#heart-empty\"/></svg> ";
-				  if ($list->isWineInList($wine->uid)) {
-					  $listIcon = "<svg width=\"1em\" height=\"1em\" style=\"color: red;\"><use xlink:href=\"img/icons.svg#heart-full\"/></svg> ";
-				  }
-				  
-				  echo "<li class=\"list-group-item\"><a class=\"dropdown-item\" href\"#\" onClick=\"handleButtonClick(this)\" data-listuid=\"" . $list->uid . "\" data-wineuid=\"" . $wine->uid . "\">" . $listIcon . $list->name . "</a></li>";
+				  echo $list->liItem($wine->uid);
 			  }
 			  ?>
 		  </ul>
+		  
+		  <h6 class="pt-3">Public Lists</h6>
+			<ul class="list-group list-group-flush">
+				<?php
+				$publicListsFilter[] = array("field" => "type", "operator" => "=", "value" => "public");
+				$publicListsFilter[] = array("field" => "member_ldap", "operator" => "!=", "value" => $_SESSION['username']);
+				foreach ($wineClass->allLists($publicListsFilter) AS $list) {
+					$list = new wine_list($list['uid']);
+					
+					echo $list->liItem($wine->uid);
+				}
+				?>
+			</ul>
 	  </div>
 	  <div class="modal-footer">
 		<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -248,7 +260,7 @@ echo $wine->statusBanner();
 </div>
 
 <script>
-function handleButtonClick(button) {
+function toggleListButton(button) {
 	// Retrieve the data attributes
 	var list_uid = button.getAttribute('data-listuid');
 	var wine_uid = button.getAttribute('data-wineuid');

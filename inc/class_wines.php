@@ -161,7 +161,7 @@ class wineClass {
 		return $transactions;
 	}
 	
-	public function allLists($whereFilterArray = null) {
+	public function allListsOLD($whereFilterArray = null) {
 		global $db;
 		
 		$sql  = "SELECT * FROM " . self::$table_lists;
@@ -177,10 +177,60 @@ class wineClass {
 			$sql .= " WHERE " . implode(' AND ', $conditions);
 		}
 		
-		$sql .= " ORDER BY name ASC";
+		$sql .= " ORDER BY last_updated DESC, name ASC";
 		
 		$lists = $db->query($sql)->fetchAll();
 		
+		return $lists;
+	}
+	
+	public function allLists($whereFilterArray = null) {
+		global $db;
+		
+		$sql  = "SELECT * FROM " . self::$table_lists;
+		
+		$conditions = [];
+		
+		// Process the array of where conditions
+		if (!empty($whereFilterArray)) {
+			foreach ($whereFilterArray as $condition) {
+				if (
+					is_array($condition) &&
+					isset($condition['field'], $condition['operator'], $condition['value'])
+				) {
+					// Safely escape the field name
+					$escapedField = addslashes($condition['field']);
+					$operator = strtoupper(trim($condition['operator']));
+					
+					// Handle the 'IN' operator specially
+					if ($operator === 'IN' && is_array($condition['value'])) {
+						$escapedValues = array_map('addslashes', $condition['value']);
+						$inClause = "'" . implode("','", $escapedValues) . "'";
+						$conditions[] = "$escapedField IN ($inClause)";
+					} else {
+						// Safely escape the value
+						$escapedValue = addslashes($condition['value']);
+	
+						// Ensure the operator is valid
+						$allowedOperators = ['=', 'LIKE', '>', '<', '>=', '<=', '<>', '!='];
+						if (in_array($operator, $allowedOperators, true)) {
+							$conditions[] = "$escapedField $operator '$escapedValue'";
+						}
+					}
+				}
+			}
+		}
+	
+		// Append the conditions to the SQL query
+		if (!empty($conditions)) {
+			$sql .= " WHERE " . implode(' AND ', $conditions);
+		}
+	
+		$sql .= " ORDER BY last_updated DESC, name ASC";
+		
+		// Execute the query and fetch results
+		$lists = $db->query($sql)->fetchAll();
+	
 		return $lists;
 	}
 	
