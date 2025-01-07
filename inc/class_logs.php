@@ -27,8 +27,7 @@ class logs {
   }
   
   public function allWhereMatch($string = null) {
-     global $db;
-     global $settingsClass;
+     global $db, $settingsClass;
   
      $maximumLogsAge = date('Y-m-d', strtotime('-' . $settingsClass->value('logs_retention') . ' days'));
   

@@ -5,9 +5,11 @@ pageAccessCheck("logs");
 <?php
 $logsClass->purge();
 $logsByDay = $logsClass->byDay("logon");
+$maximumLogsDisplay = $settingsClass->value('logs_display');
+$maximumLogsKeep = $settingsClass->value('logs_retention');
 
 $title = "Logs";
-$subtitle = "Admin/User logs for the last " . $logsDisplay . " days";
+$subtitle = "Admin/User logs for the last " . $maximumLogsDisplay . " days <i>(" . $maximumLogsKeep . " days available)</i>";
 
 echo makeTitle($title, $subtitle, false, true);
 
