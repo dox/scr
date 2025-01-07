@@ -196,7 +196,8 @@ document.getElementById('wine_search').addEventListener('keyup', function() {
 </script>
 
 <?php
-$daysToInclude = 10;
+$daysToInclude = $settingsClass->value('logs_display');
+
 $dateArray = array();
 for ($i = 0; $i < $daysToInclude; $i++) {
   // Generate the date string for $i days ago
