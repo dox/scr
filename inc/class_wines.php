@@ -66,10 +66,17 @@ class wineClass {
 		
 		if (!empty($whereFilterArray)) {
 			foreach ($whereFilterArray as $key => $value) {
-				// Escaping the key and value for safety
-				$escapedKey = addslashes($key);
-				$escapedValue = addslashes($value);
-				$conditions[] = "$escapedKey = '$escapedValue'";
+				if (is_null($value) || empty($value)) {
+					// Escaping the key and value for safety
+					$escapedKey = addslashes($key);
+					$escapedValue = addslashes($value);
+					$conditions[] = "($escapedKey = '$escapedValue' OR $escapedKey IS NULL)";
+				} else {
+					// Escaping the key and value for safety
+					$escapedKey = addslashes($key);
+					$escapedValue = addslashes($value);
+					$conditions[] = "$escapedKey = '$escapedValue'";
+				}
 			}
 		}
 		
