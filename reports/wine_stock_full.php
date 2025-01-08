@@ -48,7 +48,7 @@ foreach ($allWines AS $wine) {
   $row['grape'] = $wine->grape;
   $row['country_of_origin'] = $wine->country_of_origin;
   $row['region_of_origin'] = $wine->region_of_origin;
-  $row['vintage'] = $wine->vintage;
+  $row['vintage'] = $wine->vintage();
   $row['price_purchase'] = $wine->price_purchase;
   $row['price_internal'] = $wine->price_internal;
   $row['price_external'] = $wine->price_external;

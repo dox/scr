@@ -127,7 +127,7 @@ class wine {
 		$output .= "<div class=\"btn-group\">";
 		$output .= "<a href=\"index.php?n=wine_search&filter=price&value=" . $this->price_purchase . "\" type=\"button\" class=\"btn btn-sm btn-outline-secondary\">" . currencyDisplay($this->price_purchase) . "</a>";
 		$output .= "<a href=\"index.php?n=wine_search&filter=code&value=" . $this->code . "\" type=\"button\" class=\"btn btn-sm btn-outline-secondary\">" . $this->code . "</a>";
-		$output .= "<a href=\"index.php?n=wine_search&filter=vintage&value=" . $this->vintage . "\" type=\"button\" class=\"btn btn-sm btn-outline-secondary\">" . $this->vintage . "</a>";
+		$output .= "<a href=\"index.php?n=wine_search&filter=vintage&value=" . $this->vintage . "\" type=\"button\" class=\"btn btn-sm btn-outline-secondary\">" . $this->vintage() . "</a>";
 		$output .= "</div>";
 		$output .= $this->statusBadge();
 		$output .= "<small class=\"text-body-secondary\">" . $this->currentQty() . autoPluralise(" bottle", " bottles", $this->currentQty()) . " </small>";
@@ -149,6 +149,21 @@ class wine {
 		}
 		
 		return $output;
+	}
+	
+	public function vintage() {
+		// Check if the vintage is null or empty
+		if (empty($this->vintage)) {
+			return 'NV';
+		}
+		
+		// Check if the vintage is a valid year in the format YYYY
+		if (preg_match('/^\d{4}$/', $this->vintage)) {
+			return $this->vintage;
+		}
+		
+		// If it's not valid, return 'NV'
+		return 'NV';
 	}
 	
 	public function statusBanner() {

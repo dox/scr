@@ -74,7 +74,7 @@ echo $wine->statusBanner();
 		  <div class="col">
 			  <div class="card mb-3">
 				  <div class="card-body">
-					  <h5 class="card-title"><a href="index.php?n=wine_search&filter=vintage&value=<?php echo $wine->vintage; ?>"><?php echo $wine->vintage; ?></a></h5>
+					  <h5 class="card-title"><a href="index.php?n=wine_search&filter=vintage&value=<?php echo $wine->vintage; ?>"><?php echo $wine->vintage(); ?></a></h5>
 					  <h6 class="card-subtitle mb-2 text-body-secondary">Vintage</h6>
 				  </div>
 			  </div>
