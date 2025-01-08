@@ -304,6 +304,11 @@ class wine {
 		//remove the uid
 		unset($array['uid']);
 		
+		// null missing vintage
+		if (empty($array['vintage'])) {
+			$array['vintage'] = null;
+		}
+		
 		//upload photo (if empty no worries)
 		$this->updatePhotograph($_FILES);
 		
@@ -312,15 +317,19 @@ class wine {
 		  if (is_array($newValue)) {
 			$newValue = implode(",", $newValue);
 		  }
-			// Check if the field exists in the current values and if the values are different
-			if ($this->$field != $newValue) {
-			  
-				// Sanitize the field and value to prevent SQL injection
-				$field = htmlspecialchars($field);
-				$newValue = trim(htmlspecialchars($newValue));
-				// Add to the set part
-				$setParts[$field] = "`$field` = '$newValue'";
-			}
+		  
+		  // Check if the field exists in the current values and if the values are different
+		  if ($this->$field != $newValue) {
+			  if (is_null($newValue)) {
+					$setParts[$field] = "`$field` = NULL";
+				} else {
+					// Sanitize the field and value to prevent SQL injection
+					$field = htmlspecialchars($field);
+					$newValue = trim(htmlspecialchars($newValue));
+					// Add to the set part
+					$setParts[$field] = "`$field` = '$newValue'";
+				}
+		  }
 		}
 		
 		// If there are no changes, return null
@@ -353,8 +362,9 @@ class wine {
 		// Initialize the set part of the query
 		$setParts = [];
 		
+		// null missing vintage
 		if (empty($array['vintage'])) {
-			unset($array['vintage']);
+			$array['vintage'] = null;
 		}
 		
 		// Loop through the new values array
@@ -363,11 +373,16 @@ class wine {
 				$newValue = implode(",", $newValue);
 			}
 			
-			// Sanitize the field and value to prevent SQL injection
-			$field = htmlspecialchars($field);
-			$newValue = trim(htmlspecialchars($newValue));
-			// Add to the set part
-			$setParts[$field] = "`$field` = '$newValue'";
+			if (is_null($newValue)) {
+				$setParts[$field] = "`$field` = NULL";
+			} else {
+				// Sanitize the field and value to prevent SQL injection
+				$field = htmlspecialchars($field);
+				$newValue = trim(htmlspecialchars($newValue));
+				// Add to the set part
+				$setParts[$field] = "`$field` = '$newValue'";
+			}
+			
 		}
 		
 		// If there are no changes, return null
