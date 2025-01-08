@@ -87,7 +87,6 @@ echo makeTitle($title, $subtitle, $icons, true);
 						} else {
 							$bottlesClass = "";
 						}
-						printArray($item);
 						
 						$output  = "<tr>";
 						$output .= "<th scope=\"row\"><a href=\"index.php?n=wine_bin&bin_uid=" . $bin->uid . "\">" . $bin->name . "</a></th>";
@@ -98,8 +97,8 @@ echo makeTitle($title, $subtitle, $icons, true);
 						$output .= "</div>";
 						$output .= "</td>";
 						$output .= "<td>" . currencyDisplay($transaction->price_per_bottle) . "</td>";
-						$output .= "<td class=\"" . $bottlesClass . "\">" . $item->qty . "</td>";
-						$output .= "<td class=\"text-end\">" . currencyDisplay($transaction->price_per_bottle * $item->qty) . "</td>";
+						$output .= "<td class=\"" . $bottlesClass . "\">" . abs($transaction->bottles) . "</td>";
+						$output .= "<td class=\"text-end\">" . currencyDisplay($transaction->price_per_bottle * abs($transaction->bottles)) . "</td>";
 						$output .= "</tr>";
 						$output .= "";
 						$output .= "";
@@ -115,7 +114,7 @@ echo makeTitle($title, $subtitle, $icons, true);
 						<tr>
 							<th scope="row" colspan="4" class="border-0 text-end">Total</th>
 							<td class="border-0 text-end">
-								<h4 class="m-0 fw-semibold"><?php echo currencyDisplay($transaction->price_per_bottle * $item->qty); ?></h4>
+								<h4 class="m-0 fw-semibold"><?php echo currencyDisplay($transaction->price_per_bottle * abs($transaction->bottles)); ?></h4>
 							</td>
 						</tr>
 					</tbody>
