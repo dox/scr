@@ -132,10 +132,10 @@ class reports {
       $output .= "<h2>" . $category['category'] . "</h2>";
       $output .= "<table id=\"myTable\" class=\"table\">";
       $output .= "<thead>";
-      $output .= "<th>" . "Name" . "</th>";
-      $output .= "<th>" . "Type" . "</th>";
-      $output .= "<th>" . "Access" . "</th>";
-      $output .= "<th>" . "Last Run" . "</th>";
+      $output .= "<th style=\"width: 50%\">" . "Name" . "</th>";
+      $output .= "<th style=\"width: 10%\">" . "Type" . "</th>";
+      $output .= "<th style=\"width: 10%\">" . "Access" . "</th>";
+      $output .= "<th style=\"width: 20%\">" . "Last Run" . "</th>";
       $output .= "<th>" . "Action" . "</th>";
       $output .= "</thead>";
       
