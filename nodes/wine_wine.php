@@ -162,7 +162,7 @@ echo $wine->statusBanner();
 						  <label for="transaction_bottles" class="form-label">Bottles</label>
 						  <input type="number" class="form-control" id="transaction_bottles" value="1">
 						  <div id="transaction_bottlesHelp" class="form-text">
-							  <?php echo $wine->qty . " available"; ?>
+							  <?php echo $wine->currentQty() . " available"; ?>
 						  </div>
 						</div>
 				</div>
