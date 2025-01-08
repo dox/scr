@@ -353,6 +353,10 @@ class wine {
 		// Initialize the set part of the query
 		$setParts = [];
 		
+		if (empty($array['vintage'])) {
+			unset($array['vintage']);
+		}
+		
 		// Loop through the new values array
 		foreach ($array as $field => $newValue) {
 			if (is_array($newValue)) {
