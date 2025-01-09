@@ -8,13 +8,13 @@ $bin = new bin($binUID);
 $cellar = new cellar($bin->cellar_uid);
 
 if (isset($_GET['deleteBin'])) {
-	if (count($bin->currentWines()) == 0) {
+	if (count($bin->currentWines()) == 0 && count($bin->closedWines()) == 0) {
 		$bin->delete();
 		
 		$url = "index.php?n=wine_cellar&uid=" . $cellar->uid;
 		echo "<script type=\"text/javascript\">window.location.href = \"" . $url . "\";</script>";
 	} else {
-		echo "Cannot delete bin - there are wines in it";
+		echo "Cannot delete bin - there are wines in it (current and/or closed)";
 	}
 }
 
