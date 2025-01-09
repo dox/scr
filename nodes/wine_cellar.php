@@ -70,7 +70,7 @@ echo makeTitle($title, $subtitle, $icons, true);
 	foreach ($categories AS $wine_category) {
 		$winesByCategory = $wineClass->allWines(array('cellar_uid' => $cellar->uid, 'wine_wines.category' => $wine_category), true);
 		
-		if ($winesByCategory > 0) {
+		if (count($winesByCategory) > 0) {
 			$wineBottlesCount = 0;
 			foreach($winesByCategory AS $wine) {
 				$wine = new wine($wine['uid']);
