@@ -205,6 +205,22 @@ if ($pageType == "add") {
 	</div>
 </div>
 
+<?php
+if ($pageType == "add") {
+?>
+<div class="row">
+	<div class="col">
+		<div class="card mb-3">
+			<div class="card-body">
+				<label for="posting_date" class="form-label">Import Date</label>
+				<input type="date" class="form-control" id="posting_date" name="posting_date" value="<?php echo date('Y-m-d'); ?>">
+			</div>
+		</div>
+	</div>
+</div>
+<?php
+}
+?>
 <div class="row">
 	<div class="col">
 		<div class="card mb-3">

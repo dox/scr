@@ -407,6 +407,7 @@ class wine {
 		
 		// we don't want the qty for the wine record (only for the transaction)
 		unset($setParts['qty']);
+		unset($setParts['posting_date']);
 		
 		// Combine the set parts into a single string
 		$setString = implode(", ", $setParts);
@@ -427,7 +428,11 @@ class wine {
 		//log a transaction
 		$data['wine_uid'] = $this->uid;
 		$data['type'] = "Import";
-		$data['date_posted'] = date('Y-m-d');
+		if (isset($array['posting_date'])) {
+			$data['date_posted'] = $array['posting_date'];
+		} else {
+			$data['date_posted'] = date('Y-m-d');
+		}
 		$data['bottles'] = $array['qty'];
 		$data['price_per_bottle'] = $array['price_purchase'];
 		$data['name'] = "Original import into system";
