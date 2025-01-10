@@ -10,7 +10,7 @@ $columns = array(
 );
 
 
-$allSuppliers = $db->query("SELECT DISTINCT supplier FROM wine_wines")->fetchAll();
+$allSuppliers = $db->query("SELECT DISTINCT supplier FROM wine_wines ORDER BY supplier ASC")->fetchAll();
 
 foreach ($allSuppliers AS $supplier) {
   $row = null;
