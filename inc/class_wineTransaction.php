@@ -93,7 +93,7 @@ class transaction {
 			$output .= "<th scope=\"col\">Bottles</th>";
 			$output .= "<th scope=\"col\">£/Bottle</th>";
 			$output .= "<th scope=\"col\">Name</th>";
-			$output .= "<th scope=\"col\">Description</th>";
+			//$output .= "<th scope=\"col\">Description</th>";
 			$output .= "</tr>";
 			$output .= "</thead>";
 			$output .= "<tbody>";
@@ -133,7 +133,7 @@ class transaction {
 		$output .= "<td class=\"" . $bottlesClass . "\">" . $transaction->bottles . "</td>";
 		$output .= "<td>" . currencyDisplay($transaction->price_per_bottle) . "</td>";
 		$output .= "<td>" . $transaction->name . "</td>";
-		$output .= "<td>" . $transaction->description . $iconLink . "</td>";
+		//$output .= "<td>" . $transaction->description . $iconLink . "</td>";
 		
 		$output .= "</tr>";
 		

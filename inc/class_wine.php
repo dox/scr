@@ -430,7 +430,7 @@ class wine {
 		$data['date_posted'] = date('Y-m-d');
 		$data['bottles'] = $array['qty'];
 		$data['price_per_bottle'] = $array['price_purchase'];
-		$data['description'] = "Original import into system";
+		$data['name'] = "Original import into system";
 		
 		$transaction = new transaction();
 		$transaction->create($data);
