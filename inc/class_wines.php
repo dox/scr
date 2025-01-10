@@ -326,6 +326,8 @@ class wineClass {
 	public function transactionsTypes() {
 		$array['Transaction'] = "deduct";
 		$array['Import'] = "import";
+		$array['Stock Adjustment (Deduction)'] = "deduct";
+		$array['Stock Adjustment (Addition)'] = "import";
 		$array['Wastage'] = "deduct";
 		
 		return $array;
