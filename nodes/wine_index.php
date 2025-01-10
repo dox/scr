@@ -94,6 +94,8 @@ if (isset($_POST['name'])) {
 	<div class="col">
 		<h1>Recent Transactions</h1>
 		<div id="chart_transactions_by_day"></div>
+		
+		<p><a href="index.php?n=wine_transactions" class="float-end">View all</a></p>
 		<?php
 		  $transaction = new transaction();
 		  $subsetOfTransactions = array_slice($wineClass->allTransactions(), 0, 10, true);

@@ -16,13 +16,18 @@ if (!empty($transaction->description)) {
 	$subtitle .= " <i>(" . $transaction->description . ")</i>";
 }
 
+if (checkpoint_charlie("global_admin")) {
+  $icons[] = array("class" => "btn-danger", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#trash\"/></svg> Delete Transaction", "value" => "onclick=\"transactionDelete(" . $transaction->uid . ")\"");
+}
 echo makeTitle($title, $subtitle, $icons, true);
 ?>
+
+
 
 <nav aria-label="breadcrumb">
 	<ol class="breadcrumb">
 		<li class="breadcrumb-item"><a href="index.php?n=wine_index">Wine</a></li>
-		<li class="breadcrumb-item"><a href="index.php?n=wine_index">Transactions</a></li>
+		<li class="breadcrumb-item"><a href="index.php?n=wine_transactions">Transactions</a></li>
 		<li class="breadcrumb-item active"><?php echo $transaction->uid; ?></li>
 	</ol>
 </nav>
@@ -128,3 +133,31 @@ echo makeTitle($title, $subtitle, $icons, true);
 		</div>
 	</div>
 </div>
+
+
+<script>
+function transactionDelete(transactionUID) {
+  var transaction_uid = transactionUID;
+  
+  if (window.confirm("Are you really sure you want to delete this transaction?  The current stock quantity will be recalcualted")) {
+	var xhr = new XMLHttpRequest();
+
+	var formData = new FormData();
+	formData.append("transaction_uid", transaction_uid);
+	
+	xhr.onload = async function() {
+	  location.href = 'index.php?n=wine_transactions';
+	}
+
+	xhr.onerror = function(){
+	  // failure case
+	  alert (xhr.responseText);
+	}
+
+	xhr.open ("POST", "../actions/wine_transactionDelete.php", true);
+	xhr.send (formData);
+
+	return false;
+  }
+}
+</script>

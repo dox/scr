@@ -72,6 +72,24 @@ class transaction {
 		return true;
 	}
 	
+	public function delete() {
+		global $db, $logsClass;
+		
+		$existingTransactionName = $this->name;
+		$existingTransactionUID = $this->uid;
+		
+		$sql  = "DELETE FROM " . self::$table_name;
+		$sql .= " WHERE uid = " . $this->uid;
+		$sql .= " LIMIT 1";
+		
+		$db->query($sql);
+		
+		$logArray['category'] = "wine";
+		$logArray['result'] = "warning";
+		$logArray['description'] = "Deleted [transactionUID:" . $existingTransactionUID . "] (" . $existingTransactionName . ")";
+		$logsClass->create($logArray);
+	}
+	
 	public function typeBadge() {
 		$output = "<span class=\"badge rounded-pill text-bg-info\">" . $this->type . "</span>";
 		
