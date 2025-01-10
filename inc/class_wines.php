@@ -168,29 +168,6 @@ class wineClass {
 		return $transactions;
 	}
 	
-	public function allListsOLD($whereFilterArray = null) {
-		global $db;
-		
-		$sql  = "SELECT * FROM " . self::$table_lists;
-		
-		if (!empty($whereFilterArray)) {
-			$conditions = [];
-			foreach ($whereFilterArray as $key => $value) {
-				// Escaping the key and value for safety
-				$escapedKey = addslashes($key);
-				$escapedValue = addslashes($value);
-				$conditions[] = "$escapedKey = '$escapedValue'";
-			}
-			$sql .= " WHERE " . implode(' AND ', $conditions);
-		}
-		
-		$sql .= " ORDER BY last_updated DESC, name ASC";
-		
-		$lists = $db->query($sql)->fetchAll();
-		
-		return $lists;
-	}
-	
 	public function allLists($whereFilterArray = null) {
 		global $db;
 		
