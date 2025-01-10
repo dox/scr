@@ -84,14 +84,13 @@ class transaction {
 		$output = "";
 		
 		if (count($transactions) > 0) {
-			$output .= "<table class=\"table\">";
+			$output .= "<table class=\"table table-responsive\">";
 			$output .= "<thead>";
 			$output .= "<tr>";
 			$output .= "<th style=\"width: 18%;\" scope=\"col\">Date</th>";
-			$output .= "<th scope=\"col\">Username</th>";
-			$output .= "<th scope=\"col\">Type</th>";
-			$output .= "<th scope=\"col\">Bottles</th>";
-			$output .= "<th scope=\"col\">£/Bottle</th>";
+			$output .= "<th style=\"width: 18%;\" scope=\"col\">Username</th>";
+			$output .= "<th style=\"width: 10%;\" scope=\"col\">Bottles</th>";
+			$output .= "<th style=\"width: 18%;\" scope=\"col\">£/Bottle</th>";
 			$output .= "<th scope=\"col\">Name</th>";
 			$output .= "<th style=\"width: 8%;\" scope=\"col\"></th>";
 			$output .= "</tr>";
@@ -129,10 +128,9 @@ class transaction {
 		$output  = "<tr class=\"" . $rowClass . "\">";
 		$output .= "<th scope=\"row\">" . dateDisplay($transaction->date_posted) . "</th>";
 		$output .= "<td>" . $transaction->username . "</td>";
-		$output .= "<td>" . $transaction->typeBadge() . "</td>";
 		$output .= "<td class=\"" . $bottlesClass . "\">" . $transaction->bottles . "</td>";
 		$output .= "<td>" . currencyDisplay($transaction->price_per_bottle) . "</td>";
-		$output .= "<td class=\"text-truncate\">" . $transaction->name . "</td>";
+		$output .= "<td>" . $transaction->typeBadge() . " " . $transaction->name . "</td>";
 		$output .= "<td>" . $iconLink . "</td>";
 		
 		$output .= "</tr>";

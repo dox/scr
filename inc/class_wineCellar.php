@@ -185,31 +185,22 @@ class cellar {
 	public function binsTable($bins) {
 		global $settingsClass;
 		
-		$output = "";
-		foreach (explode(",", $settingsClass->value('wine_category')) AS $wine_category) {
-			$bins = $this->allBins(array('category' => $wine_category));
-			
-			if (count($bins) > 0) {
-				$output .= "<h2>" . $wine_category . " bins</h2>";
-				$output .= "<table class=\"table\">";
-				$output .= "<thead>";
-				$output .= "<tr>";
-				$output .= "<th style=\"width: 10%;\" scope=\"col\">Bin</th>";
-				$output .= "<th scope=\"col\">Wine</th>";
-				$output .= "<th style=\"width: 10%;\" scope=\"col\">Bottles</th>";
-				$output .= "</tr>";
-				$output .= "</thead>";
-				$output .= "<tbody>";
-				
-				foreach ($bins AS $bin) {
-					$output .= $this->binTableRow($bin);
-				}
-				
-				$output .= "</tbody>";
-				$output .= "</table>";
-			}
-			
+		$output .= "<table class=\"table\">";
+		$output .= "<thead>";
+		$output .= "<tr>";
+		$output .= "<th style=\"width: 10%;\" scope=\"col\">Bin</th>";
+		$output .= "<th scope=\"col\">Wine</th>";
+		$output .= "<th style=\"width: 10%;\" scope=\"col\">Bottles</th>";
+		$output .= "</tr>";
+		$output .= "</thead>";
+		$output .= "<tbody>";
+		
+		foreach ($bins AS $bin) {
+			$output .= $this->binTableRow($bin);
 		}
+			
+		$output .= "</tbody>";
+		$output .= "</table>";
 		
 		return $output;
 	}

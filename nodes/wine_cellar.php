@@ -96,9 +96,49 @@ echo makeTitle($title, $subtitle, $icons, true);
 
 <div id="chart"></div>
 
-<?php
-echo $cellar->binsTable($cellar->allBins());
-?>
+<ul class="nav nav-tabs nav-fill" id="remoteTabs">
+	<?php
+	$i = 1;
+	foreach (explode(",", $settingsClass->value('wine_category')) AS $wine_category) {
+		$active = "";
+		$url = "/nodes/widgets/_cellarBinCategory.php?cellar_uid=" . $cellar->uid . "&category=" . $wine_category;
+		$href = "#tab" . $i;
+		
+		if ($i == 1) {
+			$active = "active";
+		}
+		
+		
+		$output  = "<li class=\"nav-item\">";
+		$output .= "<a class=\"nav-link " . $active . "\" aria-current=\"page\" data-url=\"" . $url . "\" href=\"" . $href . "\" data-bs-toggle=\"tab\">" . $wine_category . "</a>";
+		$output .= "</li>";
+		
+		echo $output;
+		
+		$i++;
+	}
+	?>
+</ul>
+
+<div class="tab-content mt-3" id="tabContent">
+	<?php
+	$i = 1;
+	foreach (explode(",", $settingsClass->value('wine_category')) AS $wine_category) {
+		$active = "";
+		if ($i == 1) {
+			$active = "show active";
+		}
+		
+		$output  = "<div class=\"tab-pane fade " . $active . "\" id=\"tab" . $i . "\">";
+		$output .= "Loading content for " . $wine_category . "...";
+		$output .= "</div>";
+		
+		echo $output;
+		
+		$i++;
+	}
+	?>
+</div>
 
 <form method="post" id="bin_new" action="<?php echo $_SERVER['REQUEST_URI']; ?>">
 <div class="modal fade" id="newBinModal" tabindex="-1" aria-hidden="true">
@@ -276,4 +316,48 @@ chart: {
 
 var chart = new ApexCharts(document.querySelector("#chart"), options);
 chart.render();
+</script>
+
+<script>
+	// Function to load content into a specific tab pane
+	function loadTabContent(tabLink) {
+		const targetId = tabLink.getAttribute('href').substring(1); // Get tab pane ID
+		const url = tabLink.getAttribute('data-url'); // Get URL
+		const targetPane = document.getElementById(targetId); // Get the associated tab pane
+
+		// Fetch and load content only if not already loaded
+		if (targetPane.innerHTML.trim() === '' || targetPane.innerHTML.startsWith('Loading')) {
+			fetch(url)
+				.then(response => {
+					if (!response.ok) {
+						throw new Error(`HTTP error! Status: ${response.status}`);
+					}
+					return response.text();
+				})
+				.then(data => {
+					targetPane.innerHTML = data; // Populate the tab pane
+				})
+				.catch(error => {
+					targetPane.innerHTML = `Error loading content: ${error.message}`; // Handle errors
+				});
+		}
+	}
+
+	// Main script
+	document.addEventListener('DOMContentLoaded', function () {
+		const tabs = document.querySelectorAll('#remoteTabs .nav-link');
+
+		// Load content for the first active tab when the page loads
+		const activeTab = document.querySelector('#remoteTabs .nav-link.active');
+		if (activeTab) {
+			loadTabContent(activeTab);
+		}
+
+		// Add event listeners for tab switching
+		tabs.forEach(tab => {
+			tab.addEventListener('shown.bs.tab', function (event) {
+				loadTabContent(event.target); // Load content when a tab is activated
+			});
+		});
+	});
 </script>
