@@ -64,6 +64,8 @@ class bin {
 			foreach ($this->currentWines() AS $wine) {
 				$wineNames[] = $wine['name'];
 			}
+			
+			$wineNames = array_unique($wineNames);
 			return "Multiple Wines (" . count($this->currentWines()) . ") " . implode(", ", $wineNames);
 		} elseif (count($this->currentWines()) == 0) {
 			return "Empty";
