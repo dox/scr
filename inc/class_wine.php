@@ -190,6 +190,10 @@ class wine {
 		
 		$results = $db->query($sql)->fetchArray();
 		
+		if (empty($results)) {
+			$results['total'] = 0;
+		}
+		
 		return $results['total'];
 	}
 	
