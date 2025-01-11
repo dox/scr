@@ -206,16 +206,26 @@ echo makeTitle($title, $subtitle, $icons, true);
 				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
 			<div class="modal-body">
-				<div class="mb-3">
-					<label for="name" class="form-label">Cellar Name</label>
-					<input type="text" class="form-control" id="name" name="name" value="<?php echo $cellar->name; ?>">
+				<div class="row">
+				<div class="col-3">
+					<div class="mb-3">
+						<div class="mb-3">
+							<label for="short_code" class="form-label">Short Code</label>
+							<input type="text" class="form-control" id="short_code" name="short_code" value="<?php echo $cellar->short_code; ?>" maxlength="2">
+						</div>
+					</div>
 				</div>
-				<div class="mb-3">
-					<label for="short_code" class="form-label">Cellar Short Code</label>
-					<input type="text" class="form-control" id="short_code" name="short_code" value="<?php echo $cellar->short_code; ?>" maxlength="2">
+				<div class="col-9">
+					<div class="mb-3">
+						<label for="name" class="form-label">Cellar Name</label>
+						<input type="text" class="form-control" id="name" name="name" value="<?php echo $cellar->name; ?>">
+					</div>
 				</div>
+				</div>
+				
+				
 				<div class="mb-3">
-					<label for="description" class="form-label">Cellar Notes</label>
+					<label for="description" class="form-label">Notes</label>
 					<textarea class="form-control" id="notes" name="notes" rows="3"><?php echo $cellar->notes; ?></textarea>
 				</div>
 			</div>
