@@ -296,7 +296,9 @@ document.getElementById('wine_search').addEventListener('keyup', function() {
 
 <?php
 foreach ($cellar->allBottlesByGrape() AS $grape => $count) {
-	$data[] = "{ x: '" . $grape . "', y: " . $count . "}";
+	if (!empty($grape)) {
+		$data[] = "{ x: '" . $grape . "', y: " . $count . "}";
+	}
 }
 ?>
 <script>

@@ -176,10 +176,10 @@ class cellar {
 		
 		foreach ($this->allWines(null, true) AS $wine) {
 			$wine = new wine($wine['uid']);
-			$grapArray[$wine->grape] = $grapArray[$wine->grape] + $wine->currentQty();
+			$graphArray[$wine->grape] = $grapArray[$wine->grape] + $wine->currentQty();
 		}
 		
-		return $grapArray;
+		return $graphArray;
 	}
 	
 	public function binsTable($bins) {
