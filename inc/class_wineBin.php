@@ -52,7 +52,7 @@ class bin {
 		foreach ($this->currentWines() AS $wine) {
 			$wine = new wine($wine['uid']);
 			
-			$qty = $qty + $wine->currentQty();
+			$qty += $wine->currentQty();
 		}
 		
 		return $qty;
