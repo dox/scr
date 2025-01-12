@@ -320,7 +320,7 @@ chart: {
   events: {
 	  click(event, chartContext, opts) {
 		  var clicked_grape = opts.config.series[opts.seriesIndex].data[opts.dataPointIndex].x;
-		  window.location.href = 'index.php?n=wine_search&filter=grape&value=' + clicked_grape;
+		  window.location.href = 'index.php?n=wine_search&filter=grape&cellar_uid=' + <?php echo $cellar->uid; ?> + '&value=' + clicked_grape;
 	  }
   }
 }
