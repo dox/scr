@@ -172,11 +172,7 @@ echo makeTitle($title, $subtitle, $icons, true);
 					<select class="form-select" id="category" name="category" required>
 						<?php
 						foreach (explode(",", $settingsClass->value('wine_category')) AS $wine_category) {
-							if (isset($wine->category) && $wine->category == $wine_category) {
-								echo "<option selected>" . $wine_category . "</option>";
-							} else {
-								echo "<option>" . $wine_category . "</option>";
-							}
+							echo "<option>" . $wine_category . "</option>";
 						}
 						?>
 					</select>
