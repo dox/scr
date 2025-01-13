@@ -446,5 +446,35 @@ class wine {
 		
 		return true;
 	}
+	
+	public function delete() {
+		global $db, $logsClass;
+		
+		$originalWineUID = $this->uid;
+		
+		//delete photo (if empty no worries)
+		$target_dir = "../img/wines/";
+		if (file_exists($target_dir . $this->photograph)) {
+			unlink($target_dir . $this->photograph);
+			
+			$logArray['category'] = "wine";
+			$logArray['result'] = "warning";
+			$logArray['description'] = "Deleted file:" . $this->photograph;
+			$logsClass->create($logArray);
+		} 
+		
+		// Construct the final UPDATE query
+		$sql = "DELETE FROM wine_wines WHERE uid = '" . $this->uid . "'";
+		$sql .= " LIMIT 1";
+		
+		$delete = $db->query($sql);
+		
+		$logArray['category'] = "wine";
+		$logArray['result'] = "warning";
+		$logArray['description'] = "Deleted [wineUID:" . $originalWineUID . "]";
+		$logsClass->create($logArray);
+		
+		return true;
+	}
 }
 ?>

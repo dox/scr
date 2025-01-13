@@ -16,6 +16,10 @@ $subtitle = "<a href=\"" . $urlGrape . "\">" . $wine->grape . "</a>, <a href=\""
 $icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#plus-circle\"/></svg> Add Transaction", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#transactionModal\"");
 $icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#journal-text\"/></svg> Edit Wine", "value" => "onclick=\"location.href='index.php?n=wine_edit&edit=edit&uid=" . $wine->uid . "'\"");
 $icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#heart-empty\"/></svg> Add To List", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#listModal\"");
+if (checkpoint_charlie("global_admin")) {
+	$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#trash\"/></svg> Delete Wine", "value" => "onclick=\"wineDelete(" . $wine->uid . ")\"");
+}
+
 
 echo makeTitle($title, $subtitle, $icons, true);
 ?>
@@ -335,4 +339,28 @@ function createTransaction(button) {
 	xhr.send(formData);
 };
 
+function wineDelete(wineUID) {
+  var wine_uid = (wineUID);
+  
+  if (window.confirm("Are you really sure you want to delete this wine (and photograph)?  Transactions will not be deleted.  WARNING!  This action cannot be undone!")) {
+	var xhr = new XMLHttpRequest();
+
+	var formData = new FormData();
+	formData.append("wine_uid", wine_uid);
+	
+	xhr.onload = async function() {
+	  location.href = 'index.php?n=wine_index';
+	}
+
+	xhr.onerror = function(){
+	  // failure case
+	  alert (xhr.responseText);
+	}
+
+	xhr.open ("POST", "../actions/wine_delete.php", true);
+	xhr.send (formData);
+
+	return false;
+  }
+}
 </script>
