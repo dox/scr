@@ -17,6 +17,7 @@ $columns = array(
   "country_of_origin",
   "region_of_origin",
   "vintage",
+  "stock_value",
   "price_purchase",
   "price_internal",
   "price_external",
@@ -49,6 +50,7 @@ foreach ($allWines AS $wine) {
   $row['country_of_origin'] = $wine->country_of_origin;
   $row['region_of_origin'] = $wine->region_of_origin;
   $row['vintage'] = $wine->vintage();
+  $row['stock_value'] = ($wine->currentQty() * $wine->price_purchase);
   $row['price_purchase'] = $wine->price_purchase;
   $row['price_internal'] = $wine->price_internal;
   $row['price_external'] = $wine->price_external;
