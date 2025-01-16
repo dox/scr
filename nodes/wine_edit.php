@@ -73,7 +73,7 @@ if ($pageType == "add") {
 						$wine->bin_uid = $_GET['bin_uid'];
 					}
 					
-					$categories = array_slice(explode(",", $settingsClass->value('wine_category')), 0, 5, true);
+					$categories = explode(",", $settingsClass->value('wine_category'));
 					
 					foreach ($categories AS $wine_category) {
 						$output = "<optgroup label=\"" . $wine_category . "\">";
