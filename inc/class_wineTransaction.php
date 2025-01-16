@@ -168,8 +168,13 @@ class transaction {
 	public function allLinkedTransactions() {
 		global $db;
 		
-		$sql  = "SELECT * FROM " . self::$table_name;
-		$sql .= " WHERE linked = '" . $this->linked . "'";
+		if (!empty($this->linked)) {
+			$sql  = "SELECT * FROM " . self::$table_name;
+			$sql .= " WHERE linked = '" . $this->linked . "'";
+		} else {
+			$sql  = "SELECT * FROM " . self::$table_name;
+			$sql .= " WHERE uid = '" . $this->uid . "'";
+		}
 		
 		$results = $db->query($sql)->fetchAll();
 		
