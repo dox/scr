@@ -43,7 +43,11 @@ class wine {
 			$bin = new bin($this->bin_uid);
 			$cellar = new cellar($bin->cellar_uid);
 			
-			$output = $cellar->name . " > " . $this->name;
+			$output = $cellar->name . " > " . $bin->name . " > " . $this->name;
+			
+			if (!empty($this->vintage)) {
+				$output .= " (" . $this->vintage() . ")";
+			}
 		} else {
 			$output  = $this->name;
 		}
