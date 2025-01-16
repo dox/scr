@@ -60,6 +60,11 @@ class transaction {
 		$sql .= " wine_uid = '" . $wine->uid . "',";
 		$sql .= " bottles = '" . $bottles . "',";
 		$sql .= " price_per_bottle = '" . $array['price_per_bottle'] . "',";
+		
+		if (isset($array['linked'])) {
+			$sql .= " linked = '" . $array['linked'] . "',";
+		}
+		
 		$sql .= " snapshot = '" . str_replace("'", "", json_encode($wine)) . "'";
 		
 		$create_transaction = $db->query($sql);
@@ -158,6 +163,17 @@ class transaction {
 	
 	public function redOrGreen($value) {
 		
+	}
+	
+	public function allLinkedTransactions() {
+		global $db;
+		
+		$sql  = "SELECT * FROM " . self::$table_name;
+		$sql .= " WHERE linked = '" . $this->linked . "'";
+		
+		$results = $db->query($sql)->fetchAll();
+		
+		return $results;
 	}
 }
 ?>

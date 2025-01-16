@@ -14,6 +14,7 @@ $urlCategory = "index.php?n=wine_search&filter=category&value=" . $wine->categor
 $title = $wine->name;
 $subtitle = "<a href=\"" . $urlGrape . "\">" . $wine->grape . "</a>, <a href=\"" . $urlCategory . "\">" . $wine->category . "</a>";
 $icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#plus-circle\"/></svg> Add Transaction", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#transactionModal\"");
+$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#plus-circle\"/></svg> Add Multi-Transaction", "value" => "onclick=\"location.href='index.php?n=wine_transaction_multi'\"");
 $icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#journal-text\"/></svg> Edit Wine", "value" => "onclick=\"location.href='index.php?n=wine_edit&edit=edit&uid=" . $wine->uid . "'\"");
 $icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#heart-empty\"/></svg> Add To List", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#listModal\"");
 if (checkpoint_charlie("global_admin")) {
