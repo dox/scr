@@ -25,7 +25,7 @@ function wineListItem($wineUID) {
 	$output .= "</div>";
 	$output .= "<div class=\"col\">";
 	$output .= "<label for=\"price_per_bottle\" class=\"form-label\">Price/each</label>";
-	$output .= "<input type=\"number\" class=\"form-control\" id=\"price_per_bottle\" name=\"price_per_bottle[]\" placeholder=\"Price/each\" value=\"" . $wine->price_external . "\">";
+	$output .= "<input type=\"number\" class=\"form-control\" id=\"price_per_bottle\" name=\"price_per_bottle[]\" placeholder=\"Price/each\" value=\"" . $wine->price_internal . "\">";
 	$output .= "<div id=\"priceHelpBlock\" class=\"form-text\">";
 	$output .= "Internal: " . currencyDisplay($wine->price_internal) . " / External: " . currencyDisplay($wine->price_external);
 	$output .= "</div>";
