@@ -82,6 +82,10 @@ class wine {
 		return $value;
 	}
 	
+	public function stockValue($filterDate = null) {
+		return ($this->currentQty($filterDate) * $this->price_purchase);
+	}
+	
 	public function transactions() {
 		$wineClass = new wineClass();
 		

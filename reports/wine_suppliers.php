@@ -26,7 +26,7 @@ foreach ($allSuppliers AS $supplier) {
 	  
 	  $total_wines ++;
 	  $total_bottles += $wine->currentQty();
-	  $total_value += ($wine->currentQty() * $wine->price_purchase);
+	  $total_value += $wine->stockValue();
 	  
   }
   $row['supplier'] = $supplier['supplier'];

@@ -13,7 +13,7 @@ if (isset($_POST['filter_date'])) {
 foreach ($allWines AS $wine) {
 	$wine = new wine($wine['uid']);
 	$totalBottles = $totalBottles + $wine->currentQty($_POST['filter_date']);
-	$totalPurchaseValue = $totalPurchaseValue + ($wine->currentQty($_POST['filter_date']) * $wine->price_purchase);
+	$totalPurchaseValue += $wine->stockValue($_POST['filter_date']);
 }
 ?>
 
@@ -103,7 +103,7 @@ foreach ($allCellars AS $cellar) {
 			
 			$qty = $wine->currentQty($_POST['filter_date']);
 			$totalBottlesByCategory += $qty;
-			$totalPurchaseValue += ($qty * $wine->price_purchase);
+			$totalPurchaseValue += $wine->stockValue();
 			
 			$totalBottlesByCellar += $qty;
 		}
