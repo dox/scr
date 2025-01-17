@@ -41,7 +41,7 @@ echo makeTitle($title, $subtitle, $icons, true);
 </div>
 <hr class="pb-3" />
 
-<form method="post" id="wines" class="needs-validation" novalidate>
+<form method="post" action="index.php?n=wine_transactions" target="_self">
 <?php
 if (isset($_POST['wine_uid'])) {
 	printArray($_POST);
@@ -185,28 +185,8 @@ function submitAllForms() {
 		});
 	});
 
-	// Debugging: Log the FormData keys and values
-	console.log('Data being sent:');
-	for (var pair of formData.entries()) {
-		console.log(pair[0] + ':', pair[1]);
-	}
-
 	// Send the FormData object
 	xhr.send(formData);
-
-	// Add event listeners for the response
-	xhr.onload = function () {
-		if (xhr.status != 200) { // Analyze HTTP response status
-			alert('Error ' + xhr.status + ': ' + xhr.statusText); // e.g. 404: Not Found
-		} else {
-			alert('Success: ' + xhr.responseText); // response from the server
-		}
-	};
-
-	// Handle network errors
-	xhr.onerror = function () {
-		alert('Request failed. Please check your network connection.');
-	};
 
 	// Prevent default behavior (if this function is tied to a button click)
 	return false;

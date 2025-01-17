@@ -20,11 +20,11 @@ function wineListItem($wineUID) {
 	$output .= "<label for=\"bottles\" class=\"form-label\">Qty.</label>";
 	$output .= "<input type=\"number\" class=\"form-control\" id=\"bottles\" name=\"bottles[]\" placeholder=\"Qty\" value=\"1\">";
 	$output .= "<div id=\"qtyHelpBlock\" class=\"form-text\">";
-	$output .= "Available: " . $wine->qty;
+	$output .= "Available: " . $wine->currentQty();
 	$output .= "</div>";
 	$output .= "</div>";
 	$output .= "<div class=\"col\">";
-	$output .= "<label for=\"price_per_bottle\" class=\"form-label\">Price/each</label>";
+	$output .= "<label for=\"price_per_bottle\" class=\"form-label\">£/bottle</label>";
 	$output .= "<input type=\"number\" class=\"form-control\" id=\"price_per_bottle\" name=\"price_per_bottle[]\" placeholder=\"Price/each\" value=\"" . $wine->price_internal . "\">";
 	$output .= "<div id=\"priceHelpBlock\" class=\"form-text\">";
 	$output .= "Internal: " . currencyDisplay($wine->price_internal) . " / External: " . currencyDisplay($wine->price_external);
