@@ -198,7 +198,13 @@ class wine {
 		
 		$results = $db->query($sql)->fetchArray();
 		
+		// don't allow null
 		if (!isset($results['total'])) {
+			$results['total'] = 0;
+		}
+		
+		// don't allow negatives
+		if ($results['total'] < 0) {
 			$results['total'] = 0;
 		}
 		
