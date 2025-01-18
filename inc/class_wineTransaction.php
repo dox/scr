@@ -14,6 +14,7 @@ class transaction {
 	public $name;
 	public $description;
 	public $snapshot;
+	public $linked;
 	
 	function __construct($transactionUID = null) {
 		global $db;
@@ -81,18 +82,35 @@ class transaction {
 		global $db, $logsClass;
 		
 		$existingTransactionName = $this->name;
-		$existingTransactionUID = $this->uid;
 		
-		$sql  = "DELETE FROM " . self::$table_name;
-		$sql .= " WHERE uid = " . $this->uid;
-		$sql .= " LIMIT 1";
+		if (!empty($this->linked)) {
+			$existingTransactionlinkedUID = $this->linked;
+			
+			$sql  = "DELETE FROM " . self::$table_name;
+			$sql .= " WHERE linked = '" . $this->linked . "'";
+			
+			$db->query($sql);
+			
+			$logArray['category'] = "wine";
+			$logArray['result'] = "warning";
+			$logArray['description'] = "Deleted multiple transactions with linkedUID " . $existingTransactionlinkedUID . "] (" . $existingTransactionName . ")";
+			$logsClass->create($logArray);
+		} else {
+			$existingTransactionUID = $this->uid;
+			
+			$sql  = "DELETE FROM " . self::$table_name;
+			$sql .= " WHERE uid = " . $this->uid;
+			$sql .= " LIMIT 1";
+			
+			$db->query($sql);
+			
+			$logArray['category'] = "wine";
+			$logArray['result'] = "warning";
+			$logArray['description'] = "Deleted [transactionUID:" . $existingTransactionUID . "] (" . $existingTransactionName . ")";
+			$logsClass->create($logArray);
+		}
 		
-		$db->query($sql);
-		
-		$logArray['category'] = "wine";
-		$logArray['result'] = "warning";
-		$logArray['description'] = "Deleted [transactionUID:" . $existingTransactionUID . "] (" . $existingTransactionName . ")";
-		$logsClass->create($logArray);
+		return true;
 	}
 	
 	public function typeBadge() {

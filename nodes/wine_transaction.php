@@ -12,9 +12,8 @@ if (!empty($transaction->description)) {
 	$subtitle .= " <i>(" . $transaction->description . ")</i>";
 }
 
-if (checkpoint_charlie("global_admin")) {
-  $icons[] = array("class" => "btn-danger", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#trash\"/></svg> Delete Transaction", "value" => "onclick=\"transactionDelete(" . $transaction->uid . ")\"");
-}
+$icons[] = array("class" => "btn-danger", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#trash\"/></svg> Delete Transaction", "value" => "onclick=\"transactionDelete(" . $transaction->uid . ")\"");
+
 echo makeTitle($title, $subtitle, $icons, true);
 ?>
 
