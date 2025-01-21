@@ -103,7 +103,7 @@ foreach ($allCellars AS $cellar) {
 			
 			$qty = $wine->currentQty($_POST['filter_date']);
 			$totalBottlesByCategory += $qty;
-			$totalPurchaseValue += $wine->stockValue();
+			$totalPurchaseValue += $wine->stockValue($_POST['filter_date']);
 			
 			$totalBottlesByCellar += $qty;
 		}
