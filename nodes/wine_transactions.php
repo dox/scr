@@ -13,7 +13,7 @@ echo makeTitle($title, $subtitle, $icons, true);
 <nav aria-label="breadcrumb">
 	<ol class="breadcrumb">
 		<li class="breadcrumb-item"><a href="index.php?n=wine_index">Wine</a></li>
-		<li class="breadcrumb-item active"><a href="index.php?n=wine_index">Transactions</a></li>
+		<li class="breadcrumb-item active">Transactions</li>
 	</ol>
 </nav>
 

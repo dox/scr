@@ -147,7 +147,7 @@ $bookingsClass = new bookings();
             }
           $output .= "</td>";
           $output .= "<td>";
-            if ($bookingObject->domus == "1") {
+            if ($bookingObject->charge_to != "Dining Entitlement") {
               $output .= "<svg width=\"2em\" height=\"2em\" class=\"mx-1\"><use xlink:href=\"img/icons.svg#graduation-cap\"/></svg>";
             }
           $output .= "</td>";
@@ -177,7 +177,7 @@ $bookingsClass = new bookings();
                 }
               $output .= "</td>";
               $output .= "<td>";
-                if ($guest->guest_charge_to == "Domus") {
+                if ($guest->guest_charge_to != "Dining Entitlement") {
                   $output .= "<svg width=\"2em\" height=\"2em\" class=\"mx-1\"><use xlink:href=\"img/icons.svg#graduation-cap\"/></svg>";
                 }
               $output .= "</td>";
