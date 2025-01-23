@@ -125,7 +125,7 @@ class meal {
     
     $output  = "<div class=\"d-flex align-items-center justify-content-between\"><span>" . $title . "</span><span>" . $booked . " of " . $capacity . "</span></div>";
     
-    $output .= "<div class=\"progress mb-3\" role=\"progressbar\" aria-label=\"" . $title . "\" aria-valuenow=\"" . $percentage . "\" aria-valuemin=\"0\" aria-valuemax=\"" . $capacity . "\">";
+    $output .= "<div class=\"progress mb-3\" role=\"progressbar\" aria-label=\"" . $title . "\" aria-valuenow=\"" . $booked . "\" aria-valuemin=\"0\" aria-valuemax=\"" . $capacity . "\">";
     $output .= "<div class=\"progress-bar " . $class . "\" style=\"width: " . $percentage . "%\"></div>";
     $output .= "</div>";
     
