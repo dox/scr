@@ -67,23 +67,20 @@ class meal {
 
     $output .= "</ul>";
     
-    $dessertCapacityMet = "";
-    if ($this->total_dessert_bookings_this_meal() > $this->scr_dessert_capacity)  {
-      $dessertCapacityMet = "<span class=\"badge rounded-pill bg-danger text-dark\">Dessert over capacity</span>";
-    } elseif ($this->scr_dessert_capacity > 0 && $this->total_dessert_bookings_this_meal() == $this->scr_dessert_capacity) {
-      $dessertCapacityMet = "<span class=\"badge rounded-pill bg-warning text-dark\">Dessert at capacity</span>";
-    }
-
+    $output .= $this->progressBar("Dinner");
+    $output .= $this->progressBar("Dessert");
+    
     $output .= "</p>";
 
-    if ($this->total_bookings_this_meal('SCR') > 0 || $this->totalCapacity('SCR') > 0) {
+    /*if ($this->total_bookings_this_meal('SCR') > 0 || $this->totalCapacity('SCR') > 0) {
       $scrCapacity = "(SCR " . $this->total_bookings_this_meal('SCR') . "/" . $this->totalCapacity('SCR') . ")";
     }
     if ($this->total_bookings_this_meal('MCR') > 0 || $this->totalCapacity('MCR') > 0) {
       $mcrCapacity = "(MCR " . $this->total_bookings_this_meal('MCR') . "/" . $this->totalCapacity('MCR') . ")";
     }
     $output .= "<small class=\"d-block\">Bookings: " . $scrCapacity . "  " .  $mcrCapacity . $dessertCapacityMet . "</small>";
-
+    */
+    
     $output .= "</div>";
     $output .= "<div class=\"card-footer bg-white border-0 px-0 py-0\">";
     $output .= $this->bookingButton();
@@ -91,6 +88,47 @@ class meal {
     $output .= "</div>";
     $output .= "</div>";
 
+    return $output;
+  }
+  
+  private function progressBar($type = "Dinner") {
+    if ($type == "Dinner") {
+      $title = $this->type . " bookings";
+      $capacity = $this->totalCapacity('SCR');
+      $booked = $this->total_bookings_this_meal('SCR');
+      
+      // calculate Dinner
+      if ($capacity > 0 AND $booked > 0) {
+        $percentage = round(($booked/$capacity) * 100,0);
+      }
+    } elseif ($type = "Dessert") {
+      // calculate Dinner
+      $title = "Dessert bookings";
+      $capacity = $this->scr_dessert_capacity;
+      $booked = $this->total_dessert_bookings_this_meal('SCR');
+      
+      if ($capacity > 0 AND $booked > 0) {
+        $percentage = round(($booked/$capacity) * 100,0);
+      }
+    } else {
+      return $type . " unknown";
+    }
+    
+    
+    if ($percentage >= 100) {
+      $class = "bg-danger";
+    } elseif($percentage >= 80) {
+      $class = "bg-warning";
+    } else {
+      $class = "bg-info";
+    }
+    
+    $output  = "<div class=\"d-flex align-items-center justify-content-between\"><span>" . $title . "</span><span>" . $booked . " of " . $capacity . "</span></div>";
+    
+    $output .= "<div class=\"progress mb-3\" role=\"progressbar\" aria-label=\"" . $title . "\" aria-valuenow=\"" . $percentage . "\" aria-valuemin=\"0\" aria-valuemax=\"" . $dinnerBookings . "\">";
+    $output .= "<div class=\"progress-bar " . $class . "\" style=\"width: " . $percentage . "%\"></div>";
+    $output .= "</div>";
+    
     return $output;
   }
 
