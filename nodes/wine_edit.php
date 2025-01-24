@@ -323,6 +323,8 @@ const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]
 const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
 
 function submitWine(button) {
+	button.disabled = true;
+	
 	var safeToContinue = true;
 	
 	// Fetch all the forms we want to apply custom Bootstrap validation styles to
@@ -340,6 +342,7 @@ function submitWine(button) {
 		form.classList.add('was-validated')
 	})
 	if (!safeToContinue) {
+		button.disabled = false;
 		return false;
 	}
 	
@@ -377,6 +380,7 @@ function submitWine(button) {
 
 	// This will be called in case of a network error
 	xhr.onerror = function() {
+		button.disabled = false;
 		alert('Request failed');
 	};
 };
