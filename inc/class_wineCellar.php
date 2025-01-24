@@ -190,6 +190,7 @@ class cellar {
 		$output .= "<tr>";
 		$output .= "<th style=\"width: 10%;\" scope=\"col\">Bin</th>";
 		$output .= "<th scope=\"col\">Wine</th>";
+		$output .= "<th style=\"width: 10%;\" scope=\"col\">Vintage</th>";
 		$output .= "<th style=\"width: 10%;\" scope=\"col\">Bottles</th>";
 		$output .= "</tr>";
 		$output .= "</thead>";
@@ -233,6 +234,7 @@ class cellar {
 		$output  = "<tr>";
 		$output .= "<th scope=\"row\"><a href=\"" . $url . "\">" . $bin->name . "</a></th>";
 		$output .= "<td class=\"" . $class . "\">" . $title . "</td>";
+		$output .= "<td>" . $bin->currentWineVintage() . "</td>";
 		$output .= "<td>" . $bin->currentBottlesCount() . "</td>";
 		$output .= "</tr>";
 		

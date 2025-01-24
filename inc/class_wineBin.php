@@ -74,6 +74,21 @@ class bin {
 		}
 	}
 	
+	public function currentWineVintage() {
+		if (count($this->currentWines()) > 1) {
+			foreach ($this->currentWines() AS $wine) {
+				$wineVintages[] = $wine['vintage'];
+			}
+			
+			$wineVintages = array_unique($wineVintages);
+			return implode("/", $wineVintages);
+		} elseif (count($this->currentWines()) == 0) {
+			return "";
+		} else {
+			return $this->currentWines()[0]['vintage'];
+		}
+	}
+	
 	public function create() {
 		global $db, $logsClass;
 		
