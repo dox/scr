@@ -27,6 +27,7 @@ if ($searchFilter == "list") {
 		"vintage" => "vintage",
 		"grape" => "grape",
 		"country_of_origin" => "country_of_origin",
+		"region_of_origin" => "region_of_origin",
 		"category" => "wine_wines.category",
 		"supplier" => "wine_wines.supplier",
 		"price" => "wine_wines.price_purchase",

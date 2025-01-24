@@ -9,10 +9,20 @@ $wine = new wine($wineUID);
 $bin = new bin($wine->bin_uid);
 $cellar = new cellar($bin->cellar_uid);
 
-$urlGrape = "index.php?n=wine_search&filter=grape&value=" . $wine->grape;
-$urlCategory = "index.php?n=wine_search&filter=category&value=" . $wine->category;
+$urlCategory =
 $title = $wine->name;
-$subtitle = "<a href=\"" . $urlGrape . "\">" . $wine->grape . "</a>, <a href=\"" . $urlCategory . "\">" . $wine->category . "</a>";
+
+if (!empty($wine->grape)) {
+	$subtitleArray[] = "<a href=\"index.php?n=wine_search&filter=grape&value=" . $wine->grape . "\">" . $wine->grape . "</a>";
+}
+if (!empty($wine->region_of_origin)) {
+	$subtitleArray[] = "<a href=\"index.php?n=wine_search&filter=region_of_origin&value=" . $wine->region_of_origin . "\">" . $wine->region_of_origin . "</a>";
+}
+if (!empty($wine->category)) {
+	$subtitleArray[] = "<a href=\"index.php?n=wine_search&filter=category&value=" . $wine->category . "\">" . $wine->category . "</a>";
+}
+$subtitle = implode(", ", $subtitleArray);
+
 $icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#plus-circle\"/></svg> Add Transaction", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#transactionModal\"");
 $icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#plus-circle\"/></svg> Add Multi-Transaction", "value" => "onclick=\"location.href='index.php?n=wine_transaction_multi'\"");
 $icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#journal-text\"/></svg> Edit Wine", "value" => "onclick=\"location.href='index.php?n=wine_edit&edit=edit&uid=" . $wine->uid . "'\"");
