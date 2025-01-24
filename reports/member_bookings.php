@@ -21,6 +21,7 @@ $columns = array(
   "booking_guests",
   "meal_name",
   "meal_notes",
+  "meal_menu",
   "meal_date",
   "meal_time",
   "member_diner_type", //member/guest
@@ -47,8 +48,13 @@ foreach ($bookings AS $bookingUID) {
   $bookingRow['booking_wine'] = $bookingObject->wine;
   $bookingRow['booking_dessert'] = $bookingObject->dessert;
   $bookingRow['booking_guests'] = count($bookingObject->guestsArray());
-  $bookingRow['meal_name'] = $mealObject->name;
-  $bookingRow['meal_notes'] = $mealObject->notes;
+  $bookingRow['meal_name'] = htmlspecialchars_decode($mealObject->name);
+  
+  if (checkpoint_charlie("meals")) {
+    $bookingRow['meal_notes'] = $mealObject->notes;
+  }
+  
+  $bookingRow['meal_menu'] = htmlspecialchars_decode($mealObject->menu);
   $bookingRow['meal_date'] = date('Y-m-d', strtotime($mealObject->date_meal));
   $bookingRow['meal_time'] = date('H:i', strtotime($mealObject->date_meal));
   $bookingRow['member_diner_type'] = "Member";
@@ -71,7 +77,12 @@ foreach ($bookings AS $bookingUID) {
     $bookingRowGuest['booking_wine'] = onToOne($guest->guest_wine) ;
     $bookingRowGuest['booking_dessert'] = $bookingObject->dessert; // takes value from host booking
     $bookingRowGuest['meal_name'] = htmlspecialchars_decode($mealObject->name);
-    $bookingRowGuest['meal_notes'] = $mealObject->notes;
+    $bookingRowGuest['meal_menu'] = htmlspecialchars_decode($mealObject->menu);
+    
+    if (checkpoint_charlie("meals")) {
+      $bookingRowGuest['meal_notes'] = $mealObject->notes;
+    }
+    
     $bookingRowGuest['meal_date'] = date('Y-m-d', strtotime($mealObject->date_meal));
     $bookingRowGuest['meal_time'] = date('H:i', strtotime($mealObject->date_meal));
     $bookingRowGuest['member_diner_type'] = "Guest";
