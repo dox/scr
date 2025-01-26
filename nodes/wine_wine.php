@@ -9,7 +9,6 @@ $wine = new wine($wineUID);
 $bin = new bin($wine->bin_uid);
 $cellar = new cellar($bin->cellar_uid);
 
-$urlCategory =
 $title = $wine->name;
 
 if (!empty($wine->grape)) {
@@ -30,7 +29,6 @@ $icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=
 if (checkpoint_charlie("global_admin")) {
 	$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#trash\"/></svg> Delete Wine", "value" => "onclick=\"wineDelete(" . $wine->uid . ")\"");
 }
-
 
 echo makeTitle($title, $subtitle, $icons, true);
 ?>
