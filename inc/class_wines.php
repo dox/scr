@@ -239,8 +239,9 @@ class wineClass {
 		
 		$sql  = "SELECT wine_wines.*, wine_bins.cellar_uid, CASE 
 			WHEN wine_wines.name LIKE \"%" . $searchTerm . "%\" THEN 20
-			WHEN wine_wines.code LIKE \"%" . $searchTerm . "%\" THEN 5
-			WHEN wine_wines.grape LIKE \"%" . $searchTerm . "%\" THEN 1
+			WHEN wine_wines.code LIKE \"%" . $searchTerm . "%\" THEN 10
+			WHEN wine_wines.grape LIKE \"%" . $searchTerm . "%\" THEN 5
+			WHEN wine_wines.region_of_origin LIKE \"%" . $searchTerm . "%\" THEN 1
 			ELSE 0
 		END AS weight ";
 		//$sql .= "FROM `wine_wines` ";
@@ -248,7 +249,8 @@ class wineClass {
 		$sql .= "WHERE (";
 			$sql .= "wine_wines.name LIKE \"%" . $searchTerm . "%\" ";
 			$sql .= "OR wine_wines.code LIKE \"%" . $searchTerm . "%\" ";
-			$sql .= "OR wine_wines.grape LIKE \"%" . $searchTerm . "%\"";
+			$sql .= "OR wine_wines.grape LIKE \"%" . $searchTerm . "%\" ";
+			$sql .= "OR wine_wines.region_of_origin LIKE \"%" . $searchTerm . "%\"";
 		$sql .= ") ";
 		
 		if (isset($cellarUID)) {
