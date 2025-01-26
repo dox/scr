@@ -9,23 +9,20 @@ if (checkpoint_charlie("wine")) {
 	$data = array();
 	
 	if (isset($_GET['q'])) {
-		$queryArray["wine_wines.name"] = $_GET['q'];
-		$queryArray["wine_wines.code"] = $_GET['q'];
-		$queryArray["wine_wines.region_of_origin"] = $_GET['q'];
 		
+		$searchTerm = htmlspecialchars($_GET['q']);
 		$cellarUID = null;
+		$closed = false;
 		if (isset($_GET['c'])) {
 			$cellarUID = filter_var($_GET['c'], FILTER_VALIDATE_INT);
+		}
+		if (isset($_GET['include']) && $_GET['include'] == "true") {
+			$closed = true;
 		}
 		
 		$resultsLimit = 4;
 		
-		// include closed wines or no
-		if (isset($_GET['include']) && $_GET['include'] == "true") {
-			$wines = $wineClass->searchAllWines($queryArray, $cellarUID, $resultsLimit, true);
-		} else {
-			$wines = $wineClass->searchAllWines($queryArray, $cellarUID, $resultsLimit);
-		}
+		$wines = $wineClass->weightedSearch($searchTerm, $cellarUID, $closed);
 		
 		foreach ($wines AS $wine) {
 			$wine = new wine($wine['uid']);

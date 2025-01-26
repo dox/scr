@@ -234,38 +234,41 @@ class wineClass {
 		return $results;
 	}
 	
-	public function searchAllWines($searchArray = null, $cellarUID = null, $limit = null, $closed = null) {
-		global $db, $logsClass;
+	public function weightedSearch($searchTerm, $cellarUID = null, $closed = false) {
+		global $db;
 		
-		foreach ($searchArray AS $searchKey => $searchString) {
-			$searchStatements[] = $searchKey . " LIKE '%" . $searchString . "%'";
-		}
-		
-		$sql  = "SELECT wine_wines.*, wine_bins.cellar_uid";
-		$sql .= " FROM wine_wines LEFT JOIN wine_bins ON wine_wines.bin_uid = wine_bins.uid";
-		$sql .= " WHERE";
+		$sql  = "SELECT wine_wines.*, wine_bins.cellar_uid, CASE 
+			WHEN wine_wines.name LIKE \"%" . $searchTerm . "%\" THEN 20
+			WHEN wine_wines.code LIKE \"%" . $searchTerm . "%\" THEN 5
+			WHEN wine_wines.grape LIKE \"%" . $searchTerm . "%\" THEN 1
+			ELSE 0
+		END AS weight ";
+		//$sql .= "FROM `wine_wines` ";
+		$sql .= " FROM wine_wines LEFT JOIN wine_bins ON wine_wines.bin_uid = wine_bins.uid ";
+		$sql .= "WHERE (";
+			$sql .= "wine_wines.name LIKE \"%" . $searchTerm . "%\" ";
+			$sql .= "OR wine_wines.code LIKE \"%" . $searchTerm . "%\" ";
+			$sql .= "OR wine_wines.grape LIKE \"%" . $searchTerm . "%\"";
+		$sql .= ") ";
 		
 		if (isset($cellarUID)) {
-			$sql .= " cellar_uid = '" . $cellarUID ."' AND ";
+			$sql .= "AND wine_bins.cellar_uid = '" . $cellarUID . "' ";
 		}
 		
-		if (isset($closed)) {
-			//$sql .= " wine_wines.status != 'Closed' AND ";
+		if ($closed == true) {
 		} else {
-			$sql .= " wine_wines.status != 'Closed' AND ";
+			$sql .= "AND wine_wines.status != 'Closed' ";
 		}
 		
-		$sql .= "(" . implode(" OR ", $searchStatements) . ")";
-		$sql .= " ORDER BY wine_wines.name ASC";
+		$sql .= "ORDER BY weight DESC ";
+		$sql .= "LIMIT 20";
 		
-		if ($limit) {
-			$sql .= " LIMIT " . $limit;
-		}
+		//echo $sql;
 		
 		$results = $db->query($sql)->fetchAll();
 		
 		return $results;
-	  }
+	}
 	
 	public function wineBottlesTotal($whereFilterArray = null) {
 		$qty = 0;
