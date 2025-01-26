@@ -114,7 +114,7 @@ class cellar {
 		$output .= "<div class=\"card-body\">";
 		$output .= "<h5 class=\"card-title\"><i>(" . $this->short_code . ")</i> " . $this->name . "</h5>";
 		$output .= "<div class=\"d-flex justify-content-between align-items-center\">";
-		$output .= "<a href=\"index.php?n=wine_cellar&uid=" . $this->uid . "\" type=\"button\" class=\"btn btn-sm btn-outline-secondary stretched-link\">View</a>";
+		$output .= "<a href=\"index.php?n=wine_cellar&uid=" . $this->uid . "\" type=\"button\" class=\"btn btn-sm btn-outline-secondary\">View</a>";
 		$output .= "<small class=\"text-body-secondary\">";
 		$output .= count($this->allBins()) . autoPluralise(" bin", " bins", count($this->allBins()));
 		$output .= " / ";
