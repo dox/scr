@@ -8,5 +8,10 @@ $cellar = new cellar($cellarUID);
 
 $bins = $cellar->allBins(array('category' => $category));
 
-echo $cellar->binsTable($bins);
+if (count($bins) > 0) {
+	echo $cellar->binsTable($bins);
+} else {
+	echo "0 bins listed for " . $category;
+}
+
 ?>

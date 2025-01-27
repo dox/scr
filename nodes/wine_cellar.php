@@ -292,6 +292,7 @@ document.getElementById('wine_search').addEventListener('keyup', function() {
 </script>
 
 <?php
+$data = array();
 foreach ($cellar->allBottlesByGrape() AS $grape => $count) {
 	if (!empty($grape)) {
 		$data[] = "{ x: '" . $grape . "', y: " . $count . "}";
@@ -328,45 +329,45 @@ chart.render();
 </script>
 
 <script>
-	// Function to load content into a specific tab pane
-	function loadTabContent(tabLink) {
-		const targetId = tabLink.getAttribute('href').substring(1); // Get tab pane ID
-		const url = tabLink.getAttribute('data-url'); // Get URL
-		const targetPane = document.getElementById(targetId); // Get the associated tab pane
+// Function to load content into a specific tab pane
+function loadTabContent(tabLink) {
+	const targetId = tabLink.getAttribute('href').substring(1); // Get tab pane ID
+	const url = tabLink.getAttribute('data-url'); // Get URL
+	const targetPane = document.getElementById(targetId); // Get the associated tab pane
+	
+	// Fetch and load content only if not already loaded
+	if (targetPane.innerHTML.trim() === '' || targetPane.innerHTML.startsWith('Loading')) {
+		fetch(url)
+			.then(response => {
+				if (!response.ok) {
+					throw new Error(`HTTP error! Status: ${response.status}`);
+				}
+				return response.text();
+			})
+			.then(data => {
+				targetPane.innerHTML = data; // Populate the tab pane
+			})
+			.catch(error => {
+				targetPane.innerHTML = `Error loading content: ${error.message}`; // Handle errors
+			});
+	}
+}
 
-		// Fetch and load content only if not already loaded
-		if (targetPane.innerHTML.trim() === '' || targetPane.innerHTML.startsWith('Loading')) {
-			fetch(url)
-				.then(response => {
-					if (!response.ok) {
-						throw new Error(`HTTP error! Status: ${response.status}`);
-					}
-					return response.text();
-				})
-				.then(data => {
-					targetPane.innerHTML = data; // Populate the tab pane
-				})
-				.catch(error => {
-					targetPane.innerHTML = `Error loading content: ${error.message}`; // Handle errors
-				});
-		}
+// Main script
+document.addEventListener('DOMContentLoaded', function () {
+	const tabs = document.querySelectorAll('#remoteTabs .nav-link');
+
+	// Load content for the first active tab when the page loads
+	const activeTab = document.querySelector('#remoteTabs .nav-link.active');
+	if (activeTab) {
+		loadTabContent(activeTab);
 	}
 
-	// Main script
-	document.addEventListener('DOMContentLoaded', function () {
-		const tabs = document.querySelectorAll('#remoteTabs .nav-link');
-
-		// Load content for the first active tab when the page loads
-		const activeTab = document.querySelector('#remoteTabs .nav-link.active');
-		if (activeTab) {
-			loadTabContent(activeTab);
-		}
-
-		// Add event listeners for tab switching
-		tabs.forEach(tab => {
-			tab.addEventListener('shown.bs.tab', function (event) {
-				loadTabContent(event.target); // Load content when a tab is activated
-			});
+	// Add event listeners for tab switching
+	tabs.forEach(tab => {
+		tab.addEventListener('shown.bs.tab', function (event) {
+			loadTabContent(event.target); // Load content when a tab is activated
 		});
 	});
+});
 </script>
