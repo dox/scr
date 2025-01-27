@@ -37,13 +37,49 @@ class meal {
 			$this->$key = $value;
 		}
   }
+  
+  public function status() {
+    $array['can_book'] = false;
+    $array['can_edit'] = false;
+    $array['can_add_guest'] = false;
+    $array['can_edit_guest'] = false;
+    $array['can_delete_guest'] = false;
+    
+    if (
+      $this->check_capacity_ok(true) &&
+      $this->check_cutoff_ok(true) &&
+      $this->check_member_ok(true) &&
+      $this->check_member_type_ok(true)
+    ) {
+      $array['can_book'] = true;
+    }
+    
+    if (
+      $this->check_capacity_ok(true) &&
+      $this->check_cutoff_ok(true) &&
+      $this->check_member_ok(true) &&
+      $this->check_member_type_ok(true)
+    ) {
+      $array['can_add_guest'] = true;
+    }
+    
+    if (
+      $this->check_cutoff_ok(true)
+    ) {
+      $array['can_edit'] = true;
+      $array['can_edit_guest'] = true;
+      $array['can_delete_guest'] = true;
+    }
+    
+    return $array;
+  }
 
   public function mealCard() {
     $mealURL = "index.php?n=admin_meal&mealUID=" . $this->uid;
 
     $output  = "<div class=\"col mb-3\">";
     $output .= "<div class=\"card border-light\">";
-
+    //$output .= json_encode($this->status());
     if (!empty($this->photo)) {
       $imageURL = "../../img/cards/" . $this->photo;
       $output .= "<img src=\"" . $imageURL . "\" class=\"card-img-top\" alt=\"Meal Image\">";
@@ -68,7 +104,10 @@ class meal {
     $output .= "</ul>";
     
     $output .= $this->progressBar("Dinner");
-    $output .= $this->progressBar("Dessert");
+    
+    if ($this->scr_dessert_capacity > 0 && $this->total_dessert_bookings_this_meal('SCR') >= $this->scr_dessert_capacity) {
+      $output .= $this->progressBar("Dessert");
+    }
     
     $output .= "</p>";
 
