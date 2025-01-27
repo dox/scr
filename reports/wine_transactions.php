@@ -77,6 +77,6 @@ foreach ($csvOUTPUT AS $row) {
 
 $logArray['category'] = "report";
 $logArray['result'] = "success";
-$logArray['description'] = "[reportUID:" . $report['uid'] . "] run for [memberUID:" . $memberObject->uid . "]";
+$logArray['description'] = "[reportUID:" . $report['uid'] . "] run";
 $logsClass->create($logArray);
 ?>

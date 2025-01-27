@@ -133,6 +133,6 @@ foreach ($allCellars AS $cellar) {
 <?php
 $logArray['category'] = "report";
 $logArray['result'] = "success";
-$logArray['description'] = "[reportUID:" . $report['uid'] . "] run for [memberUID:" . $memberObject->uid . "]";
-//$logsClass->create($logArray);
+$logArray['description'] = "[reportUID:" . $report['uid'] . "] run";
+$logsClass->create($logArray);
 ?>
