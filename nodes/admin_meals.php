@@ -79,6 +79,7 @@ echo makeTitle($title, $subtitle, $icons, true);
         $output .= "</div>";
         //$output .= "<p class=\"mb-1\">" . $log['description'] . "</p>";
         $output .= "<small class=\"text-muted\">" . $mealObject->location . "</small>";
+        $output .= $mealObject->progressBar();
         $output .= "</a>";
 
         echo $output;

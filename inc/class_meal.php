@@ -130,7 +130,7 @@ class meal {
     return $output;
   }
   
-  private function progressBar($type = "Dinner") {
+  public function progressBar($type = "Dinner") {
     if ($type == "Dinner") {
       $title = $this->type . " bookings";
       $capacity = $this->totalCapacity('SCR');
