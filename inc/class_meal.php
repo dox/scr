@@ -77,7 +77,7 @@ class meal {
   public function mealCard() {
     $mealURL = "index.php?n=admin_meal&mealUID=" . $this->uid;
 
-    $output  = "<div class=\"col mb-3\">";
+    $output  = "<div class=\"col-sm-6 mb-3 mb-sm-0\">";
     $output .= "<div class=\"card border-light\">";
     //$output .= json_encode($this->status());
     if (!empty($this->photo)) {
@@ -98,8 +98,7 @@ class meal {
     $output .= "<p class=\"card-text my-2\">";
 
     $output .= "<ul class=\"list-unstyled\">";
-    $output .= "<li>" . $this->type . ", " . $this->location . "</li>";
-    $output .= "<li>" . timeDisplay($this->date_meal) . "</li>";
+    $output .= "<li>" . $this->type . ", " . $this->location . ". " . timeDisplay($this->date_meal) . "</li>";
 
     $output .= "</ul>";
     

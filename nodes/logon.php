@@ -20,7 +20,7 @@
 		?>
 	</div>
 	
-	<div class="col-md-8 col-lg-6 col-xl-5 offset-xl-1 my-lg-5 py-lg-5">
+	<div class="col-md-9">
 		<form method="post" id="loginSubmit" action="index.php">
 			<div class="divider d-flex align-items-center my-4">
 				<p class="text-center fw-bold mx-3 mb-0">Sign In</p>
@@ -36,7 +36,7 @@
 				?>
 			</div>
 			
-			<div class=" mb-4">
+			<div class="mb-4">
 				<label class="form-label" for="username">Username</label>
 				<input type="text" id="username" name="username" class="form-control form-control-lg" required />
 			</div>

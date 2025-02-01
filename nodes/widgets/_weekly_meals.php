@@ -20,7 +20,7 @@ for($i = 0; $i < 7; $i++){
 
   $output .= "<h2 class=\"text-center mt-3\">" . date('l', $date) . " <span class=\"text-muted\">" . date('F jS', $date) . "</span></h2>";
   
-  $output .= "<div class=\"row row-cols-1 row-cols-md-3 justify-content-center\">";
+  $output .= "<div class=\"row justify-content-center\">";
   
   if (count($meals) > 0) {
     foreach ($meals AS $meal) {
