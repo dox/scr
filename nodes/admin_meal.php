@@ -96,7 +96,9 @@ echo makeTitle($title, $subtitle, $icons, true);
         </div>
       </li>
     </ul>
-    <a href="report.php?reportUID=9&mealUID=<?php echo $mealObject->uid; ?>" class="text-muted float-end">Export all meal bookings</a>
+    <div class="text-end">
+      <a href="report.php?reportUID=9&mealUID=<?php echo $mealObject->uid; ?>" class="text-muted">Export all meal bookings</a>
+    </div>
     
     <div id="chart-meals_by_day"></div>
     
