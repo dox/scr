@@ -15,7 +15,7 @@
 	  </button>
 	  <div class="collapse navbar-collapse" id="navbarLinkCollapse">
 	    <ul class="navbar-nav me-auto mb-2 mb-md-0">
-	      <li class="nav-item d-print-none"><a class="nav-link active" aria-current="page" href="index.php">
+			<li class="nav-item d-print-none"><a class="nav-link active" aria-current="page" href="index.php">
 					<svg width="1em" height="1em" class="text-muted">
 						<use xlink:href="img/icons.svg#house-door"/>
 					</svg> Home</a>
@@ -23,24 +23,18 @@
 	      <li class="nav-item d-print-none"><a class="nav-link" aria-current="page" href="index.php?n=member">
 					<svg width="1em" height="1em" class="text-muted">
 						<use xlink:href="img/icons.svg#person"/>
-					</svg> Your Profile</a>
+					</svg> Profile</a>
 	      </li>
-				<li class="nav-item d-print-none"><a class="nav-link" aria-current="page" href="index.php?n=information">
+		  <li class="nav-item d-print-none"><a class="nav-link" aria-current="page" href="index.php?n=information">
+					  <svg width="1em" height="1em" class="text-muted">
+						  <use xlink:href="img/icons.svg#info-circle"/>
+					  </svg> Information</a>
+		</li>
+		<li class="nav-item d-print-none"><a class="nav-link" aria-current="page" href="index.php?n=dining">
 					<svg width="1em" height="1em" class="text-muted">
 						<use xlink:href="img/icons.svg#journal-text"/>
-					</svg> SCR Information</a>
-	      </li>
-				<?php
-				foreach (navbar_addon AS $navbarAddOn => $value) {
-					$output  = "<li class=\"nav-item d-print-none\">";
-					$output .= "<a class=\"nav-link\" aria-current=\"page\" href=\"" . $value['url'] . "\">";
-					$output .= $value['icon'];
-					$output .= " " . $value['name'];
-					$output .= "</a></li>";
-
-					echo $output;
-				}
-				?>
+					</svg> Dining Arrangements</a>
+		  </li>	
 	    </ul>
 			<?php
 			if ($_SESSION['impersonating'] == true) {
@@ -107,7 +101,6 @@
 					echo "<a class=\"dropdown-item\" href=\"index.php?n=admin_meals\">Meals</a>";
 				}
 				
-				// needs allowing for checkpoint_charlie("wine") when ready
 				if(checkpoint_charlie("wine")) {
 					echo "<a class=\"dropdown-item\" href=\"index.php?n=wine_index\">Wine</a>";
 				}
