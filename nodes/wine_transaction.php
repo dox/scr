@@ -96,10 +96,16 @@ echo makeTitle($title, $subtitle, $icons, true);
 							}
 							
 							$output  = "<tr>";
-							$output .= "<th scope=\"row\"><a href=\"index.php?n=wine_bin&bin_uid=" . $bin->uid . "\">" . $bin->name . "</a></th>";
+							$output .= "<th scope=\"row\" class=\"align-top\"><a href=\"index.php?n=wine_bin&bin_uid=" . $bin->uid . "\">" . $bin->name . "</a></th>";
 							$output .= "<td>";
 							$output .= "<div>";
-							$output .= "<h5 class=\"text-truncate mb-1\">" . $item->name . "</h5>";
+							if (!empty($item->vintage)) {
+								$name = $item->name . " (" . $item->vintage . ")";
+							} else {
+								$name = $item->name;
+							}
+							$name = "<a href=\"index.php?n=wine_wine&wine_uid=" . $item->uid . "\">" . $name . "</a>";
+							$output .= "<h5 class=\"text-truncate mb-1\">" . $name . "</h5>";
 							$output .= "<p class=\"text-muted mb-0\">" . $item->grape . "</p>";
 							$output .= "</div>";
 							$output .= "</td>";
