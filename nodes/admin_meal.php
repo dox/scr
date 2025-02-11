@@ -56,7 +56,7 @@ echo makeTitle($title, $subtitle, $icons, true);
       <span>Diners Signed Up</span>
       <span class="badge bg-secondary rounded-pill"><?php echo count($mealObject->bookings_this_meal()); ?></span>
     </h4>
-    <ul class="list-group mb-3">
+    <div class="list-group mb-3">
       <?php
       
       $currentMembersBooked = array();
@@ -65,37 +65,38 @@ echo makeTitle($title, $subtitle, $icons, true);
         $memberObject = new member($booking['member_ldap']);
 
         $guests = (array)json_decode($booking['guests_array']);
-
-        $output  = "<li class=\"list-group-item d-flex justify-content-between lh-sm\">";
-        $output .= "<div class=\"text-muted\">";
-        $output .= "<h6 class=\"my-0\"><a href=\"index.php?n=member&memberUID=" . $memberObject->uid . "\" class=\"text-muted\">" . $memberObject->displayName() . "</a></h6>";
         
         if (strtotime($booking['date']) > strtotime($mealObject->date_cutoff)) {
-          $class = "text-danger";
+          $bookingDateClass = "text-danger";
         } else {
-          $class = "text-muted";
+          $bookingDateClass = "text-muted";
         }
-        $output .= "<small class=\"" . $class . "\">" . dateDisplay($booking['date']) . " " . date('H:i:s', strtotime($booking['date'])) . "</small>";
-        $output .= "</div>";
-
+        
+        $output  = "<a href=\"index.php?n=member&memberUID=" . $memberObject->uid . "\" class=\"list-group-item list-group-item-action\">";
+        $output .= "<div class=\"d-flex w-100 justify-content-between\">";
+        $output .= "<h5 class=\"text-truncate mb-1\">" . $memberObject->displayName() . "</h5>";
+        
         if (count($guests) > 0) {
-          $output .= "<span class=\"text-muted\">+" . count($guests) . autoPluralise(" guest", " guests", count($guests)) . "</span>";
+          $output .= "<span class=\"text-muted\">+" . count($guests) . "</span>";
         }
-
-        $output .= "</li>";
-
+        
+        $output .= "</div>";
+        $output .= "<small class=\"" . $bookingDateClass . " mb-1\">" . dateDisplay($booking['date']) . " " . timeDisplay($booking['date']) . "</small>";
+        $output .= "</a>";
+        
         echo $output;
         
         $currentMembersBooked[] = $memberObject->ldap;
       }
       ?>
-      <li class="list-group-item d-flex justify-content-between lh-sm">
+      <a class="list-group-item d-flex justify-content-between lh-sm">
         <div class="input-group">
           <input class="form-control" type="text" id='quick-add-member' list='members-list' placeholder="Quick Add Member" aria-label="Quick Add Member">
           <button type="submit" id="quick-add-member-submit" onclick='quickAdd()' name="quick-add-member-submit" class="btn btn-primary"> Add</button>
         </div>
-      </li>
-    </ul>
+      </a>
+    </div>
+    
     <div class="text-end">
       <a href="report.php?reportUID=9&mealUID=<?php echo $mealObject->uid; ?>" class="text-muted">Export all meal bookings</a>
     </div>
