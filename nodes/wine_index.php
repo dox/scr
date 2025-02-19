@@ -129,6 +129,11 @@ if (isset($_POST['name'])) {
 					</div>
 				</div>
 				<div class="mb-3">
+					<label for="description" class="form-label">Bin Types</label>
+					<textarea class="form-control" id="bin_types" name="bin_types" rows="3"></textarea>
+					<div id="bin-typesHelp" class="form-text">Comma,Separated,List</div>
+				</div>
+				<div class="mb-3">
 					<label for="description" class="form-label">Notes</label>
 					<textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
 				</div>

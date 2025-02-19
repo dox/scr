@@ -6,6 +6,7 @@ class cellar {
 	public $name;
 	public $short_code;
 	public $notes;
+	public $bin_types;
 	public $photograph;
 	
 	function __construct($cellarUID = null) {
@@ -93,6 +94,15 @@ class cellar {
 		
 		return true;
 	  }
+	
+	public function binTypes() {
+		$types = explode(",", $this->bin_types);
+		
+		foreach ($types AS $type) {
+			$returnArray[] = trim($type);
+		}
+		return $returnArray;
+	}
 	
 	public function photographURL() {
 		$image = "img/cards/wine.png";

@@ -100,7 +100,7 @@ echo makeTitle($title, $subtitle, $icons, true);
 <ul class="nav nav-tabs nav-fill" id="remoteTabs">
 	<?php
 	$i = 1;
-	foreach (explode(",", $settingsClass->value('wine_category')) AS $wine_category) {
+	foreach ($cellar->binTypes() AS $wine_category) {
 		$active = "";
 		$url = "/nodes/widgets/_cellarBinCategory.php?cellar_uid=" . $cellar->uid . "&category=" . $wine_category;
 		$href = "#tab" . $i;
@@ -124,7 +124,7 @@ echo makeTitle($title, $subtitle, $icons, true);
 <div class="tab-content mt-3" id="tabContent">
 	<?php
 	$i = 1;
-	foreach (explode(",", $settingsClass->value('wine_category')) AS $wine_category) {
+	foreach ($cellar->binTypes() AS $wine_category) {
 		$active = "";
 		if ($i == 1) {
 			$active = "show active";
@@ -172,7 +172,7 @@ echo makeTitle($title, $subtitle, $icons, true);
 					<label for="category" class="form-label">Bin Category</label>
 					<select class="form-select" id="category" name="category" required>
 						<?php
-						foreach (explode(",", $settingsClass->value('wine_category')) AS $wine_category) {
+						foreach ($cellar->binTypes() AS $wine_category) {
 							echo "<option>" . $wine_category . "</option>";
 						}
 						?>
@@ -219,8 +219,11 @@ echo makeTitle($title, $subtitle, $icons, true);
 					</div>
 				</div>
 				</div>
-				
-				
+				<div class="mb-3">
+					<label for="description" class="form-label">Bin Types</label>
+					<textarea class="form-control" id="bin_types" name="bin_types" rows="3"><?php echo $cellar->bin_types; ?></textarea>
+					<div id="bin-typesHelp" class="form-text">Comma,Separated,List</div>
+				</div>
 				<div class="mb-3">
 					<label for="description" class="form-label">Notes</label>
 					<textarea class="form-control" id="notes" name="notes" rows="3"><?php echo $cellar->notes; ?></textarea>

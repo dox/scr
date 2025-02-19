@@ -88,7 +88,7 @@ foreach ($allCellars AS $cellar) {
 	echo "</thead>";
 	echo "<tbody>";
 	
-	foreach (explode(",", $settingsClass->value('wine_category')) AS $wine_category) {
+	foreach ($cellar->binTypes() AS $wine_category) {
 		$filter = array(
 			"cellar_uid" => $cellar->uid,
 			"wine_wines.category" => $wine_category
