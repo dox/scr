@@ -224,10 +224,6 @@ class cellar {
 		if (count($bin->currentWines()) == 1) {
 			$url = "index.php?n=wine_wine&wine_uid=" . $bin->currentWines()[0]['uid'];
 			$title = $bin->currentWineName();
-			
-			if ($bin->currentWines()[0]['category'] != $bin->category) {
-				$title = $title . " <span class=\"text-warning\">(" . $bin->currentWines()[0]['category'] . ")</strong>";
-			}
 		} elseif (count($bin->currentWines()) == 0) {
 			$class = " text-muted";
 			$url = "index.php?n=wine_bin&bin_uid=" . $bin->uid;
