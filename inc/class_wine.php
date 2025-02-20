@@ -338,7 +338,7 @@ class wine {
 		unset($array['uid']);
 		
 		// null missing vintage
-		if (empty($array['vintage'])) {
+		if (isset($array['vintage']) && empty($array['vintage'])) {
 			$array['vintage'] = null;
 		}
 		
