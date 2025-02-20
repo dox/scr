@@ -75,12 +75,12 @@ if ($pageType == "add") {
 					
 					$categories = explode(",", $settingsClass->value('wine_category'));
 					
-					foreach ($categories AS $wine_category) {
-						$output = "<optgroup label=\"" . $wine_category . "\">";
+					foreach ($cellar->binTypes() AS $binType) {
+						$output = "<optgroup label=\"" . $binType . "\">";
 						
 						$filter = array(
 							'cellar_uid' => $cellar->uid,
-							'category' => $wine_category
+							'category' => $binType
 						);
 						foreach ($wineClass->allBins($filter) AS $binOption) {
 							if ($binOption['uid'] == $wine->bin_uid) {
