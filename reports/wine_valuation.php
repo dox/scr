@@ -118,7 +118,7 @@ foreach ($allCellars AS $cellar) {
 	}
 	
 	echo "<tr>";
-	echo "<td colspan=\"2\"></td>";
+	echo "<td></td>";
 	echo "<td><strong>" . $totalBottlesByCellar . "</strong></td>";
 	echo "<td><strong>" . currencyDisplay($cellarTotal) . "</strong></td>";
 	echo "</tr>";
