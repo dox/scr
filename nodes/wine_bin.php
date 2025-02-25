@@ -122,11 +122,11 @@ echo makeTitle($title, $subtitle, $icons, true);
 					<label for="category" class="form-label">Bin Category</label>
 					<select class="form-select" id="category" name="category" required>
 						<?php
-						foreach (explode(",", $settingsClass->value('wine_category')) AS $wine_category) {
-							if ($bin->category == $wine_category) {
-								echo "<option selected>" . $wine_category . "</option>";
+						foreach ($cellar->binTypes() AS $binType) {
+							if ($bin->category == $binType) {
+								echo "<option selected>" . $binType . "</option>";
 							} else {
-								echo "<option>" . $wine_category . "</option>";
+								echo "<option>" . $binType . "</option>";
 							}
 						}
 						?>
