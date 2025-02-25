@@ -80,8 +80,7 @@ foreach ($allCellars AS $cellar) {
 	echo "<table class=\"table\">";
 	echo "<thead>";
 	echo "<tr>";
-	echo "<th scope=\"col\">Category</th>";
-	echo "<th scope=\"col\">Bins</th>";
+	echo "<th scope=\"col\" style=\"width="40%\">Category</th>";
 	echo "<th scope=\"col\">Bottles</th>";
 	echo "<th scope=\"col\">Total Value</th>";
 	echo "</tr>";
@@ -111,7 +110,6 @@ foreach ($allCellars AS $cellar) {
 		
 		echo "<tr>";
 		echo "<td scope=\"row\">" . $wine_category . "</td>";
-		echo "<td>" . count($cellar->allBins(array("category" => $wine_category))) . "</td>";
 		echo "<td>" . $totalBottlesByCategory . "</td>";
 		echo "<td>" . currencyDisplay($totalPurchaseValue) . "</td>";
 		echo "</tr>";
