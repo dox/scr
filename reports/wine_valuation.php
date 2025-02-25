@@ -80,7 +80,7 @@ foreach ($allCellars AS $cellar) {
 	echo "<table class=\"table\">";
 	echo "<thead>";
 	echo "<tr>";
-	echo "<th scope=\"col\" style=\"width="40%\">Category</th>";
+	echo "<th scope=\"col\" style=\"width: 40%;\">Category</th>";
 	echo "<th scope=\"col\">Bottles</th>";
 	echo "<th scope=\"col\">Total Value</th>";
 	echo "</tr>";
