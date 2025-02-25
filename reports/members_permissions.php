@@ -4,7 +4,7 @@
 foreach (available_permissions() AS $permission => $description) {
   echo "<h2>" . $permission . " <small class=\"text-body-secondary\">" . $description . "</small></h2>";
   $sql  = "SELECT * FROM members";
-  $sql .= " WHERE permissions = \"global_admin\" OR permissions LIKE \"%" . $permission . "%\"";
+  $sql .= " WHERE enabled = '1' AND (permissions = \"global_admin\" OR permissions LIKE \"%" . $permission . "%\")";
   $sql .= " ORDER BY precedence ASC";
   
   $members = $db->query($sql)->fetchAll();
