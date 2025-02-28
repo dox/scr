@@ -239,6 +239,7 @@ class wineClass {
 		
 		$sql  = "SELECT wine_wines.*, wine_bins.cellar_uid, CASE 
 			WHEN wine_wines.name LIKE \"%" . $searchTerm . "%\" THEN 20
+			WHEN wine_bins.name LIKE \"%" . $searchTerm . "%\" THEN 15
 			WHEN wine_wines.code LIKE \"%" . $searchTerm . "%\" THEN 10
 			WHEN wine_wines.grape LIKE \"%" . $searchTerm . "%\" THEN 5
 			WHEN wine_wines.region_of_origin LIKE \"%" . $searchTerm . "%\" THEN 1
@@ -248,6 +249,7 @@ class wineClass {
 		$sql .= " FROM wine_wines LEFT JOIN wine_bins ON wine_wines.bin_uid = wine_bins.uid ";
 		$sql .= "WHERE (";
 			$sql .= "wine_wines.name LIKE \"%" . $searchTerm . "%\" ";
+			$sql .= "OR wine_bins.name LIKE \"%" . $searchTerm . "%\" ";
 			$sql .= "OR wine_wines.code LIKE \"%" . $searchTerm . "%\" ";
 			$sql .= "OR wine_wines.grape LIKE \"%" . $searchTerm . "%\" ";
 			$sql .= "OR wine_wines.region_of_origin LIKE \"%" . $searchTerm . "%\"";
