@@ -1,3 +1,15 @@
+<?php
+// check if there are multiple failed login attempts
+if (count($logsClass->failedLogonAttempts($_SERVER['REMOTE_ADDR'])) > LOCKOUT_ATTEMPTS) {
+	$logArray['result'] = "danger";
+	$logArray['category'] = "logon";
+	$logArray['description'] = "IP: " . $_SERVER['REMOTE_ADDR'] . " temporarily locked out";
+	$logsClass->create($logArray);
+	
+	die("There have been too many failed attempts to log in from your IP address.  Please try again later.");
+}
+?>
+
 <style>
 .divider:after,
 .divider:before {

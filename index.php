@@ -59,10 +59,15 @@ if (isLoggedIn()) {
 function attemptLogin($username, $password, $remember_me = false) {
   global $ldap_connection, $db, $logsClass;
   
-  // first LDAP auth this user...
   $clean_username = escape($username);
   $clean_password = $password;
   
+  // check if there are multiple failed login attempts
+  if (count($logsClass->failedLogonAttempts($_SERVER['REMOTE_ADDR'])) > LOCKOUT_ATTEMPTS) {
+    die("There have been too many failed attempts to log in from your IP address.  Please try again later.");
+  }
+  
+  // first LDAP auth this user...
   if ($ldap_connection->auth()->attempt($clean_username . LDAP_ACCOUNT_SUFFIX, $clean_password, $stayAuthenticated = true)) {
     // LDAP authentication correct, get the LDAP user
     $ldapUser = $ldap_connection->query()->where('samaccountname', '=', $clean_username)->get();

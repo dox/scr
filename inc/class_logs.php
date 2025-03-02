@@ -26,6 +26,18 @@ class logs {
     return $logs;
   }
   
+  function failedLogonAttempts($ip = null, $minutesToInclude = 5) {
+    global $db;
+    
+    $maximumLogsAge = date('Y-m-d H:i:s', strtotime('-' . $minutesToInclude . ' minutes'));
+    
+    $sql = "SELECT * FROM logs where date > '" . $maximumLogsAge . "' AND INET_NTOA(ip) = '" . $ip . "' AND category = 'logon' AND result = 'warning' LIMIT 100";
+    
+    $logs = $db->query($sql)->fetchAll();
+    
+    return $logs;
+  }
+  
   public function allWhereMatch($string = null) {
      global $db, $settingsClass;
   
