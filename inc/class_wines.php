@@ -275,13 +275,18 @@ class wineClass {
 	}
 	
 	public function wineBottlesTotal($whereFilterArray = null) {
-		$qty = 0;
-		foreach ($this->allCellars() AS $cellar) {
-			$cellar = new cellar($cellar['uid']);
-			
-			$qty = $qty + $cellar->allBottles();
-		}
-		return $qty;
+		global $db;
+		
+		$sql = "SELECT SUM(wine_total) AS total_bottles_in_cellar
+		FROM (
+			SELECT cellar_uid, wine_uid, GREATEST(0, SUM(bottles)) AS wine_total
+			FROM wine_transactions
+			GROUP BY cellar_uid, wine_uid
+		) AS wine_sums";
+		
+		$result = $db->query($sql)->fetchArray();
+		
+		return $result['total_bottles_in_cellar'];
 	}
 	
 	public function listFromWines($columnName, $whereFilterArray = null) {

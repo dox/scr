@@ -128,7 +128,7 @@ class cellar {
 		$output .= "<small class=\"text-body-secondary\">";
 		$output .= count($this->allBins()) . autoPluralise(" bin", " bins", count($this->allBins()));
 		$output .= " / ";
-		$output .= $this->allBottles() . autoPluralise(" bottle", " bottles", $this->allBottles());
+		$output .= $this->allBottlesCount() . autoPluralise(" bottle", " bottles", $this->allBottlesCount());
 		$output .= "</small>";
 		$output .= "</div>";
 		$output .= "</div>";
@@ -164,7 +164,21 @@ class cellar {
 		return $wines;
 	}
 	
-	public function allBottles($whereFilterArray = null) {
+	public function allBottlesCount() {
+		global $db;
+		
+		$sql = "SELECT SUM(wine_total) AS total_bottles_in_cellar
+		FROM (
+			SELECT cellar_uid, wine_uid, GREATEST(0, SUM(bottles)) AS wine_total
+			FROM wine_transactions
+			WHERE cellar_uid = '" . $this->uid . "'
+			GROUP BY cellar_uid, wine_uid
+		) AS wine_sums";
+		
+		$result = $db->query($sql)->fetchArray();
+		
+		return $result['total_bottles_in_cellar'];
+		/*
 		$wineClass = new wineClass();
 		
 		if (isset($whereFilterArray)) {
@@ -178,7 +192,7 @@ class cellar {
 			$bottles = $bottles + $wine->currentQty();
 		}
 		
-		return $bottles;
+		return $bottles;*/
 	}
 	
 	public function allBottlesByGrape() {
