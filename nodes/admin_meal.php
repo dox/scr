@@ -323,31 +323,41 @@ echo makeTitle($title, $subtitle, $icons, true);
     </div>
 
     <div class="mb-3">
-      <label for="photo" class="form-label">Photo</label>
-      
-      <div class="row row-cols-1 row-cols-lg-3">
-        <?php
-        foreach ($mealsClass->mealCardImages() AS $photo) {
-          if ($photo == $mealObject->photo) {
-            $selected = " checked ";
-          } else {
-            $selected = "";
-          }
-          
-          $output  = "<div class=\"col\">";
-          $output .= "<div class=\"card mb-3\">";
-          $output .= "<img src=\"img/cards/" . $photo . "\" class=\"card-img-top\" alt=\"...\">";
-          $output .= "<div class=\"card-body\">";
-          $output .= "<p class=\"card-text\"><label for=\"photo-" . $photo . "\" class=\"form-label\">";
-          $output .= "<input class=\"form-check-input\" type=\"radio\" name=\"photo\" id=\"photo-" . $photo . "\" value=\"" . $photo . "\"" . $selected . "> ";
-          $output .= $photo . "</label></p>";
-          $output .= "</div>";
-          $output .= "</div>";
-          $output .= "</div>";
-          
-          echo $output;
-        }
-        ?>
+      <div class="accordion accordion-flush" id="accordionFlushExample">
+        <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+          Photograph
+          </button>
+        </h2>
+        <div id="flush-collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+          <div class="accordion-body">
+            <?php
+            foreach ($mealsClass->mealCardImages() AS $photo) {
+              if ($photo == $mealObject->photo) {
+                $selected = " checked ";
+              } else {
+                $selected = "";
+              }
+              
+              $output  = "<div class=\"col\">";
+              $output .= "<div class=\"card mb-3\">";
+              $output .= "<img src=\"img/cards/" . $photo . "\" class=\"card-img-top\" alt=\"...\">";
+              $output .= "<div class=\"card-body\">";
+              $output .= "<p class=\"card-text\"><label for=\"photo-" . $photo . "\" class=\"form-label\">";
+              $output .= "<input class=\"form-check-input\" type=\"radio\" name=\"photo\" id=\"photo-" . $photo . "\" value=\"" . $photo . "\"" . $selected . "> ";
+              $output .= $photo . "</label></p>";
+              $output .= "</div>";
+              $output .= "</div>";
+              $output .= "</div>";
+              
+              echo $output;
+            }
+            ?>
+          </div>
+        </div>
+        </div>
+        
       </div>
     </div>
 

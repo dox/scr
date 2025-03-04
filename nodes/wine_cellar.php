@@ -220,6 +220,45 @@ echo makeTitle($title, $subtitle, $icons, true);
 				</div>
 				</div>
 				<div class="mb-3">
+					<div class="accordion accordion-flush" id="accordionFlushExample">
+					  <div class="accordion-item">
+						<h2 class="accordion-header">
+						  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+							Photograph
+						  </button>
+						</h2>
+						<div id="flush-collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+						  <div class="accordion-body">
+							  <?php
+							  $mealsClass = new meals();
+							  foreach ($mealsClass->mealCardImages() AS $photo) {
+								if ($photo == $cellar->photograph) {
+								  $selected = " checked ";
+								} else {
+								  $selected = "";
+								}
+								
+								$output  = "<div class=\"col\">";
+								$output .= "<div class=\"card mb-3\">";
+								$output .= "<img src=\"img/cards/" . $photo . "\" class=\"card-img-top\" alt=\"...\">";
+								$output .= "<div class=\"card-body\">";
+								$output .= "<p class=\"card-text\"><label for=\"photo-" . $photo . "\" class=\"form-label\">";
+								$output .= "<input class=\"form-check-input\" type=\"radio\" name=\"photograph\" id=\"photo-" . $photo . "\" value=\"" . $photo . "\"" . $selected . "> ";
+								$output .= $photo . "</label></p>";
+								$output .= "</div>";
+								$output .= "</div>";
+								$output .= "</div>";
+								
+								echo $output;
+							  }
+							  ?>
+						  </div>
+						</div>
+					  </div>
+					  
+					</div>
+				</div>
+				<div class="mb-3">
 					<label for="description" class="form-label">Bin Types</label>
 					<textarea class="form-control" id="bin_types" name="bin_types" rows="3"><?php echo $cellar->bin_types; ?></textarea>
 					<div id="bin-typesHelp" class="form-text">Comma,Separated,List</div>

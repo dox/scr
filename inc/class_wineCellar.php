@@ -105,11 +105,12 @@ class cellar {
 	}
 	
 	public function photographURL() {
-		$image = "img/cards/wine.png";
+		$imageDir = "img/cards/";
+		$defaultImage = $imageDir . "wine.png";
 		
 		if (!empty($this->photograph)) {
-			if (file_exists($this->photograph)) {
-				$image = $this->photograph;
+			if (file_exists($imageDir . $this->photograph)) {
+				$image = $imageDir . $this->photograph;
 			}
 		}
 		
