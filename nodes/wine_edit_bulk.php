@@ -32,13 +32,13 @@ unset($classVars['uid']);
 	<div class="mb-3">
 	  <label for="where_criteria" class="form-label">Selection Criteria</label>
 	  <?php
-	  $where_default = "{'wine_wines.category':'White','wine_wines.vintage':'2024'}";
+	  $where_default = '{"wine_wines.category":"White","wine_wines.vintage":"' . date('Y')-2 . '"}';
 	  if (isset($_POST['where_criteria'])) {
 		  $where_default = $_POST['where_criteria'];
 	  }
 	  ?>
 	  <textarea class="form-control" id="where_criteria" name="where_criteria" rows="3"><?php echo $where_default; ?></textarea>
-	  <div id="where_criteriaHelp" class="form-text">One 'WHERE' clause per line.  e.g.: category='White'</div>
+	  <div id="where_criteriaHelp" class="form-text">JSON format.  e.g.: {"wine_wines.category":"White","wine_wines.vintage":"<?php echo date('Y')-2; ?>"}</div>
 	</div>
 </div>
 
@@ -91,14 +91,9 @@ unset($classVars['uid']);
 <hr />
 
 <?php
-printArray($_POST['where_criteria']);
-echo json_encode($_POST['where_criteria']);
-echo json_decode($_POST['where_criteria']);
-
 $wines = array();
 if (isset($_POST['where_criteria'])) {
-	$whereCriteria = json_decode($_POST['where_criteria']);
-	printArray($whereCriteria);
+	$whereCriteria = json_decode($_POST['where_criteria'], true);
 
 	$wines = $wineClass->allWines($whereCriteria);
 }
@@ -111,10 +106,15 @@ if (isset($_POST['where_criteria'])) {
 	  <thead>
 		<tr>
 		  <th scope="col">UID</th>
+		  <th scope="col">Status</th>
+		  <th scope="col">Cellar</th>
+		  <th scope="col">Bin</th>
 		  <th scope="col">Name</th>
 		  <th scope="col">Vintage</th>
+		  <th scope="col">Price Purchase</th>
 		  <th scope="col">Price Internal</th>
 		  <th scope="col">Price External</th>
+		  <th scope="col">Qty.</th>
 		</tr>
 	  </thead>
 	  <tbody>
@@ -123,13 +123,20 @@ if (isset($_POST['where_criteria'])) {
 		  
 		  foreach ($wines AS $wine) {
 			  $wine = new wine($wine['uid']);
+			  $bin = new bin($wine->bin_uid);
+			  $cellar = new cellar($bin->cellar_uid);
 			  
 			  $output  = "<tr>";
 			  $output .= "<th scope=\"row\">" . $wine->uid . "</th>";
-			  $output .= "<td>" . $wine->clean_name() . "</td>";
+			  $output .= "<td>" . $wine->status . "</td>";
+			  $output .= "<td>" . $cellar->name . "</td>";
+			  $output .= "<td>" . $bin->name . "</td>";
+			  $output .= "<td><a href=\"index.php?n=wine_wine&wine_uid=" . $wine->uid . "\">" . $wine->clean_name() . "<a/></td>";
 			  $output .= "<td>" . $wine->vintage() . "</td>";
+			  $output .= "<td>" . $wine->price_purchase . "</td>";
 			  $output .= "<td>" . $wine->price_internal . "</td>";
 			  $output .= "<td>" . $wine->price_external . "</td>";
+			  $output .= "<td>" . $wine->currentQty() . "</td>";
 			  $output .= "</tr>";
 			  
 			  echo $output;
@@ -139,7 +146,7 @@ if (isset($_POST['where_criteria'])) {
 	</table>
 </div>
 
-
+<h6>Actions to be executed...</h6>
 <?php
 $changeInstructions = json_decode($_POST['change_instruction']);
 
@@ -162,8 +169,6 @@ foreach ($wines AS $wine) {
 		  $logArray['result'] = "success";
 		  $logArray['description'] = "Bulk updated [wineUID:" . $wine->uid . "] with field " . $_POST['change_key'] . " from " . $originalValue . " to " . $newValue;
 		  $logsClass->create($logArray);
-		  
-		  die();
 	  } else {
 		  echo $sql . "<br />";
 	  }
