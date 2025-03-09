@@ -99,7 +99,7 @@ if (isset($_POST['name'])) {
 		<p><a href="index.php?n=wine_transactions" class="float-end">View all</a></p>
 		<?php
 		  $transaction = new transaction();
-		  $subsetOfTransactions = array_slice($wineClass->allTransactions(), 0, 10, true);
+		  $subsetOfTransactions = array_slice($wineClass->allTransactions(), 0, 20, true);
 		  echo $transaction->transactionsTable($subsetOfTransactions);
 		  ?>
 	</div>
