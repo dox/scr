@@ -152,7 +152,7 @@ echo makeTitle($title, $subtitle, $icons, true);
 			<div class="modal-body">
 				<div class="mb-3">
 					<label for="name" class="form-label">Cellar </label>
-					<select class="form-select" id="cellar_uid" name="cellar_uid" required>
+					<select disabled class="form-select" id="cellar_uid" name="cellar_uid" required>
 						<?php
 						foreach ($wineClass->allCellars() AS $cellarOption) {
 							if ($cellarOption['uid'] == $cellar->uid) {
