@@ -438,4 +438,28 @@ function sendMail($subject = "No Subject Specified", $recipients = NULL, $body =
 	}
 	
 }
+
+function randomQuote($seed = null) {
+	$quotes = [
+		"Provision for this week hath not yet been made known.",
+		"Repast for this week remaineth shrouded in mystery.",
+		"The victuals ordained for this week are, as yet, unknown to mortal man.",
+		"Provision for the coming days hath not been disclosed, perchance due to forces beyond our ken.",
+		"Lo, the feast of the week is veiled in secrecy, as though the gods themselves withhold it.",
+		"The sustenance of the week remaineth a riddle wrapped in an enigma, basted in uncertainty.",
+		"Alas, the bill of fare for this week hath not yet been divined by augurs nor scribes.",
+		"No herald hath yet declared what sustenance shall grace our tables in the days to come.",
+		"The week's repast remaineth as elusive as the Holy Grail, and twice as coveted.",
+		"Lo, the larder-keepers keepeth their counsel, and naught is revealed of the coming feasts.",
+		"The mysteries of the menu endure, locked away as though in the vaults of the gods themselves.",
+		"The provender of the week is as yet unknown—mayhap lost in the ether or concealed by mischievous sprites.",
+		"This week’s nourishment is but a spectre, glimpsed not by even the keenest of gastronomic soothsayers."
+	];
+	
+	$hash = crc32($seed); // Generate a numeric hash from the week
+	$index = $hash % count($quotes); // Get a consistent index within bounds
+	
+	return $quotes[$index];
+}
+
 ?>

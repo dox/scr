@@ -38,7 +38,12 @@ for($i = 0; $i < 7; $i++){
 }
 
 if ($noMealsCount >= 7) {
-  $output = "<h2 class=\"text-center p-3\">Meals for this week are not yet available</h2>";
+  $output  = "<h2 class=\"text-center p-3\">Meals for this week are not yet available</h2>";
+  
+  if ($settingsClass->value('menu_quotes') == "true") {
+    $output .= "<blockquote class=\"text-center blockquote\"><p>" . randomQuote($suppliedWeek) . "</p></blockquote>";
+  }
+  
 }
 
 echo $output;
