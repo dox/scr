@@ -323,14 +323,14 @@ echo makeTitle($title, $subtitle, $icons, true);
     </div>
 
     <div class="mb-3">
-      <div class="accordion accordion-flush" id="accordionFlushExample">
+      <div class="accordion" id="accordionPhotograph">
         <div class="accordion-item">
         <h2 class="accordion-header">
           <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
           Photograph
           </button>
         </h2>
-        <div id="flush-collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+        <div id="flush-collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionPhotograph">
           <div class="accordion-body">
             <?php
             foreach ($mealsClass->mealCardImages() AS $photo) {
