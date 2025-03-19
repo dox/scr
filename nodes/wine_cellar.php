@@ -163,6 +163,7 @@ echo makeTitle($title, $subtitle, $icons, true);
 						}
 						?>
 					</select>
+					<input type="hidden" id="cellar_uid" name="cellar_uid" value="<?php echo $cellar->uid; ?>">
 				</div>
 				<div class="mb-3">
 					<label for="name" class="form-label">Bin Name</label>
