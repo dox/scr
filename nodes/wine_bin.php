@@ -102,7 +102,7 @@ echo makeTitle($title, $subtitle, $icons, true);
 			<div class="modal-body">
 				<div class="mb-3">
 					<label for="name" class="form-label">Cellar </label>
-					<select disabled class="form-select" id="cellar_uid" name="cellar_uid" required>
+					<select class="form-select" id="cellar_uid" name="cellar_uid" required>
 						<?php
 						foreach ($wineClass->allCellars() AS $cellarOption) {
 							if ($cellarOption['uid'] == $cellar->uid) {
@@ -124,9 +124,9 @@ echo makeTitle($title, $subtitle, $icons, true);
 						<?php
 						foreach ($cellar->binTypes() AS $binType) {
 							if ($bin->category == $binType) {
-								echo "<option selected>" . $binType . "</option>";
+								echo "<option value=\"" . $binType . "\" selected>" . $binType . "</option>";
 							} else {
-								echo "<option>" . $binType . "</option>";
+								echo "<option value=\"" . $binType . "\">" . $binType . "</option>";
 							}
 						}
 						?>
@@ -147,3 +147,50 @@ echo makeTitle($title, $subtitle, $icons, true);
 	</div>
 </div>
 </form>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+	var cellarDropdown = document.getElementById("cellar_uid");
+	var sectionDropdown = document.getElementById("category");
+	var selectedCellar = cellarDropdown.value;
+	var selectedSection = "<?php echo $bin->category ?>"; // Pre-selected section from PHP
+
+	function fetchSections(cellarId, preselect = null) {
+		sectionDropdown.innerHTML = '<option value="">Loading...</option>';
+
+		if (cellarId) {
+			fetch("actions/wine_cellarSections.php?c=" + cellarId)
+				.then(response => response.json())
+				.then(data => {
+					sectionDropdown.innerHTML = '';
+					data.forEach(section => {
+						let option = document.createElement("option");
+						option.value = section.name;
+						option.textContent = section.name;
+						if (preselect && section.name == preselect) {
+							option.selected = true;
+						}
+						sectionDropdown.appendChild(option);
+					});
+				})
+				.catch(error => {
+					console.error("Error fetching sections:", error);
+					sectionDropdown.innerHTML = '<option value="">Error loading sections</option>';
+				});
+		} else {
+			//sectionDropdown.innerHTML = '<option value="">Select a Section</option>';
+		}
+	}
+
+	// Load sections on page load if a cellar is pre-selected
+	if (selectedCellar) {
+		fetchSections(selectedCellar, selectedSection);
+	}
+
+	// Update sections dynamically when changing the cellar
+	cellarDropdown.addEventListener("change", function () {
+		fetchSections(this.value);
+	});
+});
+</script>
