@@ -83,47 +83,47 @@
 function bookMealQuick(this_id) {
   event.preventDefault();
 
-  var mealUID = this_id.replace("mealUID-", "");
+  const mealUID = this_id.replace("mealUID-", "");
+  const buttonClicked = document.getElementById(this_id);
 
-  var buttonClicked = document.getElementById(this_id);
-  var formData = new FormData();
-
+  const formData = new FormData();
   formData.append("meal_uid", mealUID);
 
-  var request = new XMLHttpRequest();
-
+  const request = new XMLHttpRequest();
   request.open("POST", "../actions/booking_create.php", true);
   request.send(formData);
 
-  // 4. This will be called after the response is received
   request.onload = function() {
-    if (request.status != 200) { // analyze HTTP status of the response
-      alert("Something went wrong.  Please refresh this page and try again.");
-      alert(`Error ${request.status}: ${request.statusText}`); // e.g. 404: Not Found
+    if (request.status !== 200) {
+      alert("Something went wrong. Please refresh this page and try again.");
+      alert(`Error ${request.status}: ${request.statusText}`);
     } else {
-      // check if the booking was made
-      var error_check = request.responseText.includes("Error");
+      const isError = request.responseText.includes("Error");
 
-      // if the booking had an error, alert
-      if (error_check == true) {
-        alert(this.responseText);
+      if (isError) {
+        alert(request.responseText);
       } else {
-        // booking made, update the booking button
-        buttonClicked.className = 'btn btn-sm rounded-0 rounded-bottom btn-success';
+        // ✅ Booking successful – update button styling and attributes
+        buttonClicked.classList.remove("btn-primary", "btn-warning", "btn-secondary", "disabled");
+        buttonClicked.classList.add("btn-success");
+
+        // Just to be safe, make sure other required classes remain
+        buttonClicked.classList.add("btn", "btn-sm", "w-100");
+
+        // Update href and label
         buttonClicked.removeAttribute("onclick");
-        buttonClicked.href = "index.php?n=booking&mealUID=" + mealUID;
-        //totalBookings.innerHTML = parseInt(totalBookings.innerHTML, 10)+1;
-        buttonClicked.innerText = 'Manage Booking';
+        buttonClicked.setAttribute("href", "index.php?n=booking&mealUID=" + mealUID);
+        buttonClicked.innerText = "Manage Booking";
       }
     }
-  }
+  };
 
   request.onerror = function() {
     alert("Request failed");
   };
 
   return false;
-};
+}
 
 function addGuest(this_id) {
   var bookingUID = document.getElementById('bookingUID').value;

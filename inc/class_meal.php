@@ -73,191 +73,167 @@ class meal {
     
     return $array;
   }
-
+  
   public function mealCard() {
-    $mealURL = "index.php?n=admin_meal&mealUID=" . $this->uid;
-
-    $output  = "<div class=\"col mb-3\">";
-    $output .= "<div class=\"card border-light\">";
-    //$output .= json_encode($this->status());
-    if (!empty($this->photo)) {
-      $imageURL = "../../img/cards/" . $this->photo;
-      $output .= "<img src=\"" . $imageURL . "\" class=\"card-img-top\" alt=\"Meal Image\">";
-    }
-    
-    $output .= "<div class=\"card-body text-center\">";
-
-    $output .= $this->menuTooltip();
-
-    if (checkpoint_charlie("meals")) {
-      $output .= "<h2 class=\"h5\"><a href=\"" . $mealURL . "\">" . $this->name . "</a></h2>";
-    } else {
-      $output .= "<h2 class=\"h5\">" . $this->name . "</h2>";
-    }
-
-    $output .= "<p class=\"card-text my-2\">";
-
-    $output .= "<ul class=\"list-unstyled\">";
-    $output .= "<li>" . $this->type . ", " . $this->location . ". " . timeDisplay($this->date_meal) . "</li>";
-
-    $output .= "</ul>";
-    
-    $output .= $this->progressBar("Dinner");
-    
-    if ($this->scr_dessert_capacity > 0 && $this->total_dessert_bookings_this_meal('SCR') >= $this->scr_dessert_capacity) {
-      $output .= $this->progressBar("Dessert");
-    }
-    
-    $output .= "</p>";
-
-    /*if ($this->total_bookings_this_meal('SCR') > 0 || $this->totalCapacity('SCR') > 0) {
-      $scrCapacity = "(SCR " . $this->total_bookings_this_meal('SCR') . "/" . $this->totalCapacity('SCR') . ")";
-    }
-    if ($this->total_bookings_this_meal('MCR') > 0 || $this->totalCapacity('MCR') > 0) {
-      $mcrCapacity = "(MCR " . $this->total_bookings_this_meal('MCR') . "/" . $this->totalCapacity('MCR') . ")";
-    }
-    $output .= "<small class=\"d-block\">Bookings: " . $scrCapacity . "  " .  $mcrCapacity . $dessertCapacityMet . "</small>";
-    */
-    
-    $output .= "</div>";
-    $output .= "<div class=\"card-footer bg-white border-0 px-0 py-0\">";
-    $output .= $this->bookingButton();
-    $output .= "</div>";
-    $output .= "</div>";
-    $output .= "</div>";
-
-    return $output;
+      $mealURL = "index.php?n=admin_meal&mealUID=" . $this->uid;
+      $output  = "<div class=\"col mb-4\">";
+      $output .= "<div class=\"card h-100 shadow-sm\">";
+  
+      // Image (if present)
+      if (!empty($this->photo)) {
+          $imageURL = "../../img/cards/" . $this->photo;
+          $output .= "<img src=\"" . $imageURL . "\" class=\"card-img-top\" alt=\"Meal Image\">";
+      }
+  
+      // Card body
+      $output .= "<div class=\"card-body\">";
+  
+      // Header row with title and info icon
+      $output .= "<div class=\"d-flex justify-content-between align-items-start mb-2\">";
+  
+      $title = checkpoint_charlie("meals")
+          ? "<a href=\"$mealURL\" class=\"text-decoration-none \">" . $this->name . "</a>"
+          : $this->name;
+  
+      $output .= "<h5 class=\"card-title mb-0\">$title</h5>";
+  
+      $output .= $this->menuTooltip(); // assumes this returns the <a> with SVG
+  
+      $output .= "</div>"; // end title row
+  
+      // Metadata line (meal type, location, time)
+      $output .= "<ul class=\"list-unstyled small text-muted mb-3\">";
+      $output .= "<li><strong>" . $this->type . "</strong>, " . $this->location . " – " . timeDisplay($this->date_meal) . "</li>";
+      $output .= "</ul>";
+  
+      // Progress bars
+      $output .= $this->progressBar("Dinner");
+  
+      if ($this->scr_dessert_capacity > 0 && $this->total_dessert_bookings_this_meal('SCR') >= $this->scr_dessert_capacity) {
+          $output .= $this->progressBar("Dessert");
+      }
+  
+      $output .= "</div>"; // end card-body
+  
+      // Card footer with booking button
+      $output .= "<div class=\"card-footer bg-transparent border-0 pt-0\">";
+      $output .= $this->bookingButton();
+      $output .= "</div>"; // end footer
+  
+      $output .= "</div>"; // end card
+      $output .= "</div>"; // end column
+  
+      return $output;
   }
   
   public function progressBar($type = "Dinner") {
-    if ($type == "Dinner") {
-      $title = $this->type . " bookings";
-      $capacity = $this->totalCapacity('SCR');
-      $booked = $this->total_bookings_this_meal('SCR');
-      
-      // calculate Dinner
-      if ($capacity > 0 AND $booked > 0) {
-        $percentage = round(($booked/$capacity) * 100,0);
+      $title = "";
+      $capacity = 0;
+      $booked = 0;
+      $percentage = 0;
+  
+      switch ($type) {
+          case "Dinner":
+              $title = $this->type . " bookings";
+              $capacity = $this->totalCapacity('SCR');
+              $booked = $this->total_bookings_this_meal('SCR');
+              break;
+  
+          case "Dessert":
+              $title = "Dessert bookings";
+              $capacity = $this->scr_dessert_capacity;
+              $booked = $this->total_dessert_bookings_this_meal('SCR');
+              break;
+  
+          default:
+              return htmlspecialchars($type) . " unknown";
       }
-    } elseif ($type = "Dessert") {
-      // calculate Dinner
-      $title = "Dessert bookings";
-      $capacity = $this->scr_dessert_capacity;
-      $booked = $this->total_dessert_bookings_this_meal('SCR');
-      
-      if ($capacity > 0 AND $booked > 0) {
-        $percentage = round(($booked/$capacity) * 100,0);
+  
+      if ($capacity > 0) {
+          $percentage = round(($booked / $capacity) * 100, 0);
       }
-    } else {
-      return $type . " unknown";
-    }
-    
-    
-    if ($percentage >= 100) {
-      $class = "bg-danger";
-    } elseif($percentage >= 80) {
-      $class = "bg-warning";
-    } else {
-      $class = "bg-info";
-    }
-    
-    $output  = "<div class=\"d-flex align-items-center justify-content-between\"><span>" . $title . "</span><span>" . $booked . " of " . $capacity . "</span></div>";
-    
-    $output .= "<div class=\"progress mb-3\" role=\"progressbar\" aria-label=\"" . $title . "\" aria-valuenow=\"" . $booked . "\" aria-valuemin=\"0\" aria-valuemax=\"" . $capacity . "\">";
-    $output .= "<div class=\"progress-bar " . $class . "\" style=\"width: " . $percentage . "%\"></div>";
-    $output .= "</div>";
-    
-    return $output;
+  
+      // Colour coding based on percentage
+      if ($percentage >= 100) {
+          $class = "bg-danger";
+      } elseif ($percentage >= 80) {
+          $class = "bg-warning";
+      } else {
+          $class = "bg-info";
+      }
+  
+      $output  = "<div class=\"d-flex align-items-center justify-content-between\">";
+      $output .= "<span>" . htmlspecialchars($title) . "</span>";
+      $output .= "<span>" . $booked . " of " . $capacity . "</span>";
+      $output .= "</div>";
+  
+      $output .= "<div class=\"progress mb-3\" style=\"height: 6px;\" role=\"progressbar\" aria-label=\"" . htmlspecialchars($title) . "\" aria-valuenow=\"" . $booked . "\" aria-valuemin=\"0\" aria-valuemax=\"" . $capacity . "\">";
+      $output .= "<div class=\"progress-bar " . $class . "\" style=\"width: " . $percentage . "%\"></div>";
+      $output .= "</div>";
+  
+      return $output;
   }
 
-  private function bookingButton() {
-    $bookingsClass = new bookings();
-    $bookingsThisMeal = $this->total_bookings_this_meal($_SESSION['type']);
 
-    if ($bookingsClass->bookingExistCheck($this->uid, $_SESSION['username'])) {
-      // Booking exists for users - show the manage button
-      $bookingLink = "index.php?n=booking&mealUID=" . $this->uid;
-      $bookingClass = "btn-success";
-      $bookingOnClick = "";
-      $bookingDisplayText = "Manage Booking";
-    } else {
+  private function bookingButton() {
+      $bookingsClass = new bookings();
+      $userType = $_SESSION['type'] ?? '';
+      $username = $_SESSION['username'] ?? '';
+      $bookingExists = $bookingsClass->bookingExistCheck($this->uid, $username);
+  
       $bookingLink = "#";
       $bookingClass = "btn-primary";
       $bookingOnClick = "onclick=\"bookMealQuick(this.id)\"";
       $bookingDisplayText = "Book Meal";
-
-      // check for meal capacity
-      if ($this->check_capacity_ok()) {
-        // meal capacity fine
-      } else {
-        // meal capacity reached
-        if (checkpoint_charlie("bookings")) {
-          // allow admin override
-          $bookingLink = "#";
-          $bookingClass = "btn-warning";
-          $bookingOnClick = "onclick=\"bookMealQuick(this.id)\"";
-          $bookingDisplayText = "Capacity Reached";
-        } else {
-          // prevent users from booking
-          $bookingLink = "#";
-          $bookingClass = "btn-warning disabled";
+  
+      // If a booking already exists
+      if ($bookingExists) {
+          $bookingLink = "index.php?n=booking&mealUID=" . $this->uid;
+          $bookingClass = "btn-success";
           $bookingOnClick = "";
-          $bookingDisplayText = "Capacity Reached";
-        }
-      }
-
-      // check for meal cutoff expiry date
-      if ($this->check_cutoff_ok()) {
-        // meal cutoff fine
+          $bookingDisplayText = "Manage Booking";
       } else {
-        // meal cutoff passed
-        if (checkpoint_charlie("bookings")) {
-          // allow admin override
-          $bookingLink = "#";
-          $bookingClass = "btn-secondary";
-          $bookingOnClick = "onclick=\"bookMealQuick(this.id)\"";
-          $bookingDisplayText = "Deadline Passed";
-        } else {
-          // prevent users from booking
-          $bookingLink = "#";
-          $bookingClass = "btn-secondary disabled";
-          $bookingOnClick = "";
-          $bookingDisplayText = "Deadline Passed";
-        }
+          // Booking does not exist: check eligibility in priority order
+  
+          if (!$this->check_member_ok()) {
+              $bookingClass = "btn-secondary disabled";
+              $bookingOnClick = "";
+              $bookingDisplayText = "Your account is disabled";
+  
+          } elseif (!$this->check_member_type_ok(true)) {
+              $bookingClass = "btn-secondary disabled";
+              $bookingOnClick = "";
+              $bookingDisplayText = "Restricted Meal";
+  
+          } elseif (!$this->check_capacity_ok()) {
+              if (checkpoint_charlie("bookings")) {
+                  $bookingClass = "btn-warning";
+                  $bookingDisplayText = "Capacity Reached";
+              } else {
+                  $bookingClass = "btn-warning disabled";
+                  $bookingOnClick = "";
+                  $bookingDisplayText = "Capacity Reached";
+              }
+  
+          } elseif (!$this->check_cutoff_ok()) {
+              if (checkpoint_charlie("bookings")) {
+                  $bookingClass = "btn-secondary";
+                  $bookingDisplayText = "Deadline Passed";
+              } else {
+                  $bookingClass = "btn-secondary disabled";
+                  $bookingOnClick = "";
+                  $bookingDisplayText = "Deadline Passed";
+              }
+          }
       }
-
-      // check for member status (enabled/disabled)
-      if ($this->check_member_ok()) {
-        // member status fine
-      } else {
-        // member disabled
-        $bookingLink = "#";
-        $bookingClass = "btn-secondary disabled";
-        $bookingOnClick = "";
-        $bookingDisplayText = "Your account is disabled";
-      }
-      
-      // check for member category (if allowed this meal)
-      if ($this->check_member_type_ok(true)) {
-        // member status fine
-      } else {
-        // member disabled
-        $bookingLink = "#";
-        $bookingClass = "btn-secondary disabled";
-        $bookingOnClick = "";
-        $bookingDisplayText = "Restricted Meal";
-      }
-    }
-
-    $output .= "<div class=\"d-grid\">";
-    $output .= "<a class=\"btn btn-sm " . $bookingClass . " rounded-0 rounded-bottom\" href=\"" . $bookingLink . "\" id=\"mealUID-" . $this->uid . "\" " . $bookingOnClick . " >";
-    $output .= $bookingDisplayText;
-    $output .= "</a>";
-    $output .= "</div>";
-
-    //$output = "<a href=\"" . $bookingLink . "\" role=\"button\" class=\"btn w-100 " . $bookingClass . "\" id=\"" . $bookingID . "\" " . $bookingOnClick . ">" . $bookingDisplayText . "</a>";
-
-    return $output;
+  
+      // Build button HTML
+      $output  = "<a class=\"btn btn-sm {$bookingClass} w-100\" href=\"" . htmlspecialchars($bookingLink) . "\" ";
+      $output .= "id=\"mealUID-" . htmlspecialchars($this->uid) . "\" {$bookingOnClick}>";
+      $output .= htmlspecialchars($bookingDisplayText);
+      $output .= "</a>";
+  
+      return $output;
   }
 
   public function totalCapacity($memberType = null) {
