@@ -186,6 +186,14 @@ class wine {
 		return $output;
 	}
 	
+	public function favButton() {
+		$output  = "<button type=\"button\" class=\"btn text-danger btn-link\" data-bs-toggle=\"modal\" data-bs-target=\"#listModal\">";
+		$output .= "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#heart-full\"/></svg>";
+		$output .= "</button>";
+		
+		return $output;
+	}
+	
 	public function currentQty($filterDate = null) {
 		global $db;
 		

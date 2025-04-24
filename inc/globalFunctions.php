@@ -302,19 +302,35 @@ function pageAccessCheck($arrayOfAcceptablePermissions = null) {
 	}
 }
 
-function makeTitle($title = null, $subtitle = nulll, $iconsArray = null, $allowGrouping = false) {
-	$output  = "<div class=\"px-3 py-3 pt-md-5 pb-md-4 text-center\">";
+function makeTitle($title = null, $subtitle = null, $iconsArray = null, $allowGrouping = false, $extra = null) {
+	$output  = "<div class=\"p-3 p-md-5 text-center\">";
 	$output .= "<h1 class=\"display-4\">" . $title . "</h1>";
-
+	
 	if ($subtitle != null) {
 		$output .= "<p class=\"lead\">" . $subtitle . "</p>";
 	}
-
+	
 	$output .= "</div>";
 	
-	$output .= "<div class=\"pb-3 text-end\">";
-	$output .= makeTitleActionButton($iconsArray, $allowGrouping);
+	$output .= "<div class=\"row\">";
+	$output .= "<div class=\"col-8\">";
+	$output .= "";
 	$output .= "</div>";
+	$output .= "<div class=\"col-4 text-end\">";
+		$output .= "<div class=\"d-inline-flex gap-2\">";
+			if (!empty($extra)) {
+				$output .= $extra;
+			}
+			
+			$output .= makeTitleActionButton($iconsArray, $allowGrouping);
+		$output .= "</div>";
+	
+	$output .= "</div>";
+	$output .= "</div>";
+
+	
+	
+	
 
 	return $output;
 }
@@ -349,31 +365,6 @@ function makeTitleActionButton($iconsArray, $allowGrouping = false) {
 	
 	
 	
-	return $output;
-}
-
-function ALTmakeTitle($title = null, $subtitle = nulll, $iconsArray = null) {
-
-	$output  = "<div class=\"page-header text-white d-print-none\">";
-	$output .= "<div class=\"row align-items-center\">";
-	$output .= "<div class=\"col\">";
-	$output .= " <div class=\"page-pretitle\">" . $subtitle . "</div>";
-	$output .= "<h2 class=\"page-title\">" . $title . "</h2>";
-	$output .= "</div>";
-	$output .= "<div class=\"col-auto ms-auto d-print-none\">";
-	$output .= "<div class=\"btn-list\">";
-	$output .= "<span class=\"d-none d-sm-inline\">";
-	$output .= "<a href=\"#\" class=\"btn btn-white\">test</a>";
-	$output .= "</span>";
-	$output .= "<a href=\"#\" class=\"btn btn-primary d-none d-sm-inline-block\" data-bs-toggle=\"modal\" data-bs-target=\"#modal-report\">";
-	$output .= "<svg xmlns=\"http://www.w3.org/2000/svg\" class=\"icon\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" stroke-width=\"2\" stroke=\"currentColor\" fill=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path stroke=\"none\" d=\"M0 0h24v24H0z\" fill=\"none\"></path><line x1=\"12\" y1=\"5\" x2=\"12\" y2=\"19\"></line><line x1=\"5\" y1=\"12\" x2=\"19\" y2=\"12\"></line></svg>";
-	$output .= "Create new report";
-	$output .= "</a>";
-	$output .= "</div>";
-	$output .= "</div>";
-	$output .= "</div>";
-	$output .= "</div>";
-
 	return $output;
 }
 

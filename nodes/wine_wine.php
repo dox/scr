@@ -30,7 +30,7 @@ if (count($wine->transactions()) == 0) {
 	$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#trash\"/></svg> Delete Wine", "value" => "onclick=\"wineDelete(" . $wine->uid . ")\"");
 }
 
-echo makeTitle($title, $subtitle, $icons, true);
+echo makeTitle($title, $subtitle, $icons, true, $wine->favButton());
 ?>
 
 <nav aria-label="breadcrumb">
