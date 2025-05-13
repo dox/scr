@@ -59,26 +59,22 @@ echo $text;
 </div>
 
 <script>
-const editor = SUNEDITOR.create(document.getElementById('contentInfo'),{
-	"buttonList": [
-		[
-			"formatBlock",
-			"bold",
-			"underline",
-			"italic",
-			"strike",
-			"fontColor",
-			"hiliteColor",
-			"removeFormat",
-			"align",
-			"horizontalRule",
-      "list",
-      "table",
-			"link",
-			"fullScreen",
-			"codeView",
-		]
-	]
+
+SUNEDITOR.create(document.getElementById('contentInfo'),{
+    defaultTag: 'div',
+    buttonList: [
+        ['codeView', 'bold', 'italic', 'underline', 'table']
+    ],
+    addTagsWhitelist: 'div|span|table|thead|tbody|tr|th|td|i|br',
+    attributesWhitelist: {
+        all: 'class style id' // Allows all elements to have 'class', 'style', and 'id'
+    },
+    pasteTagsWhitelist: 'div|span|table|thead|tbody|tr|th|td|i|br',
+    pasteOptions: {
+        cleanStyle: false, // Do not remove inline styles
+        cleanAttrs: [], // Keep all attributes, including class and style
+        removeTagFilter: false // Prevent stripping of tags
+    }
 });
 
 window.addEventListener("click", function(event) {
