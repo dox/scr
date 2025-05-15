@@ -76,12 +76,16 @@ class member {
       if ($this->opt_in == 1) {
         $name = $this->displayName();
       } else {
-        $name = "Hidden";
+        $name  = "<div class=\"col-6\">";
+        $name .= "<span class=\"placeholder col-1\"></span> ";
+        $name .= "<span class=\"placeholder col-2\"></span> ";
+        $name .= "<span class=\"placeholder col-3\"></span>";
+        $name .= "</div>";
       }
     }
 
     if ($this->ldap == $_SESSION['username']) {
-      $name = $name . " <i>(You)</i>";
+      $name = $this->displayName() . " <i>(You)</i>";
     }
 
 
