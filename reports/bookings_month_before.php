@@ -6,6 +6,7 @@ $columns = array(
   "booking_charge_to",
   "booking_domus_reason",
   "booking_wine",
+  "booking_wine_choice",
   "booking_dessert",
   "booking_guests",
   "meal_name",
@@ -45,6 +46,7 @@ foreach ($bookings AS $booking) {
   $bookingRow['booking_charge_to'] = $bookingObject->charge_to;
   $bookingRow['booking_domus_reason'] = $bookingObject->domus_reason;
   $bookingRow['booking_wine'] = $bookingObject->wine;
+  $bookingRow['booking_wine_choice'] = $bookingObject->wine_choice;
   $bookingRow['booking_dessert'] = $bookingObject->dessert;
   $bookingRow['booking_guests'] = count($bookingGuests);
   $bookingRow['meal_name'] = $mealObject->name;
@@ -77,6 +79,7 @@ foreach ($bookings AS $booking) {
     $bookingRowGuest['booking_charge_to'] = $charge_to;
     $bookingRowGuest['booking_domus_reason'] = $guest->guest_domus_reason;
     $bookingRowGuest['booking_wine'] = onToOne($guest->guest_wine);
+    $bookingRowGuest['booking_wine_choice'] = $guest->guest_wine_choice;
     $bookingRowGuest['booking_dessert'] = $bookingObject->dessert; // takes value from host booking
     $bookingRowGuest['meal_name'] = $mealObject->name;
     $bookingRowGuest['meal_notes'] = $mealObject->notes;
