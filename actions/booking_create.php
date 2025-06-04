@@ -13,11 +13,11 @@ if (isset($_POST['member_ldap'])) {
 	$memberObject = new member($_SESSION['username']);
 }
 
-$wineValue = "0";
+$wineChoice = "";
 $dessertValue = "0";
 
-if ($mealObject->allowed_wine == 1 && $memberObject->default_wine == 1) {
-	$wineValue = "1";
+if ($mealObject->allowed_wine == 1) {
+	$wineChoice = $memberObject->defaultWineChoice();
 }
 
 if ($mealObject->allowed_dessert == 1 && $memberObject->default_dessert == 1) {
@@ -33,7 +33,7 @@ $bookingArray = array(
 	'member_ldap' => strtoupper($memberObject->ldap),
 	'charge_to' => $mealObject->charge_to,
 	'domus_reason' => $domusReason,
-	'wine' => $wineValue,
+	'wine_choice' => $wineChoice,
 	'dessert' => $dessertValue
 );
 

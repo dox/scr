@@ -7,12 +7,6 @@ $guestName = htmlspecialchars($_POST['guest_name'], ENT_QUOTES);
 $guestDietary = explode(",", $_POST['guest_dietary']);
 $guestDomusDescription = $_POST['guest_domus_description'];
 
-if ($_POST['guest_wine'] == "true") {
-	$guestWine = "on";
-} else {
-	$guestWine = null;
-}
-
 if ($_POST['guest_dessert'] == "true") {
 	$guestDessert = "on";
 } else {
@@ -27,7 +21,7 @@ $newGuest = array(
 	'guest_dietary' => $guestDietary,
 	'guest_charge_to' => $_POST['guest_charge_to'],
 	'guest_domus_reason' => $_POST['guest_domus_reason'],
-	'guest_wine' => $guestWine,
+	'guest_wine_choice' => $_POST['guest_wine_choice'],
 	'guest_dessert' => $guestDessert
 );
 

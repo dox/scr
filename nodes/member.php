@@ -30,9 +30,6 @@ if (!empty($_POST)) {
   if (!isset($_POST['email_reminders'])) {
     $_POST['email_reminders'] = 0;
   }
-  if (!isset($_POST['default_wine'])) {
-    $_POST['default_wine'] = 0;
-  }
   if (!isset($_POST['default_dessert'])) {
     $_POST['default_dessert'] = 0;
   }
@@ -355,40 +352,41 @@ function fetchAndDisplay(filePath, clickedLink) {
 
         <div class="divide-y">
           <h4 class="mb-3">Default Preferences</h4>
-          <div>
-            <label class="row">
-              <span class="col"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#person-check"></svg> Allow my name to appear on dining lists (also applies to my guests)</span>
-              <span class="col-auto">
-                <label class="form-check form-check-single form-switch"><input class="form-check-input" type="checkbox" id="opt_in" name="opt_in" value="1" <?php if ($memberObject->opt_in == "1") { echo " checked";} ?>></label>
-              </span>
-            </label>
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="opt_in" name="opt_in" value="1" <?php if ($memberObject->email_reminders == "1") { echo " checked";} ?> switch>
+            <label class="form-check-label" for="opt_in">Allow my name to appear on dining lists (also applies to my guests)</label>
           </div>
-          <div>
-            <label class="row">
-              <span class="col"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#calendar-plus"></svg> Send me an email confirmation when I book a meal</span>
-              <span class="col-auto">
-                <label class="form-check form-check-single form-switch"><input class="form-check-input" type="checkbox" id="email_reminders" name="email_reminders" value="1" <?php if ($memberObject->email_reminders == "1") { echo " checked";} ?>></label>
-              </span>
-            </label>
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="email_reminders" name="email_reminders" value="1" <?php if ($memberObject->opt_in == "1") { echo " checked";} ?> switch>
+            <label class="form-check-label" for="email_reminders">Send me an email confirmation when I book a meal</label>
           </div>
           
           <hr />
           
-          <div>
-            <label class="row">
-              <span class="col"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#wine-glass"></svg> Default Wine <small>(when available)</small></span>
-              <span class="col-auto">
-                <label class="form-check form-check-single form-switch"><input class="form-check-input" type="checkbox" id="default_wine" name="default_wine" value="1" <?php if ($memberObject->default_wine == "1") { echo " checked";} ?>></label>
-              </span>
-            </label>
-          </div>
-          <div>
-            <label class="row">
-              <span class="col"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#cookie"></svg> Default Dessert <small>(when available)</small></span>
-              <span class="col-auto">
-                <label class="form-check form-check-single form-switch"><input class="form-check-input" type="checkbox" id="default_dessert" name="default_dessert" value="1" <?php if ($memberObject->default_dessert == "1") { echo " checked";} ?>></label>
-              </span>
-            </label>
+          <span class="form-check-label" for="">Default Wine <small>(when available)</small></label>
+          <?php
+          $wineOptions = explode(",", $settingsClass->value('booking_wine_options'));
+          
+          foreach($wineOptions AS $wineOption) {
+            // Remove all non-alphanumeric characters
+            $id = preg_replace('/[^a-z0-9]/', '', strtolower($wineOption));
+            
+            $checked = ($wineOption == $memberObject->defaultWineChoice()) ? " checked" : "";
+            
+            $output  = "<div class=\"form-check\">";
+            $output .= "<input class=\"form-check-input\" type=\"radio\" name=\"default_wine_choice\" id=\"" . $id . "\" value=\"" . htmlspecialchars($wineOption, ENT_QUOTES, 'UTF-8') . "\" " . $checked . ">";
+            $output .= "<label class=\"form-check-label\" for=\"default_wine_choice\">" . $wineOption . "</label>";
+            $output .= "</div>";
+            
+            echo $output;
+          }
+          ?>
+          
+          <hr />
+          
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="default_dessert" name="default_dessert" value="1" <?php if ($memberObject->default_dessert == "1") { echo " checked";} ?> switch>
+            <label class="form-check-label" for="default_dessert">Default Dessert <small>(when available)</small></label>
           </div>
         </div>
         

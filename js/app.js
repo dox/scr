@@ -133,7 +133,7 @@ function addGuest(this_id) {
   var guestDietaryCheckboxes = document.querySelectorAll('input[name=guest_dietary]:checked');
   var guestChargeTo = document.getElementById('guest_charge_to').value;
   var guestDomusReason = document.getElementById('guest_domus_reason').value;
-  var guestWine = document.getElementById('guest_wine').checked;
+  var guestWineChoice = document.querySelector('input[name="guest_wine_choice"]:checked').value;
   var guestsList = document.getElementById('guests_list');
   var mealGuestList = document.getElementById('meal_guest_list');
 
@@ -161,7 +161,7 @@ function addGuest(this_id) {
   formData.append("guest_dietary", guestDietary);
   formData.append("guest_charge_to", guestChargeTo);
   formData.append("guest_domus_reason", guestDomusReason);
-  formData.append("guest_wine", guestWine);
+  formData.append("guest_wine_choice", guestWineChoice);
 
   xhr.onload = async function() {
     let url = 'nodes/widgets/_bookingGuestList.php?bookingUID=' + bookingUID + '&mealUID=' + mealUID;
@@ -198,7 +198,7 @@ function editGuest(this_id) {
   var guestDietaryCheckboxes = document.querySelectorAll('input[name=guest_dietary]:checked');
   var guestChargeTo = document.getElementById('guest_charge_to').value;
   var guestDomusReason = document.getElementById('guest_domus_reason').value;
-  var guestWine = document.getElementById('guest_wine').checked;
+  var guestWineChoice = document.querySelector('input[name="guest_wine_choice"]:checked').value;
   var guestsList = document.getElementById('guests_list');
   var mealGuestList = document.getElementById('meal_guest_list');
   
@@ -223,7 +223,7 @@ function editGuest(this_id) {
   formData.append("guest_dietary", guestDietary);
   formData.append("guest_charge_to", guestChargeTo);
   formData.append("guest_domus_reason", guestDomusReason);
-  formData.append("guest_wine", guestWine);
+  formData.append("guest_wine_choice", guestWineChoice);
 
   xhr.onload = async function() {
     let url = 'nodes/widgets/_bookingGuestList.php?bookingUID=' + bookingUID + '&mealUID=' + mealUID;

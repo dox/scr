@@ -16,7 +16,8 @@ class member {
   public $dietary;
   public $opt_in;
   public $email_reminders;
-  public $default_wine;
+  public $default_wine; // retired
+  public $default_wine_choice;
   public $default_dessert;
   public $date_lastlogon;
   public $calendar_hash;
@@ -125,6 +126,18 @@ class member {
     $terms = $db->query($sql);
 
     return $terms;
+  }
+  
+  public function defaultWineChoice() {
+    global $settingsClass;
+    
+    $wineOptions = explode(",", $settingsClass->value('booking_wine_options'));
+    
+    if (in_array($this->default_wine_choice, $wineOptions)) {
+      return $this->default_wine_choice;
+    } else {
+      return end($wineOptions); // fallback to last option
+    }
   }
 
   public function create($array = null, $displayAlert = true) {

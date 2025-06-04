@@ -10,7 +10,8 @@ class booking {
   public $guests_array; // json encoded array
   public $charge_to;
   public $domus_reason;
-  public $wine;
+  public $wine; // retired
+  public $wine_choice;
   public $dessert;
 
   function __construct($bookingUID = null) {

@@ -86,12 +86,6 @@ if (isset($_GET['guestUID'])) {
   }
   ?>
   
-  
-  
-  
-  
-  
-  
     <form method="post" class="needs-validation" novalidate action="../actions/booking_add_guest.php">
       <div class="form-group mb-3">
         <label for="name">Guest Name</label>
@@ -199,20 +193,32 @@ if (isset($_GET['guestUID'])) {
           ?>
           <span class="col"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#wine-glass"></svg> Guest Wine</span>
           <span class="col-auto">
-            <label class="form-check form-check-single form-switch">
-              <input class="form-check-input" id="guest_wine" name="guest_wine" type="checkbox" <?php echo $checked ?> <?php echo $wineDisabledCheck; ?>>
-            </label>
+            <?php
+            if ($mealObject->allowed_wine == 1) {
+              $wineOptions = explode(",", $settingsClass->value('booking_wine_options'));
+              
+              $disabled = (!$mealObject->check_cutoff_ok(true)) ? " disabled" : "";
+              
+              foreach($wineOptions AS $wineOption) {
+                $selectedWine = $guestObject->guest_wine_choice ?: $memberObject->defaultWineChoice();
+                $checked = ($wineOption == $selectedWine) ? " checked" : "";
+                
+                $output  = "<div class=\"form-check\">";
+                $output .= "<input class=\"form-check-input\" type=\"radio\" name=\"guest_wine_choice\" id=\"guest_wine_choice\" value=\"" . htmlspecialchars($wineOption, ENT_QUOTES, 'UTF-8') . "\"" . $checked . $disabled . ">";
+                $output .= "<label class=\"form-check-label\" for=\"guest_wine_choice\">" . $wineOption . "</label>";
+                $output .= "</div>";
+                
+                echo $output;
+              }
+            }
+            ?>
           </span>
         </label>
       </div>
     
     
     </form>
-  
-
-
     
-
   <input type="hidden" id="bookingUID" name="bookingUID" value="<?php echo $bookingObject->uid; ?>">
   <input type="hidden" id="mealUID" name="mealUID" value="<?php echo $mealObject->uid; ?>">
 </div>
