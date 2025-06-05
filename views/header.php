@@ -1,3 +1,13 @@
+<?php
+if (debug) {
+	echo "
+	<nav class=\"navbar sticky-top bg-warning\" data-bs-theme=\"light\">
+		<div class=\"mx-auto\">
+	    	<span class=\"navbar-text\">SITE IN <strong>DEBUG MODE</strong>: TESTING PURPOSES ONLY!</span>
+		</div>
+	</nav>";
+}
+?>
 <header>
 	<nav class="navbar navbar-expand-lg bg-body-secondary">
 	<div class="container">
@@ -5,11 +15,6 @@
 			<svg width="1.3em" height="1.3em">
 				<use xlink:href="img/icons.svg#chough"/>
 			</svg> <?php echo site_name; ?></a>
-			<?php
-			if (debug) {
-				echo "<span class=\"badge rounded-pill text-bg-warning\">DEBUG</span>";
-			}
-			?>
 	  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarLinkCollapse" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
 	    <span class="navbar-toggler-icon"></span>
 	  </button>
