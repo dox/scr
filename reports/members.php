@@ -45,7 +45,7 @@ foreach ($members AS $member) {
   $memberRow['opt_in'] = $memberObject->opt_in;
   $memberRow['email_reminders'] = $memberObject->email_reminders;
   $memberRow['default_wine'] = $memberObject->default_wine;
-  $memberRow['default_wine_choice'] = $memberObject->default_wine_choice;
+  $memberRow['default_wine_choice'] = $memberObject->defaultWineChoice();
   $memberRow['default_dessert'] = $memberObject->default_dessert;
   $memberRow['date_lastlogon'] = date('Y-m-d H:i:s', strtotime($memberObject->date_lastlogon));
   $memberRow['permissions'] = $memberObject->permissions;
