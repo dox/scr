@@ -137,7 +137,7 @@ $bookingsClass = new bookings();
           $output .= "</td>";
           
           $output .= "<td>";
-            if ($bookingObject->wine == "1") {
+            if ($bookingObject->wineChoice() != "None") {
               $output .= "<svg width=\"2em\" height=\"2em\" class=\"mx-1\"><use xlink:href=\"img/icons.svg#wine-glass\"/></svg>";
             }
           $output .= "</td>";
@@ -167,7 +167,7 @@ $bookingsClass = new bookings();
                 }
               $output .= "</td>";
               $output .= "<td>";
-                if ($guest->guest_wine == "on") {
+                if ($guest->guest_wine_choice != "None" && $guest->guest_wine_choice != "") {
                   $output .= "<svg width=\"2em\" height=\"2em\" class=\"mx-1\"><use xlink:href=\"img/icons.svg#wine-glass\"/></svg>";
                 }
               $output .= "</td>";

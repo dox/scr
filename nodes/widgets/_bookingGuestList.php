@@ -29,7 +29,7 @@ if (!isset($bookingObject)) {
     if ($guestObject->guest_domus == "on") {
       $icons[] = "<svg width=\"1em\" height=\"1em\" class=\"text-muted\"><use xlink:href=\"img/icons.svg#graduation-cap\"/></svg>";
     }
-    if ($guestObject->guest_wine == "on") {
+    if ($guestObject->guest_wine_choice != "None" && $guestObject->guest_wine_choice != "") {
       $icons[] = "<svg width=\"1em\" height=\"1em\" class=\"text-muted\"><use xlink:href=\"img/icons.svg#wine-glass\"/></svg>";
     }
     if ($bookingObject->dessert == "1") {

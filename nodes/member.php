@@ -353,11 +353,11 @@ function fetchAndDisplay(filePath, clickedLink) {
         <div class="divide-y">
           <h4 class="mb-3">Default Preferences</h4>
           <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" id="opt_in" name="opt_in" value="1" <?php if ($memberObject->email_reminders == "1") { echo " checked";} ?> switch>
+            <input class="form-check-input" type="checkbox" id="opt_in" name="opt_in" value="1" <?php if ($memberObject->opt_in == "1") { echo " checked";} ?> switch>
             <label class="form-check-label" for="opt_in">Allow my name to appear on dining lists (also applies to my guests)</label>
           </div>
           <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" id="email_reminders" name="email_reminders" value="1" <?php if ($memberObject->opt_in == "1") { echo " checked";} ?> switch>
+            <input class="form-check-input" type="checkbox" id="email_reminders" name="email_reminders" value="1" <?php if ($memberObject->email_reminders == "1") { echo " checked";} ?> switch>
             <label class="form-check-label" for="email_reminders">Send me an email confirmation when I book a meal</label>
           </div>
           

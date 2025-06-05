@@ -22,6 +22,12 @@ foreach ($thisMealsBookingsUIDs AS $booking) {
   $guestsArray = $guestBookingObject->guestsArray();
   $totalGuests = count($guestsArray);
   
+  if ($bookingObject->wineChoice() != "None") {
+    $wineIcon = " <svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#wine-glass\"></use></svg>";
+  } else {
+   $wineIcon = ""; 
+  }
+  
   if ($bookingObject->dessert == "1") {
     $icon = " <svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#cookie\"></use></svg>";
   } else {
@@ -29,9 +35,9 @@ foreach ($thisMealsBookingsUIDs AS $booking) {
   }
   
   if ($totalGuests > 0) {
-    $output .= "<li>" . $memberObject->public_displayName() . " (" . $totalGuests . autoPluralise(" guest", " guests", $totalGuests) . ")" . $icon . "</li>";
+    $output .= "<li>" . $memberObject->public_displayName() . " (" . $totalGuests . autoPluralise(" guest", " guests", $totalGuests) . ") " . $wineIcon . $icon . "</li>";
   } else {
-    $output .= "<li>" . $memberObject->public_displayName() . $icon . "</li>";
+    $output .= "<li>" . $memberObject->public_displayName() . $wineIcon . $icon . "</li>";
   }
 
   if ($totalGuests == $totalGuests) {
@@ -39,6 +45,12 @@ foreach ($thisMealsBookingsUIDs AS $booking) {
 
     foreach ($guestsArray AS $guest) {
       $guest = json_decode($guest);
+      
+      if ($guest->guest_wine_choice != "None" && $guest->guest_wine_choice != "") {
+        $wineIcon = " <svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#wine-glass\"></use></svg>";
+      } else {
+       $wineIcon = ""; 
+      }
       
       if ($bookingObject->dessert == "1") {
         $icon = " <svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#cookie\"></use></svg>";
@@ -49,9 +61,13 @@ foreach ($thisMealsBookingsUIDs AS $booking) {
       if ($memberObject->opt_in == 1 || checkpoint_charlie("members,meals")) {
         $guestName = $guest->guest_name;
       } else {
-        $guestName = "Hidden";
+        if ($memberObject->ldap == $_SESSION['username']) {
+          $guestName = $guest->guest_name;
+        } else {
+          $guestName = $memberObject->public_displayName();
+        }
       }
-      $output .= "<li>" . htmlspecialchars_decode($guestName) . $icon . "</li>";
+      $output .= "<li>" . htmlspecialchars_decode($guestName) . " " . $wineIcon . $icon . "</li>";
     }
     $output .= "</ul>";
   }

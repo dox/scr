@@ -26,6 +26,18 @@ class booking {
 			$this->$key = $value;
 		}
   }
+  
+  public function wineChoice() {
+    global $settingsClass;
+    
+    $wineOptions = explode(",", $settingsClass->value('booking_wine_options'));
+    
+    if (in_array($this->wine_choice, $wineOptions)) {
+      return $this->wine_choice;
+    } else {
+      return end($wineOptions); // fallback to last option
+    }
+  }
 
   public function guestsArray() {
     if (!empty($this->guests_array)) {
@@ -60,7 +72,7 @@ class booking {
 
     $logArray['category'] = "booking";
     $logArray['result'] = "success";
-    $logArray['description'] = "Guest '" . $newGuestArray['guest_name'] . "' of " . $memberObject->displayName() . " added to [bookingUID:" . $this->uid . "] for [mealUID:" . $this->meal_uid . "]. Dessert: " . $this->dessert . " Wine: " . $newGuestArray['guest_wine'];
+    $logArray['description'] = "Guest '" . $newGuestArray['guest_name'] . "' of " . $memberObject->displayName() . " added to [bookingUID:" . $this->uid . "] for [mealUID:" . $this->meal_uid . "]. Dessert: " . $this->dessert . " Wine: " . $newGuestArray['guest_wine_choice'];
     $logsClass->create($logArray);
 
 	  return $this->guests_array;
@@ -120,7 +132,7 @@ class booking {
       
       $logArray['category'] = "booking";
       $logArray['result'] = "success";
-      $logArray['description'] = "[bookingUID:" . $create->lastInsertID() . "] made for " . $memberObject->displayName() . " for [mealUID:" . $array['meal_uid'] . "].  Dessert: " . $array['dessert'] . " Wine: " . $array['wine'];
+      $logArray['description'] = "[bookingUID:" . $create->lastInsertID() . "] made for " . $memberObject->displayName() . " for [mealUID:" . $array['meal_uid'] . "].  Dessert: " . $array['dessert'] . " Wine: " . $array['wine_choice'];
       $logsClass->create($logArray);
       
       return $create;
