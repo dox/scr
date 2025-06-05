@@ -90,7 +90,7 @@ if (isset($bookingByMember)) {
         $wineOptions = explode(",", $settingsClass->value('booking_wine_options'));
         
         // catch if something erroneous is in wine_choice (from historic)
-        if (!in_array($bookingObject->wine_choice, $wineOptions)) {
+        if (!in_array($bookingObject->wine_choice, $wineOptions) && !empty($bookingObject->wine_choice)) {
           $wineOptions[] = $bookingObject->wine_choice;
         }
         
