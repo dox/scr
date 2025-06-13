@@ -12,8 +12,15 @@ if (isset($_POST['filter_date'])) {
 }
 foreach ($allWines AS $wine) {
 	$wine = new wine($wine['uid']);
-	$totalBottles = $totalBottles + $wine->currentQty($_POST['filter_date']);
-	$totalPurchaseValue += $wine->stockValue($_POST['filter_date']);
+	
+	$qty = $wine->currentQty($_POST['filter_date']);
+	$stockValue = $wine->stockValue($_POST['filter_date']);
+	
+	$totalBottles += $qty;
+	$totalPurchaseValue += $stockValue;
+	
+	$winesByBin[$wine->bin_uid]['qty'] += $qty;
+	$winesByBin[$wine->bin_uid]['totalPurchaseValue'] += $stockValue;
 }
 ?>
 
@@ -126,6 +133,40 @@ foreach ($allCellars AS $cellar) {
 	echo "</tbody>";
 	echo "</table>";
 }
+
+// By Bin
+echo "<table class=\"table\">";
+echo "<thead>";
+echo "<tr>";
+echo "<th scope=\"col\" style=\"width: 40%;\">Wine</th>";
+echo "<th scope=\"col\">Bin</th>";
+echo "<th scope=\"col\">Bottles</th>";
+echo "<th scope=\"col\">Total Value</th>";
+echo "</tr>";
+echo "</thead>";
+echo "<tbody>";
+
+foreach ($allWines AS $wine) {
+	$wine = new wine($wine['uid']);
+	$bin = new bin($wine->bin_uid);
+	$cellar = new cellar($bin->cellar_uid);
+	
+	$qty = $wine->currentQty($_POST['filter_date']);
+	$stockValue = $wine->stockValue($_POST['filter_date']);
+	
+	if ($qty > 0) {
+		echo "<tr>";
+		echo "<td scope=\"row\">" . $wine->clean_name(true) . "</td>";
+		echo "<td>" . $bin->name . "</td>";
+		echo "<td>" . $qty . "</td>";
+		echo "<td>" . currencyDisplay($stockValue) . "</td>";
+		echo "</tr>";
+	}
+}
+
+echo "</tbody>";
+echo "</table>";
+
 ?>
 
 <?php
