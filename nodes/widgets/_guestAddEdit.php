@@ -210,6 +210,13 @@ if (isset($_GET['guestUID'])) {
                 
                 echo $output;
               }
+            } else {
+              $output  = "<div class=\"form-check\">";
+              $output .= "<input class=\"form-check-input\" type=\"radio\" name=\"guest_wine_choice\" id=\"guest_wine_choice\" value=\"None\" checked disabled>";
+              $output .= "<label class=\"form-check-label\" for=\"guest_wine_choice\">Not available</label>";
+              $output .= "</div>";
+              
+              echo $output;
             }
             ?>
           </span>
