@@ -74,6 +74,15 @@
           setStoredTheme(theme)
           setTheme(theme)
           showActiveTheme(theme, true)
+        
+          // fire a custom event for ApexCharts
+          if (typeof chart !== 'undefined' && chart !== null) {
+            chart.updateOptions({
+              theme: {
+                mode: theme
+              }
+            });
+          }
         })
       })
   })
