@@ -17,7 +17,7 @@ if (isset($_POST['impersonate_ldap'])) {
   if ($_POST['maintainAdminAccess'] == "true") {
     $_SESSION['permissions'] = $_SESSION['original_details']['permissions'];
   } else {
-    $_SESSION['permissions'] = $memberObject->permissions;
+    $_SESSION['permissions'] = explode(",",$memberObject->permissions);
   }
 
   $logArray['category'] = "admin";
