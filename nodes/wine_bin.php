@@ -31,16 +31,16 @@ $subtitle = $bin->category;
 if (!empty($bin->description)) {
 	$subtitle .= " <i>(" . $bin->description . ")</i>";
 }
-$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#plus-circle\"/></svg> Add Wine", "value" => "onclick=\"location.href='index.php?n=wine_edit&edit=add&cellar_uid=" . $cellar->uid . "&bin_uid=" . $bin->uid . "'\"");
+$icons[] = array("name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#plus-circle\"/></svg> Add Wine", "value" => "onclick=\"location.href='index.php?n=wine_edit&edit=add&cellar_uid=" . $cellar->uid . "&bin_uid=" . $bin->uid . "'\"");
 
 if (count($bin->currentWines()) == 0 && count($bin->closedWines()) == 0) {
-	$icons[] = array("class" => "btn-danger", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#journal-text\"/></svg> Delete Bin", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#deleteBinModal\"");
+	$icons[] = array("class" => "text-danger", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#journal-text\"/></svg> Delete Bin", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#deleteBinModal\"");
 }
 
-$icons[] = array("class" => "btn-info", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#journal-text\"/></svg> Edit Bin", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#editBinModal\"");
+$icons[] = array("name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#journal-text\"/></svg> Edit Bin", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#editBinModal\"");
 
 if (count($bin->closedWines()) > 0) {
-	$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#info-circle\"/></svg> Show closed wines (" . count($bin->closedWines()) . ")", "value" => "onclick=\"location.href='index.php?n=wine_bin&bin_uid=" . $bin->uid . "&closed=true'\"");
+	$icons[] = array("name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#info-circle\"/></svg> Show closed wines (" . count($bin->closedWines()) . ")", "value" => "onclick=\"location.href='index.php?n=wine_bin&bin_uid=" . $bin->uid . "&closed=true'\"");
 }
 
 echo makeTitle($title, $subtitle, $icons, true);

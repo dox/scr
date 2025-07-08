@@ -23,7 +23,7 @@ $notifications = $notificationsClass->all();
 <?php
 $title = "Notifications";
 $subtitle = "Messages that appear to all users at the top of the page";
-$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"16\" height=\"16\"><use xlink:href=\"img/icons.svg#chat-dots\"/></svg> Add New", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#notficationAddModal\"");
+$icons[] = array("name" => "<svg width=\"16\" height=\"16\"><use xlink:href=\"img/icons.svg#chat-dots\"/></svg> Add New", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#notficationAddModal\"");
 
 echo makeTitle($title, $subtitle, $icons, true);
 ?>

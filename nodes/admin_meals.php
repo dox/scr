@@ -24,8 +24,8 @@ $mealsTemplates = $mealsClass->allTemplates();
 <?php
 $title = "Meals";
 $subtitle = "All meals both past and present";
-$icons[] = array("class" => "btn-info", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#bullseye\"/></svg> Apply Template", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#exampleModal\"");
-$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#plus-circle\"/></svg> Add New", "value" => "onclick=\"location.href='index.php?n=admin_meal&add'\"");
+$icons[] = array("class" => "text-info", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#bullseye\"/></svg> Apply Template", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#exampleModal\"");
+$icons[] = array("name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#plus-circle\"/></svg> Add New", "value" => "onclick=\"location.href='index.php?n=admin_meal&add'\"");
 
 echo makeTitle($title, $subtitle, $icons, true);
 ?>

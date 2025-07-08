@@ -11,8 +11,6 @@ if ($pageType == "add") {
 	$bin = new bin($cleanBinUID);
 	
 	$title = "Add New Wine";
-	//$subtitle = $wine->grape . ", " . $wine->country_of_origin;
-	//$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#plus-circle\"/></svg> Add To List", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#deleteTermModal\"");
 	echo makeTitle($title, $subtitle, $icons);
 	
 	$cellar = new cellar($cleanCellarUID);
@@ -25,7 +23,6 @@ if ($pageType == "add") {
 	
 	$title = "Edit " . $wine->name;
 	$subtitle = $wine->grape . ", " . $wine->country_of_origin;
-	//$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#plus-circle\"/></svg> Add To List", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#deleteTermModal\"");
 	echo makeTitle($title, $subtitle, $icons, true);
 }
 ?>

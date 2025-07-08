@@ -3,7 +3,7 @@ pageAccessCheck("wine");
 
 $title = "Wine Lists";
 $subtitle = "Add/edit/delete/share your lists";
-$icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#plus-circle\"/></svg> Add List", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#newListModal\"");
+$icons[] = array("name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#plus-circle\"/></svg> Add List", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#newListModal\"");
 
 echo makeTitle($title, $subtitle, $icons, true);
 

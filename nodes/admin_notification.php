@@ -28,7 +28,7 @@ $members_dismissed_array = json_decode($notification['members_array']);
 <?php
 $title = $notification['name'];
 $subtitle = $notification['message'];
-$icons[] = array("class" => "btn-danger", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#trash\"/></svg> Delete Notification", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#deleteNotificationModal\"");
+$icons[] = array("class" => "text-danger", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#trash\"/></svg> Delete Notification", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#deleteNotificationModal\"");
 
 echo makeTitle($title, $subtitle, $icons, true);
 
