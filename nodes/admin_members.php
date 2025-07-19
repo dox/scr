@@ -28,10 +28,10 @@ if (isset($_POST['precedence'])) {
   $logArray['description'] = "Members order updated";
   $logsClass->create($logArray);
 }
-$scrMembersEnabled = $membersClass->allEnabled('scr');
-$scrMembersDisabled = $membersClass->allDisabled('scr');
-$mcrMembersEnabled = $membersClass->allEnabled('mcr');
-$mcrMembersDisabled = $membersClass->allDisabled('mcr');
+$scrMembersEnabled = $membersClass->getMembers('enabled', 'scr');
+$scrMembersDisabled = $membersClass->getMembers('disabled', 'scr');
+$mcrMembersEnabled = $membersClass->getMembers('enabled', 'mcr');
+$mcrMembersDisabled = $membersClass->getMembers('disabled', 'mcr');
 
 ?>
 <?php
