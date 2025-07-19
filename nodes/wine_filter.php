@@ -55,7 +55,7 @@ echo makeTitle($title, $subtitle, true);
 
 <hr class="pb-3" />
 
-<form id="searchForm" method="POST" action="<?php echo htmlspecialchars($_SERVER['REQUEST_URI']); ?>">
+<form id="searchForm" method="POST" id="searchForm">
 	<div class="mb-3" id="conditionsContainer">
 		<?php
 		foreach ($_POST['conditions'] AS $condition) {
@@ -76,6 +76,8 @@ echo makeTitle($title, $subtitle, true);
 
 <hr class="pb-3" />
 
+<div id="resultsContainer"></div>
+
 <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
 
 <?php
@@ -92,38 +94,133 @@ foreach ($wines AS $wine) {
 foreach ($wineClass->listFromWines("supplier") AS $supplier) {
 	$suppliers[] = ['value' => $supplier['supplier'], 'label' => $supplier['supplier']];
 }
-?>		
+foreach ($wineClass->listFromWines("category") AS $category) {
+	$categories[] = ['value' => $category['category'], 'label' => $category['category']];
+}
+foreach ($wineClass->listFromWines("grape") AS $grape) {
+	$grapes[] = ['value' => $grape['grape'], 'label' => $grape['grape']];
+}
+foreach ($wineClass->listFromWines("country_of_origin") AS $country_of_origin) {
+	$countries[] = ['value' => $country_of_origin['country_of_origin'], 'label' => $country_of_origin['country_of_origin']];
+}
+foreach ($wineClass->listFromWines("region_of_origin") AS $region_of_origin) {
+	$regions[] = ['value' => $region_of_origin['region_of_origin'], 'label' => $region_of_origin['region_of_origin']];
+}
+?>
 
 <script>
 const suppliers = <?php echo json_encode($suppliers, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>;
+const categories = <?php echo json_encode($categories, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>;
+const grapes = <?php echo json_encode($grapes, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>;
+const countries = <?php echo json_encode($countries, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>;
+const regions = <?php echo json_encode($regions, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>;
 
 const fields = [
-  { 
-	value: 'name', 
-	label: 'Name', 
-	type: 'text' 
-  },
-  {
-	value: 'supplier',
-	label: 'Supplier',
-	type: 'select',
-	options: suppliers
-  },
-  {
-	value: 'department',
-	label: 'Department',
-	type: 'select',
-	options: [
-	  { value: 'HR', label: 'HR' },
-	  { value: 'IT', label: 'IT' },
-	  { value: 'Sales', label: 'Sales' }
-	]
-  },
-  {
-	value: 'age',
-	label: 'Age',
-	type: 'text'
-  }
+	{ 
+		value: 'name', 
+		label: 'Name', 
+		type: 'text' 
+	},
+	{ 
+		value: 'date_created', 
+		label: 'Date Created', 
+		type: 'text' 
+	},
+	{ 
+		value: 'date_updated', 
+		label: 'Date Updated', 
+		type: 'text' 
+	},
+	{ 
+		value: 'code', 
+		label: 'Code', 
+		type: 'text' 
+	},
+	{ 
+		value: 'bin_uid', 
+		label: 'Bin UID', 
+		type: 'text' 
+	},
+	{ 
+		value: 'status', 
+		label: 'Status', 
+		type: 'text' 
+	},
+	{ 
+		value: 'name', 
+		label: 'Name', 
+		type: 'text' 
+	},
+	{ 
+		value: 'bin_uid', 
+		label: 'Bin UID', 
+		type: 'text' 
+	},
+	{
+		value: 'supplier',
+		label: 'Supplier',
+		type: 'select',
+		options: suppliers
+	},
+	{ 
+		value: 'supplier_ref', 
+		label: 'Supplier Ref.', 
+		type: 'text' 
+	},
+	{
+		value: 'category',
+		label: 'Category',
+		type: 'select',
+		options: categories
+	},
+	{
+		value: 'grape',
+		label: 'Grape',
+		type: 'select',
+		options: grapes
+	},
+	{
+		value: 'country_of_origin',
+		label: 'County of Origin',
+		type: 'select',
+		options: countries
+	},
+	{
+		value: 'region_of_origin',
+		label: 'Region of Origin',
+		type: 'select',
+		options: regions
+	},
+	{ 
+		value: 'vintage', 
+		label: 'Vintage', 
+		type: 'text' 
+	},
+	{ 
+		value: 'price_purchase', 
+		label: 'Price (Purchase)', 
+		type: 'text' 
+	},
+	{ 
+		value: 'price_internal', 
+		label: 'Price (Internal)', 
+		type: 'text' 
+	},
+	{ 
+		value: 'price_external', 
+		label: 'Price (External)', 
+		type: 'text' 
+	},
+	{ 
+		value: 'tasting', 
+		label: 'Tasting Notes', 
+		type: 'text' 
+	},
+	{ 
+		value: 'notes', 
+		label: 'Notes (Private)', 
+		type: 'text' 
+	}
 ];
 
 const operators = [
@@ -223,5 +320,78 @@ function createValueInput(field, conditionIndex) {
 	input.classList.add('form-control');
 	return input;
   }
+}
+
+
+
+document.getElementById('searchForm').addEventListener('submit', function(e) {
+	e.preventDefault(); // Stop default form submission
+
+	const form = e.target;
+	const formData = new FormData(form);
+
+	// Convert formData to a plain object
+	const plainData = {};
+	formData.forEach((value, key) => {
+		// Handle nested condition fields (like conditions[0][field])
+		if (key.includes('[')) {
+			const match = key.match(/^(\w+)\[(\d+)\]\[(\w+)\]$/);
+			if (match) {
+				const [, group, index, field] = match;
+				if (!plainData[group]) plainData[group] = [];
+				if (!plainData[group][index]) plainData[group][index] = {};
+				plainData[group][index][field] = value;
+			}
+		} else {
+			plainData[key] = value;
+		}
+	});
+
+	// Send AJAX POST request to remote handler
+	fetch('actions/wine_search2.php', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify(plainData)
+	})
+	.then(response => response.json())
+	.then(data => {
+		displayResults(data);
+	})
+	.catch(err => {
+		document.getElementById('resultsContainer').innerHTML = `<div class="alert alert-danger">Error: ${err}</div>`;
+	});
+});
+
+function displayResults(wines) {
+	const container = document.getElementById('resultsContainer');
+	container.innerHTML = '';
+
+	if (!wines.length) {
+		container.innerHTML = '<p>No wines found.</p>';
+		return;
+	}
+
+	let html = '<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">';
+	wines.forEach(wine => {
+		html += `
+			<div class="col">
+				<div class="card">
+					<div class="card-body">
+						<h5 class="card-title">${wine.name}</h5>
+						<p class="card-text">
+							Code: ${wine.code}<br>
+							Category: ${wine.category}<br>
+							Supplier: ${wine.supplier}<br>
+							Vintage: ${wine.vintage}
+						</p>
+					</div>
+				</div>
+			</div>
+		`;
+	});
+	html += '</div>';
+	container.innerHTML = html;
 }
 </script>
