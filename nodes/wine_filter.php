@@ -3,44 +3,7 @@ pageAccessCheck("wine");
 
 $wineClass = new wineClass();
 
-if (isset($_POST['conditions'])) {
-	foreach ($_POST['conditions'] AS $condition) {
-		$conditionFields[] = $condition['field'];
-	} 
-	$subtitle = "Filtering wines on: " . implode(", ", $conditionFields);
-	
-	foreach ($_POST['conditions'] as $index => $cond) {
-		$field = $cond['field'] ?? '';
-		$operator = $cond['operator'] ?? '';
-		$value = $cond['value'] ?? '';
-	
-		// Special handling for LIKE
-		if ($operator === 'LIKE') {
-			$whereParts[] = "$field LIKE '%$value%'";
-		} else {
-			$whereParts[] = "$field $operator '$value'";
-		}
-	}
-	
-	$whereClause = '';
-	if (!empty($whereParts)) {
-		$whereClause = 'WHERE ' . implode(' AND ', $whereParts);
-	}
-	
-	// Output for testing:
-	$sql  = "SELECT * FROM wine_wines ";
-	$sql .= $whereClause;
-	
-	echo $sql;
-
-	$wines = $db->query($sql)->fetchAll();
-	echo count($wines) . " wines found";
-	
-	
-} else {
-	// not searching yet
-	$subtitle = "Filter wines based on multiple criteria";
-}
+$subtitle = "Filter wines based on multiple criteria";
 
 $title = "Wine Filter";
 echo makeTitle($title, $subtitle, true);
@@ -76,18 +39,8 @@ echo makeTitle($title, $subtitle, true);
 
 <hr class="pb-3" />
 
-<div id="resultsContainer"></div>
 
-<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-
-<?php
-foreach ($wines AS $wine) {
-	$wine = new wine($wine['uid']);
-	
-	echo $wine->card();
-}
-?>
-</div>
+	<div id="resultsContainer"></div>
 
 
 <?php
@@ -106,6 +59,9 @@ foreach ($wineClass->listFromWines("country_of_origin") AS $country_of_origin) {
 foreach ($wineClass->listFromWines("region_of_origin") AS $region_of_origin) {
 	$regions[] = ['value' => $region_of_origin['region_of_origin'], 'label' => $region_of_origin['region_of_origin']];
 }
+foreach ($wineClass->listFromWines("status") AS $status) {
+	$statuses[] = ['value' => $status['status'], 'label' => $status['status']];
+}
 ?>
 
 <script>
@@ -114,6 +70,7 @@ const categories = <?php echo json_encode($categories, JSON_HEX_TAG | JSON_HEX_A
 const grapes = <?php echo json_encode($grapes, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>;
 const countries = <?php echo json_encode($countries, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>;
 const regions = <?php echo json_encode($regions, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>;
+const statuses = <?php echo json_encode($statuses, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>;
 
 const fields = [
 	{ 
@@ -144,7 +101,8 @@ const fields = [
 	{ 
 		value: 'status', 
 		label: 'Status', 
-		type: 'text' 
+		type: 'select',
+		options: statuses
 	},
 	{ 
 		value: 'name', 
@@ -322,76 +280,38 @@ function createValueInput(field, conditionIndex) {
   }
 }
 
-
-
 document.getElementById('searchForm').addEventListener('submit', function(e) {
 	e.preventDefault(); // Stop default form submission
 
 	const form = e.target;
 	const formData = new FormData(form);
+	const resultsDiv = document.getElementById('resultsContainer');
 
-	// Convert formData to a plain object
-	const plainData = {};
-	formData.forEach((value, key) => {
-		// Handle nested condition fields (like conditions[0][field])
-		if (key.includes('[')) {
-			const match = key.match(/^(\w+)\[(\d+)\]\[(\w+)\]$/);
-			if (match) {
-				const [, group, index, field] = match;
-				if (!plainData[group]) plainData[group] = [];
-				if (!plainData[group][index]) plainData[group][index] = {};
-				plainData[group][index][field] = value;
-			}
-		} else {
-			plainData[key] = value;
-		}
-	});
+	// Clear and show loading spinner
+	resultsDiv.innerHTML = `
+		<div class="text-center my-4">
+			<div class="spinner-border text-primary" role="status" aria-hidden="true"></div>
+			<span class="ms-2">Searching...</span>
+		</div>
+	`;
 
-	// Send AJAX POST request to remote handler
+	// Send AJAX POST request to wine_search2.php
 	fetch('actions/wine_search2.php', {
 		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify(plainData)
+		body: formData
 	})
-	.then(response => response.json())
-	.then(data => {
-		displayResults(data);
+	.then(response => {
+		if (!response.ok) throw new Error('Network response was not ok');
+		return response.text();
+	})
+	.then(html => {
+		resultsDiv.innerHTML = html;
 	})
 	.catch(err => {
-		document.getElementById('resultsContainer').innerHTML = `<div class="alert alert-danger">Error: ${err}</div>`;
+		resultsDiv.innerHTML = `<div class="alert alert-danger">Error: ${err.message}</div>`;
 	});
 });
 
-function displayResults(wines) {
-	const container = document.getElementById('resultsContainer');
-	container.innerHTML = '';
 
-	if (!wines.length) {
-		container.innerHTML = '<p>No wines found.</p>';
-		return;
-	}
 
-	let html = '<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">';
-	wines.forEach(wine => {
-		html += `
-			<div class="col">
-				<div class="card">
-					<div class="card-body">
-						<h5 class="card-title">${wine.name}</h5>
-						<p class="card-text">
-							Code: ${wine.code}<br>
-							Category: ${wine.category}<br>
-							Supplier: ${wine.supplier}<br>
-							Vintage: ${wine.vintage}
-						</p>
-					</div>
-				</div>
-			</div>
-		`;
-	});
-	html += '</div>';
-	container.innerHTML = html;
-}
 </script>

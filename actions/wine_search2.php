@@ -1,13 +1,9 @@
 <?php
 include_once("../inc/autoload.php");
 
-header('Content-Type: application/json');
-
-$input = json_decode(file_get_contents("php://input"), true);
-
 $whereParts = [];
 
-foreach ($input['conditions'] as $cond) {
+foreach ($_POST['conditions'] as $cond) {
 	$field = $cond['field'] ?? '';
 	$operator = $cond['operator'] ?? '';
 	$value = $cond['value'] ?? '';
@@ -27,7 +23,15 @@ if (!empty($whereParts)) {
 }
 
 $sql = "SELECT * FROM wine_wines $whereClause";
+echo $sql;
 
 $wines = $db->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 
-echo json_encode($wines);
+
+echo "<div class=\"row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3\">";
+foreach ($wines AS $wine) {
+	$wine = new wine($wine['uid']);
+	
+	echo $wine->card();
+}
+echo "</div>";
