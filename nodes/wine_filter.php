@@ -81,121 +81,32 @@ const regions = <?php echo json_encode($regions, JSON_HEX_TAG | JSON_HEX_APOS | 
 const statuses = <?php echo json_encode($statuses, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>;
 
 const fields = [
-	{ 
-		value: 'wine_wines.name', 
-		label: 'Name', 
-		type: 'text' 
-	},
-	{ 
-		value: 'cellar_uid', 
-		label: 'Cellar', 
-		type: 'select',
-		options: cellars
-	},
-	{ 
-		value: 'bin_uid', 
-		label: 'Bin', 
-		type: 'select',
-		options: bins
-	},
-	{ 
-		value: 'date_created', 
-		label: 'Date Created', 
-		type: 'text' 
-	},
-	{ 
-		value: 'date_updated', 
-		label: 'Date Updated', 
-		type: 'text' 
-	},
-	{ 
-		value: 'code', 
-		label: 'Code', 
-		type: 'text' 
-	},
-	{ 
-		value: 'status', 
-		label: 'Status', 
-		type: 'select',
-		options: statuses
-	},
-	{ 
-		value: 'wine_wines.name', 
-		label: 'Name', 
-		type: 'text' 
-	},
-	{
-		value: 'supplier',
-		label: 'Supplier',
-		type: 'select',
-		options: suppliers
-	},
-	{ 
-		value: 'supplier_ref', 
-		label: 'Supplier Ref.', 
-		type: 'text' 
-	},
-	{
-		value: 'wine_wines.category',
-		label: 'Category',
-		type: 'select',
-		options: categories
-	},
-	{
-		value: 'grape',
-		label: 'Grape',
-		type: 'select',
-		options: grapes
-	},
-	{
-		value: 'country_of_origin',
-		label: 'County of Origin',
-		type: 'select',
-		options: countries
-	},
-	{
-		value: 'region_of_origin',
-		label: 'Region of Origin',
-		type: 'select',
-		options: regions
-	},
-	{ 
-		value: 'vintage', 
-		label: 'Vintage', 
-		type: 'text' 
-	},
-	{ 
-		value: 'price_purchase', 
-		label: 'Price (Purchase)', 
-		type: 'text' 
-	},
-	{ 
-		value: 'price_internal', 
-		label: 'Price (Internal)', 
-		type: 'text' 
-	},
-	{ 
-		value: 'price_external', 
-		label: 'Price (External)', 
-		type: 'text' 
-	},
-	{ 
-		value: 'tasting', 
-		label: 'Tasting Notes', 
-		type: 'text' 
-	},
-	{ 
-		value: 'wine_wines.notes', 
-		label: 'Notes (Private)', 
-		type: 'text' 
-	}
+	{ value: 'bin_uid', label: 'Bin', type: 'select', options: bins, operators: ['='] },
+	{ value: 'cellar_uid', label: 'Cellar', type: 'select', options: cellars, operators: ['='] },
+	{ value: 'code', label: 'Code', type: 'text', operators: ['LIKE', '='] },
+	{ value: 'country_of_origin', label: 'Country of Origin', type: 'select', options: countries, operators: ['='] },
+	{ value: 'date_created', label: 'Date Created', type: 'text', operators: ['=', '<=', '>='] },
+	{ value: 'date_updated', label: 'Date Updated', type: 'text', operators: ['=', '<=', '>='] },
+	{ value: 'grape', label: 'Grape', type: 'select', options: grapes, operators: ['='] },
+	{ value: 'price_external', label: 'Price (External)', type: 'text', operators: ['=', '<=', '>='] },
+	{ value: 'price_internal', label: 'Price (Internal)', type: 'text', operators: ['=', '<=', '>='] },
+	{ value: 'price_purchase', label: 'Price (Purchase)', type: 'text', operators: ['=', '<=', '>='] },
+	{ value: 'region_of_origin', label: 'Region of Origin', type: 'select', options: regions, operators: ['='] },
+	{ value: 'status', label: 'Status', type: 'select', options: statuses, operators: ['='] },
+	{ value: 'supplier', label: 'Supplier', type: 'select', options: suppliers, operators: ['LIKE', '='] },
+	{ value: 'supplier_ref', label: 'Supplier Ref.', type: 'text', operators: ['LIKE', '='] },
+	{ value: 'tasting', label: 'Tasting Notes', type: 'text', operators: ['LIKE', '='] },
+	{ value: 'vintage', label: 'Vintage', type: 'text', operators: ['=', '<=', '>='] },
+	{ value: 'wine_wines.category', label: 'Category', type: 'select', options: categories, operators: ['='] },
+	{ value: 'wine_wines.name', label: 'Name', type: 'text', operators: ['LIKE', '='] },
+	{ value: 'wine_wines.notes', label: 'Notes (Private)', type: 'text', operators: ['LIKE', '='] }
 ];
 
-const operators = [
+const allOperators = [
   { value: '=', label: '=' },
-  { value: '<', label: '<' },
-  { value: '>', label: '>' },
-  { value: 'LIKE', label: 'LIKE' }
+  { value: '<=', label: '<=' },
+  { value: '>=', label: '>=' },
+  { value: 'LIKE', label: 'CONTAINS' }
 ];
 
 let conditionCount = 0;
@@ -212,7 +123,7 @@ function addCondition() {
   const fieldSelect = document.createElement('select');
   fieldSelect.name = `conditions[${conditionCount}][field]`;
   fieldSelect.classList.add('form-select');
-  fieldSelect.style.width = '150px';
+  fieldSelect.style.width = '250px';
 
   fields.forEach(f => {
 	const option = document.createElement('option');
@@ -221,37 +132,34 @@ function addCondition() {
 	fieldSelect.appendChild(option);
   });
 
+  const initialField = fields[0];
+
   // Operator dropdown
   const operatorSelect = document.createElement('select');
   operatorSelect.name = `conditions[${conditionCount}][operator]`;
   operatorSelect.classList.add('form-select');
   operatorSelect.style.width = '100px';
-
-  operators.forEach(op => {
-	const option = document.createElement('option');
-	option.value = op.value;
-	option.textContent = op.label;
-	operatorSelect.appendChild(option);
-  });
+  populateOperatorOptions(operatorSelect, initialField);
 
   // Value container
   const valueContainer = document.createElement('div');
   valueContainer.style.width = '200px';
 
-  // Create initial value field (default to text input)
-  const valueInput = createValueInput(fields[0], conditionCount);
+  // Create initial value field (default to first field)
+  const valueInput = createValueInput(initialField, conditionCount);
   valueContainer.appendChild(valueInput);
 
-  // When the field changes, replace the value input
+  // When the field changes, update value input and operator options
   fieldSelect.addEventListener('change', function() {
 	const selectedField = fields.find(f => f.value === this.value);
 
-	// Clear old input
+	// Update value input
 	valueContainer.innerHTML = '';
-
-	// Add new input (text or select)
 	const newInput = createValueInput(selectedField, conditionCount);
 	valueContainer.appendChild(newInput);
+
+	// Update operators
+	populateOperatorOptions(operatorSelect, selectedField);
   });
 
   // Remove button
@@ -290,14 +198,27 @@ function createValueInput(field, conditionIndex) {
   }
 }
 
+function populateOperatorOptions(selectEl, field) {
+  selectEl.innerHTML = '';
+  const allowed = field.operators || allOperators.map(op => op.value);
+
+  allOperators.forEach(op => {
+	if (allowed.includes(op.value)) {
+	  const option = document.createElement('option');
+	  option.value = op.value;
+	  option.textContent = op.label;
+	  selectEl.appendChild(option);
+	}
+  });
+}
+
 document.getElementById('searchForm').addEventListener('submit', function(e) {
-	e.preventDefault(); // Stop default form submission
+	e.preventDefault();
 
 	const form = e.target;
 	const formData = new FormData(form);
 	const resultsDiv = document.getElementById('resultsContainer');
 
-	// Clear and show loading spinner
 	resultsDiv.innerHTML = `
 		<div class="text-center my-4">
 			<div class="spinner-border text-primary" role="status" aria-hidden="true"></div>
@@ -305,7 +226,6 @@ document.getElementById('searchForm').addEventListener('submit', function(e) {
 		</div>
 	`;
 
-	// Send AJAX POST request to wine_search2.php
 	fetch('actions/wine_search2.php', {
 		method: 'POST',
 		body: formData
@@ -321,7 +241,6 @@ document.getElementById('searchForm').addEventListener('submit', function(e) {
 		resultsDiv.innerHTML = `<div class="alert alert-danger">Error: ${err.message}</div>`;
 	});
 });
-
 
 
 </script>
