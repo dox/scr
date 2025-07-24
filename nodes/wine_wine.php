@@ -9,6 +9,37 @@ $wine = new wine($wineUID);
 $bin = new bin($wine->bin_uid);
 $cellar = new cellar($bin->cellar_uid);
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+	// 1. Handle attachment deletion (if requested)
+	if (!empty($_POST['delete_attachment'])) {
+		$storedFilename = $_POST['delete_attachment'];  // sanitized below
+		$storedFilename = basename($storedFilename);   // basic sanitization
+		
+		$deleted = $wine->deleteAttachment($storedFilename);
+		
+		if ($deleted) {
+			// Optionally set a success message
+			$message = "Attachment deleted successfully.";
+		} else {
+			$message = "Failed to delete attachment.";
+		}
+		
+		$wine = new wine($wineUID);
+	}
+	
+	// 2. Handle attachment upload (if any)
+	if (isset($_FILES['attachment'])) {
+		$attachmentData = $wine->uploadAttachment('attachment');
+		if ($attachmentData) {
+			// You can reload the wine object or update $wine->attachments as needed
+			$message = "Attachment uploaded successfully.";
+		}
+		
+		$wine = new wine($wineUID);
+	}
+}
+
+
 $title = $wine->name;
 
 if (!empty($wine->grape)) {
@@ -51,6 +82,15 @@ echo $wine->statusBanner();
 <ul class="nav nav-tabs nav-fill" id="myTab" role="tablist">
 	<li class="nav-item" role="presentation">
 		<button class="nav-link active" id="information-tab" data-bs-toggle="tab" data-bs-target="#information-tab-pane" type="button" role="tab" aria-controls="information-tab-pane" aria-selected="true">Information</button>
+	</li>
+	<li class="nav-item" role="presentation">
+		<?php
+		$attachmentsTitle = "Attachments";
+		if (count($wine->attachments()) > 0) {
+			$attachmentsTitle .= " <span class=\"badge text-bg-secondary\">" . count($wine->attachments()) . "</span>";
+		}
+		?>
+		<button class="nav-link" id="attachments-tab" data-bs-toggle="tab" data-bs-target="#attachments-tab-pane" type="button" role="tab" aria-controls="attachments-tab-pane" aria-selected="false"><?php echo $attachmentsTitle; ?></button>
 	</li>
 	<li class="nav-item" role="presentation">
 		<button class="nav-link" id="logs-tab" data-bs-toggle="tab" data-bs-target="#logs-tab-pane" type="button" role="tab" aria-controls="logs-tab-pane" aria-selected="false">Logs</button>
@@ -153,6 +193,39 @@ echo $wine->statusBanner();
 	  </div>
   </div>
   
+  <div class="tab-pane fade" id="attachments-tab-pane" role="tabpanel" aria-labelledby="attachments-tab" tabindex="0">
+	  <ul class="list-group mb-3">
+	  <?php
+	  foreach ($wine->attachments() AS $attachment) {
+		  $fileURL = "uploads/" . $attachment['stored'];
+		  
+		  $output  = "<form method=\"POST\" style=\"margin:0;\">";
+		  $output .= "<input type=\"hidden\" name=\"delete_attachment\" value=\"" . $attachment['stored'] . "\" />";
+		  $output .= "<li class=\"list-group-item d-flex justify-content-between align-items-center\">";
+		  $output .= "<a href=\"" . $fileURL . "\" target=\"_blank\">" . $attachment['original']  . "</a>";
+		  $output .= "<button type=\"submit\" class=\"btn btn-sm btn-danger\" onclick=\"return confirm('Are you sure you want to delete this file?  This action cannot be undone!')\"><svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#trash\"/></svg> Delete</button>";
+		  $output .= "</form>";
+		  $output .= "</li>";
+		  
+		  echo $output;
+	  }
+	  ?>
+	  </ul>
+
+	  <div class="mb-3">
+		  <form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'] . '?' . $_SERVER['QUERY_STRING']); ?>" enctype="multipart/form-data">
+		   <div class="input-group mb-3">
+			 <input class="form-control" required type="file" name="attachment" id="formFile">
+			 <button class="btn btn-outline-secondary" type="submit" id="button-addon1">Upload</button>
+		   </div>
+		   <div id="emailHelp" class="form-text">
+			 Allowed file types: <?php echo $settingsClass->value('uploads_allowed_filetypes'); ?>
+		   </div>
+		 </form>
+
+	  </div>
+  </div>
+	
   <div class="tab-pane fade" id="logs-tab-pane" role="tabpanel" aria-labelledby="logs-tab" tabindex="0">
 	  <?php
 	  echo $logsClass->displayTable($wine->logs());

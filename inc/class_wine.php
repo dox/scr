@@ -22,6 +22,7 @@ class wine {
 	public $tasting;
 	public $notes;
 	public $photograph;
+	public $attachments;
 	
 	function __construct($wineUID = null) {
 		global $db;
@@ -469,6 +470,20 @@ class wine {
 		return true;
 	}
 	
+	public function attachments() {
+		if (empty($this->attachments)) {
+			return [];
+		}
+	
+		$attachments = json_decode($this->attachments, true);
+	
+		if (json_last_error() !== JSON_ERROR_NONE || !is_array($attachments)) {
+			return [];
+		}
+	
+		return $attachments;
+	}
+	
 	public function delete() {
 		global $db, $logsClass;
 		
@@ -497,6 +512,130 @@ class wine {
 		$logsClass->create($logArray);
 		
 		return true;
+	}
+	
+	public function uploadAttachment($fileField = 'attachment') {
+		global $db, $settingsClass, $logsClass;
+	
+		// Check for uploaded file
+		if (!isset($_FILES[$fileField]) || $_FILES[$fileField]['error'] !== UPLOAD_ERR_OK) {
+			return null; // No file or failed upload
+		}
+	
+		$upload = $_FILES[$fileField];
+		$originalName = basename($upload['name']);
+		$ext = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
+	
+		// Validate extension
+		$allowed = array_map('trim', explode(',', $settingsClass->value('uploads_allowed_filetypes')));
+		if (!in_array($ext, $allowed)) {
+			$logArray['category'] = "wine";
+			$logArray['result'] = "warning";
+			$logArray['description'] = "Invalid file extension (" . $ext . ") for attachment upload on wine [wineUID:{$this->uid}]";
+			$logsClass->create($logArray);
+			return null;
+		}
+	
+		// Create unique filename
+		$uniqueName = uniqid("wine_" . $this->uid . "-", true) . '.' . $ext;
+		$uploadDir = "uploads/";
+	
+		if (!is_dir($uploadDir)) {
+			mkdir($uploadDir, 0775, true);
+		}
+	
+		$target = $uploadDir . $uniqueName;
+		
+		if (move_uploaded_file($upload['tmp_name'], $target)) {
+			// Construct the final UPDATE query
+			$sql = "UPDATE wine_wines
+			SET attachments = 
+			JSON_ARRAY_APPEND(
+				IFNULL(attachments, JSON_ARRAY()),
+				'$',
+				JSON_OBJECT('original' , '" . $originalName . "', 'stored', '" . $uniqueName . "')
+			)
+			WHERE uid = " . $this->uid;
+			$db->query($sql);
+			
+			$logArray['category'] = "wine";
+			$logArray['result'] = "success";
+			$logArray['description'] = "Uploaded attachment {$uniqueName} (original: {$originalName}) for [wineUID:{$this->uid}]";
+			$logsClass->create($logArray);
+	
+			return [
+				'original' => $originalName,
+				'stored' => $uniqueName
+			];
+		} else {
+			$logArray['category'] = "wine";
+			$logArray['result'] = "warning";
+			$logArray['description'] = "Failed to move uploaded attachment to " . $target . " for [wineUID:{$this->uid}]";
+			$logsClass->create($logArray);
+			return null;
+		}
+	}
+	
+	public function deleteAttachment($storedFilename) {
+		global $db, $logsClass;
+		
+		$uploadDir = "uploads/";
+		$filePath = $uploadDir . $storedFilename;
+		
+		// 1. Delete the file from disk if it exists
+		if (file_exists($filePath)) {
+			if (!unlink($filePath)) {
+				// Failed to delete file physically
+				$logArray = [
+					'category' => "wine",
+					'result' => "warning",
+					'description' => "Failed to physically delete attachment file {$storedFilename} for [wineUID:{$this->uid}]"
+				];
+				$logsClass->create($logArray);
+				return false;
+			}
+		} else {
+			// File doesn't exist, but maybe it was already removed; log as warning
+			$logArray = [
+				'category' => "wine",
+				'result' => "warning",
+				'description' => "Attachment file {$storedFilename} does not exist for [wineUID:{$this->uid}]"
+			];
+			$logsClass->create($logArray);
+		}
+		
+		// 2. Remove the attachment JSON object from the attachments field
+		$attachments = $this->attachments();
+		
+		if (is_array($attachments)) {
+			// Filter out the attachment with this stored filename
+			$newAttachments = array_filter($attachments, function($item) use ($storedFilename) {
+				return !isset($item['stored']) || $item['stored'] !== $storedFilename;
+			});
+			$newAttachments = array_values($newAttachments); // Reindex array
+			
+			// Update DB
+			$newAttachmentsJson = json_encode($newAttachments);
+			$db->query("UPDATE wine_wines SET attachments = ? WHERE uid = ?", $newAttachmentsJson, $this->uid);
+			
+			$logArray = [
+				'category' => "wine",
+				'result' => "success",
+				'description' => "Deleted attachment {$storedFilename} for [wineUID:{$this->uid}]"
+			];
+			$logsClass->create($logArray);
+			
+			return true;
+		} else {
+			// attachments field empty or malformed
+			$logArray = [
+				'category' => "wine",
+				'result' => "warning",
+				'description' => "Malformed or empty attachments field when deleting {$storedFilename} for [wineUID:{$this->uid}]"
+			];
+			$logsClass->create($logArray);
+			return false;
+		}
 	}
 }
 ?>
