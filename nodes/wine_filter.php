@@ -44,6 +44,12 @@ echo makeTitle($title, $subtitle, true);
 
 
 <?php
+foreach ($wineClass->allCellars() AS $cellar) {
+	$cellars[] = ['value' => $cellar['uid'], 'label' => $cellar['name']];
+}
+foreach ($wineClass->allBins() AS $bin) {
+	$bins[] = ['value' => $bin['uid'], 'label' => $bin['name']];
+}
 foreach ($wineClass->listFromWines("supplier") AS $supplier) {
 	$suppliers[] = ['value' => $supplier['supplier'], 'label' => $supplier['supplier']];
 }
@@ -65,6 +71,8 @@ foreach ($wineClass->listFromWines("status") AS $status) {
 ?>
 
 <script>
+const cellars = <?php echo json_encode($cellars, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>;
+const bins = <?php echo json_encode($bins, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>;
 const suppliers = <?php echo json_encode($suppliers, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>;
 const categories = <?php echo json_encode($categories, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>;
 const grapes = <?php echo json_encode($grapes, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>;
@@ -74,9 +82,21 @@ const statuses = <?php echo json_encode($statuses, JSON_HEX_TAG | JSON_HEX_APOS 
 
 const fields = [
 	{ 
-		value: 'name', 
+		value: 'wine_wines.name', 
 		label: 'Name', 
 		type: 'text' 
+	},
+	{ 
+		value: 'cellar_uid', 
+		label: 'Cellar', 
+		type: 'select',
+		options: cellars
+	},
+	{ 
+		value: 'bin_uid', 
+		label: 'Bin', 
+		type: 'select',
+		options: bins
 	},
 	{ 
 		value: 'date_created', 
@@ -94,24 +114,14 @@ const fields = [
 		type: 'text' 
 	},
 	{ 
-		value: 'bin_uid', 
-		label: 'Bin UID', 
-		type: 'text' 
-	},
-	{ 
 		value: 'status', 
 		label: 'Status', 
 		type: 'select',
 		options: statuses
 	},
 	{ 
-		value: 'name', 
+		value: 'wine_wines.name', 
 		label: 'Name', 
-		type: 'text' 
-	},
-	{ 
-		value: 'bin_uid', 
-		label: 'Bin UID', 
 		type: 'text' 
 	},
 	{
@@ -126,7 +136,7 @@ const fields = [
 		type: 'text' 
 	},
 	{
-		value: 'category',
+		value: 'wine_wines.category',
 		label: 'Category',
 		type: 'select',
 		options: categories
@@ -175,7 +185,7 @@ const fields = [
 		type: 'text' 
 	},
 	{ 
-		value: 'notes', 
+		value: 'wine_wines.notes', 
 		label: 'Notes (Private)', 
 		type: 'text' 
 	}

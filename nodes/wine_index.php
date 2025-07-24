@@ -35,7 +35,7 @@ if (isset($_POST['name'])) {
 	<div class="col">
 		<div class="input-group mb-3">
 		  <input type="text" class="form-control form-control-lg" id="wine_search" placeholder="Quick search all cellars" autocomplete="off" spellcheck="false">
-		  <span class="input-group-text" id="basic-addon2"><input class="form-check-input mt-0 me-2" type="checkbox" id="wine_search_include_closed" value="true">include closed</span>
+		  <a href="index.php?n=wine_filter" type="button" class="btn btn-lg btn-outline-secondary">Advanced Filter</a>
 		</div>
 		<ul id="wine_search_results" class="list-group"></ul>
 	</div>
@@ -154,8 +154,6 @@ document.getElementById('wine_search').addEventListener('keyup', function() {
 	let query = this.value;
 	let resultsDiv = document.getElementById('wine_search_results');
 	
-	let include_closed = document.getElementById('wine_search_include_closed').checked;
-	
 	// Clear the results if the input is empty
 	if (query.trim() === '') {
 		resultsDiv.innerHTML = '';
@@ -166,7 +164,7 @@ document.getElementById('wine_search').addEventListener('keyup', function() {
 	let xhr = new XMLHttpRequest();
 	
 	// Configure it: GET-request for the URL with the query
-	xhr.open('GET', 'actions/wine_search.php?q=' + encodeURIComponent(query) + '&include=' + include_closed, true);
+	xhr.open('GET', 'actions/wine_search.php?q=' + encodeURIComponent(query), true);
 	
 	// Set up the callback function
 	xhr.onload = function() {

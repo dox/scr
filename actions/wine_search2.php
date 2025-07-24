@@ -3,6 +3,10 @@ include_once("../inc/autoload.php");
 
 $whereParts = [];
 
+if (empty($_POST['conditions'])) {
+	exit("No conditions supplied");
+}
+
 foreach ($_POST['conditions'] as $cond) {
 	$field = $cond['field'] ?? '';
 	$operator = $cond['operator'] ?? '';
@@ -22,8 +26,12 @@ if (!empty($whereParts)) {
 	$whereClause = 'WHERE ' . implode(' AND ', $whereParts);
 }
 
-$sql = "SELECT * FROM wine_wines $whereClause";
-echo $sql;
+$sql = "SELECT wine_wines.uid AS uid FROM wine_wines ";
+if (in_array('cellar_uid', array_column($_POST['conditions'], 'field')) || in_array('bin_uid', array_column($_POST['conditions'], 'field'))) {
+	$sql .= "JOIN wine_bins ON wine_wines.bin_uid = wine_bins.uid ";
+	$sql .= "JOIN wine_cellars ON wine_bins.cellar_uid = wine_cellars.uid ";
+}
+$sql .= $whereClause;
 
 $wines = $db->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 

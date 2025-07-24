@@ -293,7 +293,9 @@ class wineClass {
 		global $db;
 		
 		$sql  = "SELECT DISTINCT " . $columnName . " FROM " . self::$table_wines;
-		$sql .= " WHERE status != 'Closed'";
+		if ($columnName != "status") {
+			$sql .= " WHERE status != 'Closed'";
+		}
 		if (!empty($whereFilterArray)) {
 			$conditions = [];
 			foreach ($whereFilterArray as $key => $value) {
