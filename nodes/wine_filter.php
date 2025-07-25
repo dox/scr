@@ -81,29 +81,30 @@ const regions = <?php echo json_encode($regions, JSON_HEX_TAG | JSON_HEX_APOS | 
 const statuses = <?php echo json_encode($statuses, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>;
 
 const fields = [
-	{ value: 'bin_uid', label: 'Bin', type: 'select', options: bins, operators: ['='] },
-	{ value: 'wine_wines.category', label: 'Category', type: 'select', options: categories, operators: ['='] },
-	{ value: 'cellar_uid', label: 'Cellar', type: 'select', options: cellars, operators: ['='] },
-	{ value: 'code', label: 'Code', type: 'text', operators: ['LIKE', '='] },
-	{ value: 'country_of_origin', label: 'Country of Origin', type: 'select', options: countries, operators: ['='] },
+	{ value: 'bin_uid', label: 'Bin', type: 'select', options: bins, operators: ['=','!='] },
+	{ value: 'wine_wines.category', label: 'Category', type: 'select', options: categories, operators: ['=','!='] },
+	{ value: 'cellar_uid', label: 'Cellar', type: 'select', options: cellars, operators: ['=','!='] },
+	{ value: 'code', label: 'Code', type: 'text', operators: ['LIKE', '=','!='] },
+	{ value: 'country_of_origin', label: 'Country of Origin', type: 'select', options: countries, operators: ['=','!='] },
 	{ value: 'date_created', label: 'Date Created', type: 'text', operators: ['=', '<=', '>='] },
 	{ value: 'date_updated', label: 'Date Updated', type: 'text', operators: ['=', '<=', '>='] },
-	{ value: 'grape', label: 'Grape', type: 'select', options: grapes, operators: ['='] },
-	{ value: 'wine_wines.name', label: 'Name', type: 'text', operators: ['LIKE', '='] },
-	{ value: 'wine_wines.notes', label: 'Notes (Private)', type: 'text', operators: ['LIKE', '='] },
-	{ value: 'price_external', label: 'Price (External)', type: 'text', operators: ['=', '<=', '>='] },
-	{ value: 'price_internal', label: 'Price (Internal)', type: 'text', operators: ['=', '<=', '>='] },
-	{ value: 'price_purchase', label: 'Price (Purchase)', type: 'text', operators: ['=', '<=', '>='] },
-	{ value: 'region_of_origin', label: 'Region of Origin', type: 'select', options: regions, operators: ['='] },
-	{ value: 'status', label: 'Status', type: 'select', options: statuses, operators: ['='] },
-	{ value: 'supplier', label: 'Supplier', type: 'select', options: suppliers, operators: ['LIKE', '='] },
-	{ value: 'supplier_ref', label: 'Supplier Ref.', type: 'text', operators: ['LIKE', '='] },
-	{ value: 'tasting', label: 'Tasting Notes', type: 'text', operators: ['LIKE', '='] },
-	{ value: 'vintage', label: 'Vintage', type: 'text', operators: ['=', '<=', '>='] }
+	{ value: 'grape', label: 'Grape', type: 'select', options: grapes, operators: ['=','!='] },
+	{ value: 'wine_wines.name', label: 'Name', type: 'text', operators: ['LIKE','=','!='] },
+	{ value: 'wine_wines.notes', label: 'Notes (Private)', type: 'text', operators: ['LIKE','='] },
+	{ value: 'price_external', label: 'Price (External)', type: 'text', operators: ['=','!=','<=', '>='] },
+	{ value: 'price_internal', label: 'Price (Internal)', type: 'text', operators: ['=','!=','<=', '>='] },
+	{ value: 'price_purchase', label: 'Price (Purchase)', type: 'text', operators: ['=','!=','<=', '>='] },
+	{ value: 'region_of_origin', label: 'Region of Origin', type: 'select', options: regions, operators: ['=','!='] },
+	{ value: 'status', label: 'Status', type: 'select', options: statuses, operators: ['=','!='] },
+	{ value: 'supplier', label: 'Supplier', type: 'select', options: suppliers, operators: ['LIKE','=','!='] },
+	{ value: 'supplier_ref', label: 'Supplier Ref.', type: 'text', operators: ['LIKE','=','!='] },
+	{ value: 'tasting', label: 'Tasting Notes', type: 'text', operators: ['LIKE','='] },
+	{ value: 'vintage', label: 'Vintage', type: 'text', operators: ['=','!=','<=','>='] }
 ];
 
 const allOperators = [
   { value: '=', label: '=' },
+  { value: '!=', label: '!=' },
   { value: '<=', label: '<=' },
   { value: '>=', label: '>=' },
   { value: 'LIKE', label: 'CONTAINS' }
