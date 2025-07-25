@@ -51,6 +51,19 @@ class member {
 			$this->$key = $value;
 		}
 	}
+	
+	public function updateMemberPrecendece($order) {
+		global $db, $logsClass;
+	
+		$sql  = "UPDATE " . self::$table_name;
+		$sql .= " SET precedence = '" . $order . "' ";
+		$sql .= " WHERE uid = '" . $this->uid . "' ";
+		$sql .= " LIMIT 1";
+	
+		$update = $db->query($sql);
+	
+		return $update;
+	}
 
 	public function displayName() {
 		if (!empty($this->title)) {
@@ -422,7 +435,7 @@ class member {
 			$handle = "";
 		}
 		
-		$output  = "<li class=\"list-group-item\" id=\"" . $this->uid . "\">";
+		$output  = "<li class=\"list-group-item\" data-user-id=\"" . $this->uid . "\">";
 		$output .= $handle;
 		$output .= "<a href=\"index.php?n=member&memberUID=" . $this->uid . "\">" . $this->displayName() . "</a>";
 		$output .= " <span class=\"text-muted\">[" . $this->ldap ."]</span>";

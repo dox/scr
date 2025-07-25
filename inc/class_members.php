@@ -72,18 +72,5 @@ class members {
 		
 		return $dietaryOptionsSettings;
 	}
-	
-	public function updateMemberPrecendece($memberUID = null, $order = null) {
-		global $db, $logsClass;
-	
-		$sql  = "UPDATE " . self::$table_name;
-		$sql .= " SET precedence = '" . $order . "' ";
-		$sql .= " WHERE uid = '" . $memberUID . "' ";
-		$sql .= " LIMIT 1";
-	
-		$update = $db->query($sql);
-	
-		return $update;
-	}
 }
 ?>

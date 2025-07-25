@@ -13,14 +13,15 @@ if (isset($_POST['memberNew'])) {
  $membersClass = new members();
 }
 
-if (isset($_POST['precedence'])) {
-  $precedenceArray = explode(",", $_POST['precedence']);
+if (isset($_POST['precedence_order'])) {
+  $precedenceArray = explode(",", $_POST['precedence_order']);
 
   $i = 0;
   do {
-    $membersClass->updateMemberPrecendece($precedenceArray[$i], $i);
+    $memberObject = new member($precedenceArray[$i]);
+    $memberObject->updateMemberPrecendece($i);
 
-    $i++;
+  $i++;
   } while ($i < count($precedenceArray));
 
   $logArray['category'] = "admin";
@@ -42,80 +43,77 @@ $icons[] = array("name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"
 echo makeTitle($title, $subtitle, $icons, true);
 ?>
 
-<ul class="nav nav-tabs nav-fill" id="myTab" role="tablist">
+<ul class="nav nav-tabs nav-fill" id="scrUserList" role="tablist">
   <li class="nav-item" role="presentation">
-    <a class="nav-link active" id="scr-tab" data-bs-toggle="tab" href="#scr" role="tab" aria-controls="scr" aria-selected="true">SCR (<?php echo count($scrMembersEnabled);?>)</a>
+  <a class="nav-link active" id="scr-tab" data-bs-toggle="tab" href="#scr" role="tab" aria-controls="scr" aria-selected="true">SCR (<?php echo count($scrMembersEnabled);?>)</a>
   </li>
   <li class="nav-item" role="presentation">
-    <a class="nav-link" id="mcr-tab" data-bs-toggle="tab" href="#mcr" role="tab" aria-controls="mcr" aria-selected="false">MCR (<?php echo count($mcrMembersEnabled);?>)</a>
+  <a class="nav-link" id="mcr-tab" data-bs-toggle="tab" href="#mcr" role="tab" aria-controls="mcr" aria-selected="false">MCR (<?php echo count($mcrMembersEnabled);?>)</a>
   </li>
 </ul>
 
 <div class="tab-content mt-3" id="membersContent">
   <div class="tab-pane fade show active" id="scr" role="tabpanel" aria-labelledby="scr-tab">
-    
-    <div class="row mb-3">
-      <div class="col">        
-          <input type="text" id="filterInput" class="form-control form-control-lg" placeholder="Quick search" autocomplete="off" spellcheck="false" aria-describedby="wine_searchHelp">
-      </div>
+  
+  <div class="row mb-3">
+    <div class="col">        
+      <input type="text" id="filterInput" class="form-control form-control-lg" placeholder="Quick search" autocomplete="off" spellcheck="false" aria-describedby="wine_searchHelp">
     </div>
-    
-    <form method="post" id="termForm" action="index.php?n=admin_members">
-      <!--<div class="list-group" id="members_list">-->
-      <ul class="list-group" id="scr_members_list">
-        <?php
-        foreach ($scrMembersEnabled AS $member) {
-          $memberObject = new member($member['uid']);
-          
-          echo $memberObject->memberRow();
-        }
-        ?>
-      </ul>
-
-      <input type="hidden" name="precedence" id="precedence" value="" />
-      <br />
-      <button type="submit" onclick="itterate()" class="btn btn-block btn-primary">Save Order</button>
-    </form>
-
-    <hr />
-    <h2>Disabled Dining Rights</h2>
-    <ul class="list-group">
-      <?php
-      foreach ($scrMembersDisabled AS $member) {
-        $memberObject = new member($member['uid']);
-        
-        echo $memberObject->memberRow();
-      }
-      ?>
+  </div>
+  
+  <form method="post" id="termForm" action="index.php?n=admin_members">
+    <!--<div class="list-group" id="members_list">-->
+    <ul class="list-group" id="scr_members_list">
+    <?php
+    foreach ($scrMembersEnabled AS $member) {
+      $memberObject = new member($member['uid']);
+      
+      echo $memberObject->memberRow();
+    }
+    ?>
     </ul>
+
+    <br />
+    <button class="btn btn-block btn-primary" id="submitOrder">Save Order</button>
+  </form>
+
+  <hr />
+  <h2>Disabled Dining Rights</h2>
+  <ul class="list-group">
+    <?php
+    foreach ($scrMembersDisabled AS $member) {
+    $memberObject = new member($member['uid']);
+    
+    echo $memberObject->memberRow();
+    }
+    ?>
+  </ul>
   </div>
   <div class="tab-pane fade" id="mcr" role="tabpanel" aria-labelledby="mcr-tab">
-    <ul class="list-group" id="mcr_members_list">
-      <?php
-      foreach ($mcrMembersEnabled AS $member) {
-        $memberObject = new member($member['uid']);
+  <ul class="list-group" id="mcr_members_list">
+    <?php
+    foreach ($mcrMembersEnabled AS $member) {
+    $memberObject = new member($member['uid']);
 
-        echo $memberObject->memberRow();
-      }
-      ?>
-    </ul>
+    echo $memberObject->memberRow();
+    }
+    ?>
+  </ul>
 
-    <hr />
+  <hr />
 
-    <h2>Disabled Dining Rights</h2>
-    <ul class="list-group">
-      <?php
-      foreach ($mcrMembersDisabled AS $member) {
-        $memberObject = new member($member['uid']);
+  <h2>Disabled Dining Rights</h2>
+  <ul class="list-group">
+    <?php
+    foreach ($mcrMembersDisabled AS $member) {
+    $memberObject = new member($member['uid']);
 
-       echo $memberObject->memberRow();
-      }
-      ?>
-    </ul>
+     echo $memberObject->memberRow();
+    }
+    ?>
+  </ul>
   </div>
 </div>
-
-
 
 <script>
 new Sortable(scr_members_list, {
@@ -124,124 +122,130 @@ new Sortable(scr_members_list, {
   ghostClass: 'blue-background-class'
 });
 
-function itterate() {
-  var selection = document.getElementById("scr_members_list").getElementsByClassName("list-group-item");
+document.getElementById('termForm').addEventListener('submit', function (e) {
+  const listItems = document.querySelectorAll('#scr_members_list li');
+  const orderData = [];
 
-  var arrayMembersUIDs = '';
+  listItems.forEach((li) => {
+  const userId = li.getAttribute('data-user-id');
+  if (userId) orderData.push(userId);
+  });
 
-  for(var i = 0; i < selection.length; i++) {
-    arrayMembersUIDs = arrayMembersUIDs + selection[i]['id'] + ",";
-  }
+  // Join as comma-separated to match your PHP logic (explode)
+  const input = document.createElement('input');
+  input.type = 'hidden';
+  input.name = 'precedence_order';
+  input.value = orderData.join(',');
 
-  document.getElementById("precedence").value = arrayMembersUIDs;
-}
+  e.target.appendChild(input);
+});
 </script>
 
 <style>
 .handle {
-	cursor: grab;
+  cursor: grab;
 }
 </style>
 
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog">
-    <div class="modal-content">
-      <form method="post" id="memberForm" action="<?php echo $_SERVER['REQUEST_URI']; ?>">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Add New SCR Member</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-          <div class="col-12 mb-3">
-            <label for="title" class="form-label">Title</label>
-            <select class="form-select" name="title" id="title" required>
-              <?php
-              foreach ($membersClass->memberTitles() AS $title) {
-                $output = "<option value=\"" . $title . "\">" . $title . "</option>";
-
-                echo $output;
-              }
-              ?>
-            </select>
-            <div class="invalid-feedback">
-              Title is required.
-            </div>
-          </div>
-
-          <div class="col-12 mb-3">
-            <label for="firstname" class="form-label">First name</label>
-            <input type="text" class="form-control" name="firstname" id="firstname" required>
-            <div class="invalid-feedback">
-              Valid first name is required.
-            </div>
-          </div>
-
-          <div class="col-12 mb-3">
-            <label for="lastname" class="form-label">Last name</label>
-            <input type="text" class="form-control" name="lastname" id="lastname" required>
-            <div class="invalid-feedback">
-              Valid last name is required.
-            </div>
-          </div>
-
-          <div class="col-12 mb-3">
-            <label for="ldap" class="form-label">LDAP Username</label>
-            <div class="input-group">
-              <span class="input-group-text" onclick="ldapLookup()">@</span>
-              <input type="text" class="form-control" name="ldap" id="ldap" required>
-            <div class="invalid-feedback">
-                LDAP Username is required.
-              </div>
-            </div>
-          </div>
-
-          <div class="col-12 mb-3">
-            <label for="category" class="form-label">Member Category</label>
-            <select class="form-select" name="category" id="category" required>
-              <?php
-              foreach ($membersClass->memberCategories() AS $category) {
-                $output = "<option value=\"" . $category . "\"" . ">" . $category . "</option>";
-
-                echo $output;
-              }
-              ?>
-            </select>
-            <div class="invalid-feedback">
-              Please select a valid Member Type.
-            </div>
-          </div>
-
-          <div class="col-12 mb-3">
-            <label for="email" class="form-label">Email <span class="text-muted">(Optional)</span></label>
-            <input type="email" class="form-control" name="email" id="email">
-            <div class="invalid-feedback">
-              Please enter a valid email address for shipping updates.
-            </div>
-          </div>
-
-          <div class="col-12 mb-3">
-            <label for="enabled" class="form-label">Enabled/Disabled Status</label>
-            <select class="form-select" name="enabled" id="enabled" required>
-              <option value="1" selected>Enabled</option>
-              <option value="0">Disabled</option>
-            </select>
-            <div class="invalid-feedback">
-              Status is required.
-            </div>
-          </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-link text-muted" data-bs-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#person-plus"/></svg> Add Member</button>
-        <input type="hidden" name="memberNew" value="true" />
-        <input type="hidden" name="precedence" value="999" />
-        <input type="hidden" name="default_wine_choice" value="<?php echo reset(explode(",", $settingsClass->value('booking_wine_options'))); ?>" />
-        <input type="hidden" name="calendar_hash" value="<?php echo bin2hex(random_bytes(12)); ?>" />
-        <input type="hidden" name="type" value="SCR" />
-      </div>
-      </form>
+  <div class="modal-content">
+    <form method="post" id="memberForm" action="<?php echo $_SERVER['REQUEST_URI']; ?>">
+    <div class="modal-header">
+    <h5 class="modal-title" id="exampleModalLabel">Add New SCR Member</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
     </div>
+    <div class="modal-body">
+      <div class="col-12 mb-3">
+      <label for="title" class="form-label">Title</label>
+      <select class="form-select" name="title" id="title" required>
+        <?php
+        foreach ($membersClass->memberTitles() AS $title) {
+        $output = "<option value=\"" . $title . "\">" . $title . "</option>";
+
+        echo $output;
+        }
+        ?>
+      </select>
+      <div class="invalid-feedback">
+        Title is required.
+      </div>
+      </div>
+
+      <div class="col-12 mb-3">
+      <label for="firstname" class="form-label">First name</label>
+      <input type="text" class="form-control" name="firstname" id="firstname" required>
+      <div class="invalid-feedback">
+        Valid first name is required.
+      </div>
+      </div>
+
+      <div class="col-12 mb-3">
+      <label for="lastname" class="form-label">Last name</label>
+      <input type="text" class="form-control" name="lastname" id="lastname" required>
+      <div class="invalid-feedback">
+        Valid last name is required.
+      </div>
+      </div>
+
+      <div class="col-12 mb-3">
+      <label for="ldap" class="form-label">LDAP Username</label>
+      <div class="input-group">
+        <span class="input-group-text" onclick="ldapLookup()">@</span>
+        <input type="text" class="form-control" name="ldap" id="ldap" required>
+      <div class="invalid-feedback">
+        LDAP Username is required.
+        </div>
+      </div>
+      </div>
+
+      <div class="col-12 mb-3">
+      <label for="category" class="form-label">Member Category</label>
+      <select class="form-select" name="category" id="category" required>
+        <?php
+        foreach ($membersClass->memberCategories() AS $category) {
+        $output = "<option value=\"" . $category . "\"" . ">" . $category . "</option>";
+
+        echo $output;
+        }
+        ?>
+      </select>
+      <div class="invalid-feedback">
+        Please select a valid Member Type.
+      </div>
+      </div>
+
+      <div class="col-12 mb-3">
+      <label for="email" class="form-label">Email <span class="text-muted">(Optional)</span></label>
+      <input type="email" class="form-control" name="email" id="email">
+      <div class="invalid-feedback">
+        Please enter a valid email address for shipping updates.
+      </div>
+      </div>
+
+      <div class="col-12 mb-3">
+      <label for="enabled" class="form-label">Enabled/Disabled Status</label>
+      <select class="form-select" name="enabled" id="enabled" required>
+        <option value="1" selected>Enabled</option>
+        <option value="0">Disabled</option>
+      </select>
+      <div class="invalid-feedback">
+        Status is required.
+      </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+    <button type="button" class="btn btn-link text-muted" data-bs-dismiss="modal">Close</button>
+    <button type="submit" class="btn btn-primary"><svg width="1em" height="1em"><use xlink:href="img/icons.svg#person-plus"/></svg> Add Member</button>
+    <input type="hidden" name="memberNew" value="true" />
+    <input type="hidden" name="precedence" value="999" />
+    <input type="hidden" name="default_wine_choice" value="<?php echo reset(explode(",", $settingsClass->value('booking_wine_options'))); ?>" />
+    <input type="hidden" name="calendar_hash" value="<?php echo bin2hex(random_bytes(12)); ?>" />
+    <input type="hidden" name="type" value="SCR" />
+    </div>
+    </form>
+  </div>
   </div>
 </div>
 
@@ -255,15 +259,15 @@ function filterList() {
   
   // Loop through all list items
   for(var i = 0; i < items.length; i++) {
-    var item = items[i];
-    var text = item.textContent.toLowerCase();
-    
-    // If the input matches the item, display it, otherwise hide it
-    if(text.indexOf(filterValue) !== -1) {
-      item.style.display = '';
-    } else {
-      item.style.display = 'none';
-    }
+  var item = items[i];
+  var text = item.textContent.toLowerCase();
+  
+  // If the input matches the item, display it, otherwise hide it
+  if(text.indexOf(filterValue) !== -1) {
+    item.style.display = '';
+  } else {
+    item.style.display = 'none';
+  }
   }
 }
 
