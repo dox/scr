@@ -74,7 +74,7 @@ echo makeTitle($title, $subtitle, $icons, true);
     </ul>
 
     <br />
-    <button class="btn btn-block btn-primary" id="submitOrder">Save Order</button>
+    <button class="btn btn-primary position-sticky bottom-0 start-50 translate-middle-x mb-3" id="submitOrder">Save Order</button>
   </form>
 
   <hr />
