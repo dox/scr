@@ -16,9 +16,7 @@ foreach ($orphanedBookings AS $booking) {
   $totalOrphanedBookings = $totalOrphanedBookings + $booking['bookingsCount'];
 }
 
-$members = $membersClass->all();
-
-
+$members = $membersClass->getMembers();
 ?>
 
 <datalist id="members">

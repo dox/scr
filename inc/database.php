@@ -118,6 +118,11 @@ class db {
             exit($error);
         }
     }
+	
+	public function fetchColumn() {
+		$row = $this->fetchArray();
+		return array_values($row)[0] ?? null;
+	}
 
 	private function _gettype($var) {
 	    if (is_string($var)) return 's';

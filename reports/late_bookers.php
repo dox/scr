@@ -9,9 +9,6 @@
 		$membersLate = array();
 		
 		foreach ($allMeals AS $meal) {
-			$meal = new meal($meal['uid']);
-			
-			
 			$bookings = $meal->bookings_this_meal();
 			
 			$bookingLateArray = array();

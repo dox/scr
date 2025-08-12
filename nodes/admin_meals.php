@@ -40,17 +40,15 @@ echo makeTitle($title, $subtitle, $icons, true);
       <div class="list-group">
         <?php
         foreach ($mealsTemplates AS $meal) {
-          $mealObject = new meal($meal['uid']);
-
-          $output  = "<a href=\"index.php?n=admin_meal&mealUID=" . $mealObject->uid . "\" class=\"list-group-item list-group-item-action\">";
+          $output  = "<a href=\"index.php?n=admin_meal&mealUID=" . $meal->uid . "\" class=\"list-group-item list-group-item-action\">";
           $output .= "<div class=\"d-flex w-100 justify-content-between\">";
-          $output .= "<h5 class=\"mb-1\">" . $mealObject->name . "</h5>";
-          $output .= "<small class=\"text-muted\">" . "<span class=\"badge bg-primary rounded-pill\">" . $mealObject->type . "</span></small>";
+          $output .= "<h5 class=\"mb-1\">" . $meal->name . "</h5>";
+          $output .= "<small class=\"text-muted\">" . "<span class=\"badge bg-primary rounded-pill\">" . $meal->type . "</span></small>";
           //$output .= "<p id=\"" . $term['uid'] . "\" onclick=\"dismiss(this.id);\">dismiss this box</p>";
           //$output .= "<span class=\"badge bg-primary rounded-pill\">" . $log['type'] . "</span>";
           $output .= "</div>";
           //$output .= "<p class=\"mb-1\">" . $log['description'] . "</p>";
-          $output .= "<small class=\"text-muted\">" . $mealObject->location . "</small>";
+          $output .= "<small class=\"text-muted\">" . $meal->location . "</small>";
           $output .= "</a>";
 
           echo $output;
@@ -68,18 +66,16 @@ echo makeTitle($title, $subtitle, $icons, true);
     <div class="list-group">
       <?php
       foreach ($meals AS $meal) {
-        $mealObject = new meal($meal['uid']);
-
-        $output  = "<a href=\"index.php?n=admin_meal&mealUID=" . $mealObject->uid . "\" class=\"list-group-item list-group-item-action\">";
+        $output  = "<a href=\"index.php?n=admin_meal&mealUID=" . $meal->uid . "\" class=\"list-group-item list-group-item-action\">";
         $output .= "<div class=\"d-flex w-100 justify-content-between\">";
-        $output .= "<h5 class=\"mb-1\">" . dateDisplay($mealObject->date_meal) . " " . $mealObject->name . "</h5>";
-        $output .= "<small class=\"text-muted\">" . "<span class=\"badge bg-primary rounded-pill\">" . $mealObject->type . "</span></small>";
+        $output .= "<h5 class=\"mb-1\">" . dateDisplay($meal->date_meal) . " " . $meal->name . "</h5>";
+        $output .= "<small class=\"text-muted\">" . "<span class=\"badge bg-primary rounded-pill\">" . $meal->type . "</span></small>";
         //$output .= "<p id=\"" . $term['uid'] . "\" onclick=\"dismiss(this.id);\">dismiss this box</p>";
         //$output .= "<span class=\"badge bg-primary rounded-pill\">" . $log['type'] . "</span>";
         $output .= "</div>";
         //$output .= "<p class=\"mb-1\">" . $log['description'] . "</p>";
-        $output .= "<small class=\"text-muted\">" . $mealObject->location . "</small>";
-        $output .= $mealObject->progressBar();
+        $output .= "<small class=\"text-muted\">" . $meal->location . "</small>";
+        $output .= $meal->progressBar();
         $output .= "</a>";
 
         echo $output;

@@ -9,7 +9,7 @@ class members {
 		
 		if (strtoupper($status) == "ENABLED") {
 			$conditions[] = "enabled = '1'";
-		} elseif (strtoupper($status) == "ENABLED") {
+		} elseif (strtoupper($status) == "DISABLED") {
 			$conditions[] = "enabled = '0'";
 		}
 		

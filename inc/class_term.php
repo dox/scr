@@ -1,61 +1,63 @@
 <?php
 class term {
-  protected static $table_name = "terms";
-
-  public $uid;
-  public $name;
-  public $date_start;
-  public $date_end;
-
-  function __construct($termUID = null) {
-    global $db;
-
-    if ($termUID == null) {
-      $currentTermClass = $this->currentTerm();
-      $termUID = $currentTermClass['uid'];
-    }
-
+	protected static $table_name = "terms";
+	
+	public $uid;
+	public $name;
+	public $date_start;
+	public $date_end;
+	
+	function __construct($termUID = null) {
+		global $db;
+		
+		if ($termUID == null) {
+			$currentTermClass = $this->currentTerm();
+			$termUID = $currentTermClass['uid'];
+		}
+		
 		$sql  = "SELECT * FROM " . self::$table_name;
-    $sql .= " WHERE uid = '" . $termUID . "'";
-
+		$sql .= " WHERE uid = '" . $termUID . "'";
+		
 		$term = $db->query($sql)->fetchArray();
-
+		
 		foreach ($term AS $key => $value) {
 			$this->$key = $value;
 		}
-  }
-  
-  
-
-  public function currentTerm() {
-    global $db;
-
-    $sql  = "SELECT *  FROM " . self::$table_name;
-    $sql .= " WHERE CURDATE() > date_start AND CURDATE() < date_end ";
-    $sql .= " LIMIT 1";
-
-    $currentTerm = $db->query($sql)->fetchAll();
-
-    if (count($currentTerm) == 1) {
-      $currentTerm = $currentTerm[0];
-    } else {
-      $sql  = "SELECT *  FROM " . self::$table_name;
-      $sql .= " WHERE CURDATE() > date_start ";
-      $sql .= " ORDER BY date_end DESC";
-      $sql .= " LIMIT 1";
-      
-      $previousTerm = $db->query($sql)->fetchArray();
-      
-      $currentTerm = array("uid"=>"0", "name"=>"Vacation", "date_start"=>$previousTerm['date_end'], "date_end"=>date('Y-m-d'));
-    }
-
-    return $currentTerm;
-  }
+	}
+	
+	public function currentTerm() {
+			global $db;
+	
+			// Try to find the current term
+			$sql = "SELECT * FROM " . self::$table_name . "
+							WHERE CURDATE() BETWEEN date_start AND date_end
+							LIMIT 1";
+			$currentTerm = $db->query($sql)->fetchArray();
+	
+			// If no current term, find the most recent past term
+			if (empty($currentTerm)) {
+					$sql = "SELECT * FROM " . self::$table_name . "
+									WHERE CURDATE() > date_start
+									ORDER BY date_end DESC
+									LIMIT 1";
+					$previousTerm = $db->query($sql)->fetchArray();
+	
+					// Fallback "Vacation" period
+					$currentTerm = [
+							"uid"        => "0",
+							"name"       => "Vacation",
+							"date_start" => $previousTerm['date_end'] ?? null,
+							"date_end"   => date('Y-m-d')
+					];
+			}
+	
+			return $currentTerm;
+	}
 
   public function nextTerm() {
     global $db;
 
-    $sql  = "SELECT *  FROM " . self::$table_name;
+    $sql  = "SELECT * FROM " . self::$table_name;
     $sql .= " WHERE DATE(date_start) > '" . $this->date_end . "'";
     $sql .= " ORDER BY date_start ASC";
     $sql .= " LIMIT 1";

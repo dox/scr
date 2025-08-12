@@ -1,5 +1,6 @@
 <?php
 include_once("../../inc/autoload.php");
+
 $termsClass = new terms();
 $currentTerm = new term();
 
@@ -24,11 +25,7 @@ for($i = 0; $i < 7; $i++){
   
   if (count($meals) > 0) {
     foreach ($meals AS $meal) {
-      $mealObject = new meal($meal['uid']);
-    
-      $output .= $mealObject->mealCard();
-      //$output .= $mealObject->mealCard2();
-      //$output .= $mealObject->mealCard2();
+      $output .= $meal->mealCard();
     }
   } else {
     $noMealsCount++;
