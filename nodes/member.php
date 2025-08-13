@@ -190,7 +190,10 @@ function fetchAndDisplay(filePath, clickedLink) {
       } while($i <= $mealsToDisplay);
       ?>
     </ul>
-    <a href="report.php?reportUID=3&memberUID=<?php echo $memberObject->uid; ?>" class="text-muted text-end">Export all meal bookings</a>
+    
+    <div class="text-end">
+      <a href="report.php?reportUID=3&memberUID=<?php echo $memberObject->uid; ?>" class="text-muted">Export all meal bookings</a>
+    </div>
     
     <hr />
     
