@@ -1,6 +1,26 @@
 <?php
 pageAccessCheck("settings");
 
+$mealsClass = new meals();
+
+if (isset($_POST['purge_old_bookings']) && $_POST['purge_old_bookings'] === '1') {
+    // Get the retention period from settings
+    $days = (int) $settingsClass->value('bookings_retention');
+
+    // Prepared statement: `?` binds the days value safely
+    $db->query("DELETE FROM bookings WHERE `date` < NOW() - INTERVAL ? DAY", $days);
+
+    echo "Bookings purged";
+
+    $meals = $mealsClass->betweenDates('1970-01-01', date('Y-m-d', strtotime("-{$days} days")));
+    
+    foreach ($meals AS $meal) {
+      if ($meal->total_bookings_this_meal <= 0) {
+        $meal->delete();
+      }
+    }
+}
+
 //check if creating new setting
 if (isset($_POST['name'])) {
   $settingsClass->create($_POST);
@@ -90,8 +110,6 @@ echo makeTitle($title, $subtitle, $icons, true);
 </div>
 
 <h2 class="m-3">Icons Available in <code>./img/icon.svg</code></h2>
-
-
 <?php
 $iconsArray = array(
   "chough" => "Chough",
@@ -128,8 +146,7 @@ $iconsArray = array(
 );
 
 
-
-echo "<dic class=\"row text-center\">";
+echo "<div class=\"row text-center\">";
 foreach ($iconsArray AS $icon => $name) {
   $output  = "<div class=\"col-sm-2 mb-3\">";
   $output .= "<div class=\"card\">";
@@ -148,6 +165,19 @@ foreach ($iconsArray AS $icon => $name) {
 
 echo "</div>";
 ?>
+
+<hr />
+
+<div class="alert alert-danger" role="alert">
+  <h4 class="alert-heading">Purge old bookings and meals?</h4>
+  <p><strong>WARNING!</strong> Purge bookings older than <?php echo $settingsClass->value('bookings_retention'); ?> days? This action is immediate, and cannot be undone!</p>
+  <p>This will also delete all meals (without bookings) older than <?php echo $settingsClass->value('bookings_retention'); ?> days.</p>
+
+  <form method="post" onsubmit="return confirm('Are you sure you want to permanently delete all bookings (and unbooked meals) older than <?php echo $settingsClass->value('bookings_retention'); ?> days?  This action cannot be undone!');">
+    <input type="hidden" name="purge_old_bookings" value="1">
+    <p><button type="submit" class="btn btn-danger">Purge old bookings</button></p>
+  </form>
+</div>
 
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
