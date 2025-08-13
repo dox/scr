@@ -35,9 +35,7 @@ echo makeTitle($title, $subtitle, $icons, true);
     <ul class="list-group mb-3">
       <?php
       foreach ($meals AS $meal) {
-        $mealObject = new meal($meal['uid']);
-
-        echo $mealObject->displayListGroupItem();
+        echo $meal->displayListGroupItem();
       }
       ?>
     </ul>
@@ -48,9 +46,7 @@ echo makeTitle($title, $subtitle, $icons, true);
     <ul class="list-group mb-3">
       <?php
       foreach ($mealsAfterTerm AS $meal) {
-        $mealObject = new meal($meal['uid']);
-
-        echo $mealObject->displayListGroupItem();
+        echo $meal->displayListGroupItem();
       }
       ?>
     </ul>
