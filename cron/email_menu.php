@@ -21,16 +21,13 @@ for($i = 0; $i < 7; $i++){
 
 
   $meals = $mealsClass->allByDate(date('Y-m-d', $date));
-  $meals = array_reverse($meals);
 
   foreach ($meals AS $meal) {
-    if (!empty($mealObject->menu)) {
+    if (!empty($meal->menu)) {
       $totalMeals = $totalMeals + 1;
     }
-    
-  $mealObject = new meal($meal['uid']);
 
-  $output .= "<p><strong>" . $mealObject->type . "</strong> " . $mealObject->menu . "</p>";
+  $output .= "<p><strong>" . $meal->type . "</strong> " . $meal->menu . "</p>";
   }
 }
 
