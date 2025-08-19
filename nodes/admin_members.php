@@ -66,9 +66,7 @@ echo makeTitle($title, $subtitle, $icons, true);
     <ul class="list-group" id="scr_members_list">
     <?php
     foreach ($scrMembersEnabled AS $member) {
-      $memberObject = new member($member['uid']);
-      
-      echo $memberObject->memberRow();
+      echo $member->memberRow();
     }
     ?>
     </ul>
@@ -82,9 +80,7 @@ echo makeTitle($title, $subtitle, $icons, true);
   <ul class="list-group">
     <?php
     foreach ($scrMembersDisabled AS $member) {
-    $memberObject = new member($member['uid']);
-    
-    echo $memberObject->memberRow();
+    echo $member->memberRow();
     }
     ?>
   </ul>
@@ -93,9 +89,7 @@ echo makeTitle($title, $subtitle, $icons, true);
   <ul class="list-group" id="mcr_members_list">
     <?php
     foreach ($mcrMembersEnabled AS $member) {
-    $memberObject = new member($member['uid']);
-
-    echo $memberObject->memberRow();
+    echo $member->memberRow();
     }
     ?>
   </ul>
@@ -106,9 +100,7 @@ echo makeTitle($title, $subtitle, $icons, true);
   <ul class="list-group">
     <?php
     foreach ($mcrMembersDisabled AS $member) {
-    $memberObject = new member($member['uid']);
-
-     echo $memberObject->memberRow();
+     echo $member->memberRow();
     }
     ?>
   </ul>

@@ -23,7 +23,14 @@ class members {
 		
 		$sql .= " ORDER BY precedence ASC, lastname ASC, firstname ASC";
 		
-		$members = $db->query($sql)->fetchAll();
+		$rows = $db->query($sql)->fetchAll();
+		
+		$members = [];
+		
+		foreach ($rows as $row) {
+			$member = new member($row['uid']);
+			$members[] = $member;
+		}
 		
 		return $members;
 	}
