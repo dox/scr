@@ -119,8 +119,6 @@ class member {
 
 	public function stewardBadge() {
 		if ($this->isSteward()) {
-			global $settingsClass;
-
 			$badge = " <span class=\"badge bg-warning\">SCR Steward</span>";
 
 			return $badge;
@@ -156,7 +154,7 @@ class member {
 
 		$create = $db->query($sql);
 		if ($displayAlert == true) {
-			echo $settingsClass->alert("success", "Success!", "Memer successfully created");
+			echo $settingsClass->alert("success", "Success!", "Member successfully created");
 		}
 
 		$logArray['category'] = "member";
@@ -183,7 +181,6 @@ class member {
 			}
 				// Check if the field exists in the current values and if the values are different
 				if ($this->$field != $newValue) {
-					
 						// Sanitize the field and value to prevent SQL injection
 						$field = escape($field);
 						$newValue = escape($newValue);
@@ -230,7 +227,7 @@ class member {
 	public function updateLastLoginDate() {
 		global $db;
 		
-		// Construct the final UPDATE query
+		// Construct the UPDATE query
 		$sql  = "UPDATE " . self::$table_name;
 		$sql .= " SET date_lastlogon = '" . date('c') . "'";
 		$sql .= " WHERE uid = '" . $this->uid . "' ";
@@ -400,8 +397,8 @@ class member {
 	}
 	
 	public function delete() {
-		global $db, $logsClass
-		;
+		global $db, $logsClass;
+		
 		// warning - deletes a member and all their bookings!
 		$memberUID = $this->uid;
 		$memberName = $this->displayName();
