@@ -26,9 +26,7 @@ $membersClass = new members();
       <?php
       $members = $membersClass->getMembers('enabled');
 
-      foreach ($members AS $member) {
-      $memberObject = new member($member['uid']);
-
+      foreach ($members AS $memberObject) {
       if (isset($_SESSION['impersonating']) && $_SESSION['username'] == $memberObject->ldap) {
         $selectStatus = " selected";
       } else {
