@@ -536,11 +536,9 @@ chart.render();
 <datalist id="members-list">
   <?php
   $membersClass = new members();
-  $members = $membersClass->allEnabled();
+  $members = $membersClass->getMembers();
 
-  foreach ($members AS $member) {
-    $memberObject = new member($member['uid']);
-    
+  foreach ($members AS $memberObject) {
     if (!in_array($memberObject->ldap, $currentMembersBooked)) {
       echo "<option id=\"" . $memberObject->ldap . "\" value=\"" . $memberObject->displayName() . "\"></option>";
     }
