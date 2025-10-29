@@ -4,14 +4,11 @@
 <?php
 //check if updating existing setting
 if (isset($_POST['contentInfo'])) {
-  $_POST['contentInfo'] = str_replace("'", "\'", $_POST['contentInfo']);
-
-  $sql  = "UPDATE settings";
-  $sql .= " SET value = '" . $_POST['contentInfo'] . "'";
-  $sql .= " WHERE name = 'scr_information'";
-  $sql .= " LIMIT 1";
-
-  $db->query($sql);
+  $db->query(
+      "UPDATE settings SET value = ? WHERE name = ?",
+      $_POST['contentInfo'],
+      'scr_information'
+  );
   
   $logArray['category'] = "admin";
   $logArray['result'] = "success";
