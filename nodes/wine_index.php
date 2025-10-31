@@ -94,6 +94,10 @@ if (isset($_POST['name'])) {
 <div class="row">
 	<div class="col">
 		<h1>Recent Transactions</h1>
+		<div>
+		  <canvas id="myChart"></canvas>
+		</div>
+		
 		<div id="chart_transactions_by_day"></div>
 		
 		<p><a href="index.php?n=wine_transactions" class="float-end">View all</a></p>
@@ -210,10 +214,10 @@ for ($i = 0; $i < $daysToInclude; $i++) {
   $date = date('Y-m-d', strtotime("-$i days"));
 
   // Assign the date as a key in the array with a default value
-  $dateArray[] = $date;
+  $dateArray[$date] = 0;
 }
 
-foreach ($dateArray AS $date) {
+foreach ($dateArray AS $date => $value) {
 	$transactions = $wineClass->allTransactions(array('DATE(date)' => $date));
 	
 	$bottlesTotal = 0;
@@ -221,46 +225,38 @@ foreach ($dateArray AS $date) {
 		if (isset($transaction)) {
 			$bottlesTotal= $bottlesTotal + abs($transaction['bottles']);
 		}
-		
 	}
-	//printArray($transactions);
-	$series[$date] = "'" . $date . "'";
-	$transactionsTotal[$date] = count($transactions);
-	$transactionsBottlesTotal[$date] = $bottlesTotal[$date] + $bottlesTotal;
+	$transactionsTotal[$date] += $bottlesTotal;
 }
-?>
-<script>
-var options = {
-  series: [{
-	  name:'Total Transactions',
-	  data: [<?php echo implode(",", $transactionsTotal); ?>]
-  }, {
-	  name:'Total Bottles',
-		data: [<?php echo implode(",", $transactionsBottlesTotal); ?>]
-  }],
-  legend: {
-  show: false
-},
-chart: {
-  height: 350,
-  type: 'bar',
-  stacked: true,
-  toolbar: {
-	  show: false
-  },
-  zoom: {
-	  enabled: false,
-  }
-},
-dataLabels: {
-	enabled: false
-},
-xaxis: {
-  type: 'datetime',
-  categories: [<?php echo implode(",", $series); ?>]
-},
-};
 
-var chart = new ApexCharts(document.querySelector("#chart_transactions_by_day"), options);
-chart.render();
+ksort($transactionsTotal);
+?>
+
+<script>
+  const ctx = document.getElementById('myChart');
+
+  new Chart(ctx, {
+	type: 'bar',
+	data: {
+	  labels: ['<?php echo implode("','", array_keys($transactionsTotal)); ?>'],
+	  datasets: [{
+		label: '# of logs',
+		data: [<?php echo implode(",", $transactionsTotal); ?>],
+		borderWidth: 1
+	  }]
+	},
+	options: {
+	  plugins: {
+	  legend: {
+		  display: false
+		}
+	  },
+	  maintainAspectRatio: false,
+	  scales: {
+		y: {
+		  beginAtZero: true
+		}
+	  }
+	}
+  });
 </script>

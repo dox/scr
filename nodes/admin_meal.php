@@ -99,7 +99,9 @@ echo makeTitle($title, $subtitle, $icons, true);
       <a href="report.php?reportUID=9&mealUID=<?php echo $mealObject->uid; ?>" class="text-muted">Export all meal bookings</a>
     </div>
     
-    <div id="chart-meals_by_day"></div>
+    <div>
+      <canvas id="myChart"></canvas>
+    </div>
     
   </div>
   <div class="col-md-7 col-lg-8">
@@ -477,62 +479,6 @@ var fp2 = flatpickr("#date_cutoff", {
 })
 </script>
 
-
-
-<?php
-$chartReadingsArray = array();
-foreach ($mealObject->bookings_this_meal() AS $booking) {
-  $date = date('Y-m-d', strtotime($booking['date']));
-  
-  $bookingTotals[$date] = $bookingTotals[$date] + 1;
-  $chartReadingsArray[strtotime($date)*1000] = "[" . (strtotime($date)*1000) . "," . $bookingTotals[$date] . "]";
-}
-?>
-<script>
-var options = {
-  chart: {
-    type: 'bar',
-    height: '200px',
-    toolbar: {
-      show: false
-    },
-    zoom: {
-      enabled: false,
-    },
-    background: 'transparent'
-  },
-  
-  annotations: {
-    xaxis: [{
-      x: new Date('<?php echo $mealObject->date_cutoff; ?>').getTime(),
-    }]
-  },
-  grid: {
-    show: false
-  },
-  dataLabels: {
-    enabled: false
-  },
-  series: [{
-    name: "Total bookings by day",
-    data: [<?php echo implode (",", $chartReadingsArray); ?>]
-  }],
-  xaxis: {
-    type: 'datetime',
-  },
-  tooltip: {
-    x: {
-      format: 'yyyy MMM dd'
-    }
-  }
-}
-
-var chart = new ApexCharts(document.querySelector("#chart-meals_by_day"), options);
-
-chart.render();
-</script>
-
-
 <datalist id="members-list">
   <?php
   $membersClass = new members();
@@ -546,8 +492,6 @@ chart.render();
   }
   ?>
 </datalist>
-
-
 
 <script>
 function quickAdd() {
@@ -588,4 +532,81 @@ function quickAdd() {
     }
   }
 }
+</script>
+
+<?php
+$bookings = $mealObject->bookings_this_meal();
+
+if (empty($bookings)) {
+    $dailyTotals = [];
+} else {
+    // Find the range of dates
+    $dates = array_map(function($d){
+        return date('Y-m-d', strtotime($d));
+    }, array_column($bookings, 'date'));
+    
+    $startDate = new DateTime(min($dates));
+    $endDate   = new DateTime(max($dates));
+
+    // Initialise each date in the range
+    $dailyTotals = [];
+    for ($d = clone $startDate; $d <= $endDate; $d->modify('+1 day')) {
+        $dateStr = $d->format('Y-m-d');
+        $dailyTotals[$dateStr] = 0;
+    }
+
+    // Count bookings per date
+    foreach ($bookings as $b) {
+        $date = date('Y-m-d', strtotime($b['date']));
+        if (isset($dailyTotals[$date])) {
+            $dailyTotals[$date]++;
+        }
+    }
+}
+
+$cutoff = strtotime($mealObject->date_cutoff);
+
+// Build an array of colors
+$barColors = [];
+foreach (array_keys($dailyTotals) as $date) {
+    if (strtotime($date) > $cutoff) {
+        $barColors[] = 'rgba(255, 99, 132, 0.8)'; // red after cutoff
+    } else {
+        $barColors[] = 'rgba(54, 162, 235, 0.8)'; // blue before/on cutoff
+    }
+}
+?>
+
+<script>
+const ctx = document.getElementById('myChart');
+new Chart(ctx, {
+  type: 'bar',
+  data: {
+    labels: <?= json_encode(array_keys($dailyTotals)) ?>,
+    datasets: [{
+      label: 'Bookings per Day',
+      data: <?= json_encode(array_values($dailyTotals)) ?>,
+      backgroundColor: <?= json_encode($barColors) ?>
+    }]
+  },
+  options: {
+    plugins: {
+      legend: {
+        display: false
+      }
+    },
+    scales: {
+      x: {
+        ticks: {
+          maxRotation: 90,
+          minRotation: 45
+        }
+      },
+      y: {
+        beginAtZero: true,
+        ticks: { precision: 0 }
+      }
+    }
+  }
+});
 </script>

@@ -198,7 +198,9 @@ function fetchAndDisplay(filePath, clickedLink) {
     <hr />
     
     <h4 class="d-flex justify-content-between align-items-center mb-3">Bookings by Day</h4>
-    <div id="chart-meals_by_day"></div>
+    <div>
+      <canvas id="myChart"></canvas>
+    </div>
   </div>
 
   <div class="col-md-7 col-lg-8">
@@ -489,44 +491,36 @@ function memberDelete(member_uid) {
 }
 </script>
 
-
 <?php
-$chartArray = array();
-foreach ($memberObject->bookingsByDay() AS $mealName => $mealBookings) {
-  $output  = "{name: '" . $mealName . "',";
-  $output .= "data: [" . implode(",", $mealBookings) . "]}";
-  
-  $chartArray[] = $output;
+$days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+$datasets = [];
+foreach ($memberObject->bookingsByDay() as $mealType => $dayCounts) {
+    $datasets[] = [
+        'label' => $mealType,
+        'data' => array_values($dayCounts)
+    ];
 }
 ?>
+
 <script>
-var options = {
-  chart: {
-    type: 'bar',
-    stacked: true,
-    height: '300px',
-    toolbar: {
-      show: false
+const ctx = document.getElementById('myChart');
+const chart = new Chart(ctx, {
+  type: 'bar',
+  data: {
+    labels: <?= json_encode($days) ?>,
+    datasets: <?= json_encode($datasets) ?>
+  },
+  options: {
+    plugins: {
+      legend: {
+        display: false
+      }
     },
-    zoom: {
-      enabled: false,
+    scales: {
+      x: { stacked: true },
+      y: { stacked: true, beginAtZero: true }
     }
-  },
-  
-  dataLabels: {
-    enabled: false
-  },
-  series: [<?php echo implode(",", $chartArray); ?>],
-  xaxis: {
-    categories: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-  },
-  tooltip: {
-    intersect: false,
-    shared: true
   }
-}
-
-var chart = new ApexCharts(document.querySelector("#chart-meals_by_day"), options);
-
-chart.render();
+});
 </script>
