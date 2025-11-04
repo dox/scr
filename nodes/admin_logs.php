@@ -30,7 +30,9 @@ if (isset($_POST['logs_search'])) {
 $logs = $logsClass->paginatedResults($offset, $search);
 ?>
 
-<div id="chart-logs"></div>
+<div class="chart-container" style="height:40vh;">
+  <canvas id="myChart"></canvas>
+</div>
 
 <?php
 $totalBookings = $db->query("SELECT COUNT(*) AS totalBookings FROM bookings")->fetchArray();
@@ -78,25 +80,30 @@ foreach (array_keys($logsByDay) AS $label) {
 ?>
 
 <script>
-var options = {
-  chart: {
-    id: 'logs-daily',
+  const ctx = document.getElementById('myChart');
+
+  new Chart(ctx, {
     type: 'bar',
-    height: '300px'
-  },
-  series: [{
-    name: 'Logs',
-    data: [<?php echo implode(",", $logsByDay); ?>]
-  }],
-  dataLabels: {
-    enabled: false
-  },
-  xaxis: {
-    categories: ['<?php echo implode("','", $labelsArray); ?>']
-  }
-}
-
-var chart = new ApexCharts(document.querySelector("#chart-logs"), options);
-
-chart.render();
+    data: {
+      labels: ['<?php echo implode("','", $labelsArray); ?>'],
+      datasets: [{
+        label: '# of logs',
+        data: [<?php echo implode(",", $logsByDay); ?>],
+        borderWidth: 1
+      }]
+    },
+    options: {
+      plugins: {
+      legend: {
+          display: false
+        }
+      },
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
 </script>
