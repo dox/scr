@@ -29,7 +29,7 @@ if (checkpoint_charlie("wine")) {
 			
 			$data[] = array(
 				"uid" => $wine->uid,
-				"name" => html_entity_decode($wine->clean_name(true), ENT_QUOTES | ENT_HTML5)
+				"name" => html_entity_decode($wine->clean_name(true) . " (Qty. " . $wine->currentQty() . ")", ENT_QUOTES | ENT_HTML5)
 			);
 		}
 		
