@@ -23,7 +23,7 @@ function dateDisplay($date = null, $longFormat = false) {
 }
 
 function timeago($date) {
-   $timestamp = strtotime($date);	
+   $timestamp = strtotime($date);
    
    $strTime = array("second", "minute", "hour", "day", "month", "year");
    $length = array("60","60","24","30","12","10");
@@ -72,15 +72,13 @@ function firstDayOfWeek($inputDate = null) {
 function timeDisplay($date = null, $hour12 = false) {
 	global $settingsClass;
 
-	if ($hour12 == true) {
+	if ($hour12) {
 		$dateFormat = 'H:i a';
 	} else {
 		$dateFormat = 'H:i';
 	}
-
-	$returnDate = date($dateFormat, strtotime($date));
-
-	return $returnDate;
+	
+	return date($dateFormat, strtotime($date));
 }
 
 
@@ -100,12 +98,10 @@ function escape($var = null) {
 	if (!empty($var) && !is_array($var)) {
 		$var = stripslashes($var);
 		$var = htmlentities($var);
-		//$var = htmlspecialchars($value, ENT_QUOTES);
 		$var = strip_tags($var);
 		$var = str_replace("'", "\'", $var);
 	}
 	
-
 	return $var;
 }
 
@@ -226,9 +222,7 @@ function ordinal($number) {
 }
 
 function siteURL() {
-	$actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
-
-	return $actual_link;
+	return (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
 }
 
 function available_permissions() {
@@ -455,5 +449,3 @@ function randomQuote($seed = null) {
 	
 	return $quotes[$index];
 }
-
-?>
