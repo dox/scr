@@ -1,5 +1,5 @@
 <?php
-include_once("inc/autoload.php");
+include_once "inc/autoload.php";
 
 $_SESSION['logon_error'] = null;
 
@@ -89,7 +89,7 @@ function attemptLogin($username, $password, $remember_me = false) {
       $sql = "UPDATE members SET date_lastlogon = '" . date('Y-m-d H:i:s') . "' WHERE uid = '" . $memberObject->uid . "' LIMIT 1";
       $userUpdate = $db->query($sql);
       
-      if($remember_me == true) {
+      if($remember_me) {
         $token = bin2hex(random_bytes(16));
         $token_expiry =  date('c', strtotime("1 month"));
         
@@ -98,7 +98,7 @@ function attemptLogin($username, $password, $remember_me = false) {
         
         $expire = 30*24*3600; // 1 month
         setcookie ("username_uid", $memberObject->uid, time() + $expire);
-        setcookie ("token", $token, time() + $expire);      
+        setcookie ("token", $token, time() + $expire);
       }
       
       $logArray['result'] = "success";
@@ -174,13 +174,13 @@ function attemptLoginByCookie() {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <?php include_once("views/html_head.php"); ?>
+  <?php include_once "views/html_head.php"; ?>
 </head>
 
 <body class="bg-body-tertiary">
     <?php
     if (isLoggedIn()) {
-      include_once("views/header.php");
+      include_once "views/header.php";
     }
     ?>
 
@@ -189,11 +189,11 @@ function attemptLoginByCookie() {
       if (!file_exists($node)) {
         $node = "nodes/404.php";
       }
-      include_once($node);
+      include_once $node;
       ?>
     </div>
     <?php
-    include_once("views/footer.php");
+    include_once "views/footer.php";
     ?>
 </body>
 </html>

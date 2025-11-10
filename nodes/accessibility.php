@@ -39,7 +39,7 @@ echo $text;
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-fullscreen">
     <div class="modal-content">
-      <form method="post" id="scr_accessibility" action="<?php echo $_SERVER['REQUEST_URI']; ?>">
+      <form method="post" id="scr_accessibility" action="<?php echo htmlspecialchars($_SERVER['REQUEST_URI']); ?>">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLabel">Edit SCR Accessibility Statement</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>

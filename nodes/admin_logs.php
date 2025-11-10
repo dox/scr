@@ -58,7 +58,7 @@ $oldestMeal = $db->query("SELECT * FROM meals ORDER BY date_meal ASC LIMIT 1")->
   </div>
 </div>
 
-<form method="post" id="search" action="<?php echo $_SERVER['REQUEST_URI']; ?>" class="needs-validation" novalidate>
+<form method="post" id="search" action="<?php echo htmlspecialchars($_SERVER['REQUEST_URI']); ?>" class="needs-validation" novalidate>
 <div class="input-group my-3">
   <input type="text" class="form-control" id="logs_search" name="logs_search" placeholder="e.g. '[memberUID:137]'" aria-label="Search Logs" aria-describedby="button-addon2" value="<?php if (isset($search)) { echo $search; } ?>">
   <button class="btn btn-outline-secondary" type="submit" id="button-addon2">Search</button>
@@ -74,7 +74,7 @@ echo $logsClass->paginationResults();
 
 
 
-foreach (array_keys($logsByDay) AS $label) {
+foreach (array_keys($logsByDay) as $label) {
   $labelsArray[] = date('M-d', strtotime($label));
 }
 ?>

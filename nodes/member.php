@@ -101,7 +101,7 @@ function fetchAndDisplay(filePath, clickedLink) {
     <ul class="list-group mb-3">
       <?php
       $futureBookings = $bookingsClass->booking_uids_future_by_member($memberObject->ldap);
-      foreach ($futureBookings AS $booking) {
+      foreach ($futureBookings as $booking) {
         $bookingObject = new booking($booking['uid']);
         echo $bookingObject->displayListGroupItem();
       }
@@ -205,13 +205,13 @@ function fetchAndDisplay(filePath, clickedLink) {
 
   <div class="col-md-7 col-lg-8">
     <h4 class="d-flex mb-3">Personal Information</h4>
-    <form method="post" id="memberUpdate" action="<?php echo $_SERVER['REQUEST_URI']; ?>" class="needs-validation" novalidate>
+    <form method="post" id="memberUpdate" action="<?php echo htmlspecialchars($_SERVER['REQUEST_URI']); ?>" class="needs-validation" novalidate>
       <div class="row g-3">
         <div class="col-lg-2 col-md-4 col-sm-4 col-4 mb-3">
           <label for="title" class="form-label">Title</label>
           <select class="form-select" name="title" id="title" required>
             <?php
-            foreach ($membersClass->memberTitles() AS $title) {
+            foreach ($membersClass->memberTitles() as $title) {
               if ($title == $memberObject->title) {
                 $selected = " selected ";
               } else {
@@ -264,7 +264,7 @@ function fetchAndDisplay(filePath, clickedLink) {
           <label for="category" class="form-label">Member Category</label>
           <select class="form-select" name="category" id="category" <?php echo $disabledCheck; ?> required>
             <?php
-            foreach ($membersClass->memberCategories() AS $category) {
+            foreach ($membersClass->memberCategories() as $category) {
               if ($category == $memberObject->category) {
                 $selected = " selected ";
               } else {
@@ -294,7 +294,7 @@ function fetchAndDisplay(filePath, clickedLink) {
             $memberDietary = explode(",", $memberObject->dietary);
             
             $i = 0;
-            foreach ($membersClass->dietaryOptions() AS $dietaryOption) {
+            foreach ($membersClass->dietaryOptions() as $dietaryOption) {
               if (in_array($dietaryOption, $memberDietary)) {
                 $checked = " checked";
               } else {
@@ -372,7 +372,7 @@ function fetchAndDisplay(filePath, clickedLink) {
           <?php
           $wineOptions = explode(",", $settingsClass->value('booking_wine_options'));
           
-          foreach($wineOptions AS $wineOption) {
+          foreach($wineOptions as $wineOption) {
             // Remove all non-alphanumeric characters
             $id = preg_replace('/[^a-z0-9]/', '', strtolower($wineOption));
             
@@ -406,7 +406,7 @@ function fetchAndDisplay(filePath, clickedLink) {
           <?php
           $grantedPermissions = explode(",", $memberObject->permissions);
           
-          foreach (available_permissions() AS $permission => $description) {
+          foreach (available_permissions() as $permission => $description) {
             if (in_array($permission, $grantedPermissions)) {
               $checked = " checked ";
             } else {
