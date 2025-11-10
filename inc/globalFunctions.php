@@ -1,8 +1,13 @@
 <?php
-function printArray($array) {
-	echo ("<pre>");
-	print_r ($array);
-	echo ("</pre>");
+function printArray($data): void {
+	echo "<div class=\"alert alert-info\" role=\"alert\" style=\"font-family:monospace;\"><pre>";
+	
+	if (is_array($data) || is_object($data)) {
+		echo htmlspecialchars(print_r($data, true));
+	} else {
+		echo htmlspecialchars(var_export($data, true));
+	}
+	echo "</pre></div>";
 }
 
 function dateDisplay($date = null, $longFormat = false) {
