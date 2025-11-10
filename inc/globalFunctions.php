@@ -12,16 +12,14 @@ function printArray($data): void {
 
 function dateDisplay($date = null, $longFormat = false) {
 	global $settingsClass;
-
-	if ($longFormat == true) {
+	
+	if ($longFormat) {
 		$dateFormat = $settingsClass->value('datetime_format_long');
 	} else {
 		$dateFormat = $settingsClass->value('datetime_format_short');
 	}
-
-	$returnDate = date($dateFormat, strtotime($date));
-
-	return $returnDate;
+	
+	return date($dateFormat, strtotime($date));
 }
 
 function timeago($date) {
