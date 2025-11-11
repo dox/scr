@@ -41,7 +41,7 @@ echo makeTitle($title, $subtitle, $icons, true);
     </h4>
     <ul class="list-group mb-3">
       <?php
-      foreach ($members_dismissed_array AS $member => $dismissedDate) {
+      foreach ($members_dismissed_array as $member => $dismissedDate) {
         $memberObject = new member($member);
 
         $deleteIcon = "<a href=\"index.php?n=admin_notification&notificationUID=" . $notification['uid'] . "&deleteDismiss=" . $member . "\"><svg width=\"1em\" height=\"1em\" class=\"text-muted me-1\"><use xlink:href=\"img/icons.svg#x-circle\"/></svg></a>";
@@ -49,7 +49,6 @@ echo makeTitle($title, $subtitle, $icons, true);
         $output  = "<li class=\"list-group-item d-flex justify-content-between lh-sm\">";
         $output .= "<div class=\"text-muted\">";
         $output .= "<h6 class=\"my-0\">" . $deleteIcon . "<a href=\"index.php?n=member&memberUID=" . $memberObject->uid . "\" class=\"text-muted\">" . $memberObject->displayName() . "</a></h6>";
-        //$output .= "<span class=\"text-muted\">" . $memberObject->displayName() . "</span>";
         $output .= "</div>";
         $output .= "<small class=\"text-muted\">" . dateDisplay($dismissedDate) . " " . timeDisplay($dismissedDate) . "</small>";
 
@@ -61,7 +60,7 @@ echo makeTitle($title, $subtitle, $icons, true);
   </div>
   <div class="col-md-7 col-lg-8">
     <h4 class="mb-3">Notification</h4>
-    <form method="post" id="termUpdate" action="<?php echo $_SERVER['REQUEST_URI']; ?>" class="needs-validation" novalidate>
+    <form method="post" id="termUpdate" action="<?php echo htmlspecialchars($_SERVER['REQUEST_URI']); ?>" class="needs-validation" novalidate>
       <div class="row">
         <div class="col-3 mb-3">
           <label for="type" class="form-label">Type</label>

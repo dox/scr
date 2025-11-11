@@ -34,7 +34,7 @@ echo makeTitle($title, $subtitle, $icons, true);
     </h4>
     <ul class="list-group mb-3">
       <?php
-      foreach ($meals AS $meal) {
+      foreach ($meals as $meal) {
         echo $meal->displayListGroupItem();
       }
       ?>
@@ -45,7 +45,7 @@ echo makeTitle($title, $subtitle, $icons, true);
     </h4>
     <ul class="list-group mb-3">
       <?php
-      foreach ($mealsAfterTerm AS $meal) {
+      foreach ($mealsAfterTerm as $meal) {
         echo $meal->displayListGroupItem();
       }
       ?>
@@ -53,7 +53,7 @@ echo makeTitle($title, $subtitle, $icons, true);
   </div>
   <div class="col-md-7 col-lg-8">
     <h4 class="mb-3">Term Information</h4>
-    <form method="post" id="termUpdate" action="<?php echo $_SERVER['REQUEST_URI']; ?>" class="needs-validation" novalidate>
+    <form method="post" id="termUpdate" action="<?php echo htmlspecialchars($_SERVER['REQUEST_URI']); ?>" class="needs-validation" novalidate>
       <div class="col mb-3">
         <label for="name" class="form-label">Term name</label>
         <input type="text" class="form-control" name="name" id="name" value="<?php echo $termObject->name; ?>" required>

@@ -14,7 +14,7 @@ if (isset($_POST['purge_old_bookings']) && $_POST['purge_old_bookings'] === '1')
 
     $meals = $mealsClass->betweenDates('1970-01-01', date('Y-m-d', strtotime("-{$days} days")));
     
-    foreach ($meals AS $meal) {
+    foreach ($meals as $meal) {
       if ($meal->total_bookings_this_meal <= 0) {
         $meal->delete();
       }
@@ -47,7 +47,7 @@ echo makeTitle($title, $subtitle, $icons, true);
 
 <div class="accordion" id="accordionExample">
   <?php
-  foreach ($settings AS $setting) {
+  foreach ($settings as $setting) {
     if (isset($_GET['settingUID']) && $_GET['settingUID'] == $setting['uid']) {
       $headingShow = "accordion-button show";
       $settingShow = "accordion-collapse show";
@@ -147,7 +147,7 @@ $iconsArray = array(
 
 
 echo "<div class=\"row text-center\">";
-foreach ($iconsArray AS $icon => $name) {
+foreach ($iconsArray as $icon => $name) {
   $output  = "<div class=\"col-sm-2 mb-3\">";
   $output .= "<div class=\"card\">";
   $output .= "<div class=\"card-body\">";
@@ -231,63 +231,3 @@ function dismiss(el){
   document.getElementById(el).parentNode.style.display='none';
 };
 </script>
-
-
-<?php
-function prettyPrint( $json )
-{
-    $result = '';
-    $level = 0;
-    $in_quotes = false;
-    $in_escape = false;
-    $ends_line_level = NULL;
-    $json_length = strlen( $json );
-
-    for( $i = 0; $i < $json_length; $i++ ) {
-        $char = $json[$i];
-        $new_line_level = NULL;
-        $post = "";
-        if( $ends_line_level !== NULL ) {
-            $new_line_level = $ends_line_level;
-            $ends_line_level = NULL;
-        }
-        if ( $in_escape ) {
-            $in_escape = false;
-        } else if( $char === '"' ) {
-            $in_quotes = !$in_quotes;
-        } else if( ! $in_quotes ) {
-            switch( $char ) {
-                case '}': case ']':
-                    $level--;
-                    $ends_line_level = NULL;
-                    $new_line_level = $level;
-                    break;
-
-                case '{': case '[':
-                    $level++;
-                case ',':
-                    $ends_line_level = $level;
-                    break;
-
-                case ':':
-                    $post = " ";
-                    break;
-
-                case " ": case "\t": case "\n": case "\r":
-                    $char = "";
-                    $ends_line_level = $new_line_level;
-                    $new_line_level = NULL;
-                    break;
-            }
-        } else if ( $char === '\\' ) {
-            $in_escape = true;
-        }
-        if( $new_line_level !== NULL ) {
-            $result .= "\n".str_repeat( "\t", $new_line_level );
-        }
-        $result .= $char.$post;
-    }
-
-    return $result;
-}
-?>

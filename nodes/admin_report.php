@@ -23,7 +23,7 @@ echo makeTitle($title, $subtitle, false, true);
     </h4>
     <ul class="list-group mb-3">
       <?php
-      foreach ($reportLogs AS $log) {
+      foreach ($reportLogs as $log) {
         $output  = "<li class=\"list-group-item d-flex justify-content-between lh-sm\">";
         $output .= "<div class=\"text-muted\">";
         $output .= "<h6 class=\"my-0\"><a href=\"index.php?n=admin_logs\" class=\"text-muted\">" . $log['description'] . "</a></h6>";
@@ -38,7 +38,7 @@ echo makeTitle($title, $subtitle, false, true);
   </div>
   <div class="col-md-7 col-lg-8">
     <h4 class="mb-3">Report</h4>
-    <form method="post" id="termUpdate" action="<?php echo $_SERVER['REQUEST_URI']; ?>" class="needs-validation" novalidate>
+    <form method="post" id="termUpdate" action="<?php echo htmlspecialchars($_SERVER['REQUEST_URI']); ?>" class="needs-validation" novalidate>
       <div class="row">
         <div class="col-4 mb-3">
           <label for="type" class="form-label">Type</label>
@@ -62,7 +62,7 @@ echo makeTitle($title, $subtitle, false, true);
           <label for="category" class="form-label">Category</label>
           <select class="form-select" name="category" id="category" required>
             <?php
-            foreach ($reportsClass->categories() AS $category) {
+            foreach ($reportsClass->categories() as $category) {
               $selected = "";
               if ($category['category'] == $report['category']) {
                 $selected = " selected";

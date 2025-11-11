@@ -30,7 +30,7 @@ echo makeTitle($title, $subtitle, $icons, true);
 
 <div class="list-group">
   <?php
-  foreach ($notifications AS $notification) {
+  foreach ($notifications as $notification) {
     if (date('Y-m-d', strtotime($notification['date_end'])) > date('Y-m-d')) {
       $class = "";
     } else {
@@ -40,10 +40,7 @@ echo makeTitle($title, $subtitle, $icons, true);
     $output .= "<div class=\"d-flex w-100 justify-content-between\">";
     $output .= "<h5 class=\"mb-1\">" . $notification['name'] . "</h5>";
     $output .= "<small class=\"text-muted\">" . "<span class=\"badge bg-primary rounded-pill\">" . dateDisplay($notification['date_start']) . " - " . dateDisplay($notification['date_end']) . "</span></small>";
-    //$output .= "<p id=\"" . $term['uid'] . "\" onclick=\"dismiss(this.id);\">dismiss this box</p>";
-    //$output .= "<span class=\"badge bg-primary rounded-pill\">" . $log['type'] . "</span>";
     $output .= "</div>";
-    //$output .= "<p class=\"mb-1\">" . $log['description'] . "</p>";
     $output .= "<small class=\"text-muted\">" . htmlspecialchars($notification['message']) . "</small>";
     $output .= "</a>";
 
@@ -56,7 +53,7 @@ echo makeTitle($title, $subtitle, $icons, true);
 <div class="modal fade" id="notficationAddModal" tabindex="-1" aria-labelledby="notficationAddModal" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
-      <form method="post" id="notificationForm" action="<?php echo $_SERVER['REQUEST_URI']; ?>">
+      <form method="post" id="notificationForm" action="<?php echo htmlspecialchars($_SERVER['REQUEST_URI']); ?>">
       <div class="modal-header">
         <h5 class="modal-title" id="notficationAddModalLabel">Add New Notification</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
