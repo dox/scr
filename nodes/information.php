@@ -2,27 +2,40 @@
 <script src="https://cdn.jsdelivr.net/npm/suneditor@latest/dist/suneditor.min.js"></script>
 
 <?php
+
+$setting = "scr_information";
+$settingFriendlyName = "SCR Information";
+$settingDescription = "Details on dining rights, meal allowances and procedures";
+
+if (isset($_GET['type'])){
+  if ($_GET['type'] == "dining") {
+    $setting = "dining_arrangements";
+    $settingFriendlyName = "Dining Information";
+    $settingDescription = "Dining arrangements at a glance";
+  }
+}
+
 //check if updating existing setting
 if (isset($_POST['contentInfo'])) {
   $db->query(
       "UPDATE settings SET value = ? WHERE name = ?",
       $_POST['contentInfo'],
-      'scr_information'
+      $setting
   );
   
   $logArray['category'] = "admin";
   $logArray['result'] = "success";
-  $logArray['description'] = "SCR Information updated";
+  $logArray['description'] = $settingFriendlyName . " updated";
   $logsClass->create($logArray);
   
-  echo $settingsClass->alert("success", "Success!", "SCR Information successfully updated");
+  echo $settingsClass->alert("success", "Success!", $settingFriendlyName . " successfully updated");
 
 }
 
-$text = $settingsClass->value('scr_information');
+$text = $settingsClass->value($setting);
 
-$title = "SCR Information";
-$subtitle = "Details on dining rights, meal allowances and procedures";
+$title = $settingFriendlyName;
+$subtitle = $settingDescription;
 if (checkpoint_charlie("settings")) {
   $icons[] = array("class" => "btn-primary", "name" => "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#journal-text\"/></svg> Edit Content", "value" => "data-bs-toggle=\"modal\" data-bs-target=\"#exampleModal\"");
 }
@@ -32,17 +45,13 @@ echo makeTitle($title, $subtitle, $icons);
 echo $text;
 ?>
 
-
-
-
-
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-fullscreen">
     <div class="modal-content">
       <form method="post" id="scr_information" action="<?php echo htmlspecialchars($_SERVER['REQUEST_URI']); ?>">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Edit SCR Information</h5>
+        <h5 class="modal-title" id="exampleModalLabel">Edit</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">

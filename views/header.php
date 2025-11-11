@@ -35,7 +35,7 @@ if (debug) {
 						  <use xlink:href="img/icons.svg#info-circle"/>
 					  </svg> Information</a>
 		</li>
-		<li class="nav-item d-print-none"><a class="nav-link" aria-current="page" href="index.php?n=dining">
+		<li class="nav-item d-print-none"><a class="nav-link" aria-current="page" href="index.php?n=information&type=dining">
 					<svg width="1em" height="1em" class="text-muted">
 						<use xlink:href="img/icons.svg#journal-text"/>
 					</svg> Dining Arrangements</a>
