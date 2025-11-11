@@ -56,16 +56,15 @@ echo makeTitle($title, $subtitle, $icons, true);
   <div class="tab-pane fade show active" id="scr" role="tabpanel" aria-labelledby="scr-tab">
   
   <div class="row mb-3">
-    <div class="col">        
+    <div class="col">
       <input type="text" id="filterInput" class="form-control form-control-lg" placeholder="Quick search" autocomplete="off" spellcheck="false" aria-describedby="wine_searchHelp">
     </div>
   </div>
   
   <form method="post" id="termForm" action="index.php?n=admin_members">
-    <!--<div class="list-group" id="members_list">-->
     <ul class="list-group" id="scr_members_list">
     <?php
-    foreach ($scrMembersEnabled AS $member) {
+    foreach ($scrMembersEnabled as $member) {
       echo $member->memberRow();
     }
     ?>
@@ -79,7 +78,7 @@ echo makeTitle($title, $subtitle, $icons, true);
   <h2>Disabled Dining Rights</h2>
   <ul class="list-group">
     <?php
-    foreach ($scrMembersDisabled AS $member) {
+    foreach ($scrMembersDisabled as $member) {
     echo $member->memberRow();
     }
     ?>
@@ -88,7 +87,7 @@ echo makeTitle($title, $subtitle, $icons, true);
   <div class="tab-pane fade" id="mcr" role="tabpanel" aria-labelledby="mcr-tab">
   <ul class="list-group" id="mcr_members_list">
     <?php
-    foreach ($mcrMembersEnabled AS $member) {
+    foreach ($mcrMembersEnabled as $member) {
     echo $member->memberRow();
     }
     ?>
@@ -99,7 +98,7 @@ echo makeTitle($title, $subtitle, $icons, true);
   <h2>Disabled Dining Rights</h2>
   <ul class="list-group">
     <?php
-    foreach ($mcrMembersDisabled AS $member) {
+    foreach ($mcrMembersDisabled as $member) {
      echo $member->memberRow();
     }
     ?>
@@ -143,7 +142,7 @@ document.getElementById('termForm').addEventListener('submit', function (e) {
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog">
   <div class="modal-content">
-    <form method="post" id="memberForm" action="<?php echo $_SERVER['REQUEST_URI']; ?>">
+    <form method="post" id="memberForm" action="<?php echo htmlspecialchars($_SERVER['REQUEST_URI']); ?>">
     <div class="modal-header">
     <h5 class="modal-title" id="exampleModalLabel">Add New SCR Member</h5>
     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -153,7 +152,7 @@ document.getElementById('termForm').addEventListener('submit', function (e) {
       <label for="title" class="form-label">Title</label>
       <select class="form-select" name="title" id="title" required>
         <?php
-        foreach ($membersClass->memberTitles() AS $title) {
+        foreach ($membersClass->memberTitles() as $title) {
         $output = "<option value=\"" . $title . "\">" . $title . "</option>";
 
         echo $output;
@@ -196,7 +195,7 @@ document.getElementById('termForm').addEventListener('submit', function (e) {
       <label for="category" class="form-label">Member Category</label>
       <select class="form-select" name="category" id="category" required>
         <?php
-        foreach ($membersClass->memberCategories() AS $category) {
+        foreach ($membersClass->memberCategories() as $category) {
         $output = "<option value=\"" . $category . "\"" . ">" . $category . "</option>";
 
         echo $output;

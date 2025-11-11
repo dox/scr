@@ -54,12 +54,12 @@ if (isset($_POST['name'])) {
 	<?php
 	$categories = array_slice(explode(",", $settingsClass->value('wine_category')), 0, 5, true);
 	
-	foreach ($categories AS $wine_category) {
+	foreach ($categories as $wine_category) {
 		$winesByCategory = $wineClass->allWines(array('wine_wines.category' => $wine_category), true);
 		
 		if (count($winesByCategory) > 0) {
 			$wineBottlesCount = 0;
-			foreach($winesByCategory AS $wine) {
+			foreach($winesByCategory as $wine) {
 				$wine = new wine($wine['uid']);
 				$wineBottlesCount = $wineBottlesCount + $wine->currentQty();
 			}
@@ -81,7 +81,7 @@ if (isset($_POST['name'])) {
 
 <div class="row">
 	<?php
-	foreach ($wineClass->allCellars() AS $cellar) {
+	foreach ($wineClass->allCellars() as $cellar) {
 		$cellar = new cellar($cellar['uid']);
 		
 		echo $cellar->card();
@@ -110,7 +110,7 @@ if (isset($_POST['name'])) {
 </div>
 
 
-<form method="post" id="bin_new" action="<?php echo $_SERVER['REQUEST_URI']; ?>">
+<form method="post" id="bin_new" action="<?php echo htmlspecialchars($_SERVER['REQUEST_URI']); ?>">
 <div class="modal fade" id="newCellarModal" tabindex="-1" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
@@ -217,11 +217,11 @@ for ($i = 0; $i < $daysToInclude; $i++) {
   $dateArray[$date] = 0;
 }
 
-foreach ($dateArray AS $date => $value) {
+foreach ($dateArray as $date => $value) {
 	$transactions = $wineClass->allTransactions(array('DATE(date)' => $date));
 	
 	$bottlesTotal = 0;
-	foreach ($transactions AS $transaction) {
+	foreach ($transactions as $transaction) {
 		if (isset($transaction)) {
 			$bottlesTotal= $bottlesTotal + abs($transaction['bottles']);
 		}

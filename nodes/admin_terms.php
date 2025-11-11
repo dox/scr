@@ -28,7 +28,7 @@ echo makeTitle($title, $subtitle, $icons, true);
 
 <div class="list-group">
   <?php
-  foreach ($terms AS $term) {
+  foreach ($terms as $term) {
     $termObject = new term($term['uid']);
 
     if ($termObject->isCurrentTerm()) {
@@ -41,10 +41,7 @@ echo makeTitle($title, $subtitle, $icons, true);
     $output .= "<div class=\"d-flex w-100 justify-content-between\">";
     $output .= "<h5 class=\"mb-1\">" . $termObject->name . "</h5>";
     $output .= "<small class=\"text-muted\">" . "<span class=\"badge bg-primary rounded-pill\">" . $termObject->total_mealsThisTerm() . " meals</span> " . $log['ip'] . "</small>";
-    //$output .= "<p id=\"" . $term['uid'] . "\" onclick=\"dismiss(this.id);\">dismiss this box</p>";
-    //$output .= "<span class=\"badge bg-primary rounded-pill\">" . $log['type'] . "</span>";
     $output .= "</div>";
-    //$output .= "<p class=\"mb-1\">" . $log['description'] . "</p>";
     $output .= "<small class=\"text-muted\">" . dateDisplay($termObject->date_start) . " - " . dateDisplay($termObject->date_end) . "</small>";
     $output .= "</a>";
 
@@ -57,7 +54,7 @@ echo makeTitle($title, $subtitle, $icons, true);
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
-      <form method="post" id="termForm" action="<?php echo $_SERVER['REQUEST_URI']; ?>">
+      <form method="post" id="termForm" action="<?php echo htmlspecialchars($_SERVER['REQUEST_URI']); ?>">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLabel">Add New Term Date</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>

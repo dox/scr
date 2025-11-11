@@ -59,7 +59,7 @@ echo makeTitle($title, $subtitle, $icons, true);
       
       $currentMembersBooked = array();
       
-      foreach ($mealObject->bookings_this_meal() AS $booking) {
+      foreach ($mealObject->bookings_this_meal() as $booking) {
         $memberObject = new member($booking['member_ldap']);
 
         $guests = (array)json_decode($booking['guests_array']);
@@ -110,7 +110,7 @@ echo makeTitle($title, $subtitle, $icons, true);
     if (isset($_GET['add'])) {
       echo "<form method=\"post\" id=\"mealUpdate\" action=\"index.php?n=admin_meals\" class=\"needs-validation\" >";
     } else {
-      echo "<form method=\"post\" id=\"mealUpdate\" action=\"" . $_SERVER['REQUEST_URI'] . "\" class=\"needs-validation\" >";
+      echo "<form method=\"post\" id=\"mealUpdate\" action=\"" . htmlspecialchars($_SERVER['REQUEST_URI']) . "\" class=\"needs-validation\" >";
     }
     ?>
     <div class="row">
@@ -118,7 +118,7 @@ echo makeTitle($title, $subtitle, $icons, true);
         <label for="type" class="form-label">Type</label>
         <select class="form-select" name="type" id="type" required>
           <?php
-          foreach ($mealsClass->mealTypes() AS $type) {
+          foreach ($mealsClass->mealTypes() as $type) {
             if ($type == $mealObject->type) {
               $selected = " selected ";
             } else {
@@ -146,7 +146,7 @@ echo makeTitle($title, $subtitle, $icons, true);
         <input type="text" list="locations_datalist" class="form-control" name="location" id="location" placeholder="" value="<?php echo $mealObject->location; ?>" required>
         <datalist id="locations_datalist">
           <?php
-          foreach ($mealsClass->mealLocations() AS $location) {
+          foreach ($mealsClass->mealLocations() as $location) {
             echo "<option value=\"" . $location['location'] . "\">";
           }
           ?>
@@ -228,7 +228,7 @@ echo makeTitle($title, $subtitle, $icons, true);
               $mealTypesAllowed = explode(",", $mealObject->allowed);
               
               $i = 0;
-              foreach ($memberTypes AS $memberType) {
+              foreach ($memberTypes as $memberType) {
                 if (in_array($memberType, $mealTypesAllowed)) {
                   $checked = " checked";
                 } else {
@@ -333,7 +333,7 @@ echo makeTitle($title, $subtitle, $icons, true);
         <div id="flush-collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionPhotograph">
           <div class="accordion-body">
             <?php
-            foreach ($mealsClass->mealCardImages() AS $photo) {
+            foreach ($mealsClass->mealCardImages() as $photo) {
               if ($photo == $mealObject->photo) {
                 $selected = " checked ";
               } else {
@@ -369,7 +369,7 @@ echo makeTitle($title, $subtitle, $icons, true);
         <?php
         $charge_to_options = explode(",", $settingsClass->value('booking_charge-to'));
 
-        foreach ($charge_to_options AS $option) {
+        foreach ($charge_to_options as $option) {
           if ($option == $mealObject->charge_to) {
             $selected = " selected ";
           } else {
@@ -484,7 +484,7 @@ var fp2 = flatpickr("#date_cutoff", {
   $membersClass = new members();
   $members = $membersClass->getMembers();
 
-  foreach ($members AS $memberObject) {
+  foreach ($members as $memberObject) {
     if (!in_array($memberObject->ldap, $currentMembersBooked)) {
       echo "<option id=\"" . $memberObject->ldap . "\" value=\"" . $memberObject->displayName() . "\"></option>";
     }

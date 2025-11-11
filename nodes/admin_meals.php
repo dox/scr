@@ -39,15 +39,12 @@ echo makeTitle($title, $subtitle, $icons, true);
 
       <div class="list-group">
         <?php
-        foreach ($mealsTemplates AS $meal) {
+        foreach ($mealsTemplates as $meal) {
           $output  = "<a href=\"index.php?n=admin_meal&mealUID=" . $meal->uid . "\" class=\"list-group-item list-group-item-action\">";
           $output .= "<div class=\"d-flex w-100 justify-content-between\">";
           $output .= "<h5 class=\"mb-1\">" . $meal->name . "</h5>";
           $output .= "<small class=\"text-muted\">" . "<span class=\"badge bg-primary rounded-pill\">" . $meal->type . "</span></small>";
-          //$output .= "<p id=\"" . $term['uid'] . "\" onclick=\"dismiss(this.id);\">dismiss this box</p>";
-          //$output .= "<span class=\"badge bg-primary rounded-pill\">" . $log['type'] . "</span>";
           $output .= "</div>";
-          //$output .= "<p class=\"mb-1\">" . $log['description'] . "</p>";
           $output .= "<small class=\"text-muted\">" . $meal->location . "</small>";
           $output .= "</a>";
 
@@ -65,15 +62,12 @@ echo makeTitle($title, $subtitle, $icons, true);
 
     <div class="list-group">
       <?php
-      foreach ($meals AS $meal) {
+      foreach ($meals as $meal) {
         $output  = "<a href=\"index.php?n=admin_meal&mealUID=" . $meal->uid . "\" class=\"list-group-item list-group-item-action\">";
         $output .= "<div class=\"d-flex w-100 justify-content-between\">";
         $output .= "<h5 class=\"mb-1\">" . dateDisplay($meal->date_meal) . " " . $meal->name . "</h5>";
         $output .= "<small class=\"text-muted\">" . "<span class=\"badge bg-primary rounded-pill\">" . $meal->type . "</span></small>";
-        //$output .= "<p id=\"" . $term['uid'] . "\" onclick=\"dismiss(this.id);\">dismiss this box</p>";
-        //$output .= "<span class=\"badge bg-primary rounded-pill\">" . $log['type'] . "</span>";
         $output .= "</div>";
-        //$output .= "<p class=\"mb-1\">" . $log['description'] . "</p>";
         $output .= "<small class=\"text-muted\">" . $meal->location . "</small>";
         $output .= $meal->progressBar();
         $output .= "</a>";
@@ -89,7 +83,7 @@ echo makeTitle($title, $subtitle, $icons, true);
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
-      <form method="post" id="termForm" action="<?php echo $_SERVER['REQUEST_URI']; ?>">
+      <form method="post" id="termForm" action="<?php echo htmlspecialchars($_SERVER['REQUEST_URI']); ?>">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLabel">Apply Template to Week</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -100,7 +94,7 @@ echo makeTitle($title, $subtitle, $icons, true);
             <select class="form-select" name="template_name" id="template_name" required>
               <option value=""></option>
               <?php
-              foreach ($settingsClass->templates() AS $template) {
+              foreach ($settingsClass->templates() as $template) {
                 $output = "<option value=\"" . $template['name'] . "\">" . $template['name'] . " - " . $template['description'] . "</option>";
 
                 echo $output;

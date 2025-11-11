@@ -63,7 +63,7 @@ echo makeTitle($title, $subtitle, $icons, true);
 	} else {
 		$wines = $bin->currentWines();
 	}
-	foreach ($wines AS $wine) {
+	foreach ($wines as $wine) {
 		$wine = new wine($wine['uid']);
 		echo $wine->card();
 	}
@@ -91,7 +91,7 @@ echo makeTitle($title, $subtitle, $icons, true);
 	</div>
 </div>
 
-<form method="post" id="bin_new" action="<?php echo $_SERVER['REQUEST_URI']; ?>">
+<form method="post" id="bin_new" action="<?php echo htmlspecialchars($_SERVER['REQUEST_URI']); ?>">
 <div class="modal fade" id="editBinModal" tabindex="-1" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
@@ -104,7 +104,7 @@ echo makeTitle($title, $subtitle, $icons, true);
 					<label for="name" class="form-label">Cellar </label>
 					<select class="form-select" id="cellar_uid" name="cellar_uid" required>
 						<?php
-						foreach ($wineClass->allCellars() AS $cellarOption) {
+						foreach ($wineClass->allCellars() as $cellarOption) {
 							if ($cellarOption['uid'] == $cellar->uid) {
 								echo "<option value=\"" . $cellarOption['uid'] . "\" selected>" . $cellarOption['name'] . "</option>";
 							} else {
@@ -122,7 +122,7 @@ echo makeTitle($title, $subtitle, $icons, true);
 					<label for="category" class="form-label">Bin Category</label>
 					<select class="form-select" id="category" name="category" required>
 						<?php
-						foreach ($cellar->binTypes() AS $binType) {
+						foreach ($cellar->binTypes() as $binType) {
 							if ($bin->category == $binType) {
 								echo "<option value=\"" . $binType . "\" selected>" . $binType . "</option>";
 							} else {

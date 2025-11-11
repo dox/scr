@@ -70,12 +70,12 @@ echo makeTitle($title, $subtitle, $icons, true);
 	<?php
 	$categories = array_slice(explode(",", $settingsClass->value('wine_category')), 0, 5, true);
 	
-	foreach ($categories AS $wine_category) {
+	foreach ($categories as $wine_category) {
 		$winesByCategory = $wineClass->allWines(array('cellar_uid' => $cellar->uid, 'wine_wines.category' => $wine_category), true);
 		
 		if (count($winesByCategory) > 0) {
 			$wineBottlesCount = 0;
-			foreach($winesByCategory AS $wine) {
+			foreach($winesByCategory as $wine) {
 				$wine = new wine($wine['uid']);
 				$wineBottlesCount = $wineBottlesCount + $wine->currentQty();
 			}
@@ -102,7 +102,7 @@ echo makeTitle($title, $subtitle, $icons, true);
 <ul class="nav nav-tabs nav-fill" id="remoteTabs">
 	<?php
 	$i = 1;
-	foreach ($cellar->binTypes() AS $wine_category) {
+	foreach ($cellar->binTypes() as $wine_category) {
 		$active = "";
 		$url = "/nodes/widgets/_cellarBinCategory.php?cellar_uid=" . $cellar->uid . "&category=" . $wine_category;
 		$href = "#tab" . $i;
@@ -126,7 +126,7 @@ echo makeTitle($title, $subtitle, $icons, true);
 <div class="tab-content mt-3" id="tabContent">
 	<?php
 	$i = 1;
-	foreach ($cellar->binTypes() AS $wine_category) {
+	foreach ($cellar->binTypes() as $wine_category) {
 		$active = "";
 		if ($i == 1) {
 			$active = "show active";
@@ -143,7 +143,7 @@ echo makeTitle($title, $subtitle, $icons, true);
 	?>
 </div>
 
-<form method="post" id="bin_new" action="<?php echo $_SERVER['REQUEST_URI']; ?>">
+<form method="post" id="bin_new" action="<?php echo htmlspecialchars($_SERVER['REQUEST_URI']); ?>">
 <div class="modal fade" id="newBinModal" tabindex="-1" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
@@ -156,7 +156,7 @@ echo makeTitle($title, $subtitle, $icons, true);
 					<label for="name" class="form-label">Cellar </label>
 					<select disabled class="form-select" id="cellar_uid" name="cellar_uid" required>
 						<?php
-						foreach ($wineClass->allCellars() AS $cellarOption) {
+						foreach ($wineClass->allCellars() as $cellarOption) {
 							if ($cellarOption['uid'] == $cellar->uid) {
 								echo "<option value=\"" . $cellarOption['uid'] . "\" selected>" . $cellarOption['name'] . "</option>";
 							} else {
@@ -175,7 +175,7 @@ echo makeTitle($title, $subtitle, $icons, true);
 					<label for="category" class="form-label">Bin Category</label>
 					<select class="form-select" id="category" name="category" required>
 						<?php
-						foreach ($cellar->binTypes() AS $wine_category) {
+						foreach ($cellar->binTypes() as $wine_category) {
 							echo "<option>" . $wine_category . "</option>";
 						}
 						?>
@@ -197,7 +197,7 @@ echo makeTitle($title, $subtitle, $icons, true);
 </div>
 </form>
 
-<form method="post" id="cellar_edit" action="<?php echo $_SERVER['REQUEST_URI']; ?>">
+<form method="post" id="cellar_edit" action="<?php echo htmlspecialchars($_SERVER['REQUEST_URI']); ?>">
 <div class="modal fade" id="editCellarModal" tabindex="-1" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
@@ -234,7 +234,7 @@ echo makeTitle($title, $subtitle, $icons, true);
 						  <div class="accordion-body">
 							  <?php
 							  $mealsClass = new meals();
-							  foreach ($mealsClass->mealCardImages() AS $photo) {
+							  foreach ($mealsClass->mealCardImages() as $photo) {
 								if ($photo == $cellar->photograph) {
 								  $selected = " checked ";
 								} else {
@@ -336,7 +336,7 @@ document.getElementById('wine_search').addEventListener('keyup', function() {
 
 <?php
 $data = array();
-foreach ($cellar->allBottlesByGrape() AS $grape => $count) {
+foreach ($cellar->allBottlesByGrape() as $grape => $count) {
 	if (!empty($grape)) {
 		$data[] = "{ x: '" . $grape . "', y: " . $count . "}";
 	}
