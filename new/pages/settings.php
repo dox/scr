@@ -10,7 +10,11 @@ echo pageTitle(
 			'title' => 'Add new',
 			'class' => '',
 			'event' => '',
-			'icon' => 'plus-circle'
+			'icon' => 'plus-circle',
+			'data' => [
+				'bs-toggle' => 'modal',
+				'bs-target' => '#addSettingModal'
+			]
 		]
 	]
 );
@@ -84,4 +88,23 @@ echo pageTitle(
 	  echo $output;
   }
   ?>
+</div>
+
+
+<!-- Add Setting Modal -->
+<div class="modal fade" tabindex="-1" id="addSettingModal" data-backdrop="static" data-keyboard="false" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Test Modal <span class="text-danger"><strong>WARNING!</strong></span></h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				Test Modal
+				<p><span class="text-danger"><strong>WARNING!</strong> Are you sure you want to delete this member?</p>
+				<p>This will also delete <strong>all</strong> bookings (past and present) for this member.<p>
+				<p><span class="text-danger"><strong>THIS ACTION CANNOT BE UNDONE!</strong></span></p>
+			</div>
+		</div>
+	</div>
 </div>

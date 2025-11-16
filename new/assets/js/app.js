@@ -47,3 +47,13 @@ function initAjaxLoader(triggerSelector, targetSelector, options = {}) {
 	const first = document.querySelector(triggerSelector);
 	if (first) first.click();
 }
+
+function filterList(inputSelector, listSelector) {
+  const filterValue = document.querySelector(inputSelector).value.toLowerCase();
+  const items = document.querySelectorAll(`${listSelector} li`);
+
+  items.forEach(item => {
+	const text = item.textContent.toLowerCase();
+	item.style.display = text.includes(filterValue) ? '' : 'none';
+  });
+}

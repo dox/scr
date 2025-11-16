@@ -7,7 +7,7 @@ echo pageTitle(
 );
 ?>
 
-<ul class="nav nav-tabs flex-nowrap" id="scrUserList" role="tablist">
+<ul class="nav nav-tabs mb-3 flex-nowrap" id="scrUserList" role="tablist">
 <?php foreach ($terms->navbarWeeks() as $week): ?>
 	<?php
 		$weekName = $currentTerm->tabLabel(htmlspecialchars($week));
@@ -40,12 +40,15 @@ echo pageTitle(
 		$tabId  = 'week-tab-' . htmlspecialchars($week);
 		$isCurrent = $terms->isCurrentWeek($week);
 	?>
-	<div class="tab-pane fade <?= $isCurrent ? 'show active' : '' ?>"
-		 id="<?= $paneId ?>"
-		 role="tabpanel"
-		 aria-labelledby="<?= $tabId ?>"
-		 data-url="./ajax/meals.php?week=<?= urlencode($week) ?>">
-		 <div class="text-muted">Loading...</div>
+	<div class="tab-pane fade <?= $isCurrent ? 'show active' : '' ?>  text-center"
+		id="<?= $paneId ?>"
+		role="tabpanel"
+		aria-labelledby="<?= $tabId ?>"
+		data-url="./ajax/meals.php?week=<?= urlencode($week) ?>">
+		
+		<div class="spinner-border" role="status">
+			<span class="visually-hidden">Loading...</span>
+		</div>
 	</div>
 <?php endforeach; ?>
 </div>
@@ -53,7 +56,6 @@ echo pageTitle(
 <script>
 // Initialize week tabs
 initAjaxLoader('#scrUserList a[data-bs-toggle="tab"]', null, {event: 'shown.bs.tab', cache: true});
-
 </script>
 
 

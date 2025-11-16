@@ -50,7 +50,11 @@ echo pageTitle(
 			</li>
 		</ul>
 		<div id="member_stats_container">
-			<div class="text-muted">Loading...</div>
+			<div class="d-flex justify-content-center">
+			  <div class="spinner-border" role="status">
+				<span class="visually-hidden">Loading...</span>
+			  </div>
+			</div>
 		</div>
 	</div>
 </div>
@@ -228,8 +232,8 @@ echo pageTitle(
 				<input class="form-check-input" type="checkbox" id="email_reminders" name="email_reminders" value="1" <?php if ($member->email_reminders == "1") { echo " checked";} ?> switch>
 				<label class="form-check-label" for="email_reminders">Send me an email confirmation when I book a meal</label>
 			</div>
-			<div class="">
-				<span class="form-check-label" for="">Default Wine <small>(when available)</small></label>
+			<div>
+				<span class="form-check-label" for="">Default Wine <small>(when available)</small></label></span>
 				<?php
 				$wineOptions = explode(",", $settings->get('booking_wine_options'));
 				
@@ -334,7 +338,7 @@ echo pageTitle(
 
 
 <!-- Delete Member Modal -->
-<div class="modal" tabindex="-1" id="deleteMemberModal" data-backdrop="static" data-keyboard="false" aria-hidden="true">
+<div class="modal fade" tabindex="-1" id="deleteMemberModal" data-backdrop="static" data-keyboard="false" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -343,8 +347,8 @@ echo pageTitle(
 			</div>
 			<div class="modal-body">
 				Test Modal
-				<p><span class="text-danger"><strong>WARNING!</strong> Are you sure you want to delete this member?</p>
-				<p>This will also delete <strong>all</strong> bookings (past and present) for this member.<p>
+				<p><span class="text-danger"><strong>WARNING!</strong></span> Are you sure you want to delete this member?</p>
+				<p>This will also delete <strong>all</strong> bookings (past and present) for this member.</p>p>
 				<p><span class="text-danger"><strong>THIS ACTION CANNOT BE UNDONE!</strong></span></p>
 			</div>
 		</div>
@@ -352,71 +356,73 @@ echo pageTitle(
 </div>
 
 <!-- Calendar Subscribe Modal -->
-<div class="modal fade" id="calendarModal" tabindex="-1" aria-labelledby="calendarModalLabel" aria-hidden="true">
-	  <div class="modal-dialog">
+<div class="modal fade" tabindex="-1" id="calendarModal" data-backdrop="static" data-keyboard="false" aria-hidden="true">
+	<div class="modal-dialog">
 		<div class="modal-content">
-		  <div class="modal-header">
-			<h1 class="modal-title fs-5" id="exampleModalLabel">Add meals to your calendar <span class="badge rounded-pill text-bg-warning">BETA FEATURE</span></h1>
-			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-		  </div>
-		  <div class="modal-body">
-			<p>You can subscribe to your meals (past and present) in your calendar application.</p>
-			<p>Any meals you book will, after a few hours, be updated and shown in your calendar application.  You only need to subscribe once.</p>
-			<div class="accordion" id="accordionExample">
-			  <div class="accordion-item">
-				<h2 class="accordion-header">
-				  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-					<svg width="1em" height="1em"><use xlink:href="assets/images/icons.svg#microsoft"></svg>&nbsp;Windows/Microsoft Outlook
-				  </button>
-				</h2>
-				<div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
-				  <div class="accordion-body">
-					<p>Please <strong>copy</strong> the following link (this is your unique URL to your meal calendar)</p>
-					<p><code>https://<?php echo $_SERVER['HTTP_HOST']; ?>/calendar.php?hash=<?php echo $memberObject->calendar_hash; ?></code></p>
-					<p>Open Outlook (Or log in to your Outlook account on the web at <a href="https://outlook.live.com/">https://outlook.live.com/</a> and open your calendar.</p>
-					<p>Click on "Add calendar" in the left-hand panel.</p>
-					<p>Click "Subscribe from web" and paste in the copied URL.  Give your calendar a name, customise any details, and click "Import".</p>
-					<p>Your calendar will appear under "Other calendars".</p>
-					
-					<hr />
-					<p><strong>Please note:</strong> changes to your SCR bookings can take up to 24 hours to update in your calendar!</p>
-				  </div>
-				</div>
-			  </div>
-			  <div class="accordion-item">
-				<h2 class="accordion-header">
-				  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-					<svg width="1em" height="1em"><use xlink:href="assets/images/icons.svg#apple"></svg>&nbsp;Apple/iCalendar
-				  </button>
-				</h2>
-				<div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
-				  <div class="accordion-body">
-					<p>Please <strong>click</strong> the following link (this is your unique URL to your meal calendar) then click 'Allow', then 'Subscribe'.</p>
-					<p><a href="webcal://<?php echo $_SERVER['HTTP_HOST']; ?>/calendar.php?hash=<?php echo $memberObject->calendar_hash; ?>">webcal://<?php echo $_SERVER['HTTP_HOST']; ?>/calendar.php?hash=<?php echo $memberObject->calendar_hash; ?></a></p>
-					<p>Your calendar will appear under "Other calendars".</p>
-					
-					<hr />
-					<p><strong>Please note:</strong> changes to your SCR bookings can take up to 2 hours to update in your calendar!</p>
-				  </div>
-				</div>
-			  </div>
+			<div class="modal-header">
+				<h5 class="modal-title">Subscribe to your meal calendar</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
-			
-		  </div>
-		  <div class="modal-footer">
-			<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-		  </div>
+			<div class="modal-body">
+				<p>Please <strong>copy</strong> the following link (this is your unique URL to your meal calendar)</p>
+				<p><code>https://<?php echo $_SERVER['HTTP_HOST']; ?>/calendar.php?hash=<?php echo $member->calendar_hash; ?></code></p>
+				<p>Open Outlook (Or log in to your Outlook account on the web at <a href="https://outlook.live.com/">https://outlook.live.com/</a> and open your calendar.</p>
+				<p>Click on "Add calendar" in the left-hand panel.</p>
+				<p>Click "Subscribe from web" and paste in the copied URL.  Give your calendar a name, customise any details, and click "Import".</p>
+				<p>Your calendar will appear under "Other calendars".</p>
+				
+				<hr />
+				
+				<p><strong>Please note:</strong> changes to your SCR bookings can take up to 24 hours to update in your calendar!</p>
+				
+				<div class="accordion" id="accordionCalendar">
+					<div class="accordion-item">
+						<h2 class="accordion-header">
+							<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMicrosoft" aria-expanded="false" aria-controls="collapseMicrosoft">
+							<i class="bi me-2 bi-microsoft" aria-hidden="true"></i>Windows/Microsoft Outlook</button>
+						</h2>
+						<div id="collapseMicrosoft" class="accordion-collapse collapse" data-bs-parent="#accordionCalendar">
+							<div class="accordion-body">
+								<p>Please <strong>copy</strong> the following link (this is your unique URL to your meal calendar)</p>
+								<p><code>https://<?php echo $_SERVER['HTTP_HOST']; ?>/calendar.php?hash=<?php echo $member->calendar_hash; ?></code></p>
+								<p>Open Outlook (Or log in to your Outlook account on the web at <a href="https://outlook.live.com/">https://outlook.live.com/</a> and open your calendar.</p>
+								<p>Click on "Add calendar" in the left-hand panel.</p>
+								<p>Click "Subscribe from web" and paste in the copied URL.  Give your calendar a name, customise any details, and click "Import".</p>
+								<p>Your calendar will appear under "Other calendars".</p>
+								
+								<hr />
+								
+								<p><strong>Please note:</strong> changes to your SCR bookings can take up to 24 hours to update in your calendar!</p>
+							</div>
+						</div>
+					</div>
+					<div class="accordion-item">
+						<h2 class="accordion-header">
+							<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseApple" aria-expanded="false" aria-controls="collapseApple">
+							<i class="bi me-2 bi-apple" aria-hidden="true"></i>Apple/iCalendar</button>
+						</h2>
+						
+						<div id="collapseApple" class="accordion-collapse collapse" data-bs-parent="#accordionCalendar">
+							<div class="accordion-body">
+								<p>Please <strong>click</strong> the following link (this is your unique URL to your meal calendar) then click 'Allow', then 'Subscribe'.</p>
+								<p><a href="webcal://<?php echo $_SERVER['HTTP_HOST']; ?>/calendar.php?hash=<?php echo $member->calendar_hash; ?>">webcal://<?php echo $_SERVER['HTTP_HOST']; ?>/calendar.php?hash=<?php echo $member->calendar_hash; ?></a></p>
+								<p>Your calendar will appear under "Other calendars".</p>
+								
+								<hr />
+								
+								<p><strong>Please note:</strong> changes to your SCR bookings can take up to 2 hours to update in your calendar!</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
-	  </div>
 	</div>
+</div>
 
 <?php
 //printArray($_SESSION);
 ?>
-
-
-
-
 
 <?php
 $days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
@@ -456,7 +462,4 @@ const chart = new Chart(ctx, {
 <script>
 // Initialize stats links
 initAjaxLoader('.stats-link', '#member_stats_container', {event: 'click', cache: true});
-
 </script>
-
-

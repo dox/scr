@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <?php
-include_once('inc/autoload.php');
+include_once "inc/autoload.php";
 
 // Authenticate
 $error = null;
@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 <html lang="en" data-bs-theme="auto">
 <head>
-	<?php include_once('layout/html_head.php'); ?>
+	<?php include_once "layout/html_head.php"; ?>
 </head>
 <body>
 	<div class="container text-center">
@@ -46,6 +46,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			</div>
 		</div>
 	</div>
-	<?php include_once('layout/footer.php'); ?>
+	<?php include_once "layout/footer.php"; ?>
 </body>
 </html>

@@ -28,7 +28,7 @@ echo pageTitle(
 );
 ?>
 
-<ul class="nav nav-tabs nav-fill mt-3" id="scrUserList" role="tablist">
+<ul class="nav nav-tabs nav-fill mb-3" id="scrUserList" role="tablist">
 <?php foreach ($members as $type => $contents): ?>
 	<li class="nav-item" role="presentation">
 		<a class="nav-link <?= $first ? 'active' : '' ?>" 
@@ -55,9 +55,15 @@ foreach ($members as $type => $contents):
 		 id="<?= htmlspecialchars($type) ?>" 
 		 role="tabpanel" 
 		 aria-labelledby="<?= htmlspecialchars($type) ?>-tab">
+	
+	<div class="row mb-3">
+		<div class="col">
+		  <input type="text" id="filterInput" class="form-control form-control-lg" placeholder="Quick search" autocomplete="off" spellcheck="false" aria-describedby="wine_searchHelp">
+		</div>
+	  </div>
 		 
 		<?php if (!empty($contents)): ?>
-			<ul class="list-group mt-2">
+			<ul class="list-group mt-2" id="<?= $type ?>-sortable">
 				<?php foreach ($contents as $member): ?>
 					<li class="list-group-item">
 						<i class="bi bi-grip-vertical"></i>
@@ -75,6 +81,11 @@ foreach ($members as $type => $contents):
 			<p class="text-muted mt-2">No members in this category.</p>
 		<?php endif; ?>
 	</div>
+	
+	<script>
+	document.querySelector('#filterInput')
+	  .addEventListener('input', () => filterList('#filterInput', '#<?= $type ?>-sortable'));
+	</script>
 <?php
 	$first = false;
 endforeach;
@@ -89,40 +100,9 @@ endforeach;
 
 
 
-<script>
-new Sortable(scr_members_list, {
-  handle: '.handle',
-  animation: 150,
-  ghostClass: 'blue-background-class'
-});
-
-document.getElementById('termForm').addEventListener('submit', function (e) {
-  const listItems = document.querySelectorAll('#scr_members_list li');
-  const orderData = [];
-
-  listItems.forEach((li) => {
-  const userId = li.getAttribute('data-user-id');
-  if (userId) orderData.push(userId);
-  });
-
-  // Join as comma-separated to match your PHP logic (explode)
-  const input = document.createElement('input');
-  input.type = 'hidden';
-  input.name = 'precedence_order';
-  input.value = orderData.join(',');
-
-  e.target.appendChild(input);
-});
-</script>
-
-<style>
-.handle {
-  cursor: grab;
-}
-</style>
 
 <!-- Add Member Modal -->
-<div class="modal" tabindex="-1" id="addMemberModal" data-backdrop="static" data-keyboard="false" aria-hidden="true">
+<div class="modal fade" tabindex="-1" id="addMemberModal" data-backdrop="static" data-keyboard="false" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
