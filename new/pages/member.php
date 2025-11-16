@@ -1,0 +1,462 @@
+<?php
+$ldap   = $_GET['ldap'] ?? $user->getUsername() ?? null;
+$member = Member::fromLDAP($ldap);
+
+if (!isset($member->uid)) {
+	die("Unknown or unavailable member");
+}
+
+echo pageTitle(
+	(strtoupper($member->ldap) == $user->getUsername()) ? "Your Profile" : $member->name() . " Profile",
+	$member->type . " (" . $member->category . ")",
+	[
+		[
+			'permission' => 'everyone',
+			'title' => 'Add meals to your calendar',
+			'class' => '',
+			'event' => '',
+			'icon' => 'calendar2-week',
+			'data' => [
+				'bs-toggle' => 'modal',
+				'bs-target' => '#calendarModal'
+			]
+		],
+		[
+			'permission' => 'meals',
+			'title' => 'Delete Member',
+			'class' => 'text-danger',
+			'event' => '',
+			'icon' => 'person-x',
+			'data' => [
+				'bs-toggle' => 'modal',
+				'bs-target' => '#deleteMemberModal'
+			]
+		]
+	]
+);
+?>
+
+<div class="row mb-3">
+	<div class="col">
+		<ul class="list-inline">
+			<li class="list-inline-item">
+				<a href="#" class="small stats-link" data-url="./ajax/member_stats.php?memberUID=<?= $member->uid ?>&scope=all">All</a>
+			</li>
+			<li class="list-inline-item">
+				<a href="#" class="small stats-link fw-bold" data-url="./ajax/member_stats.php?memberUID=<?= $member->uid ?>&scope=year">Year</a>
+			</li>
+			<li class="list-inline-item">
+				<a href="#" class="small stats-link" data-url="./ajax/member_stats.php?memberUID=<?= $member->uid ?>&scope=term">This Term</a>
+			</li>
+		</ul>
+		<div id="member_stats_container">
+			<div class="text-muted">Loading...</div>
+		</div>
+	</div>
+</div>
+
+
+<hr>
+
+<div class="row">
+	<div class="col-md-7 col-lg-8">
+		<h4>Personal Information</h4>
+		
+		<form>
+			<div class="mb-3">
+				<label for="title" class="form-label">Title</label>
+				<select class="form-select" name="title" id="title" required>
+					<?php
+					$memberTitles = explode(',', $settings->get('member_titles'));
+					
+					foreach ($memberTitles as $title) {
+						$title = trim($title);
+						$selected = ($title === $member->title) ? ' selected' : '';
+						echo "<option value=\"{$title}\"{$selected}>{$title}</option>";
+					}
+					?>
+				</select>
+				<div class="invalid-feedback">
+					Title is required.
+				</div>
+			</div>
+			
+			<div class="mb-3">
+				<label for="firstname" class="form-label">First name</label>
+				<input type="text" class="form-control" name="firstname" id="firstname" placeholder="First Name" value="<?php echo $member->firstname; ?>" required>
+				<div class="invalid-feedback">
+					Valid first name is required.
+				</div>
+			</div>
+			
+			<div class="mb-3">
+				<label for="firstname" class="form-label">Last name</label>
+				<input type="text" class="form-control" name="lastname" id="lastname" placeholder="Last Name" value="<?php echo $member->lastname; ?>" required>
+				<div class="invalid-feedback">
+					Valid last name is required.
+				</div>
+			</div>
+			
+			<div class="mb-3">
+				<label for="ldap" class="form-label">LDAP Username</label>
+				<div class="input-group">
+					<span class="input-group-text" onclick="ldapLookup()">@</span>
+					<input
+						type="text"
+						class="form-control"
+						name="ldap"
+						id="ldap"
+						placeholder="LDAP Username"
+						value="<?= htmlspecialchars($member->ldap ?? '', ENT_QUOTES) ?>"
+						<?= $user->hasPermission('members') ? '' : 'disabled' ?>
+						required
+					>
+					<div class="invalid-feedback">
+						Valid LDAP username is required.
+					</div>
+				</div>
+				<?php
+				if (isset($member->date_lastlogon)) {
+					echo "<small class=\"form-text text-muted\">Last logon: " . formatDate($member->date_lastlogon) . " " . formatTime($member->date_lastlogon) . "</small>";
+				}
+				?>
+			</div>
+			
+			<div class="mb-3">
+				<label for="title" class="form-label">Member Category</label>
+				<select class="form-select" name="category" id="category" <?= $user->hasPermission('members') ? '' : 'disabled' ?> required>
+					<?php
+					$memberCategories = explode(',', $settings->get('member_categories'));
+					
+					foreach ($memberCategories as $category) {
+						$category = trim($category);
+						$selected = ($category === $member->category) ? ' selected' : '';
+						echo "<option value=\"{$category}\"{$selected}>{$category}</option>";
+					}
+					?>
+				</select>
+				<div class="invalid-feedback">
+					Valid category is required.
+				</div>
+			</div>
+			
+			<div class="accordion mb-3" id="accordionDietary">
+				<div class="accordion-item">
+					<h2 class="accordion-header">
+						<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne"> Dietary Information&nbsp;<i>(Maximum: <?php echo $settings->get('meal_dietary_allowed'); ?>)</i></button>
+					</h2>
+					<div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+						<div class="accordion-body">
+							<?php
+							$dietaryOptions    = array_map('trim', explode(',', $settings->get('meal_dietary')));
+							$dietaryOptionsMax = (int) $settings->get('meal_dietary_allowed');
+							$memberDietary     = array_map('trim', explode(',', $member->dietary ?? ''));
+							
+							$output = '';
+							
+							foreach ($dietaryOptions as $index => $dietaryOption) {
+								$checked    = in_array($dietaryOption, $memberDietary, true) ? ' checked' : '';
+								$safeValue  = htmlspecialchars($dietaryOption, ENT_QUOTES);
+								$checkboxId = "dietary_{$index}";
+							
+								$output .= '<div class="form-check">';
+								$output .= '<input class="form-check-input dietaryOptionsMax" '
+										 . 'type="checkbox" '
+										 . 'onclick="checkMaxCheckboxes(' . $dietaryOptionsMax . ')" '
+										 . 'name="dietary[]" '
+										 . 'id="' . $checkboxId . '" '
+										 . 'value="' . $safeValue . '"' 
+										 . $checked 
+										 . '>';
+								$output .= '<label class="form-check-label" for="' . $checkboxId . '">' 
+										 . $safeValue 
+										 . '</label>';
+								$output .= '</div>';
+							}
+							
+							echo $output;
+							?>
+							
+							<small id="nameHelp" class="form-text text-muted"><?php echo $settings->get('meal_dietary_message'); ?></small>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="mb-3">
+				<label for="email" class="form-label">Email <span class="text-muted">(Optional)</span></label>
+				<input type="email" class="form-control" name="email" id="email" placeholder="Email address" value="<?php echo $member->email; ?>" required>
+			</div>
+			
+			<div class="mb-3">
+				<label for="type" class="form-label">Member Type</label>
+				<select class="form-select" name="type" id="type" <?= $user->hasPermission('members') ? '' : 'disabled' ?> required>
+					<?php
+					$memberTypes = explode(',', $settings->get('member_types'));
+					
+					foreach ($memberTypes as $type) {
+						$type = trim($type);
+						$selected = ($type === $member->type) ? ' selected' : '';
+						echo "<option value=\"{$type}\"{$selected}>{$type}</option>";
+					}
+					?>
+				</select>
+				<div class="invalid-feedback">
+					Valid member type is required.
+				</div>
+			</div>
+			
+			<div class="col-6 mb-3">
+			  <label for="enabled" class="form-label">Enabled/Disabled Status</label>
+			  <select class="form-select" name="enabled" id="enabled" <?= $user->hasPermission('members') ? '' : 'disabled' ?> required>
+				<option value="1" <?php if ($member->enabled == "1") { echo " selected"; } ?>>Enabled</option>
+				<option value="0" <?php if ($member->enabled == "0") { echo " selected"; } ?>>Disabled</option>
+			  </select>
+			  <div class="invalid-feedback">
+				Status is required.
+			  </div>
+			</div>
+			
+			<hr>
+			
+			<h4>Default Preferences</h4>
+			<div class="form-check form-switch">
+				<input class="form-check-input" type="checkbox" id="opt_in" name="opt_in" value="1" <?php if ($member->opt_in == "1") { echo " checked";} ?> switch>
+				<label class="form-check-label" for="opt_in">Allow my name to appear on dining lists (also applies to my guests</label>
+			</div>
+			<div class="form-check form-switch">
+				<input class="form-check-input" type="checkbox" id="email_reminders" name="email_reminders" value="1" <?php if ($member->email_reminders == "1") { echo " checked";} ?> switch>
+				<label class="form-check-label" for="email_reminders">Send me an email confirmation when I book a meal</label>
+			</div>
+			<div class="">
+				<span class="form-check-label" for="">Default Wine <small>(when available)</small></label>
+				<?php
+				$wineOptions = explode(",", $settings->get('booking_wine_options'));
+				
+				foreach($wineOptions as $wineOption) {
+					// Remove all non-alphanumeric characters
+					$id = preg_replace('/[^a-z0-9]/', '', strtolower($wineOption));
+					
+					$checked = ($wineOption == $member->default_wine_choice) ? " checked" : "";
+					
+					$output  = "<div class=\"form-check\">";
+					$output .= "<input class=\"form-check-input\" type=\"radio\" name=\"default_wine_choice\" id=\"" . $id . "\" value=\"" . htmlspecialchars($wineOption, ENT_QUOTES, 'UTF-8') . "\" " . $checked . ">";
+					$output .= "<label class=\"form-check-label\" for=\"default_wine_choice\">" . $wineOption . "</label>";
+					$output .= "</div>";
+					
+					echo $output;
+				}
+				?>
+			</div>
+			<div class="form-check form-switch">
+				<input class="form-check-input" type="checkbox" id="default_dessert" name="default_dessert" value="1" <?php if ($member->default_dessert == "1") { echo " checked";} ?> switch>
+				<label class="form-check-label" for="email_reminders">Default Dessert <small>(when available)</small></label>
+			</div>
+			
+			
+			<?php
+			  $grantedPermissions = explode(",", $member->permissions);
+			  
+			  $output = "<hr><h4>Permissions</h4>";
+			  foreach ($user->available_permissions() as $permission => $description) {
+				if (in_array($permission, $grantedPermissions)) {
+				  $checked = " checked ";
+				} else {
+				  $checked = " ";
+				}
+				
+				$output .= "<div class=\"form-check\">";
+				$output .= "<input class=\"form-check-input\" type=\"checkbox\" value=\"" . $permission . "\" name=\"permissions[]\" " . $checked . ">";
+				$output .= "<label class=\"form-check-label\" for=\"flexCheckDefault\"><strong>" . $permission . "</strong> <small>" . $description . "</small></label>";
+				$output .= "</div>";
+				
+				$output .= "<input type=\"hidden\" value=\"null\" name=\"permissions[]\" />";
+			  }
+			  
+			  // only show permissions to global admins
+			  if ($user->hasPermission('global_admin')) {
+				  echo $output;
+			  }
+			  ?>
+		</form>
+	</div>
+	<div class="col-md-5 col-lg-4">
+		<?php
+		$upcomingBookings = $member->upcomingBookings();
+		?>
+		<h4 class="d-flex justify-content-between align-items-center mb-3">
+		  <span>Upcoming Meals</span>
+		  <span class="badge bg-secondary rounded-pill"><?php echo count($upcomingBookings); ?></span>
+		</h4>
+		<ul class="list-group mb-3">
+			<?php
+			foreach ($upcomingBookings as $booking) {
+				echo $booking->displayMemberListGroupItem();
+			}
+			?>
+		</ul>
+		<?php
+		$recentBookings = $member->recentBookings();
+		?>
+		
+		<h4 class="d-flex justify-content-between align-items-center mb-3">
+		  <span>Recent Meals</span>
+		  <span class="badge bg-secondary rounded-pill"><?php echo count($recentBookings); ?></span>
+		</h4>
+		<ul class="list-group mb-3">
+			<?php
+			foreach (array_slice($recentBookings, 0, 10) as $booking) {
+				echo $booking->displayMemberListGroupItem();
+			}
+			?>
+		</ul>
+		
+		<div class="text-end">
+			<a class="btn btn-sm btn-outline-light" href="#" role="button"><i class="bi bi-download"></i> export COMING SOON</a>
+		</div>
+		
+		<hr>
+		
+		<h4 class="mb-3">Bookings by Day</h4>
+		<div>
+			<canvas id="chart_bookingsByDay"></canvas>
+		</div>
+	</div>
+</div>
+
+
+
+
+
+
+
+
+
+
+<!-- Delete Member Modal -->
+<div class="modal" tabindex="-1" id="deleteMemberModal" data-backdrop="static" data-keyboard="false" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Test Modal <span class="text-danger"><strong>WARNING!</strong></span></h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				Test Modal
+				<p><span class="text-danger"><strong>WARNING!</strong> Are you sure you want to delete this member?</p>
+				<p>This will also delete <strong>all</strong> bookings (past and present) for this member.<p>
+				<p><span class="text-danger"><strong>THIS ACTION CANNOT BE UNDONE!</strong></span></p>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Calendar Subscribe Modal -->
+<div class="modal fade" id="calendarModal" tabindex="-1" aria-labelledby="calendarModalLabel" aria-hidden="true">
+	  <div class="modal-dialog">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<h1 class="modal-title fs-5" id="exampleModalLabel">Add meals to your calendar <span class="badge rounded-pill text-bg-warning">BETA FEATURE</span></h1>
+			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		  </div>
+		  <div class="modal-body">
+			<p>You can subscribe to your meals (past and present) in your calendar application.</p>
+			<p>Any meals you book will, after a few hours, be updated and shown in your calendar application.  You only need to subscribe once.</p>
+			<div class="accordion" id="accordionExample">
+			  <div class="accordion-item">
+				<h2 class="accordion-header">
+				  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+					<svg width="1em" height="1em"><use xlink:href="assets/images/icons.svg#microsoft"></svg>&nbsp;Windows/Microsoft Outlook
+				  </button>
+				</h2>
+				<div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+				  <div class="accordion-body">
+					<p>Please <strong>copy</strong> the following link (this is your unique URL to your meal calendar)</p>
+					<p><code>https://<?php echo $_SERVER['HTTP_HOST']; ?>/calendar.php?hash=<?php echo $memberObject->calendar_hash; ?></code></p>
+					<p>Open Outlook (Or log in to your Outlook account on the web at <a href="https://outlook.live.com/">https://outlook.live.com/</a> and open your calendar.</p>
+					<p>Click on "Add calendar" in the left-hand panel.</p>
+					<p>Click "Subscribe from web" and paste in the copied URL.  Give your calendar a name, customise any details, and click "Import".</p>
+					<p>Your calendar will appear under "Other calendars".</p>
+					
+					<hr />
+					<p><strong>Please note:</strong> changes to your SCR bookings can take up to 24 hours to update in your calendar!</p>
+				  </div>
+				</div>
+			  </div>
+			  <div class="accordion-item">
+				<h2 class="accordion-header">
+				  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+					<svg width="1em" height="1em"><use xlink:href="assets/images/icons.svg#apple"></svg>&nbsp;Apple/iCalendar
+				  </button>
+				</h2>
+				<div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+				  <div class="accordion-body">
+					<p>Please <strong>click</strong> the following link (this is your unique URL to your meal calendar) then click 'Allow', then 'Subscribe'.</p>
+					<p><a href="webcal://<?php echo $_SERVER['HTTP_HOST']; ?>/calendar.php?hash=<?php echo $memberObject->calendar_hash; ?>">webcal://<?php echo $_SERVER['HTTP_HOST']; ?>/calendar.php?hash=<?php echo $memberObject->calendar_hash; ?></a></p>
+					<p>Your calendar will appear under "Other calendars".</p>
+					
+					<hr />
+					<p><strong>Please note:</strong> changes to your SCR bookings can take up to 2 hours to update in your calendar!</p>
+				  </div>
+				</div>
+			  </div>
+			</div>
+			
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+		  </div>
+		</div>
+	  </div>
+	</div>
+
+<?php
+//printArray($_SESSION);
+?>
+
+
+
+
+
+<?php
+$days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+$datasets = [];
+foreach ($member->bookingsByDay() as $mealType => $dayCounts) {
+	$datasets[] = [
+		'label' => $mealType,
+		'data' => array_values($dayCounts)
+	];
+}
+?>
+
+<script>
+const ctx = document.getElementById('chart_bookingsByDay');
+const chart = new Chart(ctx, {
+  type: 'bar',
+  data: {
+	labels: <?= json_encode($days) ?>,
+	datasets: <?= json_encode($datasets) ?>
+  },
+  options: {
+	plugins: {
+	  legend: {
+		display: false
+	  }
+	},
+	scales: {
+	  x: { stacked: true },
+	  y: { stacked: true, beginAtZero: true }
+	}
+  }
+});
+</script>
+
+
+<script>
+// Initialize stats links
+initAjaxLoader('.stats-link', '#member_stats_container', {event: 'click', cache: true});
+
+</script>
+
+
