@@ -120,7 +120,10 @@ class Meal extends Model {
 		$output = "";
 		
 		if (!empty($this->menu)) {
-			$output  = "<a href=\"#\" class=\"\" id=\"menuUID-" . $this->uid . "\" data-bs-toggle=\"modal\" data-bs-target=\"#menuModal\" onclick=\"displayMenu(this.id)\">";
+			$output  = "<a href=\"#\" class=\"load-remote-menu\" id=\"menuUID-" . $this->uid . "\" 
+			data-url=\"./ajax/menu_modal.php?mealUID=" . $this->uid . "\"
+			data-bs-toggle=\"modal\"
+			data-bs-target=\"#menuModal\">";
 			$output .= "<i class=\"bi bi-info-circle\"></i>";
 			$output .= "</a>";
 		}

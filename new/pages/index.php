@@ -78,3 +78,12 @@ document.addEventListener('DOMContentLoaded', () => {
   white-space: nowrap; /* prevent breaking */
 }
 </style>
+
+
+<div class="modal fade" id="menuModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+	<div class="modal-content">
+	  <div class="modal-body" id="modalBody"></div>
+	</div>
+  </div>
+</div>

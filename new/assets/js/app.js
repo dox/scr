@@ -57,3 +57,27 @@ function filterList(inputSelector, listSelector) {
 	item.style.display = text.includes(filterValue) ? '' : 'none';
   });
 }
+
+// load remote content for menu modal
+document.addEventListener('click', function(e) {
+  const trigger = e.target.closest('.load-remote-menu');
+  if (!trigger) return;
+  e.preventDefault();
+
+  const url = trigger.dataset.url;
+  const target = document.querySelector('#modalBody');
+
+  target.innerHTML = '<div class="text-muted">Loading...</div>';
+
+  fetch(url)
+	.then(resp => resp.text())
+	.then(html => {
+	  target.innerHTML = html;
+	  bootstrap.Modal.getOrCreateInstance(
+		document.querySelector('#menuModal')
+	  ).show();
+	})
+	.catch(() => {
+	  target.innerHTML = '<div class="text-danger">Error loading content</div>';
+	});
+});

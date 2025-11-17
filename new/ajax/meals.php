@@ -57,5 +57,4 @@ while ($current <= $endDate) {
 
 	$current->modify('+1 day');
 }
-
 ?>

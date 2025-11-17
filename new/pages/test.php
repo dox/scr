@@ -4,18 +4,27 @@ echo pageTitle(
 	"For testing purposes only"
 );
 
-
-
-$givenDate = "2025-11-23";
-$firstDayOfWeek = $terms->firstDayOfWeek($givenDate);
-$isCurrentWeek = $terms->isCurrentWeek($givenDate);
-
-echo "<h1>Given Date</h1>";
-printArray($givenDate);
-
-echo "<h1>First Day Of Week</h1>";
-printArray($firstDayOfWeek);
-
-echo "<h1>Is Current Week</h1>";
-printArray($isCurrentWeek);
 ?>
+
+<button class="load-remote btn btn-primary"
+		data-url="./ajax/menu_modal.php"
+		data-bs-toggle="modal"
+		data-bs-target="#myModal">
+	Edit
+</button>
+
+<div class="modal fade" id="myModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+	<div class="modal-content">
+	  <div class="modal-body" id="modalBody"></div>
+	</div>
+  </div>
+</div>
+
+
+<script>
+initAjaxLoader('.load-remote', '#modalBody', {
+  event: 'click',
+  cache: false
+});
+</script>

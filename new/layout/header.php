@@ -21,34 +21,41 @@
 			  </ul>
 			  
 			  <div class="d-flex">
-				  <ul class="navbar-nav me-auto mb-2 mb-md-0 text-end">
-					  <li class="nav-item dropdown me-2">
-						<a class="nav-link dropdown-toggle d-print-none theme-icon-active" id="bd-theme" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-							<i class="bi bi-moon-stars-fill"></i><span class="visually-hidden" id="bd-theme-text">Toggle theme</span></a>
-						<ul class="dropdown-menu">
-						  <li><button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="light" aria-pressed="false">
-								  <i class="bi bi-sun"></i>
+				  
+				  
+				  <div class="dropdown me-3">
+						<a href="#" id="bd-theme"
+						   class="d-block link-body-emphasis text-decoration-none dropdown-toggle"
+						   data-bs-toggle="dropdown" aria-expanded="false">
+							<i class="bi bi-moon-stars-fill"></i>
+							<span class="visually-hidden" id="bd-theme-text">Toggle theme</span>
+						</a>
+						
+						<ul class="dropdown-menu text-small">
+							<li><button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="light" aria-pressed="false">
+								  <i class="bi bi-sun me-2"></i>
 								  Light
-								  <i class="bi bi-check"></i>
+								  <i class="bi bi-check2"></i>
 								</button>
 							</li>
 							<li>
 								<button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark" aria-pressed="false">
-									<i class="bi bi-moon-stars-fill"></i>
+									<i class="bi bi-moon-stars-fill me-2"></i>
 									Dark
-									<i class="bi bi-check"></i>
+									<i class="bi bi-check2"></i>
 								  </button>
 							</li>
 							<li>
-								<button type="button" class="dropdown-item d-flex align-items-center active" data-bs-theme-value="auto" aria-pressed="true">
-									<i class="bi bi-circle-half"></i>
+								<button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="auto" aria-pressed="false">
+									<i class="bi bi-circle-half me-2"></i>
 									Auto
-									<i class="bi bi-check"></i>
+									<i class="bi bi-check2"></i>
 								  </button>
 							</li>
 						</ul>
-					  </li>
-					</ul>
+					</div>
+				  
+				  
 					
 					<div class="dropdown text-end">
 						  <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
