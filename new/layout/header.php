@@ -20,53 +20,84 @@
 				  </li>
 			  </ul>
 			  
-			  <div class="dropdown text-end">
-				  <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-					  <?php
-					  echo $user->getUsername(); ?>
-				  </a>
-				  
-				  <ul class="dropdown-menu text-small">
-					  <?php
-					  if($user->hasPermission("impersonate")) {
-						  echo "<li><a class=\"dropdown-item\" href=\"index.php?page=admin_impersonate\"><i class=\"bi me-2 bi-person-gear\" aria-hidden=\"true\"></i>Impersonate</a></li>";
-					  }
-					  
-					  if($user->hasPermission("members")) {
-						  echo "<li><a class=\"dropdown-item\" href=\"index.php?page=members\"><i class=\"bi me-2 bi-people\" aria-hidden=\"true\"></i>Members</a></li>";
-					  }
-					  
-					  if($user->hasPermission("meals")) {
-						  echo "<li><a class=\"dropdown-item\" href=\"index.php?page=meals\"><i class=\"bi me-2 bi-fork-knife\" aria-hidden=\"true\"></i>Meals</a></li>";
-					  }
-					  
-					  if($user->hasPermission("wine")) {
-						  echo "<li><a class=\"dropdown-item\" href=\"index.php?page=wine_index\">Wine</a></li>";
-					  }
-					  
-					  if($user->hasPermission("terms")) {
-						  echo "<li><a class=\"dropdown-item\" href=\"index.php?page=terms\"><i class=\"bi me-2 bi-calendar4-range\" aria-hidden=\"true\"></i>Terms</a></li>";
-					  }
-					  
-					  if($user->hasPermission("notifications")) {
-						  echo "<li><a class=\"dropdown-item\" href=\"index.php?page=notifications\"><i class=\"bi me-2 bi-bell\" aria-hidden=\"true\"></i>Notifications</a></li>";
-					  }
-					  
-					  if($user->hasPermission("reports")) {
-						  echo "<li><a class=\"dropdown-item\" href=\"index.php?page=reports\"><i class=\"bi me-2 bi-graph-up-arrow\" aria-hidden=\"true\"></i>Reports</a></li>";
-					  }
-					  
-					  if($user->hasPermission("settings")) {
-						  echo "<li><a class=\"dropdown-item\" href=\"index.php?page=settings\"><i class=\"bi me-2 bi-gear\" aria-hidden=\"true\"></i>Settings</a></li>";
-					  }
-					  
-					  if($user->hasPermission("logs")) {
-						  echo "<li><a class=\"dropdown-item\" href=\"index.php?page=logs\"><i class=\"bi me-2 bi-clock-history\" aria-hidden=\"true\"></i>Logs</a></li>";
-					  }
-					  ?>
-					  <li><hr class="dropdown-divider"></li>
-					  <li><a class="dropdown-item" href="logout.php">Sign out</a></li>
-				  </ul>
+			  <div class="d-flex">
+				  <ul class="navbar-nav me-auto mb-2 mb-md-0 text-end">
+					  <li class="nav-item dropdown me-2">
+						<a class="nav-link dropdown-toggle d-print-none theme-icon-active" id="bd-theme" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+							<i class="bi bi-moon-stars-fill"></i><span class="visually-hidden" id="bd-theme-text">Toggle theme</span></a>
+						<ul class="dropdown-menu">
+						  <li><button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="light" aria-pressed="false">
+								  <i class="bi bi-sun"></i>
+								  Light
+								  <i class="bi bi-check"></i>
+								</button>
+							</li>
+							<li>
+								<button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark" aria-pressed="false">
+									<i class="bi bi-moon-stars-fill"></i>
+									Dark
+									<i class="bi bi-check"></i>
+								  </button>
+							</li>
+							<li>
+								<button type="button" class="dropdown-item d-flex align-items-center active" data-bs-theme-value="auto" aria-pressed="true">
+									<i class="bi bi-circle-half"></i>
+									Auto
+									<i class="bi bi-check"></i>
+								  </button>
+							</li>
+						</ul>
+					  </li>
+					</ul>
+					
+					<div class="dropdown text-end">
+						  <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+							  <?php
+							  echo $user->getUsername(); ?>
+						  </a>
+						  
+						  <ul class="dropdown-menu text-small">
+							  <?php
+							  if($user->hasPermission("impersonate")) {
+								  echo "<li><a class=\"dropdown-item\" href=\"index.php?page=admin_impersonate\"><i class=\"bi me-2 bi-person-gear\" aria-hidden=\"true\"></i>Impersonate</a></li>";
+							  }
+							  
+							  if($user->hasPermission("members")) {
+								  echo "<li><a class=\"dropdown-item\" href=\"index.php?page=members\"><i class=\"bi me-2 bi-people\" aria-hidden=\"true\"></i>Members</a></li>";
+							  }
+							  
+							  if($user->hasPermission("meals")) {
+								  echo "<li><a class=\"dropdown-item\" href=\"index.php?page=meals\"><i class=\"bi me-2 bi-fork-knife\" aria-hidden=\"true\"></i>Meals</a></li>";
+							  }
+							  
+							  if($user->hasPermission("wine")) {
+								  echo "<li><a class=\"dropdown-item\" href=\"index.php?page=wine_index\">Wine</a></li>";
+							  }
+							  
+							  if($user->hasPermission("terms")) {
+								  echo "<li><a class=\"dropdown-item\" href=\"index.php?page=terms\"><i class=\"bi me-2 bi-calendar4-range\" aria-hidden=\"true\"></i>Terms</a></li>";
+							  }
+							  
+							  if($user->hasPermission("notifications")) {
+								  echo "<li><a class=\"dropdown-item\" href=\"index.php?page=notifications\"><i class=\"bi me-2 bi-bell\" aria-hidden=\"true\"></i>Notifications</a></li>";
+							  }
+							  
+							  if($user->hasPermission("reports")) {
+								  echo "<li><a class=\"dropdown-item\" href=\"index.php?page=reports\"><i class=\"bi me-2 bi-graph-up-arrow\" aria-hidden=\"true\"></i>Reports</a></li>";
+							  }
+							  
+							  if($user->hasPermission("settings")) {
+								  echo "<li><a class=\"dropdown-item\" href=\"index.php?page=settings\"><i class=\"bi me-2 bi-gear\" aria-hidden=\"true\"></i>Settings</a></li>";
+							  }
+							  
+							  if($user->hasPermission("logs")) {
+								  echo "<li><a class=\"dropdown-item\" href=\"index.php?page=logs\"><i class=\"bi me-2 bi-clock-history\" aria-hidden=\"true\"></i>Logs</a></li>";
+							  }
+							  ?>
+							  <li><hr class="dropdown-divider"></li>
+							  <li><a class="dropdown-item" href="logout.php">Sign out</a></li>
+						  </ul>
+					  </div>
 			  </div>
 		  </div>
 	  </div>
@@ -76,7 +107,7 @@
 if (APP_DEBUG) {
 	$output  = "<nav class=\"navbar navbar-expand-lg bg-warning\" data-bs-theme=\"dark\">";
 	$output .= "<div class=\"container\">";
-	$output .= "PRODUCTION";
+	$output .= "<strong>PRODUCTION</strong> Site is in production mode.  All data is for testing purposes only.  No emails will be sent.";
 	$output .= "</div>";
 	$output .= "</nav>";
 	
