@@ -8,7 +8,7 @@ if (!isset($member->uid)) {
 
 echo pageTitle(
 	(strtoupper($member->ldap) == $user->getUsername()) ? "Your Profile" : $member->name() . " Profile",
-	$member->type . " (" . $member->category . ")",
+	$member->type . " (" . $member->category . ")" . $member->stewardBadge(),
 	[
 		[
 			'permission' => 'everyone',
@@ -43,7 +43,7 @@ echo pageTitle(
 				<a href="#" class="small stats-link" data-url="./ajax/member_stats.php?memberUID=<?= $member->uid ?>&scope=all">All</a>
 			</li>
 			<li class="list-inline-item">
-				<a href="#" class="small stats-link fw-bold" data-url="./ajax/member_stats.php?memberUID=<?= $member->uid ?>&scope=year">Year</a>
+				<a href="#" class="small stats-link fw-bold" data-url="./ajax/member_stats.php?memberUID=<?= $member->uid ?>&scope=ytd">YTD</a>
 			</li>
 			<li class="list-inline-item">
 				<a href="#" class="small stats-link" data-url="./ajax/member_stats.php?memberUID=<?= $member->uid ?>&scope=term">This Term</a>
@@ -364,17 +364,6 @@ echo pageTitle(
 				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
 			<div class="modal-body">
-				<p>Please <strong>copy</strong> the following link (this is your unique URL to your meal calendar)</p>
-				<p><code>https://<?php echo $_SERVER['HTTP_HOST']; ?>/calendar.php?hash=<?php echo $member->calendar_hash; ?></code></p>
-				<p>Open Outlook (Or log in to your Outlook account on the web at <a href="https://outlook.live.com/">https://outlook.live.com/</a> and open your calendar.</p>
-				<p>Click on "Add calendar" in the left-hand panel.</p>
-				<p>Click "Subscribe from web" and paste in the copied URL.  Give your calendar a name, customise any details, and click "Import".</p>
-				<p>Your calendar will appear under "Other calendars".</p>
-				
-				<hr />
-				
-				<p><strong>Please note:</strong> changes to your SCR bookings can take up to 24 hours to update in your calendar!</p>
-				
 				<div class="accordion" id="accordionCalendar">
 					<div class="accordion-item">
 						<h2 class="accordion-header">

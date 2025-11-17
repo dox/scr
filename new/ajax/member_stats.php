@@ -5,27 +5,52 @@ if (!$user->isLoggedIn()) {
 	die("User not logged in.");
 }
 
-printArray($_GET);
+$member = Member::fromUID($_GET['memberUID']);
+
+if (!$user->hasPermission("members") && $member->ldap != $user->getUsername()) {
+	die("User not permitted to see member stats.");
+}
+
+$terms = new Terms();
+$currentTerm = $terms->currentTerm();
+
+// Determine days for countBookingsByType
+$scope = $_GET['scope'] ?? 'YTD';
+switch ($scope) {
+	case 'all':
+		$start = "1970-01-01";
+		$end = date('Y-m-d');
+		break;
+	case 'term':
+		$start = $currentTerm->date_start;
+		$end = $currentTerm->date_end;
+		break;
+	case 'YTD':
+	default:
+		$start = date('Y-01-01');
+		$end = date('Y-m-d');
+		break;
+}
+
+$totalBookings = $member->countBookingsByTypeBetweenDates($start, $end);
+
+// Keep top 4 bookings, sorted
+$totalBookings = array_slice($totalBookings, 0, 4, true);
+
+// Determine Bootstrap column class
+$colClasses = [1 => 'col-12', 2 => 'col-6', 3 => 'col-4', 4 => 'col-6 col-sm-6 col-lg-3'];
+$colClass = $colClasses[count($totalBookings)] ?? 'col-12';
 ?>
 
-
-<div class="row row-deck row-cards mb-3">
-  <?php
-  $totalBookings = array("test" => 1,2,3);
-  
-  foreach ($totalBookings AS $typeName => $total) {
-	$output  = "<div class=\"col\">";
-	$output .= "<div class=\"card\">";
-	$output .= "<div class=\"card-body\">";
-	$output .= "<div class=\"subheader\">" . $typeName . " bookings</div>";
-	$output .= "<div class=\"h1 mb-3\" id=\"test\">" . $total . "</div>";
-
-	$output .= "</div>";
-	$output .= "</div>";
-	$output .= "</div>";
-
-	echo $output;
-
-  }
-  ?>
+<div class="row">
+	<?php foreach ($totalBookings as $booking): ?>
+		<div class="<?= $colClass ?>">
+			<div class="card mb-3">
+				<div class="card-body">
+					<div class="subheader text-nowrap text-truncate"><?= htmlspecialchars($booking['type']) ?></div>
+					<div class="h1 text-truncate"><?= htmlspecialchars($booking['total']) ?></div>
+				</div>
+			</div>
+		</div>
+	<?php endforeach; ?>
 </div>

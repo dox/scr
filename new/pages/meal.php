@@ -179,8 +179,9 @@ echo pageTitle(
 
 <script>
 const el = document.getElementById('date_meal');
+const el2 = document.getElementById('date_cutoff');
 
-new tempusDominus.TempusDominus(el, {
+const options = {
 	defaultDate: '<?php echo formatDate($meal->date_meal, 'short') . " " . formatTime($meal->date_meal); ?>',
 	display: {
 		icons: {
@@ -211,6 +212,8 @@ new tempusDominus.TempusDominus(el, {
 		hourCycle: 'h24',
 		format: '<?php echo strtolower($settings->get('datetime_format_short')); ?> HH:mm'
 	}
-});
+};
 
+new tempusDominus.TempusDominus(el, options);
+new tempusDominus.TempusDominus(el2, options);
 </script>

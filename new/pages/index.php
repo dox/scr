@@ -26,7 +26,8 @@ echo pageTitle(
 		   role="tab"
 		   aria-controls="<?= $paneId ?>"
 		   aria-selected="<?= $isCurrent ? 'true' : 'false' ?>"
-		   data-url="./ajax/meals.php?week=<?= urlencode($week) ?>">
+		   data-selected="<?= $isCurrent ? 'true' : 'false' ?>"
+		   data-url="./ajax/meals.php?date=<?= urlencode($week) ?>">
 		   <?= $label ?>
 		</a>
 	</li>
@@ -40,14 +41,16 @@ echo pageTitle(
 		$tabId  = 'week-tab-' . htmlspecialchars($week);
 		$isCurrent = $terms->isCurrentWeek($week);
 	?>
-	<div class="tab-pane fade <?= $isCurrent ? 'show active' : '' ?>  text-center"
+	<div class="tab-pane fade <?= $isCurrent ? 'show active' : '' ?> "
 		id="<?= $paneId ?>"
 		role="tabpanel"
 		aria-labelledby="<?= $tabId ?>"
 		data-url="./ajax/meals.php?week=<?= urlencode($week) ?>">
 		
-		<div class="spinner-border" role="status">
+		<div class="d-flex justify-content-center">
+		  <div class="spinner-border" role="status">
 			<span class="visually-hidden">Loading...</span>
+		  </div>
 		</div>
 	</div>
 <?php endforeach; ?>
@@ -55,18 +58,23 @@ echo pageTitle(
 
 <script>
 // Initialize week tabs
-initAjaxLoader('#scrUserList a[data-bs-toggle="tab"]', null, {event: 'shown.bs.tab', cache: true});
+document.addEventListener('DOMContentLoaded', () => {
+	initAjaxLoader('.nav-link', '#scrUserListContent');
+});
 </script>
-
 
 <style>
 .nav-tabs {
   overflow-x: auto;
-  overflow-y: hidden;
-  display: -webkit-box;
-  display: -moz-box;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch; /* smooth scrolling on iOS */
 }
-.nav-tabs>li {
-  float: none;
+
+.nav-tabs .nav-item {
+  display: inline-block;
+}
+
+.nav-tabs .nav-link {
+  white-space: nowrap; /* prevent breaking */
 }
 </style>

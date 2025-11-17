@@ -86,9 +86,9 @@ function pageTitle(string $title, string $subtitle = '', array $actions = []): s
 	global $user;
 	
 	$html = '<div class="p-3 p-md-5 text-center">';
-	$html .= '<h1 class="display-4">' . htmlspecialchars($title) . '</h1>';
+	$html .= '<h1 class="display-4">' . $title . '</h1>';
 	if ($subtitle !== '') {
-		$html .= '<p class="lead">' . htmlspecialchars($subtitle) . '</p>';
+		$html .= '<p class="lead">' . $subtitle . '</p>';
 	}
 	$html .= '</div>';
 

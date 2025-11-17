@@ -184,6 +184,29 @@ class Member extends Model {
 		return $bookings;
 	}
 	
+	public function countBookingsByTypeBetweenDates($start, $end): array {
+		global $db;
+	
+		// Normalize to YYYY-MM-DD
+		if ($start instanceof DateTime) $start = $start->format('Y-m-d');
+		if ($end instanceof DateTime) $end = $end->format('Y-m-d');
+	
+		$sql = "
+			SELECT m.type, COUNT(*) AS total
+			FROM bookings b
+			INNER JOIN meals m ON b.meal_uid = m.uid
+			WHERE b.member_ldap = ?
+			  AND m.date_meal >= ? 
+			  AND m.date_meal <= ?
+			GROUP BY m.type
+			ORDER BY total DESC
+		";
+	
+		$results = $db->fetchAll($sql, [$this->ldap, $start, $end]);
+	
+		return $results;
+	}
+	
 	public function save() {
 		if (isset($this->id)) {
 			// update

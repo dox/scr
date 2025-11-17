@@ -128,4 +128,35 @@ class Meal extends Model {
 		if (!isset($this->id)) return false;
 		return $this->db->query("DELETE FROM " . static::$table . " WHERE id = ?", [$this->id]);
 	}
+	
+	public function photographURL(): string {
+		// Path relative to the public folder (for browser)
+		$urlPath = '/new/uploads/meal_cards/';
+	
+		// Full filesystem path for file_exists()
+		$filePath = $_SERVER['DOCUMENT_ROOT'] . $urlPath;
+	
+		// Use default if photo is empty
+		$filename = $this->photo ?: 'default.png';
+	
+		// If the file does not exist on disk, fall back to default
+		if (!file_exists($filePath . $filename)) {
+			$filename = 'default.png';
+		}
+	
+		return $urlPath . $filename;
+	}
+	
+	public function card() {
+		$output  = "<div class=\"col mb-3\">";
+		$output .= "<div class=\"card mb-3\">";
+		$output .= "<img src=\"" . $this->photographURL() . "\" class=\"card-img-top\" alt=\"...\">";
+		$output .= "<div class=\"card-body\">";
+		$output .= "<p class=\"card-text\">" . $this->name . "</p>";
+		$output .= "</div>";
+		$output .= "</div>";
+		$output .= "</div>";
+		
+		return $output;
+	}
 }

@@ -194,6 +194,27 @@ class Meals extends Model {
 		
 		return $locations;
 	}
+	
+	public static function betweenDates($start, $end): array {
+		global $db;
+	
+		// Normalize to YYYY-MM-DD
+		if ($start instanceof DateTime) {
+			$start = $start->format('Y-m-d');
+		}
+		if ($end instanceof DateTime) {
+			$end = $end->format('Y-m-d');
+		}
+	
+		$sql = "SELECT uid
+				FROM " . static::$table . "
+				WHERE date_meal >= ? AND date_meal <= ?
+				ORDER BY date_meal ASC";
+	
+		$rows = $db->fetchAll($sql, [$start, $end]);
+	
+		return array_map(fn($row) => new Meal($row['uid']), $rows);
+	}
 }
 
 class Terms extends Model {
@@ -248,6 +269,21 @@ class Terms extends Model {
 		return $date->format('Y-m-d');
 	}
 	
+	function lastDayOfWeek(?string $inputDate = null): string {
+		$date = new DateTime($inputDate ?? 'now');
+	
+		// Subtract days to reach Sunday (0 = Sunday)
+		$dayOfWeek = (int)$date->format('w'); // 0 (Sun) to 6 (Sat)
+		if ($dayOfWeek !== 0) {
+			$date->modify("-{$dayOfWeek} days");
+		}
+	
+		// Add 6 days to get Saturday
+		$date->modify('+6 days');
+	
+		return $date->format('Y-m-d');
+	}
+	
 	public function navbarWeeks(): array {
 		global $settings;
 	
@@ -277,8 +313,10 @@ class Terms extends Model {
 	
 	public function isCurrentWeek(string $date): bool {
 		$given = new DateTime($date);
-		$start = new DateTime('monday this week');
-		$end   = new DateTime('sunday this week 23:59:59');
+	
+		// Start of the current week (Sunday) based on today
+		$start = new DateTime($this->firstDayOfWeek()); 
+		$end   = (clone $start)->modify('+6 days 23:59:59'); // Saturday end
 	
 		return ($given >= $start && $given <= $end);
 	}
