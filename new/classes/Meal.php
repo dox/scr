@@ -92,37 +92,6 @@ class Meal extends Model {
 	
 		return $bookings;
 	}
-	
-	public function displayListGroupItem() {
-		global $settingsClass;
-	
-		$meal = new meal($this->meal_uid);
-	
-		if (date('Y-m-d', strtotime($meal->date_meal)) == date('Y-m-d')) {
-		  $class = "text-success";
-		} else {
-		  $class = "text-muted";
-		}
-	
-		$output  = "<li class=\"list-group-item d-flex justify-content-between lh-sm\">";
-		$output .= "<div class=\"" . $class . " d-inline-block text-truncate\" style=\"max-width: 73%;\">";
-		$output .= "<h6 class=\"my-0\">";
-	
-		// if admin, link to the meal itself, otherwise, link to the booking for the user
-		if (checkpoint_charlie("meals")) {
-		  $output .= "<a href=\"index.php?n=admin_meal&mealUID=" . $meal->uid . "\" class=\"" . $class . "\">" . $meal->name . "</a>";
-		} else {
-		  $output .= "<a href=\"index.php?n=booking&mealUID=" . $meal->uid . "\" class=\"" . $class . "\">" . $meal->name . "</a>";
-		}
-	
-		$output .= "</h6>";
-		$output .= "<small class=\"" . $class . "\">" . $meal->location . "</small>";
-		$output .= "</div>";
-		$output .= "<span class=\"" . $class . "\">" . dateDisplay($meal->date_meal) . "</span>";
-		$output .= "</li>";
-	
-		return $output;
-	  }
 
 	public function delete() {
 		if (!isset($this->id)) return false;
@@ -147,15 +116,55 @@ class Meal extends Model {
 		return $urlPath . $filename;
 	}
 	
+	public function menuTooltip() {
+		$output = "";
+		
+		if (!empty($this->menu)) {
+			$output  = "<a href=\"#\" class=\"\" id=\"menuUID-" . $this->uid . "\" data-bs-toggle=\"modal\" data-bs-target=\"#menuModal\" onclick=\"displayMenu(this.id)\">";
+			$output .= "<i class=\"bi bi-info-circle\"></i>";
+			$output .= "</a>";
+		}
+		
+		return $output;
+	}
+	
 	public function card() {
+		global $user;
+		
+		$mealURL = "index.php?page=meal&uid=" . $this->uid;
+		
 		$output  = "<div class=\"col mb-3\">";
-		$output .= "<div class=\"card mb-3\">";
+		$output .= "<div class=\"card\">";
 		$output .= "<img src=\"" . $this->photographURL() . "\" class=\"card-img-top\" alt=\"...\">";
+		
 		$output .= "<div class=\"card-body\">";
-		$output .= "<p class=\"card-text\">" . $this->name . "</p>";
-		$output .= "</div>";
-		$output .= "</div>";
-		$output .= "</div>";
+			$output .= "<div class=\"d-flex justify-content-between align-items-start mb-2\">";
+				$output .= $user->hasPermission("meals")
+					? "<h5 class=\"card-title mb-0\"><a href=\"$mealURL\" class=\"text-decoration-none \">" . $this->name . "</a></h5>"
+					: "<h5 class=\"card-title mb-0\">" . $this->name . "</h5>";
+				
+				$output .= $this->menuTooltip(); // assumes this returns the <a> with SVG
+			$output .= "</div>"; // end title row
+			
+			$output .= "<ul class=\"list-unstyled small text-muted mb-3\">";
+				$output .= "<li><strong>" . $this->type . "</strong>, " . $this->location . " – " . formatTime($this->date_meal) . "</li>";
+			$output .= "</ul>";
+			
+			// Progress bars
+			//$output .= $this->progressBar("Dinner");
+			
+			//if ($this->scr_dessert_capacity > 0 && $this->total_dessert_bookings_this_meal('SCR') >= $this->scr_dessert_capacity) {
+			//  $output .= $this->progressBar("Dessert");
+			//}
+			
+			$output .= "</div>"; // end card-body
+			
+			$output .= "<div class=\"card-footer bg-transparent border-0 pt-0\">";
+				//$output .= $this->bookingButton();
+			$output .= "</div>"; // end footer
+			
+		$output .= "</div>"; // end card
+		$output .= "</div>"; // end column
 		
 		return $output;
 	}

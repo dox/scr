@@ -66,8 +66,8 @@ class Booking extends Model {
 		$member = Member::fromLDAP($this->member_ldap);
 	
 		// Determine text class: green if today, muted otherwise
-		$class = (date('Y-m-d', strtotime($meal->date_meal)) === date('Y-m-d')) 
-			? 'text-success' 
+		$class = (date('Y-m-d H:i', strtotime($this->date)) > date('Y-m-d H:i', strtotime($meal->date_cutoff))) 
+			? 'text-danger' 
 			: 'text-muted';
 	
 		// Determine link: admin sees meal, others see booking
