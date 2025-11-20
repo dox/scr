@@ -99,7 +99,7 @@ echo pageTitle(
 					<label for="date_meal" class="form-label">Meal Date/Time</label>
 					<div class="input-group" id="datetimepicker">
 						<span class="input-group-text"><i class="bi bi-calendar-date"></i></span>
-						<input type="text" class="form-control" name="date_meal" id="date_meal" placeholder="" value="<?php echo formatDate($meal->date_meal, 'short') . " " . formatTime($meal->date_meal); ?>" required>
+						<input type="text" class="form-control" name="date_meal" id="date_meal" placeholder="" value="<?php echo $meal->date_meal; ?>" required>
 					</div>
 					<div class="invalid-feedback">
 						Meal date is required.
@@ -110,7 +110,7 @@ echo pageTitle(
 					<label for="date_cutoff" class="form-label">Meal Date/Time Cut-Off</label>
 					<div class="input-group" id="datetimepicker">
 						<span class="input-group-text"><i class="bi bi-calendar-date"></i></span>
-						<input type="text" class="form-control" name="date_cutoff" id="date_cutoff" placeholder="" value="<?php echo formatDate($meal->date_cutoff, 'short') . " " . formatTime($meal->date_cutoff); ?>" required>
+						<input type="text" class="form-control" name="date_cutoff" id="date_cutoff" placeholder="" value="<?php echo $meal->date_cutoff; ?>" required>
 					</div>
 					<div class="invalid-feedback">
 						Meal cut-off date is required.
@@ -182,7 +182,7 @@ const el = document.getElementById('date_meal');
 const el2 = document.getElementById('date_cutoff');
 
 const options = {
-	defaultDate: '<?php echo formatDate($meal->date_meal, 'short') . " " . formatTime($meal->date_meal); ?>',
+	defaultDate: '<?php echo $meal->date_meal; ?>',
 	display: {
 		icons: {
 			type: 'icons',
@@ -209,9 +209,8 @@ const options = {
 		}
 	},
 	localization: {
-		hourCycle: 'h24',
-		format: '<?php echo strtolower($settings->get('datetime_format_short')); ?> HH:mm'
-	}
+		format: 'yyyy-MM-dd HH:mm',
+	  }
 };
 
 new tempusDominus.TempusDominus(el, options);

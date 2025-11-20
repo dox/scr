@@ -53,6 +53,20 @@ if (APP_DEBUG) {
 # 3. Register class autoloader
 # ------------------------------------------------------------
 require_once __DIR__ . '/../classes/Database.php';
+
+
+# ------------------------------------------------------------
+# 4. Initialise shared Database instance
+# ------------------------------------------------------------
+try {
+	global $db;
+	$db = Database::getInstance();
+} catch (Throwable $e) {
+	// Handle connection errors gracefully
+	error_log("Database connection failed: " . $e->getMessage());
+	die('<h1>Database connection error: ' . $e->getMessage() . '</h1>');
+}
+
 require_once __DIR__ . '/../classes/Model.php';
 require_once __DIR__ . '/../classes/Term.php';
 require_once __DIR__ . '/../classes/User.php';
@@ -64,14 +78,3 @@ $log = new Log();
 $terms = new Terms();
 $user = new User();
 $settings = new Settings();
-
-# ------------------------------------------------------------
-# 4. Initialise shared Database instance
-# ------------------------------------------------------------
-try {
-	$db = Database::getInstance();
-} catch (Throwable $e) {
-	// Handle connection errors gracefully
-	error_log("Database connection failed: " . $e->getMessage());
-	die('<h1>Database connection error: ' . $e->getMessage() . '</h1>');
-}

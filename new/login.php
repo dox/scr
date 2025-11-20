@@ -2,8 +2,13 @@
 <?php
 include_once "inc/autoload.php";
 
+if ($user->isLoggedIn()) {
+	header("Location: index.php");
+}
+
 // Authenticate
 $error = null;
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	if ($user->authenticate($_POST['username'], $_POST['password'], $_POST['remember_me'])) {
 		header('Location: index.php');

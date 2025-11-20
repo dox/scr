@@ -24,7 +24,26 @@ class Member extends Model {
 	protected $db;
 	protected static string $table = 'members';
 	
-	protected function __construct() {} // keep raw creation private
+	protected function __construct() {
+		$this->uid = null;
+		$this->enabled = false;
+		$this->type = null;
+		$this->ldap = "Unknown";
+		$this->permissions = [];
+		$this->title = null;
+		$this->firstname = "Unknown";
+		$this->lastname = "Unknown";
+		$this->category = null;
+		$this->precedence = 0;
+		$this->email = "unknown@unknown.com";
+		$this->dietary = null;
+		$this->opt_in = false;
+		$this->email_reminders = false;
+		$this->default_wine_choice = null;
+		$this->default_dessert = null;
+		$this->date_lastlogon = null;
+		$this->calendar_hash = null;
+	}
 	
 	public static function fromLDAP(?string $ldap): self {
 		global $db;
@@ -122,6 +141,16 @@ class Member extends Model {
 		return $name;
 	}
 	
+	public function permissions() {
+		// If $this->permissions is empty/null, return an empty array
+		if (empty($this->permissions)) {
+			return [];
+		}
+	
+		// Otherwise, split the comma-separated string into an array
+		return array_map('trim', explode(',', $this->permissions));
+	}
+	
 	public function isSteward() {
 		global $settings;
 	
@@ -203,8 +232,51 @@ class Member extends Model {
 		";
 	
 		$results = $db->fetchAll($sql, [$this->ldap, $start, $end]);
-	
+		
 		return $results;
+	}
+	
+	public function update(array $postData) {
+		global $db;
+	
+		// Map normal text/select fields
+		$fields = [
+			'title'      => $postData['title'] ?? null,
+			'firstname'  => $postData['firstname'] ?? null,
+			'lastname'   => $postData['lastname'] ?? null,
+			'ldap'       => $postData['ldap'] ?? null,
+			'category'   => $postData['category'] ?? null,
+			'email'      => $postData['email'] ?? null,
+			'type'       => $postData['type'] ?? null,
+			'enabled'    => isset($postData['enabled']) ? (int)$postData['enabled'] : 0,
+		];
+	
+		// Handle checkboxes / arrays (dietary, permissions)
+		$fields['dietary'] = isset($postData['dietary']) 
+			? implode(',', array_filter($postData['dietary'])) 
+			: '';
+			
+		$fields['permissions'] = isset($postData['permissions']) 
+			? implode(',', array_filter($postData['permissions'])) 
+			: '';
+	
+		// Handle switches (checkboxes that may not be submitted)
+		$fields['opt_in']         = isset($postData['opt_in']) ? 1 : 0;
+		$fields['email_reminders'] = isset($postData['email_reminders']) ? 1 : 0;
+		$fields['default_dessert'] = isset($postData['default_dessert']) ? 1 : 0;
+	
+		// Handle radio buttons
+		$fields['default_wine_choice'] = $postData['default_wine_choice'] ?? 'None';
+	
+		// Send to database update
+		$updatedRows = $db->update(
+			static::$table,
+			$fields,
+			['uid' => $this->uid],
+			'logs'
+		);
+	
+		return $updatedRows;
 	}
 	
 	public function save() {
@@ -248,23 +320,30 @@ class Member extends Model {
 	public function bookingsByDay(): array {
 		global $db;
 	
-		$days = [1=>'Sunday',2=>'Monday',3=>'Tuesday',4=>'Wednesday',5=>'Thursday',6=>'Friday',7=>'Saturday'];
+		// Monday-first order
+		$days = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
 	
 		// Query total meals by day and type
-		$sql = "SELECT DAYOFWEEK(meals.date_meal) AS dayofweek, meals.type, COUNT(*) AS totalMeals
-				FROM bookings
-				LEFT JOIN meals ON bookings.meal_uid = meals.uid
-				WHERE member_ldap = ?
-				GROUP BY DAYOFWEEK(meals.date_meal), meals.type
-				ORDER BY DAYOFWEEK(meals.date_meal) ASC";
+		$sql = "
+			SELECT 
+				DAYOFWEEK(meals.date_meal) AS dayofweek, 
+				meals.type, 
+				COUNT(*) AS totalMeals
+			FROM bookings
+			LEFT JOIN meals ON bookings.meal_uid = meals.uid
+			WHERE member_ldap = ?
+			GROUP BY DAYOFWEEK(meals.date_meal), meals.type
+		";
 	
 		$bookings = $db->fetchAll($sql, [$this->ldap]);
-		
+	
 		$returnArray = [];
 	
 		foreach ($bookings as $booking) {
 			$type = $booking['type'];
-			$dayName = $days[$booking['dayofweek']];
+			// Convert MySQL 1=Sunday … 7=Saturday to Monday-first index 0..6
+			$index = ($booking['dayofweek'] + 5) % 7; 
+			$dayName = $days[$index];
 			$returnArray[$type][$dayName] = (int)$booking['totalMeals'];
 		}
 	
@@ -274,7 +353,7 @@ class Member extends Model {
 				$returnArray[$type][$dayName] = $returnArray[$type][$dayName] ?? 0;
 			}
 		}
-		
+	
 		return $returnArray;
 	}
 

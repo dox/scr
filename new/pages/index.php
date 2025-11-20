@@ -7,7 +7,7 @@ echo pageTitle(
 );
 ?>
 
-<ul class="nav nav-tabs mb-3 flex-nowrap" id="scrUserList" role="tablist">
+<ul class="nav nav-tabs mb-3 flex-nowrap" id="weeklyMealsTabs" role="tablist">
 <?php foreach ($terms->navbarWeeks() as $week): ?>
 	<?php
 		$weekName = $currentTerm->tabLabel(htmlspecialchars($week));
@@ -34,7 +34,7 @@ echo pageTitle(
 <?php endforeach; ?>
 </ul>
 
-<div class="tab-content" id="scrUserListContent">
+<div class="tab-content" id="weeklyMealsContent">
 <?php foreach ($terms->navbarWeeks() as $week): ?>
 	<?php
 		$paneId = 'week-' . htmlspecialchars($week);
@@ -59,7 +59,7 @@ echo pageTitle(
 <script>
 // Initialize week tabs
 document.addEventListener('DOMContentLoaded', () => {
-	initAjaxLoader('.nav-link', '#scrUserListContent');
+	initAjaxLoader('#weeklyMealsTabs .nav-link', '#weeklyMealsContent');
 });
 </script>
 
@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
 <div class="modal fade" id="menuModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-lg">
 	<div class="modal-content">
-	  <div class="modal-body" id="modalBody"></div>
+		<div class="modal-body" id="modalBody"></div>
 	</div>
   </div>
 </div>

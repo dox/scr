@@ -64,7 +64,7 @@ class Booking extends Model {
 	
 		$meal = new Meal($this->meal_uid);
 		$member = Member::fromLDAP($this->member_ldap);
-	
+		
 		// Determine text class: green if today, muted otherwise
 		$class = (date('Y-m-d H:i', strtotime($this->date)) > date('Y-m-d H:i', strtotime($meal->date_cutoff))) 
 			? 'text-danger' 

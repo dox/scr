@@ -6,6 +6,16 @@ if (!isset($member->uid)) {
 	die("Unknown or unavailable member");
 }
 
+
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+	$member->update($_POST);
+	$member = Member::fromLDAP($ldap);
+}
+
+
+
+
 echo pageTitle(
 	(strtoupper($member->ldap) == $user->getUsername()) ? "Your Profile" : $member->name() . " Profile",
 	$member->type . " (" . $member->category . ")" . $member->stewardBadge(),
@@ -43,7 +53,7 @@ echo pageTitle(
 				<a href="#" class="small stats-link" data-url="./ajax/member_stats.php?memberUID=<?= $member->uid ?>&scope=all">All</a>
 			</li>
 			<li class="list-inline-item">
-				<a href="#" class="small stats-link fw-bold" data-url="./ajax/member_stats.php?memberUID=<?= $member->uid ?>&scope=ytd">YTD</a>
+				<a href="#" class="small stats-link" data-url="./ajax/member_stats.php?memberUID=<?= $member->uid ?>&scope=ytd">YTD</a>
 			</li>
 			<li class="list-inline-item">
 				<a href="#" class="small stats-link" data-url="./ajax/member_stats.php?memberUID=<?= $member->uid ?>&scope=term">This Term</a>
@@ -66,7 +76,7 @@ echo pageTitle(
 	<div class="col-md-7 col-lg-8">
 		<h4>Personal Information</h4>
 		
-		<form>
+		<form method="post" action="<?= htmlspecialchars($_SERVER['REQUEST_URI']) ?>">
 			<div class="mb-3">
 				<label for="title" class="form-label">Title</label>
 				<select class="form-select" name="title" id="title" required>
@@ -259,29 +269,30 @@ echo pageTitle(
 			
 			
 			<?php
-			  $grantedPermissions = explode(",", $member->permissions);
-			  
-			  $output = "<hr><h4>Permissions</h4>";
-			  foreach ($user->available_permissions() as $permission => $description) {
-				if (in_array($permission, $grantedPermissions)) {
-				  $checked = " checked ";
-				} else {
-				  $checked = " ";
+			// only show permissions to global admins
+			if ($user->hasPermission('global_admin')) {
+				$grantedPermissions = $member->permissions();
+				
+				$output = "<hr><h4>Permissions</h4>";
+				foreach ($user->available_permissions() as $permission => $description) {
+					if (in_array($permission, $grantedPermissions)) {
+						$checked = " checked ";
+					} else {
+						$checked = " ";
+					}
+					
+					$output .= "<div class=\"form-check\">";
+					$output .= "<input class=\"form-check-input\" type=\"checkbox\" value=\"" . $permission . "\" name=\"permissions[]\" " . $checked . ">";
+					$output .= "<label class=\"form-check-label\" for=\"flexCheckDefault\"><strong>" . $permission . "</strong> <small>" . $description . "</small></label>";
+					$output .= "</div>";
 				}
 				
-				$output .= "<div class=\"form-check\">";
-				$output .= "<input class=\"form-check-input\" type=\"checkbox\" value=\"" . $permission . "\" name=\"permissions[]\" " . $checked . ">";
-				$output .= "<label class=\"form-check-label\" for=\"flexCheckDefault\"><strong>" . $permission . "</strong> <small>" . $description . "</small></label>";
-				$output .= "</div>";
-				
-				$output .= "<input type=\"hidden\" value=\"null\" name=\"permissions[]\" />";
-			  }
-			  
-			  // only show permissions to global admins
-			  if ($user->hasPermission('global_admin')) {
-				  echo $output;
+				$output .= "<hr>";
+				echo $output;
 			  }
 			  ?>
+			  
+			  <button type="submit" class="btn btn-primary">Update</button>
 		</form>
 	</div>
 	<div class="col-md-5 col-lg-4">
@@ -418,9 +429,13 @@ $days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday']
 
 $datasets = [];
 foreach ($member->bookingsByDay() as $mealType => $dayCounts) {
+	$data = [];
+	foreach ($days as $dayName) {
+		$data[] = $dayCounts[$dayName] ?? 0;
+	}
 	$datasets[] = [
 		'label' => $mealType,
-		'data' => array_values($dayCounts)
+		'data' => $data
 	];
 }
 ?>

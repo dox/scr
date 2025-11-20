@@ -5,7 +5,12 @@ if (!$user->isLoggedIn()) {
 	die("User not logged in.");
 }
 
-$member = Member::fromUID($_GET['memberUID']);
+$memberUID = filter_input(INPUT_GET, 'memberUID', FILTER_SANITIZE_NUMBER_INT);
+if (!$memberUID) {
+	die("Invalid member UID.");
+}
+
+$member = Member::fromUID($memberUID);
 
 if (!$user->hasPermission("members") && $member->ldap != $user->getUsername()) {
 	die("User not permitted to see member stats.");
@@ -34,23 +39,29 @@ switch ($scope) {
 
 $totalBookings = $member->countBookingsByTypeBetweenDates($start, $end);
 
-// Keep top 4 bookings, sorted
-$totalBookings = array_slice($totalBookings, 0, 4, true);
+if (empty($totalBookings)) {
+	echo "No statistics to show";
+} else {
+	// Keep top 4 bookings, sorted
+	$totalBookings = array_slice($totalBookings, 0, 4, true);
 
-// Determine Bootstrap column class
-$colClasses = [1 => 'col-12', 2 => 'col-6', 3 => 'col-4', 4 => 'col-6 col-sm-6 col-lg-3'];
-$colClass = $colClasses[count($totalBookings)] ?? 'col-12';
-?>
-
-<div class="row">
-	<?php foreach ($totalBookings as $booking): ?>
-		<div class="<?= $colClass ?>">
-			<div class="card mb-3">
-				<div class="card-body">
-					<div class="subheader text-nowrap text-truncate"><?= htmlspecialchars($booking['type']) ?></div>
-					<div class="h1 text-truncate"><?= htmlspecialchars($booking['total']) ?></div>
+	// Determine Bootstrap column class
+	$colClasses = [1 => 'col-12', 2 => 'col-6', 3 => 'col-4', 4 => 'col-6 col-sm-6 col-lg-3'];
+	$colClass = $colClasses[count($totalBookings)] ?? 'col-12';
+	?>
+	
+	<div class="row">
+		<?php foreach ($totalBookings as $booking): ?>
+			<div class="<?= $colClass ?>">
+				<div class="card mb-3">
+					<div class="card-body">
+						<div class="subheader text-nowrap text-truncate"><?= htmlspecialchars($booking['type']) ?></div>
+						<div class="h1 text-truncate"><?= htmlspecialchars($booking['total']) ?></div>
+					</div>
 				</div>
 			</div>
-		</div>
-	<?php endforeach; ?>
-</div>
+		<?php endforeach; ?>
+	</div>
+
+<?php
+} // close else

@@ -1,5 +1,4 @@
 <?php
-
 class Database {
 	private static $instance = null;
 	private $pdo;
@@ -55,4 +54,63 @@ class Database {
 	public function rollBack() {
 		$this->pdo->rollBack();
 	}
+
+	/**
+	 * Generic update method.
+	 *
+	 * @param string $table Table name
+	 * @param array $fields Associative array of fields to update ['column' => 'value']
+	 * @param array $where Associative array for WHERE clause ['uid' => 123]
+	 * @param string|null $logTable Optional table name to log changes
+	 * @return int Number of affected rows
+	 */
+	public function update(string $table, array $fields, array $where, bool $logChanges = false): int {
+		if (empty($fields) || empty($where)) {
+			throw new InvalidArgumentException("Fields and WHERE conditions cannot be empty.");
+		}
+	
+		// Fetch existing record
+		$whereSql = implode(" AND ", array_map(fn($k) => "$k = :where_$k", array_keys($where)));
+		$existing = $this->fetch("SELECT * FROM `$table` WHERE $whereSql", array_combine(
+			array_map(fn($k) => ":where_$k", array_keys($where)),
+			array_values($where)
+		));
+	
+		if (!$existing) {
+			throw new RuntimeException("Record not found for update.");
+		}
+	
+		// Build SET clause
+		$setSql = implode(", ", array_map(fn($k) => "$k = :$k", array_keys($fields)));
+		$params = $fields;
+		foreach ($where as $k => $v) {
+			$params["where_$k"] = $v;
+		}
+	
+		// Execute update
+		$stmt = $this->query("UPDATE `$table` SET $setSql WHERE $whereSql", $params);
+		$affected = $stmt->rowCount();
+	
+		// Log changes via Log class
+		if ($logChanges) {
+			$logger = new Log();
+			foreach ($fields as $k => $v) {
+				$old = $existing[$k] ?? null;
+				if ($old != $v) {
+					$description = sprintf(
+						"Updated %s.%s for UID %s: '%s' → '%s'",
+						$table,
+						$k,
+						$where['uid'] ?? json_encode($where),
+						$old,
+						$v
+					);
+					$logger->add($description, Log::INFO);
+				}
+			}
+		}
+	
+		return $affected;
+	}
+
 }
