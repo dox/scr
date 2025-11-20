@@ -20,7 +20,7 @@ $terms = new Terms();
 $currentTerm = $terms->currentTerm();
 
 // Determine days for countBookingsByType
-$scope = $_GET['scope'] ?? 'YTD';
+$scope = $_GET['scope'] ?? 'all';
 switch ($scope) {
 	case 'all':
 		$start = "1970-01-01";
@@ -28,11 +28,14 @@ switch ($scope) {
 		break;
 	case 'term':
 		$start = $currentTerm->date_start;
-		$end = $currentTerm->date_end;
+		$end = date('Y-m-d');
 		break;
-	case 'YTD':
+	case 'ytd':
+		$start = date('Y-m-d', strtotime('1 year ago'));
+		$end = date('Y-m-d');
+		break;
 	default:
-		$start = date('Y-01-01');
+		$start = "1970-01-01";
 		$end = date('Y-m-d');
 		break;
 }

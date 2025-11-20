@@ -67,7 +67,7 @@ foreach ($members as $type => $contents):
 				<?php foreach ($contents as $member): ?>
 					<li class="list-group-item">
 						<i class="bi bi-grip-vertical"></i>
-						<a href="index.php?page=member&ldap=<?= $member->ldap ?>"><?= htmlspecialchars($member->name()) ?></a>
+						<a href="index.php?page=member&ldap=<?= $member->ldap ?>"><?= $member->name() ?></a>
 						<span class="text-muted">@<?= strtoupper($member->ldap) ?></span>
 
 

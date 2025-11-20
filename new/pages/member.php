@@ -199,7 +199,7 @@ echo pageTitle(
 			
 			<div class="mb-3">
 				<label for="email" class="form-label">Email <span class="text-muted">(Optional)</span></label>
-				<input type="email" class="form-control" name="email" id="email" placeholder="Email address" value="<?php echo $member->email; ?>" required>
+				<input type="email" class="form-control" name="email" id="email" placeholder="Email address" value="<?php echo $member->email; ?>">
 			</div>
 			
 			<div class="mb-3">
@@ -220,15 +220,15 @@ echo pageTitle(
 				</div>
 			</div>
 			
-			<div class="col-6 mb-3">
-			  <label for="enabled" class="form-label">Enabled/Disabled Status</label>
-			  <select class="form-select" name="enabled" id="enabled" <?= $user->hasPermission('members') ? '' : 'disabled' ?> required>
-				<option value="1" <?php if ($member->enabled == "1") { echo " selected"; } ?>>Enabled</option>
-				<option value="0" <?php if ($member->enabled == "0") { echo " selected"; } ?>>Disabled</option>
-			  </select>
-			  <div class="invalid-feedback">
-				Status is required.
-			  </div>
+			<div class="mb-3">
+				<label for="enabled" class="form-label">Enabled/Disabled Status</label>
+				<select class="form-select" name="enabled" id="enabled" <?= $user->hasPermission('members') ? '' : 'disabled' ?> required>
+					<option value="1" <?php if ($member->enabled == "1") { echo " selected"; } ?>>Enabled</option>
+					<option value="0" <?php if ($member->enabled == "0") { echo " selected"; } ?>>Disabled</option>
+				</select>
+				<div class="invalid-feedback">
+					Enabled/disabled status is required.
+				</div>
 			</div>
 			
 			<hr>
@@ -238,11 +238,11 @@ echo pageTitle(
 				<input class="form-check-input" type="checkbox" id="opt_in" name="opt_in" value="1" <?php if ($member->opt_in == "1") { echo " checked";} ?> switch>
 				<label class="form-check-label" for="opt_in">Allow my name to appear on dining lists (also applies to my guests</label>
 			</div>
-			<div class="form-check form-switch">
+			<div class="form-check form-switch mb-3">
 				<input class="form-check-input" type="checkbox" id="email_reminders" name="email_reminders" value="1" <?php if ($member->email_reminders == "1") { echo " checked";} ?> switch>
 				<label class="form-check-label" for="email_reminders">Send me an email confirmation when I book a meal</label>
 			</div>
-			<div>
+			<div class="mb-3">
 				<span class="form-check-label" for="">Default Wine <small>(when available)</small></label></span>
 				<?php
 				$wineOptions = explode(",", $settings->get('booking_wine_options'));
