@@ -10,10 +10,13 @@ if ($user->isLoggedIn()) {
 $error = null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-	if ($user->authenticate($_POST['username'], $_POST['password'], $_POST['remember_me'])) {
+	$remember = isset($_POST['remember_me']) ? true : false;
+
+	if ($user->authenticate($_POST['username'], $_POST['password'], $remember)) {
 		header('Location: index.php');
+		exit;
 	} else {
-		$errors[] = "<div class=\"alert alert-warning\" role=\"alert\">Username/password mismatch</div>";
+		$errors[] = '<div class="alert alert-warning" role="alert">Username/password mismatch</div>';
 	}
 }
 ?>
