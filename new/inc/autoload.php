@@ -78,3 +78,36 @@ $log = new Log();
 $terms = new Terms();
 $user = new User();
 $settings = new Settings();
+
+
+if (isset($_POST['impersonate_submit_button'])) {
+	$targetId = $_POST['impersonate'] ?? null;
+
+	if ($targetId) {
+		// preserve the current session state
+		$_SESSION['impersonation_backup'] = $_SESSION['user'];
+		$existingPermissions = $_SESSION['user']['permissions'];
+
+		// fetch the user being impersonated
+		$member = Member::fromUID($targetId);
+
+		// adopt their details
+		$_SESSION['user']['uid']   = $member->uid;
+		$_SESSION['user']['samaccountname']   = $member->ldap;
+		$_SESSION['user']['permissions'] = $member->permissions();
+
+		// optional: honour the checkbox
+		if (isset($_POST['maintainAdminAccess'])) {
+			$_SESSION['user']['permissions'] = $existingPermissions;
+		}
+	}
+}
+
+if (isset($_POST['restore_impersonation']) && isset($_SESSION['impersonation_backup'])) {
+	// adopt their details
+	$_SESSION['user']['uid']   = $_SESSION['impersonation_backup']['uid'];
+	$_SESSION['user']['samaccountname']   = $_SESSION['impersonation_backup']['samaccountname'];
+	$_SESSION['user']['permissions'] = $_SESSION['impersonation_backup']['permissions'];
+	
+	unset($_SESSION['impersonation_backup']);
+}

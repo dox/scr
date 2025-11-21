@@ -29,7 +29,7 @@ class User {
 		if (!empty($_SESSION['user'])) {
 			$this->userData = $_SESSION['user'];
 			$this->loggedIn = true;
-			$this->uid      = $_SESSION['user']['member_uid'] ?? null;
+			$this->uid      = $_SESSION['user']['uid'] ?? null;
 			return;
 		}
 
@@ -76,7 +76,7 @@ class User {
 		$this->userData = [
 			'samaccountname' => $member->ldap, // string
 			'permissions'    => explode(',', $member->permissions ?? ''),
-			'member_uid'     => $member->uid
+			'uid'     => $member->uid
 		];
 
 		$_SESSION['user'] = $this->userData;
@@ -138,7 +138,7 @@ class User {
 		$this->userData = [
 			'samaccountname' => $member->ldap,
 			'permissions'    => explode(',', $member->permissions ?? ''),
-			'member_uid'     => $member->uid
+			'uid'     => $member->uid
 		];
 
 		$_SESSION['user'] = $this->userData;
@@ -194,6 +194,7 @@ class User {
 		}
 
 		unset($_SESSION['user']);
+		unset($_SESSION['impersonation_backup']);
 		$this->loggedIn = false;
 		$this->userData = [];
 		$this->uid = null;
