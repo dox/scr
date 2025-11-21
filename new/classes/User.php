@@ -61,7 +61,7 @@ class User {
 		}
 		
 		if (strtotime($record['token_expiry']) < time()) {
-			//$db->query("DELETE FROM tokens WHERE token = ?", [$token]);
+			$db->query("DELETE FROM tokens WHERE token = ?", [$token]);
 			error_log("Token expired and removed.");
 			return false;
 		}
@@ -162,7 +162,7 @@ class User {
 		$expiryDate = (new DateTime('+1 month'))->format('Y-m-d H:i:s');
 	
 		// Delete any old tokens
-		$db->query("DELETE FROM tokens WHERE member_uid = ?", [$memberUID]);
+		$db->query("DELETE FROM tokens WHERE token_expiry > ?", [$expiryDate]);
 	
 		// Insert new token with expiry
 		$db->query("

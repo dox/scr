@@ -421,7 +421,11 @@ echo pageTitle(
 </div>
 
 <?php
-//printArray($_SESSION);
+$query = "SELECT * FROM tokens";
+$rows = $db->fetchAll($query);
+
+
+printArray($rows);
 ?>
 
 <?php
