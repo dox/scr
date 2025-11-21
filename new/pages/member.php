@@ -6,15 +6,10 @@ if (!isset($member->uid)) {
 	die("Unknown or unavailable member");
 }
 
-
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	$member->update($_POST);
 	$member = Member::fromLDAP($ldap);
 }
-
-
-
 
 echo pageTitle(
 	(strtoupper($member->ldap) == $user->getUsername()) ? "Your Profile" : $member->name() . " Profile",
@@ -419,14 +414,6 @@ echo pageTitle(
 		</div>
 	</div>
 </div>
-
-<?php
-$query = "SELECT * FROM tokens";
-$rows = $db->fetchAll($query);
-
-
-printArray($rows);
-?>
 
 <?php
 $days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];

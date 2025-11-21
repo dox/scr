@@ -1,11 +1,3 @@
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@eonasdan/tempus-dominus@6.9.4/dist/css/tempus-dominus.min.css" crossorigin="anonymous">
-<!-- Popperjs -->
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" crossorigin="anonymous"></script>
-<!-- Tempus Dominus JavaScript -->
-<script src="https://cdn.jsdelivr.net/npm/@eonasdan/tempus-dominus@6.9.4/dist/js/tempus-dominus.min.js" crossorigin="anonymous"></script>
-
-
-
 <?php
 $user->pageCheck('meals');
 $meal = new Meal($_GET['uid']);
@@ -118,6 +110,122 @@ echo pageTitle(
 				</div>
 			</div>
 			
+			<hr>
+			
+			<div class="row">
+				<div class="col">
+					<div class="accordion" id="accordionAllowed">
+						<div class="accordion-item">
+							<h2 class="accordion-header">
+								<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">Allowed Groups</button>
+							</h2>
+							<div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionAllowed">
+								<div class="accordion-body">
+									<strong>Select none for everyone to be allowed, otherwise only those member types selected can book this meal</strong>
+									
+									<?php
+									$memberTypes = explode(',', $settings->get('member_categories'));
+									$mealTypesAllowed = explode(',', $meal->allowed);
+									
+									foreach ($memberTypes as $i => $memberType) {
+										$checked = in_array($memberType, $mealTypesAllowed) ? ' checked' : '';
+										?>
+										<div class="form-check">
+											<input class="form-check-input" type="checkbox"
+												   value="<?= htmlspecialchars($memberType) ?>"
+												   name="allowed[]"
+												   id="flexCheckDefault_<?= $i ?>"
+												   <?= $checked ?>>
+											<label class="form-check-label" for="flexCheckDefault_<?= $i ?>">
+												<?= htmlspecialchars($memberType) ?>
+											</label>
+										</div>
+										<?php
+									}
+									?>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<hr>
+			
+			<div class="row mb-3">
+				<div class="col">
+					<label for="scr_capacity" class="form-label">Capacity</label>
+					<input type="number" class="form-control" name="scr_capacity" id="scr_capacity" value="<?php echo $meal->scr_capacity; ?>" min="0" required="">
+					<div class="invalid-feedback">
+						SCR Capacity is required.
+					</div>
+				</div>
+				
+				<div class="col mb-3">
+					<label for="scr_dessert_capacity" class="form-label">Dessert Capacity</label>
+					<input type="number" class="form-control" name="scr_dessert_capacity" id="scr_dessert_capacity" value="<?php echo $meal->scr_dessert_capacity; ?>" min="0" required="">
+					<div class="invalid-feedback">
+						SCR Dessert Capacity is required.
+					</div>
+				</div>
+				
+				<div class="col mb-3">
+					<label for="scr_guests" class="form-label">Guests</label>
+					<input type="number" class="form-control" name="scr_guests" id="scr_guests" value="<?php echo $meal->scr_guests; ?>" min="0" required="">
+					<div id="scr_guestsHelp" class="form-text">Per member</div>
+					<div class="invalid-feedback">
+						SCR Guests is required.
+					</div>
+				</div>
+			</div>
+			
+			<hr>
+			
+			<div class="row mb-3">
+				<div class="col">
+					<label for="menu" class="form-label">Menu</label>
+					<textarea rows="4" class="form-control" name="menu" id="menu"><?php echo $meal->menu;?></textarea>
+				</div>
+			</div>
+			
+			<div class="row mb-3">
+				<div class="col">
+					<label for="menu" class="form-label">Notes (Private)</label>
+					<textarea rows="4" class="form-control" name="notes" id="notes"><?php echo $meal->notes;?></textarea>
+				</div>
+			</div>
+			
+			<div class="mb-3">
+				<div class="accordion" id="accordionPhotograph">
+					<div class="accordion-item">
+						<h2 class="accordion-header">
+							<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">Photograph</button>
+						</h2>
+						<div id="flush-collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionPhotograph">
+							<div class="accordion-body">
+								<?php foreach ($meals->cardImages() as $cardImage): ?>
+									<div class="col">
+										<div class="card mb-3">
+											<img src="<?= htmlspecialchars($cardImage) ?>" class="card-img-top" alt="...">
+											<div class="card-body">
+												<p class="card-text">
+													<label class="form-label">
+														<input class="form-check-input" type="radio" 
+															   name="photo" 
+															   value="<?= basename($cardImage) ?>" 
+															   <?= ($meal->photo === basename($cardImage)) ? 'checked' : '' ?>>
+														<?= basename($cardImage) ?>
+													</label>
+												</p>
+											</div>
+										</div>
+									</div>
+								<?php endforeach; ?>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
 		</form>
 	</div>
 	<div class="col-4">
@@ -215,4 +323,24 @@ const options = {
 
 new tempusDominus.TempusDominus(el, options);
 new tempusDominus.TempusDominus(el2, options);
+</script>
+
+<script>
+let editor;
+editor = SUNEDITOR.create(document.getElementById('menu'), {
+	height: 100,
+	buttonList: [
+		['undo', 'redo'],
+		['font', 'fontSize', 'formatBlock'],
+		['bold', 'italic', 'underline', 'strike'],
+		['fontColor', 'hiliteColor', 'align', 'list'],
+		['table', 'link', 'image'],
+		['fullScreen', 'codeView']
+	]
+});
+
+// Sync content back to textarea on submit
+document.getElementById('contentEditForm').addEventListener('submit', function(e) {
+	document.getElementById('value').value = editor.getContents();
+});
 </script>

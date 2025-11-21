@@ -13,10 +13,10 @@
 					  <a href="index.php?page=member" class="nav-link"><i class="bi me-2 bi-person" aria-hidden="true"></i>Profile</a>
 				  </li>
 				  <li>
-					  <a href="index.php?page=information&subpage=information" class="nav-link"><i class="bi me-2 bi-journal-text" aria-hidden="true"></i>Information</a>
+					  <a href="index.php?page=information&subpage=scr_information" class="nav-link"><i class="bi me-2 bi-journal-text" aria-hidden="true"></i>Information</a>
 				  </li>
 				  <li>
-					  <a href="index.php?page=information&subpage=dining" class="nav-link"><i class="bi me-2 bi-info-circle" aria-hidden="true"></i>Dining Arrangements</a>
+					  <a href="index.php?page=information&subpage=dining_arrangements" class="nav-link"><i class="bi me-2 bi-info-circle" aria-hidden="true"></i>Dining Arrangements</a>
 				  </li>
 			  </ul>
 			  

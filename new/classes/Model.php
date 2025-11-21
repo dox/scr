@@ -26,7 +26,7 @@ abstract class Model {
 	 * @param array $data  Associative array of column => value
 	 * @return int|false   Inserted row ID or false on failure
 	 */
-	public function insert(array $data, bool $log = true) {
+	public function create(array $data, bool $log = true) {
 		if (empty($data)) {
 			throw new InvalidArgumentException("Insert data cannot be empty.");
 		}
@@ -146,6 +146,32 @@ class Settings extends Model {
 		
 		if ($row) return $row['value'];
 	}
+	
+	public function getUID($name) {
+		$query = "SELECT uid FROM " . static::$table . " WHERE name = ?";
+		$row = $this->db->fetch($query, [$name]);
+		
+		if ($row) return $row['uid'];
+	}
+	
+	public function update(array $postData) {
+		global $db;
+	
+		// Map normal text/select fields
+		$fields = [
+			'value'       => $postData['value'] ?? null
+		];
+		
+		// Send to database update
+		$updatedRows = $db->update(
+			static::$table,
+			$fields,
+			['uid' => $postData['uid']],
+			'logs'
+		);
+		
+		return $updatedRows;
+	}
 }
 
 class Members extends Model {
@@ -215,10 +241,41 @@ class Meals extends Model {
 	
 		return array_map(fn($row) => new Meal($row['uid']), $rows);
 	}
+	
+	public function cardImages() {
+		$mealCardDirectory = "./uploads/meal_cards/";
+	
+		$files = scandir($mealCardDirectory, SCANDIR_SORT_DESCENDING);
+		$cleanFiles = array_diff($files, array('..', '.'));
+	
+		// Prepend the directory path to each file
+		$fullPaths = array_map(function($file) use ($mealCardDirectory) {
+			return $mealCardDirectory . $file;
+		}, $cleanFiles);
+	
+		return $fullPaths;
+	}
 }
 
 class Terms extends Model {
 	protected static string $table = 'terms';
+	
+	public function all() {
+		global $db;
+		
+		$sql = "SELECT uid
+				FROM " . static::$table . "
+				ORDER BY date_start DESC";
+		
+		$rows = $db->fetchAll($sql);
+		
+		$terms = array();
+		foreach ($rows as $row) {
+			$terms[] = new Term($row['uid']);
+		}
+		
+		return $terms;
+	}
 	
 	public function currentTerm(): object {
 		global $db;
@@ -241,23 +298,6 @@ class Terms extends Model {
 			return new Term($row['uid']);
 		}
 	}
-	
-	/*
-	UNUSED?
-	public function nextTerm(): ?array {
-		global $db;
-		
-		$stmt = $db->prepare("
-			SELECT *
-			FROM " . self::$table . "
-			WHERE date_start > :end
-			ORDER BY date_start ASC
-			LIMIT 1
-		");
-		
-		$stmt->execute([':end' => $this->date_end]);
-		return $stmt->fetch() ?: null;
-	}*/
 	
 	function firstDayOfWeek(?string $inputDate = null): string {
 		$date = new DateTime($inputDate ?? 'now');
@@ -319,5 +359,26 @@ class Terms extends Model {
 		$end   = (clone $start)->modify('+6 days 23:59:59'); // Saturday end
 	
 		return ($given >= $start && $given <= $end);
+	}
+	
+	public function update(array $postData) {
+		global $db;
+	
+		// Map normal text/select fields
+		$fields = [
+			'name'      => $postData['name'] ?? null,
+			'date_start'  => $postData['date_start'] ?? null,
+			'date_end'   => $postData['date_end'] ?? null
+		];
+	
+		// Send to database update
+		$updatedRows = $db->update(
+			static::$table,
+			$fields,
+			['uid' => $this->uid],
+			'logs'
+		);
+	
+		return $updatedRows;
 	}
 }

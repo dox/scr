@@ -1,6 +1,10 @@
 <?php
 $user->pageCheck('settings');
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+	$settings->update($_POST);
+}
+
 echo pageTitle(
 	"Site Settings",
 	"Customise the behaviour, display and configuration of this site",
@@ -96,14 +100,15 @@ echo pageTitle(
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title">Test Modal <span class="text-danger"><strong>WARNING!</strong></span></h5>
+				<h5 class="modal-title">Feature Not Yet Available</h5>
 				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
 			<div class="modal-body">
-				Test Modal
-				<p><span class="text-danger"><strong>WARNING!</strong> Are you sure you want to delete this member?</p>
-				<p>This will also delete <strong>all</strong> bookings (past and present) for this member.<p>
-				<p><span class="text-danger"><strong>THIS ACTION CANNOT BE UNDONE!</strong></span></p>
+				<p><span class="text-danger"><strong>WARNING!</strong> This feature is not yet available</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-link text-muted" data-bs-dismiss="modal">Close</button>
+				<button type="submit" class="btn btn-primary">VOID</button>
 			</div>
 		</div>
 	</div>

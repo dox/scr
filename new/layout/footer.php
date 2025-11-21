@@ -10,7 +10,7 @@
 			<?php
 			if ($user->isLoggedIn()) {
 				echo "<div class=\"col-12 col-md-6 text-end d-print-none\">";
-				echo "<a class=\"link-secondary\" href=\"index.php?page=information&subtype=accessibility\">Accessibility Statement</a>";
+				echo "<a class=\"link-secondary\" href=\"index.php?page=information&subpage=scr_accessibility\">Accessibility Statement</a>";
 				echo "</div>";
 			}
 			?>
