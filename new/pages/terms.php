@@ -2,7 +2,14 @@
 $user->pageCheck('terms');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-	$terms->create($_POST);
+	if (isset($_POST['deleteTermUID'])) {
+		$deleteTermUID = filter_input(INPUT_POST, 'deleteTermUID', FILTER_SANITIZE_NUMBER_INT);
+		
+		$term = new Term($deleteTermUID);
+		$term->delete();
+	} else {
+		$terms->create($_POST);
+	}
 }
 
 echo pageTitle(
@@ -39,7 +46,7 @@ echo pageTitle(
 		$meals = new Meals();
 		
 		foreach ($terms->all() as $term) {
-			$mealsInTerm = $meals->betweenDates($term->date_start, $term->date_end);
+			$mealsInTerm = $term->mealsInTerm();
 			$active = ($currentTerm->uid == $term->uid) ? ' class="table-success"' : '';
 			$url = "index.php?page=term&uid=" . $term->uid;
 			
@@ -56,6 +63,7 @@ echo pageTitle(
 
 <!-- Add Term Modal -->
 <div class="modal fade" tabindex="-1" id="addTermModal" data-backdrop="static" data-keyboard="false" aria-hidden="true">
+	<form method="post" action="<?= htmlspecialchars($_SERVER['REQUEST_URI']) ?>">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -63,7 +71,6 @@ echo pageTitle(
 				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
 			<div class="modal-body">
-				<form method="post" action="<?= htmlspecialchars($_SERVER['REQUEST_URI']) ?>">
 					<div class="modal-body">
 						<div class="mb-3">
 							<label for="name">Term Name</label>
@@ -93,10 +100,10 @@ echo pageTitle(
 						<button type="button" class="btn btn-link text-muted" data-bs-dismiss="modal">Close</button>
 						<button type="submit" class="btn btn-primary">Add Term</button>
 					</div>
-				</form>
 			</div>
 		</div>
 	</div>
+	</form>
 </div>
 
 <script>

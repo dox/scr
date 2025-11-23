@@ -360,25 +360,4 @@ class Terms extends Model {
 	
 		return ($given >= $start && $given <= $end);
 	}
-	
-	public function update(array $postData) {
-		global $db;
-	
-		// Map normal text/select fields
-		$fields = [
-			'name'      => $postData['name'] ?? null,
-			'date_start'  => $postData['date_start'] ?? null,
-			'date_end'   => $postData['date_end'] ?? null
-		];
-	
-		// Send to database update
-		$updatedRows = $db->update(
-			static::$table,
-			$fields,
-			['uid' => $this->uid],
-			'logs'
-		);
-	
-		return $updatedRows;
-	}
 }

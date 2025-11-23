@@ -27,6 +27,41 @@ class Term extends Model {
 		}
 	}
 	
+	public function update(array $postData) {
+		global $db;
+	
+		// Map normal text/select fields
+		$fields = [
+			'name'      => $postData['name'] ?? null,
+			'date_start'  => $postData['date_start'] ?? null,
+			'date_end'   => $postData['date_end'] ?? null
+		];
+	
+		// Send to database update
+		$updatedRows = $db->update(
+			static::$table,
+			$fields,
+			['uid' => $this->uid],
+			'logs'
+		);
+	
+		return $updatedRows;
+	}
+	
+	public function delete() {
+		if (!isset($this->uid)) return false;
+		
+		return $this->db->query("DELETE FROM " . static::$table . " WHERE uid = ?", [$this->uid]);
+	}
+	
+	public function mealsInTerm() {
+		$meals = new Meals();
+		
+		$mealsInTerm = $meals->betweenDates($this->date_start, $this->date_end);
+		
+		return $mealsInTerm;
+	}
+	
 	public function tabLabel(?string $date = null): string {
 		// Use today if no date provided
 		$dateObj = $date ? new DateTime($date) : new DateTime();

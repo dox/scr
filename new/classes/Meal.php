@@ -92,6 +92,25 @@ class Meal extends Model {
 	
 		return $bookings;
 	}
+	
+	public function totalDiners(): int {
+		$count = 0;
+	
+		foreach ($this->bookings() as $booking) {
+			// Each booking counts as one person
+			$count++;
+	
+			// Guests stored as JSON array in $booking->guests_array
+			// Decode, but guard against null or invalid content
+			$guests = $booking->guests();
+	
+			if (is_array($guests)) {
+				$count += count($guests);
+			}
+		}
+	
+		return $count;
+	}
 
 	public function delete() {
 		if (!isset($this->id)) return false;
@@ -154,7 +173,7 @@ class Meal extends Model {
 			$output .= "</ul>";
 			
 			// Progress bars
-			//$output .= $this->progressBar("Dinner");
+			$output .= $this->progressBar("Dinner");
 			
 			//if ($this->scr_dessert_capacity > 0 && $this->total_dessert_bookings_this_meal('SCR') >= $this->scr_dessert_capacity) {
 			//  $output .= $this->progressBar("Dessert");
@@ -169,6 +188,62 @@ class Meal extends Model {
 		$output .= "</div>"; // end card
 		$output .= "</div>"; // end column
 		
+		return $output;
+	}
+	
+	public function progressBar(): string {
+		$booked     = $this->totalDiners();
+		$capacity   = (int)$this->scr_capacity;
+		$percentage = $capacity > 0 ? ($booked / $capacity) * 100 : 0;
+	
+		if ($percentage >= 100) {
+			$class = "bg-danger";
+		} elseif ($percentage >= 80) {
+			$class = "bg-warning";
+		} else {
+			$class = "bg-info";
+		}
+	
+		$output  = "<div class=\"d-flex align-items-center justify-content-between\">";
+		$output .= "<span>Bookings</span>";
+		$output .= "<span>{$booked} of {$capacity}</span>";
+		$output .= "</div>";
+	
+		$output .= "<div class=\"progress mb-3\" style=\"height: 6px;\" role=\"progressbar\" ";
+		$output .= "aria-valuenow=\"{$booked}\" aria-valuemin=\"0\" aria-valuemax=\"{$capacity}\">";
+		$output .= "<div class=\"progress-bar {$class}\" style=\"width: {$percentage}%\"></div>";
+		$output .= "</div>";
+	
+		return $output;
+	}
+	
+	public function displayListGroupItem(): string {
+		global $user;
+	
+		// Determine text class: green if today, muted otherwise
+		$class = (date('Y-m-d', strtotime($this->date_meal)) === date('Y-m-d')) 
+			? 'text-success' 
+			: 'text-muted';
+	
+		// Determine link: admin sees meal, others see booking
+		$linkUrl = $user->hasPermission('meals')
+			? "index.php?page=meal&uid=" . urlencode($this->uid)
+			: "index.php?page=booking&uid=" . urlencode($this->uid);
+	
+		$mealName     = htmlspecialchars($this->name, ENT_QUOTES);
+		$mealLocation = htmlspecialchars($this->location, ENT_QUOTES);
+		$mealDate     = formatDate($this->date_meal, 'short');
+	
+		$output  = '<li class="list-group-item d-flex justify-content-between lh-sm">';
+		$output .= '<div class="' . $class . ' d-inline-block text-truncate" style="max-width: 73%;">';
+		$output .= '<h6 class="my-0">';
+		$output .= '<a href="' . $linkUrl . '" class="' . $class . '">' . $mealName . '</a>';
+		$output .= '</h6>';
+		$output .= '<small class="' . $class . '">' . $mealLocation . '</small>';
+		$output .= '</div>';
+		$output .= '<span class="' . $class . '">' . $mealDate . '</span>';
+		$output .= '</li>';
+	
 		return $output;
 	}
 }

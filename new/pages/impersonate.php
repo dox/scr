@@ -1,7 +1,5 @@
 <?php
-if (isset($_SESSION['impersonation_backup'])) {
-	
-} else {
+if (!isset($_SESSION['impersonation_backup'])) {
 	$user->pageCheck('impersonate');
 }
 
@@ -9,52 +7,22 @@ echo pageTitle(
 	"Impersonate",
 	"Assume the identity of an SCR Member for the purposes of managing their meal bookings"
 );
-
-
 ?>
 
-<div class="col-4 mx-auto">
-	<form method="post" action="<?= htmlspecialchars($_SERVER['REQUEST_URI']) ?>">
-	
-		<input 
+<div class="col-md-12 col-lg-4 mx-auto">
+	<form method="post" action="<?= htmlspecialchars($_SERVER['REQUEST_URI']) ?>" id="impersonate-form">
+		<input
 			type="text"
-			id="impersonate-input"
-			name="impersonate"
-			class="form-control mb-3"
-			list="members-list"
+			id="member-search"
+			<?= isset($_SESSION['impersonation_backup']) ? ' value="' . $_SESSION['user']['samaccountname'] . '"' : '' ?>
+			class="form-control mb-2"
 			placeholder="Search Members"
-			aria-label="Search"
+			autocomplete="off"
 			required
 			<?= isset($_SESSION['impersonation_backup']) ? 'disabled' : '' ?>
 		>
-	
-		<?php if (!isset($_SESSION['impersonation_backup'])): ?>
-	
-			<div class="form-check mb-3">
-				<input 
-					type="checkbox"
-					class="form-check-input"
-					id="maintainAdminAccess"
-					name="maintainAdminAccess"
-					value="1"
-					checked
-				>
-				<label class="form-check-label" for="maintainAdminAccess">
-					Maintain Current Access Level*
-				</label>
-			</div>
-	
-			<button 
-				type="submit"
-				id="impersonate_submit_button"
-				name="impersonate_submit_button"
-				class="btn btn-primary w-100 mb-3"
-			>
-				Impersonate
-			</button>
-	
-		<?php else: ?>
-	
+		
+		<?php if (isset($_SESSION['impersonation_backup'])): ?>
 			<button 
 				type="submit"
 				id="restore_impersonation"
@@ -63,35 +31,91 @@ echo pageTitle(
 			>
 				Stop Impersonating
 			</button>
-	
+		<?php else: ?>
+			
+			
+			<ul id="search-results" class="list-group mb-3" style="display:none; position:absolute; z-index:1000;"></ul>
+			
+			<input type="hidden" id="member-id" name="impersonate">
+			
+			<div class="form-check mb-3">
+				<input type="checkbox" class="form-check-input" id="maintainAdminAccess" name="maintainAdminAccess" value="1" checked>
+				<label class="form-check-label" for="maintainAdminAccess">Maintain Current Access Level*</label>
+			</div>
+			
+			<button type="submit" class="btn btn-primary w-100">Impersonate</button>
+			
 		<?php endif; ?>
-	
+		
 		<p class="small">
 			†<span class="text-muted">
 				By default, when you impersonate another member, you retain your access.  
 				Uncheck to walk in another’s shoes, permissions and all.
 			</span>
 		</p>
-	
 	</form>
+	
+	
+	
+	
+
 </div>
-
-
-
 
 
 <datalist id="members-list">
 <?php
 $members = new Members();
 
+$membersArray = array();
 foreach ($members->getAllByType('SCR') as $member) {
 	if ($user->getUsername() != $member->ldap) {
-		echo "
-		<option
-			value=\"" . htmlspecialchars($member->uid) . "\"
-			label=\"" . htmlspecialchars($member->name()) . "\"
-		></option>";
+		$membersArray[] = "{ id: " . $member->uid . ",  name: \"" . $member->name() . "\" }";
 	}
 }
 ?>
 </datalist>
+
+<script>
+// Local data source on the page (could be server-generated)
+const members = [
+	<?php echo implode(",", $membersArray); ?>
+];
+
+const input  = document.getElementById("member-search");
+const list   = document.getElementById("search-results");
+const hidden = document.getElementById("member-id");
+
+input.addEventListener("input", function () {
+	const value = this.value.toLowerCase().trim();
+	list.innerHTML = "";
+
+	if (!value) {
+		list.style.display = "none";
+		hidden.value = "";
+		return;
+	}
+
+	const matches = members.filter(m => m.name.toLowerCase().includes(value));
+
+	if (matches.length === 0) {
+		list.style.display = "none";
+		return;
+	}
+
+	matches.forEach(member => {
+		const item = document.createElement("li");
+		item.className = "list-group-item list-group-item-action";
+		item.textContent = member.name;
+
+		item.addEventListener("click", () => {
+			input.value = member.name;
+			hidden.value = member.id;
+			list.style.display = "none";
+		});
+
+		list.appendChild(item);
+	});
+
+	list.style.display = "block";
+});
+</script>

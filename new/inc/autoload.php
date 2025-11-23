@@ -80,7 +80,7 @@ $user = new User();
 $settings = new Settings();
 
 
-if (isset($_POST['impersonate_submit_button'])) {
+if (isset($_POST['impersonate'])) {
 	$targetId = $_POST['impersonate'] ?? null;
 
 	if ($targetId) {

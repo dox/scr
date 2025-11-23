@@ -42,6 +42,14 @@ if (APP_DEBUG) {
 				}
 				?>
 				
+				<button type="button" class="btn btn-link position-relative">
+					<i class="bi bi-bell"></i>
+					<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+						99+
+						<span class="visually-hidden">notifications</span>
+					</span>
+				</button>
+				
 				<div class="dropdown">
 					<a href="#" id="bd-theme" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Toggle theme (auto)">
 						<i class="bi bi-circle-half me-2"></i>
