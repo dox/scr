@@ -69,7 +69,9 @@ echo pageTitle(
 			if (!empty($guests)) {
 				$output .= '<ul>';
 				foreach ($guests as $guest) {
-					if (!$member->opt_in == 1) $guest['guest_name'] = 'Hidden';
+					if (!$user->hasPermission("members") && $member->opt_in != 1) {
+						$guest['guest_name'] = 'Hidden';
+					}
 					
 					$output .= '<li>';
 					$output .= htmlspecialchars($guest['guest_name']) . ' ';
@@ -280,7 +282,4 @@ document.addEventListener('ajax-modal-loaded', () => {
 
 // Load AJAX menu
 remoteModalLoader('.load-remote-guest_edit', '#editGuestModal', '#modalBody');
-
-
-
 </script>

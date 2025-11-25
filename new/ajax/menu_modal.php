@@ -30,24 +30,33 @@ $mealObject = new Meal($mealUID);
 	<hr>
 	<?php endif; ?>
 	
-	<div class="row">
+	<div class="row text-center">
 		<div class="col">
-			<?php if ($mealObject->domus): ?>
-			<p style="font-size: 1em"><i class="bi bi-mortarboard" style="font-size: 2em"></i></p>
-			<p>Meal is Domus</p>
-			<?php endif; ?>
+			<div class="card mb-3">
+				<?php $class = ($mealObject->domus == 1) ? "" : " text-muted"; ?>
+				<div class="card-body <?= $class; ?>">
+					<h5 class="card-title text-truncate">Domus</h5>
+					<h1><i class="bi bi-mortarboard" style="font-size: 2rem;"></i></h1>
+				</div>
+			</div>
 		</div>
 		<div class="col">
-			<?php if ($mealObject->allowed_wine): ?>
-			<p><svg width="2em" height="2em"><use xlink:href="assets/images/icons.svg#wine-glass"/></svg></p>
-			<p>Wine available</p>
-			<?php endif; ?>
+			<div class="card mb-3">
+				<?php $class = ($mealObject->allowed_wine == 1) ? "" : " text-muted"; ?>
+				<div class="card-body <?= $class; ?>">
+					<h5 class="card-title text-truncate">Wine</h5>
+					<h1><svg width="1em" height="1em"><use xlink:href="assets/images/icons.svg#wine-glass"/></svg></h1>
+				</div>
+			</div>
 		</div>
 		<div class="col">
-			<?php if ($mealObject->allowed_dessert): ?>
-			<p style="font-size: 1em"><i class="bi bi-cookie" style="font-size: 2em"></i></p>
-			<p>Dessert available</p>
-			<?php endif; ?>
+			<div class="card mb-3">
+				<?php $class = ($mealObject->allowed_dessert == 1) ? "" : " text-muted"; ?>
+				<div class="card-body <?= $class; ?>">
+					<h5 class="card-title text-truncate">Dessert</h5>
+					<h1><i class="bi bi-cookie" style="font-size: 2rem;"></i></h1>
+				</div>
+			</div>
 		</div>
 	</div>
 </div>

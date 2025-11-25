@@ -50,7 +50,7 @@ echo pageTitle(
 	<div class="col-md-7 col-lg-8">
 		<h4>Meal Details</h4>
 		
-		<form method="post" action="<?= htmlspecialchars($_SERVER['REQUEST_URI']) ?>">
+		<form method="post" id="mealEditForm" action="<?= htmlspecialchars($_SERVER['REQUEST_URI']) ?>">
 			<div class="row">
 				<div class="col-4 mb-3">
 					<div class="mb-3">
@@ -472,7 +472,7 @@ editor = SUNEDITOR.create(document.getElementById('menu'), {
 });
 
 // Sync content back to textarea on submit
-document.getElementById('contentEditForm').addEventListener('submit', function(e) {
-	document.getElementById('value').value = editor.getContents();
+document.getElementById('mealEditForm').addEventListener('submit', function(e) {
+	document.getElementById('menu').value = editor.getContents();
 });
 </script>
