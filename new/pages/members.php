@@ -3,6 +3,18 @@ $user->pageCheck('members');
 
 $memberTypes = explode(',', $settings->get('member_types'));
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+	if (isset($_POST['deleteMemberUID'])) {
+		$deleteMemberUID = filter_input(INPUT_POST, 'deleteMemberUID', FILTER_SANITIZE_NUMBER_INT);
+		
+		$member = Member::fromUID($deleteMemberUID);
+		$member->delete();
+	} else {
+		$newMember = new Members();
+		$newMember->create($_POST);
+	}
+}
+
 foreach ($memberTypes as $type) {
 	$members[$type] = Members::getAllByType($type);
 }
@@ -106,14 +118,146 @@ endforeach;
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title">Test Modal <span class="text-danger"><strong>WARNING!</strong></span></h5>
+				<h5 class="modal-title">Add New Member</h5>
 				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
 			<div class="modal-body">
-				Test Modal
-				<p><span class="text-danger"><strong>WARNING!</strong> Are you sure you want to delete this member?</p>
-				<p>This will also delete <strong>all</strong> bookings (past and present) for this member.<p>
-				<p><span class="text-danger"><strong>THIS ACTION CANNOT BE UNDONE!</strong></span></p>
+				<form method="post" action="<?= htmlspecialchars($_SERVER['REQUEST_URI']) ?>">
+					<div class="mb-3">
+						<label for="title" class="form-label">Title</label>
+						<select class="form-select" name="title" id="title" required>
+							<?php
+							$memberTitles = explode(',', $settings->get('member_titles'));
+							
+							foreach ($memberTitles as $title) {
+								$title = trim($title);
+								echo "<option value=\"{$title}\">{$title}</option>";
+							}
+							?>
+						</select>
+						<div class="invalid-feedback">
+							Title is required.
+						</div>
+					</div>
+					
+					<div class="mb-3">
+						<label for="firstname" class="form-label">First name</label>
+						<input type="text" class="form-control" name="firstname" id="firstname" placeholder="First Name" required>
+						<div class="invalid-feedback">
+							Valid first name is required.
+						</div>
+					</div>
+					
+					<div class="mb-3">
+						<label for="firstname" class="form-label">Last name</label>
+						<input type="text" class="form-control" name="lastname" id="lastname" placeholder="Last Name"  required>
+						<div class="invalid-feedback">
+							Valid last name is required.
+						</div>
+					</div>
+					
+					<div class="mb-3">
+						<label for="ldap" class="form-label">LDAP Username</label>
+						<div class="input-group">
+							<span class="input-group-text" onclick="ldapLookup()">@</span>
+							<input
+								type="text"
+								class="form-control"
+								name="ldap"
+								id="ldap"
+								placeholder="LDAP Username"
+								required
+							>
+							<div class="invalid-feedback">
+								Valid LDAP username is required.
+							</div>
+						</div>
+					</div>
+					
+					<div class="mb-3">
+						<label for="title" class="form-label">Member Category</label>
+						<select class="form-select" name="category" id="category" <?= $user->hasPermission('members') ? '' : 'disabled' ?> required>
+							<?php
+							$memberCategories = explode(',', $settings->get('member_categories'));
+							
+							foreach ($memberCategories as $category) {
+								$category = trim($category);
+								echo "<option value=\"{$category}\">{$category}</option>";
+							}
+							?>
+						</select>
+						<div class="invalid-feedback">
+							Valid category is required.
+						</div>
+					</div>
+					
+					<div class="accordion mb-3" id="accordionDietary">
+						<div class="accordion-item">
+							<h2 class="accordion-header">
+								<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne"> Dietary Information&nbsp;<i>(Maximum: <?php echo $settings->get('meal_dietary_allowed'); ?>)</i></button>
+							</h2>
+							<div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+								<div class="accordion-body">
+									<?php
+									$dietaryOptions    = array_map('trim', explode(',', $settings->get('meal_dietary')));
+									$dietaryOptionsMax = (int) $settings->get('meal_dietary_allowed');
+									
+									$output = '';
+									
+									foreach ($dietaryOptions as $index => $dietaryOption) {
+										$safeValue  = htmlspecialchars($dietaryOption, ENT_QUOTES);
+										$checkboxId = "dietary_{$index}";
+									
+										$output .= '<div class="form-check">';
+										$output .= '<input class="form-check-input dietaryOptionsMax" '
+												 . 'type="checkbox" '
+												 . 'onclick="checkMaxCheckboxes(' . $dietaryOptionsMax . ')" '
+												 . 'name="dietary[]" '
+												 . 'id="' . $checkboxId . '" '
+												 . 'value="' . $safeValue . '"' 
+												 . '>';
+										$output .= '<label class="form-check-label" for="' . $checkboxId . '">' 
+												 . $safeValue 
+												 . '</label>';
+										$output .= '</div>';
+									}
+									
+									echo $output;
+									?>
+									
+									<small id="nameHelp" class="form-text text-muted"><?php echo $settings->get('meal_dietary_message'); ?></small>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					<div class="mb-3">
+						<label for="email" class="form-label">Email <span class="text-muted">(Optional)</span></label>
+						<input type="email" class="form-control" name="email" id="email" placeholder="Email address">
+					</div>
+					
+					<div class="mb-3">
+						<label for="type" class="form-label">Member Type</label>
+						<select class="form-select" name="type" id="type" <?= $user->hasPermission('members') ? '' : 'disabled' ?> required>
+							<?php
+							$memberTypes = explode(',', $settings->get('member_types'));
+							
+							foreach ($memberTypes as $type) {
+								$type = trim($type);
+								echo "<option value=\"{$type}\">{$type}</option>";
+							}
+							?>
+						</select>
+						<div class="invalid-feedback">
+							Valid member type is required.
+						</div>
+					</div>
+					
+					<div class="modal-footer">
+						<button type="button" class="btn btn-link text-muted" data-bs-dismiss="modal">Close</button>
+						<button type="submit" class="btn btn-primary">Add Member</button>
+					</div>
+				</form>
 			</div>
 		</div>
 	</div>

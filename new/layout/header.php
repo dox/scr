@@ -51,19 +51,36 @@ if (APP_DEBUG) {
 				</button>
 				
 				<div class="dropdown">
-					<a href="#" id="bd-theme" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Toggle theme (auto)">
+					<a href="#" id="bd-theme" class="d-block link-body-emphasis text-decoration-none dropdown-toggle"
+					   data-bs-toggle="dropdown" aria-expanded="true" aria-label="Toggle theme (auto)">
 						<i class="bi bi-circle-half me-2"></i>
 						<span class="visually-hidden" id="bd-theme-text">Toggle theme</span>
 					</a>
-					<ul class="dropdown-menu dropdown-menu-end text-small">
+				
+					<ul class="dropdown-menu dropdown-menu-end text-small" data-bs-popper="static">
 						<li>
-							<button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="light" aria-pressed="false"> <i class="bi bi-sun me-2"></i> Light <i class="bi bi-check2 d-none"></i></button>
+							<button type="button"
+								class="dropdown-item d-flex justify-content-between align-items-center"
+								data-bs-theme-value="light" aria-pressed="false">
+								<span><i class="bi bi-sun me-2"></i> Light</span>
+								<i class="bi bi-check2 d-none"></i>
+							</button>
 						</li>
 						<li>
-							<button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark" aria-pressed="false"> <i class="bi bi-moon-stars-fill me-2"></i> Dark <i class="bi bi-check2 d-none"></i></button>
+							<button type="button"
+								class="dropdown-item d-flex justify-content-between align-items-center"
+								data-bs-theme-value="dark" aria-pressed="false">
+								<span><i class="bi bi-moon-stars-fill me-2"></i> Dark</span>
+								<i class="bi bi-check2 d-none"></i>
+							</button>
 						</li>
 						<li>
-							<button type="button" class="dropdown-item d-flex align-items-center active" data-bs-theme-value="auto" aria-pressed="true"> <i class="bi bi-circle-half me-2"></i> Auto <i class="bi bi-check2"></i></button>
+							<button type="button"
+								class="dropdown-item d-flex justify-content-between align-items-center active"
+								data-bs-theme-value="auto" aria-pressed="true">
+								<span><i class="bi bi-circle-half me-2"></i> Auto</span>
+								<i class="bi bi-check2"></i>
+							</button>
 						</li>
 					</ul>
 				</div>

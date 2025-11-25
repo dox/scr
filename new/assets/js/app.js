@@ -58,26 +58,53 @@ function filterList(inputSelector, listSelector) {
   });
 }
 
-// load remote content for menu modal
-document.addEventListener('click', function(e) {
-  const trigger = e.target.closest('.load-remote-menu');
-  if (!trigger) return;
-  e.preventDefault();
+function remoteModalLoader(triggerSelector, modalSelector, bodySelector) {
+  document.addEventListener('click', e => {
+	const trigger = e.target.closest(triggerSelector);
+	if (!trigger) return;
 
-  const url = trigger.dataset.url;
-  const target = document.querySelector('#modalBody');
+	e.preventDefault();
 
-  target.innerHTML = '<div class="text-muted">Loading...</div>';
+	const url = trigger.dataset.url;
+	const target = document.querySelector(bodySelector);
 
-  fetch(url)
-	.then(resp => resp.text())
-	.then(html => {
-	  target.innerHTML = html;
-	  bootstrap.Modal.getOrCreateInstance(
-		document.querySelector('#menuModal')
-	  ).show();
-	})
-	.catch(() => {
-	  target.innerHTML = '<div class="text-danger">Error loading content</div>';
-	});
-});
+	target.innerHTML = '<div class="text-muted">Loading...</div>';
+
+	fetch(url)
+	  .then(r => r.text())
+	  .then(html => {
+		target.innerHTML = html;
+
+		// announce that the fragment is now alive in the DOM
+		document.dispatchEvent(new CustomEvent('ajax-modal-loaded'), {});
+
+		bootstrap.Modal.getOrCreateInstance(
+		  document.querySelector(modalSelector)
+		).show();
+	  })
+	  .catch(() => {
+		target.innerHTML = '<div class="text-danger">Error loading content</div>';
+	  });
+  });
+}
+
+function enableOnExactMatch(inputId, buttonId, triggerText) {
+	const field = document.getElementById(inputId);
+	const button = document.getElementById(buttonId);
+
+	button.disabled = (field.value !== triggerText);
+}
+
+function toggleReason(dropdownId, inputId, triggerValue) {
+	const select = document.getElementById(dropdownId);
+	const input = document.getElementById(inputId);
+
+	function update() {
+		const show = select.value === triggerValue; // only when equal
+		input.classList.toggle('d-none', !show);
+		input.required = show;
+	}
+
+	select.addEventListener('change', update);
+	update();
+}

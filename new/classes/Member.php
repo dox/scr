@@ -24,7 +24,7 @@ class Member extends Model {
 	protected $db;
 	protected static string $table = 'members';
 	
-	protected function __construct() {
+	public function __construct() {
 		$this->uid = null;
 		$this->enabled = false;
 		$this->type = null;
@@ -115,29 +115,27 @@ class Member extends Model {
 		if (!empty($this->lastname)) {
 			$parts[] = $this->lastname;
 		}
-	
-		return implode(' ', $parts);
+		
+		$imploded = html_entity_decode(implode(' ', $parts), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+		
+		return $imploded;
 	}
 	
-	public function public_displayName() {
-		if ($user->hasPermission("members")) {
+	public function public_displayName(): string {
+		global $user;
+	
+		// Base name
+		if ($user->hasPermission("members") || $this->opt_in == 1) {
 			$name = $this->name();
 		} else {
-			if ($this->opt_in == 1) {
-				$name = $this->name();
-			} else {
-				$name  = "<div class=\"col-6\">";
-				$name .= "<span class=\"placeholder col-1\"></span> ";
-				$name .= "<span class=\"placeholder col-2\"></span> ";
-				$name .= "<span class=\"placeholder col-3\"></span>";
-				$name .= "</div>";
-			}
+			$name = "Hidden";
 		}
 	
-		if ($this->ldap == $_SESSION['username']) {
-			$name = $this->name() . " <i>(You)</i>";
+		// Add "(You)" if this is the current user
+		if ($user->getUsername() === $this->ldap) {
+			$name .= ' <i>(You)</i>';
 		}
-		
+	
 		return $name;
 	}
 	
@@ -186,7 +184,7 @@ class Member extends Model {
 		$rows = $db->fetchAll($sql, ['ldap' => $this->ldap]);
 	
 		foreach ($rows as $row) {
-			$bookings[] = new Booking($row['uid']);
+			$bookings[] = Booking::fromUID($row['uid']);
 		}
 	
 		return $bookings;
@@ -207,7 +205,7 @@ class Member extends Model {
 		$rows = $db->fetchAll($sql, ['ldap' => $this->ldap]);
 	
 		foreach ($rows as $row) {
-			$bookings[] = new Booking($row['uid']);
+			$bookings[] = Booking::fromUID($row['uid']);
 		}
 	
 		return $bookings;
@@ -237,19 +235,25 @@ class Member extends Model {
 	}
 	
 	public function update(array $postData) {
-		global $db;
+		global $db, $user;
 	
 		// Map normal text/select fields
 		$fields = [
 			'title'      => $postData['title'] ?? null,
 			'firstname'  => $postData['firstname'] ?? null,
 			'lastname'   => $postData['lastname'] ?? null,
-			'ldap'       => $postData['ldap'] ?? null,
-			'category'   => $postData['category'] ?? null,
 			'email'      => $postData['email'] ?? null,
-			'type'       => $postData['type'] ?? null,
-			'enabled'    => isset($postData['enabled']) ? (int)$postData['enabled'] : 0,
 		];
+		
+		// Map privileged text/select fields
+		if ($user->hasPermission("member")) {
+			$fields = array_merge($fields, [
+				'ldap'       => $postData['ldap'] ?? null,
+				'category'   => $postData['category'] ?? null,
+				'type'       => $postData['type'] ?? null,
+				'enabled'    => isset($postData['enabled']) ? (int)$postData['enabled'] : 0,
+			]);
+		}
 	
 		// Handle checkboxes / arrays (dietary, permissions)
 		$fields['dietary'] = isset($postData['dietary']) 
@@ -277,44 +281,6 @@ class Member extends Model {
 		);
 	
 		return $updatedRows;
-	}
-	
-	public function save() {
-		if (isset($this->id)) {
-			// update
-			$sql = "UPDATE " . static::$table . " 
-					SET user_id = ?, budget_code = ?, amount = ?, description = ?, invoice_path = ? 
-					WHERE id = ?";
-			return $this->db->query($sql, [
-				$this->user_id, $this->budget_code, $this->amount,
-				$this->description, $this->invoice_path, $this->id
-			]);
-		} else {
-			// insert
-			$sql = "INSERT INTO " . static::$table . " (user_id, budget_code, amount, description, invoice_path, created_at) 
-					VALUES (?, ?, ?, ?, ?, NOW())";
-			$this->db->query($sql, [
-				$this->user_id, $this->budget_code, $this->amount,
-				$this->description, $this->invoice_path
-			]);
-
-			$this->id = $this->db->lastInsertId();
-			return $this->id;
-		}
-	}
-	
-	public function items() {
-		$itemsArray = [];
-		
-		if (isset($this->items)) {
-			$items = json_decode($this->items, true);
-			
-			foreach ($items AS $item) {
-				$itemsArray[] = $item;
-			}
-		}
-		
-		return $itemsArray;
 	}
 	
 	public function bookingsByDay(): array {
@@ -358,7 +324,24 @@ class Member extends Model {
 	}
 
 	public function delete() {
-		if (!isset($this->id)) return false;
-		return $this->db->query("DELETE FROM " . static::$table . " WHERE id = ?", [$this->id]);
+		global $db;
+		
+		if (!isset($this->uid)) return false;
+		
+		// Send to database to delete bookings
+		$deleteBookings = $db->delete(
+			'bookings',
+			['member_ldap' => $this->ldap],
+			'logs'
+		);
+		
+		// Send to database to delete bookings
+		$deleteMember = $db->delete(
+			static::$table,
+			['uid' => $this->uid],
+			'logs'
+		);
+		
+		return true;
 	}
 }

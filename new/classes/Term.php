@@ -49,9 +49,14 @@ class Term extends Model {
 	}
 	
 	public function delete() {
+		global $db;
 		if (!isset($this->uid)) return false;
 		
-		return $this->db->query("DELETE FROM " . static::$table . " WHERE uid = ?", [$this->uid]);
+		$db->delete(
+			static::$table,
+			['uid' => $this->uid],
+			'logs'
+		);
 	}
 	
 	public function mealsInTerm() {

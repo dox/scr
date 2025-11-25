@@ -49,28 +49,36 @@ class Meal extends Model {
 		return $this->name;
 	}
 	
-	public function save() {
-		if (isset($this->id)) {
-			// update
-			$sql = "UPDATE " . static::$table . " 
-					SET user_id = ?, budget_code = ?, amount = ?, description = ?, invoice_path = ? 
-					WHERE id = ?";
-			return $this->db->query($sql, [
-				$this->user_id, $this->budget_code, $this->amount,
-				$this->description, $this->invoice_path, $this->id
-			]);
-		} else {
-			// insert
-			$sql = "INSERT INTO " . static::$table . " (user_id, budget_code, amount, description, invoice_path, created_at) 
-					VALUES (?, ?, ?, ?, ?, NOW())";
-			$this->db->query($sql, [
-				$this->user_id, $this->budget_code, $this->amount,
-				$this->description, $this->invoice_path
-			]);
-
-			$this->id = $this->db->lastInsertId();
-			return $this->id;
-		}
+	public function update(array $postData) {
+		global $db;
+	
+		// Map normal text/select fields
+		$fields = [
+			'type'      => $postData['type'] ?? null,
+			'name'  => $postData['name'] ?? null,
+			'location'   => $postData['location'] ?? null,
+			'date_meal'   => $postData['date_meal'] ?? null,
+			'date_cutoff'   => $postData['date_cutoff'] ?? null,
+			'scr_capacity'   => $postData['scr_capacity'] ?? null,
+			'scr_dessert_capacity'   => $postData['scr_dessert_capacity'] ?? null,
+			'scr_guests'   => $postData['scr_guests'] ?? null,
+			'menu'   => $postData['menu'] ?? null,
+			'notes'   => $postData['notes'] ?? null,
+			'photo'   => $postData['photo'] ?? null,
+			'charge_to'   => $postData['charge_to'] ?? null,
+			'allowed_wine'   => $postData['allowed_wine'] ?? '0',
+			'allowed_dessert'   => $postData['allowed_dessert'] ?? '0'
+		];
+	
+		// Send to database update
+		$updatedRows = $db->update(
+			static::$table,
+			$fields,
+			['uid' => $this->uid],
+			'logs'
+		);
+	
+		return $updatedRows;
 	}
 	
 	public function bookings(): array {
@@ -78,16 +86,19 @@ class Meal extends Model {
 		
 		$bookings = [];
 	
-		$sql  = "SELECT bookings.uid AS uid
-				 FROM bookings
-				 LEFT JOIN meals ON bookings.meal_uid = meals.uid
-				 WHERE meals.uid = :uid
-				 ORDER BY meals.date_meal DESC";
+		$sql = "
+			SELECT bookings.uid AS uid
+			FROM bookings
+			LEFT JOIN meals ON bookings.meal_uid = meals.uid
+			LEFT JOIN members ON bookings.member_ldap = members.ldap
+			WHERE meals.uid = :uid
+			ORDER BY members.precedence ASC
+		";
 	
 		$rows = $db->fetchAll($sql, ['uid' => $this->uid]);
 	
 		foreach ($rows as $row) {
-			$bookings[] = new Booking($row['uid']);
+			$bookings[] = Booking::fromUID($row['uid']);
 		}
 	
 		return $bookings;
@@ -111,10 +122,42 @@ class Meal extends Model {
 	
 		return $count;
 	}
-
+	
+	public function totalDessertDiners(): int {
+		$count = 0;
+		
+		if (!$this->allowed_dessert) return $count;
+	
+		foreach ($this->bookings() as $booking) {
+			if ($booking->dessert) {
+				// Each booking counts as one person
+				$count++;
+				
+				// Any guests include dessert if the host diner is having dessert
+				$count += count($booking->guests());
+			}
+		}
+	
+		return $count;
+	}
+	
 	public function delete() {
-		if (!isset($this->id)) return false;
-		return $this->db->query("DELETE FROM " . static::$table . " WHERE id = ?", [$this->id]);
+		global $db;
+		if (!isset($this->uid)) return false;
+		
+		// Delete bookings
+		$db->delete(
+			"bookings",
+			['meal_uid' => $this->uid],
+			'logs'
+		);
+		
+		// Delete meal
+		$db->delete(
+			static::$table,
+			['uid' => $this->uid],
+			'logs'
+		);
 	}
 	
 	public function photographURL(): string {
@@ -125,11 +168,11 @@ class Meal extends Model {
 		$filePath = $_SERVER['DOCUMENT_ROOT'] . $urlPath;
 	
 		// Use default if photo is empty
-		$filename = $this->photo ?: 'default.png';
+		$filename = $this->photo ?: 'generic.png';
 	
 		// If the file does not exist on disk, fall back to default
 		if (!file_exists($filePath . $filename)) {
-			$filename = 'default.png';
+			$filename = 'generic.png';
 		}
 	
 		return $urlPath . $filename;
@@ -165,7 +208,7 @@ class Meal extends Model {
 					? "<h5 class=\"card-title mb-0\"><a href=\"$mealURL\" class=\"text-decoration-none \">" . $this->name . "</a></h5>"
 					: "<h5 class=\"card-title mb-0\">" . $this->name . "</h5>";
 				
-				$output .= $this->menuTooltip(); // assumes this returns the <a> with SVG
+				$output .= $this->menuTooltip();
 			$output .= "</div>"; // end title row
 			
 			$output .= "<ul class=\"list-unstyled small text-muted mb-3\">";
@@ -175,14 +218,10 @@ class Meal extends Model {
 			// Progress bars
 			$output .= $this->progressBar("Dinner");
 			
-			//if ($this->scr_dessert_capacity > 0 && $this->total_dessert_bookings_this_meal('SCR') >= $this->scr_dessert_capacity) {
-			//  $output .= $this->progressBar("Dessert");
-			//}
-			
 			$output .= "</div>"; // end card-body
 			
 			$output .= "<div class=\"card-footer bg-transparent border-0 pt-0\">";
-				//$output .= $this->bookingButton();
+				$output .= $this->bookingButton();
 			$output .= "</div>"; // end footer
 			
 		$output .= "</div>"; // end card
@@ -217,6 +256,123 @@ class Meal extends Model {
 		return $output;
 	}
 	
+	private function getBookingButtonText(): string {
+		$booking = Booking::fromMealUID($this->uid);
+	
+		if ($booking->exists()) {
+			return "Manage Booking";
+		}
+	
+		if (!$this->isCutoffValid()) {
+			return "Deadline Passed";
+		}
+	
+		if (!$this->hasCapacity()) {
+			return "Capacity Reached";
+		}
+	
+		return "Book Meal";
+	}
+	
+	private function getBookingButtonClass(): string {
+		$booking = Booking::fromMealUID($this->uid);
+	
+		if ($booking->exists()) {
+			return "btn-success";
+		}
+	
+		if (!$this->isCutoffValid() || !$this->hasCapacity()) {
+			return "btn-secondary disabled";
+		}
+	
+		return "btn-primary";
+	}
+	
+	private function getBookingButtonLink(): string {
+		$booking = Booking::fromMealUID($this->uid);
+	
+		if ($booking->exists()) {
+			return "index.php?page=booking&uid=" . urlencode($booking->uid);
+		}
+	
+		return "#";
+	}
+	
+	public function bookingButton(): string {
+		$text = $this->getBookingButtonText();
+		$class = $this->getBookingButtonClass();
+		$link = $this->getBookingButtonLink();
+	
+		return sprintf(
+			'<a href="%s" id="mealUID-%s" class="btn btn-sm %s w-100">%s</a>',
+			htmlspecialchars($link),
+			htmlspecialchars($this->uid),
+			$class,
+			htmlspecialchars($text)
+		);
+	}
+	
+	private function bookingButton2() {
+		$bookingsClass = new bookings();
+		$userType = $_SESSION['type'] ?? '';
+		$username = $_SESSION['username'] ?? '';
+		$bookingExists = $bookingsClass->bookingExistCheck($this->uid, $username);
+		
+		$bookingLink = "#";
+		$bookingClass = "btn-primary";
+		$bookingOnClick = "onclick=\"bookMealQuick(this.id)\"";
+		$bookingDisplayText = "Book Meal";
+	  
+		  // If a booking already exists
+		  if ($bookingExists) {
+			  $bookingLink = "index.php?n=booking&mealUID=" . $this->uid;
+			  $bookingClass = "btn-success";
+			  $bookingOnClick = "";
+			  $bookingDisplayText = "Manage Booking";
+		  } else {
+			  // Booking does not exist: check eligibility in priority order
+	  
+			  if (!$this->check_member_ok()) {
+				  $bookingClass = "btn-secondary disabled";
+				  $bookingOnClick = "";
+				  $bookingDisplayText = "Your account is disabled";
+	  
+			  } elseif (!$this->check_member_type_ok(true)) {
+				  $bookingClass = "btn-secondary disabled";
+				  $bookingOnClick = "";
+				  $bookingDisplayText = "Restricted Meal";
+	  
+			  } elseif (!$this->check_capacity_ok()) {
+				  if (checkpoint_charlie("bookings")) {
+					  $bookingClass = "btn-warning";
+					  $bookingDisplayText = "Capacity Reached";
+				  } else {
+					  $bookingClass = "btn-warning disabled";
+					  $bookingOnClick = "";
+					  $bookingDisplayText = "Capacity Reached";
+				  }
+	  
+			  } elseif (!$this->check_cutoff_ok()) {
+				  if (checkpoint_charlie("bookings")) {
+					  $bookingClass = "btn-secondary";
+					  $bookingDisplayText = "Deadline Passed";
+				  } else {
+					  $bookingClass = "btn-secondary disabled";
+					  $bookingOnClick = "";
+					  $bookingDisplayText = "Deadline Passed";
+				  }
+			  }
+		  }
+	  
+		  // Build button HTML
+		  $output  = "<a class=\"btn btn-sm {$bookingClass} w-100\" href=\"" . htmlspecialchars($bookingLink) . "\" ";
+		  $output .= "id=\"mealUID-" . htmlspecialchars($this->uid) . "\" {$bookingOnClick}>";
+		  $output .= htmlspecialchars($bookingDisplayText);
+		  $output .= "</a>";
+	  
+		  return $output;
+	  }
+	
 	public function displayListGroupItem(): string {
 		global $user;
 	
@@ -245,5 +401,32 @@ class Meal extends Model {
 		$output .= '</li>';
 	
 		return $output;
+	}
+	
+	// Meal booking logic
+	public function hasCapacity(): bool {
+		return $this->totalDiners() < $this->scr_capacity;
+	}
+	
+	public function hasDessertCapacity(): bool {
+		if (!$this->allowed_dessert) return false;
+		
+		return $this->totalDessertDiners() < $this->scr_dessert_capacity;
+	}
+	
+	public function isCutoffValid(): bool {
+		return new DateTime() < new DateTime($this->date_cutoff);
+	}
+	
+	public function hasGuestCapacity(): bool {
+		// this needs to be a booking check??
+		return $this->totalDiners() < $this->scr_guests;
+	}
+	
+	public function canBook(): bool {
+		return $this->hasCapacity()
+			&& $this->hasDessertCapacity()
+			&& $this->isCutoffValid()
+			&& $this->hasGuestCapacity();
 	}
 }

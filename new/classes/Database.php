@@ -112,5 +112,44 @@ class Database {
 	
 		return $affected;
 	}
+	
+	public function delete(string $table, array $where, bool $logChanges = false): int {
+		if (empty($where)) {
+			throw new InvalidArgumentException("WHERE conditions cannot be empty for delete.");
+		}
+	
+		// Build WHERE clause
+		$whereSql = implode(" AND ", array_map(fn($k) => "$k = :where_$k", array_keys($where)));
+	
+		// Fetch existing record before removal
+		$existing = $this->fetch(
+			"SELECT * FROM `$table` WHERE $whereSql",
+			array_combine(
+				array_map(fn($k) => ":where_$k", array_keys($where)),
+				array_values($where)
+			)
+		);
+	
+		// Execute delete
+		$stmt = $this->query("DELETE FROM `$table` WHERE $whereSql", array_combine(
+			array_map(fn($k) => ":where_$k", array_keys($where)),
+			array_values($where)
+		));
+	
+		$affected = $stmt->rowCount();
+	
+		// Optional logging
+		if ($logChanges && $affected) {
+			$logger = new Log();
+			$description = sprintf(
+				"Deleted record from %s for %s",
+				$table,
+				json_encode($where)
+			);
+			$logger->add($description, Log::WARNING);
+		}
+	
+		return $affected;
+	}
 
 }

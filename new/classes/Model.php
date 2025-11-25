@@ -106,22 +106,13 @@ class Log extends Model {
 		return $stmt !== false;
 	}
 	
-	/**
-	 * Retrieve recent log entries.
-	 *
-	 * @param int $limit Number of entries to return.
-	 * @return array
-	 */
-	public function getRecent(int $limit = 50): array {
-		$sql = "SELECT * FROM " . static::$table . "
-				ORDER BY date DESC
-				LIMIT :limit";
+	public function getRecent(int $age = 30): array {
+		$sql = "SELECT *
+				FROM " . static::$table . "
+				WHERE date >= DATE_SUB(CURDATE(), INTERVAL ? DAY)
+				ORDER BY date DESC";
 	
-		// Because PDO doesn’t allow named parameters for LIMIT with emulated prepares off,
-		// we’ll use a positional placeholder instead.
-		$sql = str_replace(':limit', '?', $sql);
-	
-		return $this->db->fetchAll($sql, [$limit]);
+		return $this->db->fetchAll($sql, [$age]);
 	}
 	
 	/**

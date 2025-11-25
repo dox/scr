@@ -1,13 +1,18 @@
 <?php
 $user->pageCheck('logs');
 
-$logs = $log->getRecent();
+$logsDisplay = $settings->get('logs_display');
+$logsRetention = $settings->get('logs_retention');
 
 echo pageTitle(
 	"Logs",
-	"Admin/User logs for the last " . $settings->get('logs_display') . " days (" . $settings->get('logs_retention') . " days available)"
+	"Admin/User logs for the last {$logsDisplay} days ({$logsRetention} days available)"
 );
 ?>
+
+<div class="mb-3">
+	<canvas id="chart_logsByDay" style="height: 250px;"></canvas>
+</div>
 
 <table class="table table-striped">
 	<thead>
@@ -21,7 +26,9 @@ echo pageTitle(
 	</thead>
 	<tbody>
 		<?php
-		foreach ($logs as $row) {
+		$chartData = [];
+		
+		foreach ($log->getRecent(3) as $row) {
 			if ($row['category'] == "INFO") {
 				$typeBadgeClass = "text-bg-info";
 			} elseif ($row['category'] == "WARNING") {
@@ -53,6 +60,41 @@ echo pageTitle(
 			
 		}
 		?>
-			
 	</tbody>
 </table>
+
+<?php
+foreach ($log->getRecent($logsDisplay) as $row) {
+	$date = date('Y-m-d', strtotime($row['date']));
+	$chartData[$date] = ($chartData[$date] ?? 0) + 1;
+}
+
+ksort($chartData);
+?>
+<script>
+const ctx = document.getElementById('chart_logsByDay');
+new Chart(ctx, {
+	type: 'bar',
+	data: {
+		labels: <?= json_encode(array_keys($chartData)) ?>,
+		datasets: [{
+			label: 'Logs',
+			data: <?= json_encode($chartData) ?>,
+			borderWidth: 2,
+			tension: 0.3,
+			pointRadius: 0,
+			pointHoverRadius: 0
+		}]
+	},
+	options: {
+		maintainAspectRatio: false,
+		plugins: {
+		  legend: { display: false }
+		},
+		scales: {
+			x: { title: { display: false } },
+			y: { beginAtZero: true, title: { display: false } }
+		}
+	}
+});
+</script>

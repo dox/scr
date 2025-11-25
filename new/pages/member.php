@@ -1,6 +1,7 @@
 <?php
 $ldap   = $_GET['ldap'] ?? $user->getUsername() ?? null;
 $member = Member::fromLDAP($ldap);
+printArray($_SESSION);
 
 if (!isset($member->uid)) {
 	die("Unknown or unavailable member");
@@ -257,7 +258,7 @@ echo pageTitle(
 				}
 				?>
 			</div>
-			<div class="form-check form-switch">
+			<div class="form-check form-switch mb-3">
 				<input class="form-check-input" type="checkbox" id="default_dessert" name="default_dessert" value="1" <?php if ($member->default_dessert == "1") { echo " checked";} ?> switch>
 				<label class="form-check-label" for="email_reminders">Default Dessert <small>(when available)</small></label>
 			</div>
@@ -293,6 +294,7 @@ echo pageTitle(
 	<div class="col-md-5 col-lg-4">
 		<?php
 		$upcomingBookings = $member->upcomingBookings();
+		krsort($upcomingBookings);
 		?>
 		<h4 class="d-flex justify-content-between align-items-center mb-3">
 		  <span>Upcoming Meals</span>
@@ -345,20 +347,28 @@ echo pageTitle(
 
 <!-- Delete Member Modal -->
 <div class="modal fade" tabindex="-1" id="deleteMemberModal" data-backdrop="static" data-keyboard="false" aria-hidden="true">
+	<form method="post" action="index.php?page=members">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title">Test Modal <span class="text-danger"><strong>WARNING!</strong></span></h5>
+				<h5 class="modal-title">Delete Member <span class="text-danger"><strong>WARNING!</strong></span></h5>
 				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
 			<div class="modal-body">
-				Test Modal
 				<p><span class="text-danger"><strong>WARNING!</strong></span> Are you sure you want to delete this member?</p>
-				<p>This will also delete <strong>all</strong> bookings (past and present) for this member.</p>p>
+				<p>This will also delete <strong>all</strong> bookings (past and present) for this member.</p>
 				<p><span class="text-danger"><strong>THIS ACTION CANNOT BE UNDONE!</strong></span></p>
+				<input type="text" class="form-control mb-3" id="delete_confirm" placeholder="Type 'DELETE' to confirm" oninput="enableOnExactMatch('delete_confirm', 'delete_button', 'DELETE')">
+				
+				<div class="modal-footer">
+					<button type="button" class="btn btn-link text-muted" data-bs-dismiss="modal">Close</button>
+					<button type="submit" class="btn btn-danger" id="delete_button" disabled>Delete Member</button>
+					<input type="hidden" name="deleteMemberUID" value="<?= $member->uid; ?>">
+				</div>
 			</div>
 		</div>
 	</div>
+	</form>
 </div>
 
 <!-- Calendar Subscribe Modal -->
@@ -452,7 +462,6 @@ const chart = new Chart(ctx, {
   }
 });
 </script>
-
 
 <script>
 // Initialize stats links

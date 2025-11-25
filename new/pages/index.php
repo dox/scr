@@ -87,3 +87,8 @@ document.addEventListener('DOMContentLoaded', () => {
 	</div>
   </div>
 </div>
+
+<script>
+// Load AJAX menu
+remoteModalLoader('.load-remote-menu', '#menuModal', '#modalBody');
+</script>

@@ -60,9 +60,14 @@ class User {
 			return false;
 		}
 		
+		// delete token if expired
 		if (strtotime($record['token_expiry']) < time()) {
-			$db->query("DELETE FROM tokens WHERE token = ?", [$token]);
-			error_log("Token expired and removed.");
+			$db->delete(
+				'tokens',
+				['token' => $token],
+				false
+			);
+			
 			return false;
 		}
 
@@ -162,7 +167,7 @@ class User {
 		$expiryDate = (new DateTime('+1 month'))->format('Y-m-d H:i:s');
 	
 		// Delete any old tokens
-		$db->query("DELETE FROM tokens WHERE token_expiry > ?", [$expiryDate]);
+		$db->query("DELETE FROM tokens WHERE token_expiry < NOW()");
 	
 		// Insert new token with expiry
 		$db->query("
@@ -183,7 +188,12 @@ class User {
 		global $db;
 
 		if (!empty($_COOKIE[self::COOKIE_NAME])) {
-			$db->query("DELETE FROM tokens WHERE token = ?", [$_COOKIE[self::COOKIE_NAME]]);
+			$db->delete(
+				'tokens',
+				['token' => $_COOKIE[self::COOKIE_NAME]],
+				false
+			);
+
 			setcookie(self::COOKIE_NAME, '', [
 				'expires'  => time() - 3600,
 				'path'     => '/',

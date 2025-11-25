@@ -1,9 +1,8 @@
 <?php
-
 class Booking extends Model {
 	public $uid;
-	public $type;
 	public $date;
+	public $type;
 	public $meal_uid;
 	public $member_ldap;
 	public $guests_array; // json encoded array
@@ -16,12 +15,58 @@ class Booking extends Model {
 	protected $db;
 	protected static string $table = 'bookings';
 	
-	public function __construct($uid = null) {
-		$this->db = Database::getInstance();
+	public function __construct() {}
 	
-		if ($uid !== null) {
-			$this->getOne($uid);
+	public static function fromUID(?string $uid): self {
+		global $db;
+	
+		$self = new self();
+	
+		// Guard format
+		if ($uid === null || !preg_match('/^[0-9._-]+$/', $uid)) {
+			return $self;
 		}
+		
+		$query = "SELECT * FROM " . static::$table . " 
+				  WHERE uid = ?";
+		
+		$row = $db->fetch($query, [$uid]);
+	
+		if ($row) {
+			foreach ($row as $key => $value) {
+				$self->$key = $value;
+			}
+		}
+		
+		return $self;
+	}
+	
+	public static function fromMealUID(?string $mealUID): self {
+		global $db, $user;
+	
+		$self = new self();
+	
+		// Guard format
+		if ($mealUID === null || !preg_match('/^[0-9._-]+$/', $mealUID)) {
+			return $self;
+		}
+		
+		// Both boundaries must hold
+		$query = "SELECT * FROM " . static::$table . " 
+				  WHERE meal_uid = ? AND member_ldap = ?";
+		$row = $db->fetch($query, [$mealUID, $user->getUsername()]);
+	
+		if ($row) {
+			foreach ($row as $key => $value) {
+				$self->$key = $value;
+			}
+		}
+	
+		return $self;
+	}
+	
+	public function exists(): bool {
+		return !empty($this->uid);
 	}
 	
 	public function getOne($uid) {
@@ -35,38 +80,23 @@ class Booking extends Model {
 		}
 	}
 	
-	public function save() {
-		if (isset($this->id)) {
-			// update
-			$sql = "UPDATE " . static::$table . " 
-					SET user_id = ?, budget_code = ?, amount = ?, description = ?, invoice_path = ? 
-					WHERE id = ?";
-			return $this->db->query($sql, [
-				$this->user_id, $this->budget_code, $this->amount,
-				$this->description, $this->invoice_path, $this->id
-			]);
-		} else {
-			// insert
-			$sql = "INSERT INTO " . static::$table . " (user_id, budget_code, amount, description, invoice_path, created_at) 
-					VALUES (?, ?, ?, ?, ?, NOW())";
-			$this->db->query($sql, [
-				$this->user_id, $this->budget_code, $this->amount,
-				$this->description, $this->invoice_path
-			]);
-
-			$this->id = $this->db->lastInsertId();
-			return $this->id;
-		}
-	}
-	
 	public function guests(): array {
 		if (empty($this->guests_array)) {
 			return [];
 		}
 	
-		$guests = json_decode($this->guests_array, true);
+		$outer = json_decode($this->guests_array, true);
+		if (!is_array($outer)) {
+			return [];
+		}
 	
-		return is_array($guests) ? $guests : [];
+		// Decode inner JSON and filter out empty elements
+		$decoded = array_filter(array_map(function($jsonValue) {
+			$guest = json_decode($jsonValue, true);
+			return is_array($guest) && !empty(array_filter($guest)) ? $guest : null;
+		}, $outer));
+	
+		return $decoded;
 	}
 	
 	public function displayMealListGroupItem(): string {
@@ -108,10 +138,5 @@ class Booking extends Model {
 		$meal = new Meal($this->meal_uid);
 	
 		return $meal->displayListGroupItem();
-	}
-
-	public function delete() {
-		if (!isset($this->id)) return false;
-		return $this->db->query("DELETE FROM " . static::$table . " WHERE id = ?", [$this->id]);
 	}
 }
