@@ -159,7 +159,7 @@ endforeach;
 					<div class="mb-3">
 						<label for="ldap" class="form-label">LDAP Username</label>
 						<div class="input-group">
-							<span class="input-group-text" onclick="ldapLookup()">@</span>
+							<span class="input-group-text">@</span>
 							<input
 								type="text"
 								class="form-control"

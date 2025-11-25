@@ -46,8 +46,7 @@ class User {
 		}
 
 		$token = $_COOKIE[self::COOKIE_NAME];
-		error_log("Token cookie found: $token");
-
+			
 		$record = $db->fetch("
 			SELECT member_uid, token_expiry
 			FROM tokens
@@ -95,12 +94,8 @@ class User {
 	public function authenticate(string $username, string $password, bool $remember = false): bool {
 		global $log, $db;
 
-		// Bind with service account if defined
-		if (defined('LDAP_BIND_USER') && defined('LDAP_BIND_PASS')) {
-			@ldap_bind($this->ldapConn, LDAP_BIND_USER, LDAP_BIND_PASS);
-		} else {
-			@ldap_bind($this->ldapConn);
-		}
+		// Bind with service account
+		@ldap_bind($this->ldapConn, LDAP_BIND_USER, LDAP_BIND_PASS);
 
 		$filter = "(sAMAccountName={$username})";
 		$search = @ldap_search($this->ldapConn, $this->baseDn, $filter);

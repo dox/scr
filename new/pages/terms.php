@@ -80,7 +80,7 @@ echo pageTitle(
 						
 						<div class="mb-3">
 							<label for="date_start" class="form-label">Term Start Date</label>
-							<div class="input-group" id="datetimepicker">
+							<div class="input-group">
 								<span class="input-group-text"><i class="bi bi-calendar-date"></i></span>
 								<input type="text" class="form-control" name="date_start" id="date_start" placeholder="" value="<?php echo ""; ?>" required>
 							</div>
@@ -89,7 +89,7 @@ echo pageTitle(
 						
 						<div class="mb-3">
 							<label for="date_end" class="form-label">Term End Date</label>
-							<div class="input-group" id="datetimepicker">
+							<div class="input-group">
 								<span class="input-group-text"><i class="bi bi-calendar-date"></i></span>
 								<input type="text" class="form-control" name="date_end" id="date_end" placeholder="" value="<?php echo ""; ?>" required>
 							</div>

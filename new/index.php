@@ -16,14 +16,15 @@ if (!$user->isLoggedIn()) {
 	<div class="container">
 		<?php
 		// Determine which page to show
-		$page = $_GET['page'] ?? 'index';
-		$pageFile = "pages/{$page}.php";
+		$allowed = ['404','booking','guestlist','impersonate','index','information','logs','meal','meals','member','members','settings','term','terms','test'];
 		
-		if (!file_exists($pageFile)) {
-			$pageFile = 'pages/404.php';
+		$page = $_GET['page'] ?? 'index';
+		
+		if (!in_array($page, $allowed, true)) {
+			$page = '404';
 		}
 		
-		require_once $pageFile;
+		require_once __DIR__ . "/pages/{$page}.php";
 		?>
 	</div>
 	

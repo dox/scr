@@ -110,7 +110,7 @@ echo pageTitle(
 			<div class="mb-3">
 				<label for="ldap" class="form-label">LDAP Username</label>
 				<div class="input-group">
-					<span class="input-group-text" onclick="ldapLookup()">@</span>
+					<span class="input-group-text">@</span>
 					<input
 						type="text"
 						class="form-control"
@@ -324,7 +324,7 @@ echo pageTitle(
 		</ul>
 		
 		<div class="text-end">
-			<a class="btn btn-sm btn-outline-light" href="#" role="button"><i class="bi bi-download"></i> export COMING SOON</a>
+			<a class="btn btn-sm btn-outline-light" href="report.php" role="button"><i class="bi bi-download"></i> export COMING SOON</a>
 		</div>
 		
 		<hr>
