@@ -25,8 +25,8 @@ $guest = $booking->guests()[$guestUID];
 	
 	<div class="mb-3">
 		<label for="name">Guest Name</label>
-		<input type="text" class="form-control" name="guest_name" id="guest_name" aria-describedby="termNameHelp" value="<?= $guest['guest_name']; ?>" required="">
-		<small id="nameHelp" class="form-text text-muted">This name will appear on the sign-up list</small>
+		<input type="text" class="form-control" name="guest_name" id="guest_name" aria-describedby="guest_nameHelp" value="<?= $guest['guest_name']; ?>" required="">
+		<small id="guest_nameHelp" class="form-text text-muted">This name will appear on the sign-up list</small>
 	</div>
 	
 	<div class="accordion mb-3" id="accordionDietary">
@@ -66,7 +66,7 @@ $guest = $booking->guests()[$guestUID];
 					echo $output;
 					?>
 					
-					<small id="nameHelp" class="form-text text-muted"><?php echo $settings->get('meal_dietary_message'); ?></small>
+					<small class="form-text text-muted"><?php echo $settings->get('meal_dietary_message'); ?></small>
 				</div>
 			</div>
 		</div>

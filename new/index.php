@@ -8,10 +8,10 @@ if (!$user->isLoggedIn()) {
 ?>
 <html lang="en" data-bs-theme="auto">
 <head>
-	<?php include_once "layout/html_head.php"; ?>
+	<?php require_once "layout/html_head.php"; ?>
 </head>
 <body>
-	<?php include_once "layout/header.php"; ?>
+	<?php require_once "layout/header.php"; ?>
 	
 	<div class="container">
 		<?php
@@ -23,10 +23,10 @@ if (!$user->isLoggedIn()) {
 			$pageFile = 'pages/404.php';
 		}
 		
-		include $pageFile;
+		require_once $pageFile;
 		?>
 	</div>
 	
-	<?php include_once "layout/footer.php"; ?>
+	<?php require_once "layout/footer.php"; ?>
 </body>
 </html>

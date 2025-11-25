@@ -1,415 +1,138 @@
 <?php
 $user->pageCheck('meals');
-$meal = new Meal($_GET['uid']);
-$meals = new Meals();
+
+$mealUID = filter_input(INPUT_GET, 'uid', FILTER_SANITIZE_NUMBER_INT);
+
+$meal = new Meal($mealUID);
 
 echo pageTitle(
 	$meal->name(),
-	formatDate($meal->date_meal) . ", " . $meal->location,
-	[
-		[
-			'permission' => 'meals',
-			'title' => 'Guest List',
-			'class' => '',
-			'event' => 'index.php?page=guestlist',
-			'icon' => 'calendar2-week'
-		],
-		[
-			'permission' => 'meals',
-			'title' => 'Delete Meal',
-			'class' => 'text-danger',
-			'event' => '',
-			'icon' => 'x-octagon',
-			'data' => [
-				'bs-toggle' => 'modal',
-				'bs-target' => '#deleteMealModal'
-			]
-		]
-	]
+	formatDate($meal->date_meal) . ", " . $meal->location
 );
 ?>
 
-<div class="row">
-	<div class="col-md-7 col-lg-8">
-		<h4>Meal Details</h4>
-		
-		<form>
-			<div class="row">
-				<div class="col-4 mb-3">
-					<div class="mb-3">
-						<label for="type" class="form-label">Type</label>
-						<select class="form-select" name="type" id="type" required>
-							<?php
-							$mealTypes = explode(',', $settings->get('meal_types'));
-							
-							foreach ($mealTypes as $type) {
-								$type = trim($type);
-								$selected = ($type === $meal->$type) ? ' selected' : '';
-								echo "<option value=\"{$type}\"{$selected}>{$type}</option>";
-							}
-							?>
-						</select>
-						<div class="invalid-feedback">
-							Title is required.
-						</div>
-					</div>
-				</div>
-				<div class="col-8 mb-3">
-					<div class="mb-3">
-						<label for="name" class="form-label">Name</label>
-						<input type="text" class="form-control" name="name" id="name" placeholder="Name" value="<?php echo $meal->name; ?>" required>
-						<div class="invalid-feedback">
-							Valid meal name is required.
-						</div>
-					</div>
-				</div>
-			</div>
-			
-			<div class="mb-3">
+<div class="row mb-3">
+	<div class="col mb-3">
+		<div class="card">
+			<div class="card-body">
 				<?php
+				$totalDiners = $meal->totalDiners();
+				$totalBookings = count($meal->bookings());
+				$guests = $totalDiners - $totalBookings;
 				?>
-				
-				<label for="location" class="form-label">Location</label>
-				<input type="text" class="form-control" list="locations" name="location" id="location" placeholder="Location" value="<?php echo $meal->location; ?>" required>
-				<div class="invalid-feedback">
-					Valid meal location is required.
-				</div>
-				
-				<datalist id="locations">
-				  <?php
-				  foreach ($meals->locations() as $location) {
-					echo "<option value=\"" . $location . "\">";
-				  }
-				  ?>
-				</datalist>
+				<div class="card-title"><h2>SCR Diners</h2></div>
+				<div class="card-text text-muted"><h4><?= $totalDiners . " (" . $totalBookings . " +" . $guests . " guests)" ?></h4></div>
 			</div>
-			
-			<hr>
-			
-			<div class="row">
-				<div class="col-6 mb-3">
-					<label for="date_meal" class="form-label">Meal Date/Time</label>
-					<div class="input-group" id="datetimepicker">
-						<span class="input-group-text"><i class="bi bi-calendar-date"></i></span>
-						<input type="text" class="form-control" name="date_meal" id="date_meal" placeholder="" value="<?php echo $meal->date_meal; ?>" required>
-					</div>
-					<div class="invalid-feedback">
-						Meal date is required.
-					</div>
-				</div>
-				
-				<div class="col-6 mb-3">
-					<label for="date_cutoff" class="form-label">Meal Date/Time Cut-Off</label>
-					<div class="input-group" id="datetimepicker">
-						<span class="input-group-text"><i class="bi bi-calendar-date"></i></span>
-						<input type="text" class="form-control" name="date_cutoff" id="date_cutoff" placeholder="" value="<?php echo $meal->date_cutoff; ?>" required>
-					</div>
-					<div class="invalid-feedback">
-						Meal cut-off date is required.
-					</div>
-				</div>
-			</div>
-			
-			<hr>
-			
-			<div class="row">
-				<div class="col">
-					<div class="accordion" id="accordionAllowed">
-						<div class="accordion-item">
-							<h2 class="accordion-header">
-								<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">Allowed Groups</button>
-							</h2>
-							<div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionAllowed">
-								<div class="accordion-body">
-									<strong>Select none for everyone to be allowed, otherwise only those member types selected can book this meal</strong>
-									
-									<?php
-									$memberTypes = explode(',', $settings->get('member_categories'));
-									$mealTypesAllowed = explode(',', $meal->allowed);
-									
-									foreach ($memberTypes as $i => $memberType) {
-										$checked = in_array($memberType, $mealTypesAllowed) ? ' checked' : '';
-										?>
-										<div class="form-check">
-											<input class="form-check-input" type="checkbox"
-												   value="<?= htmlspecialchars($memberType) ?>"
-												   name="allowed[]"
-												   id="flexCheckDefault_<?= $i ?>"
-												   <?= $checked ?>>
-											<label class="form-check-label" for="flexCheckDefault_<?= $i ?>">
-												<?= htmlspecialchars($memberType) ?>
-											</label>
-										</div>
-										<?php
-									}
-									?>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-			
-			<hr>
-			
-			<div class="row mb-3">
-				<div class="col">
-					<label for="scr_capacity" class="form-label">Capacity</label>
-					<input type="number" class="form-control" name="scr_capacity" id="scr_capacity" value="<?php echo $meal->scr_capacity; ?>" min="0" required="">
-					<div class="invalid-feedback">
-						SCR Capacity is required.
-					</div>
-				</div>
-				
-				<div class="col mb-3">
-					<label for="scr_dessert_capacity" class="form-label">Dessert Capacity</label>
-					<input type="number" class="form-control" name="scr_dessert_capacity" id="scr_dessert_capacity" value="<?php echo $meal->scr_dessert_capacity; ?>" min="0" required="">
-					<div class="invalid-feedback">
-						SCR Dessert Capacity is required.
-					</div>
-				</div>
-				
-				<div class="col mb-3">
-					<label for="scr_guests" class="form-label">Guests</label>
-					<input type="number" class="form-control" name="scr_guests" id="scr_guests" value="<?php echo $meal->scr_guests; ?>" min="0" required="">
-					<div id="scr_guestsHelp" class="form-text">Per member</div>
-					<div class="invalid-feedback">
-						SCR Guests is required.
-					</div>
-				</div>
-			</div>
-			
-			<hr>
-			
-			<div class="row mb-3">
-				<div class="col">
-					<label for="menu" class="form-label">Menu</label>
-					<textarea rows="4" class="form-control" name="menu" id="menu"><?php echo $meal->menu;?></textarea>
-				</div>
-			</div>
-			
-			<div class="row mb-3">
-				<div class="col">
-					<label for="menu" class="form-label">Notes (Private)</label>
-					<textarea rows="4" class="form-control" name="notes" id="notes"><?php echo $meal->notes;?></textarea>
-				</div>
-			</div>
-			
-			<div class="mb-3">
-				<div class="accordion" id="accordionPhotograph">
-					<div class="accordion-item">
-						<h2 class="accordion-header">
-							<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">Photograph</button>
-						</h2>
-						<div id="flush-collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionPhotograph">
-							<div class="accordion-body">
-								<?php foreach ($meals->cardImages() as $cardImage): ?>
-									<div class="col">
-										<div class="card mb-3">
-											<img src="<?= htmlspecialchars($cardImage) ?>" class="card-img-top" alt="...">
-											<div class="card-body">
-												<p class="card-text">
-													<label class="form-label">
-														<input class="form-check-input" type="radio" 
-															   name="photo" 
-															   value="<?= basename($cardImage) ?>" 
-															   <?= ($meal->photo === basename($cardImage)) ? 'checked' : '' ?>>
-														<?= basename($cardImage) ?>
-													</label>
-												</p>
-											</div>
-										</div>
-									</div>
-								<?php endforeach; ?>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</form>
+		</div>
 	</div>
-	<div class="col-md-5 col-lg-4">
+	<div class="col mb-3">
+		<div class="card">
+			<div class="card-body">
+				<?php
+				$totalDessertDiners = $meal->totalDessertDiners();
+				?>
+				<div class="card-title"><h2>SCR Dessert</h2></div>
+				<div class="card-text text-muted"><h4><?= $totalDessertDiners ?></h4></div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<h4 class="d-flex justify-content-between align-items-center mb-3">Guest List</h4>
+
+<table class="table">
+	<thead>
+		<tr>
+			<th scope="col" width="2em">#</th>
+			<th scope="col">Name</th>
+			<th scope="col" width="2em">
+				<svg width="2em" height="2em" class="mx-1 text-muted">
+					<use xlink:href="img/icons.svg#wine-glass"/>
+				</svg>
+			</th>
+			<th scope="col" width="2em">
+				<svg width="2em" height="2em" class="mx-1 text-muted">
+					<use xlink:href="img/icons.svg#cookie"/>
+				</svg>
+			</th>
+			<th scope="col" width="2em">
+				<svg width="2em" height="2em" class="mx-1 text-muted">
+					<use xlink:href="img/icons.svg#graduation-cap"/>
+				</svg>
+			</th>
+		</tr>
+	</thead>
+	<tbody>
 		<?php
-		$Bookings = $meal->bookings();
-		?>
-		<h4 class="d-flex justify-content-between align-items-center mb-3">
-		  <span>Bookings</span>
-		  <span class="badge bg-secondary rounded-pill"><?php echo $meal->totalDiners(); ?></span>
-		</h4>
-		<ul class="list-group mb-3">
-			<?php
-			foreach ($Bookings as $booking) {
-				echo $booking->displayMealListGroupItem();
+		$i = 1;
+		foreach ($meal->bookings() AS $booking) {
+		  $member = Member::fromLDAP($booking->member_ldap);
+		  
+		  $output  = "<tr>";
+		  $output .= "<th scope=\"row\" rowspan=\"" . count($booking->guests()) + 1 . "\"><h5>" . $i . "</h5></th>";
+		  $output .= "<td>";
+			$output .= "<h4>" . $member->name() . "</h4>";
+			if (!empty($member->dietary)) {
+			  $dietaryArray = explode(",", $member->dietary);
+			  
+			  $output .= implode(", ", $dietaryArray);
 			}
-			?>
-		</ul>
-		
-		<div class="text-end">
-			<a class="btn btn-sm btn-outline-light" href="#" role="button"><i class="bi bi-download"></i> export COMING SOON</a>
-		</div>
-		
-		<h4 class="mb-3">Bookings by Day</h4>
-		<div>
-			<canvas id="chart_bookingsByDay"></canvas>
-		</div>
-	</div>
-</div>
-
-
-<!-- Delete Meal Modal -->
-<div class="modal fade" tabindex="-1" id="deleteMealModal" data-backdrop="static" data-keyboard="false" aria-hidden="true">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title">Test Modal <span class="text-danger"><strong>WARNING!</strong></span></h5>
-				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-			</div>
-			<div class="modal-body">
-				Test Modal
-				<p><span class="text-danger"><strong>WARNING!</strong> Are you sure you want to delete this member?</p>
-				<p>This will also delete <strong>all</strong> bookings (past and present) for this member.<p>
-				<p><span class="text-danger"><strong>THIS ACTION CANNOT BE UNDONE!</strong></span></p>
-			</div>
-		</div>
-	</div>
-</div>
-
-<?php
-$points = [];
-$cumulative = 0;
-
-// First, extract bookings into temporary array
-$temp = [];
-foreach ($meal->bookings() as $booking) {
-
-	$date = date('Y-m-d', strtotime($booking->date));
-
-	$guestCount = 0;
-	if (!empty($booking->guests_array)) {
-		$guestArray = json_decode($booking->guests_array, true);
-		$guestCount = is_array($guestArray) ? count($guestArray) : 0;
-	}
-
-	$total = 1 + $guestCount;
-
-	// Group totals by date (multiple bookings same day)
-	if (!isset($temp[$date])) {
-		$temp[$date] = 0;
-	}
-	$temp[$date] += $total;
-}
-
-// Sort dates
-ksort($temp);
-
-// Find date range
-$start = array_key_first($temp);
-$end   = array_key_last($temp);
-
-$current = new DateTime($start);
-$endDate = new DateTime($end);
-
-// Build full day-by-day set including missing days
-while ($current <= $endDate) {
-
-	$day = $current->format('Y-m-d');
-
-	if (isset($temp[$day])) {
-		$cumulative += $temp[$day];
-	}
-
-	$points[] = [
-		'date' => $day,
-		'cumulative' => $cumulative,
-	];
-
-	$current->modify('+1 day');
-}
-?>
-
-<script>
-const ctx = document.getElementById('chart_bookingsByDay');
-new Chart(ctx, {
-	type: 'line',
-	data: {
-		labels: <?= json_encode(array_column($points, 'date')) ?>,
-		datasets: [{
-			label: 'Bookings',
-			data: <?= json_encode(array_column($points, 'cumulative')) ?>,
-			borderWidth: 2,
-			tension: 0.3,
-			pointRadius: 0,
-			pointHoverRadius: 0
-		}]
-	},
-	options: {
-		plugins: {
-		  legend: { display: false }
-		},
-		scales: {
-			x: { title: { display: false } },
-			y: { beginAtZero: true, title: { display: false } }
+		  $output .= "</td>";
+		  
+		  $output .= "<td>";
+			if ($booking->wine != "None") {
+			  $output .= "<svg width=\"2em\" height=\"2em\"><use xlink:href=\"assets/images/icons.svg#wine-glass\"/></svg>";
+			}
+		  $output .= "</td>";
+		  $output .= "<td>";
+			if ($booking->dessert == "1") {
+			  $output .= "<i class=\"bi bi-cookie\" style=\"font-size: 2em\"></i>";
+			}
+		  $output .= "</td>";
+		  $output .= "<td>";
+			if ($booking->charge_to != "Dining Entitlement") {
+			  $output .= "<i class=\"bi bi-mortarboard\" style=\"font-size: 2em\"></i>";
+			}
+		  $output .= "</td>";
+		  $output .= "</tr>";
+		  
+		  
+		  if (!empty($booking->guests())) {
+			foreach ($booking->guests() as $guest) {
+			  $output .= "<tr>";
+			  
+			  $output .= "<td>";
+				$output .= "<h5> + " . $guest['guest_name'] . "</h5>";
+				if (!empty($guest['guest_dietary'])) {
+				  $output .= implode(", ", $guest['guest_dietary']);
+				}
+			  $output .= "</td>";
+			  $output .= "<td>";
+				if ($guest['guest_wine_choice'] != "None" && $guest['guest_wine_choice'] != "") {
+				  $output .= "<svg width=\"2em\" height=\"2em\"><use xlink:href=\"assets/images/icons.svg#wine-glass\"/></svg>";
+				}
+			  $output .= "</td>";
+			  $output .= "<td>";
+				if ($booking->dessert == "1") {
+				  $output .= "<i class=\"bi bi-cookie\" style=\"font-size: 2em\"></i>";
+				}
+			  $output .= "</td>";
+			  $output .= "<td>";
+				if ($guest['guest_charge_to'] != "Dining Entitlement") {
+				  $output .= "<i class=\"bi bi-mortarboard\" style=\"font-size: 2em\"></i>";
+				}
+			  $output .= "</td>";
+			  
+			  $output .= "</tr>";
+			}
+		  }
+		  
+		  echo $output;
+		  
+		  $i++;
 		}
-	}
-});
-</script>
+		?>
+	</tbody>
+</table>
 
-<script>
-const el = document.getElementById('date_meal');
-const el2 = document.getElementById('date_cutoff');
-
-const options = {
-	defaultDate: '<?php echo $meal->date_meal; ?>',
-	display: {
-		icons: {
-			type: 'icons',
-			time: 'bi bi-clock',
-			date: 'bi bi-calendar',
-			up: 'bi bi-arrow-up',
-			down: 'bi bi-arrow-down',
-			previous: 'bi bi-chevron-left',
-			next: 'bi bi-chevron-right',
-			today: 'bi bi-calendar-check',
-			clear: 'bi bi-trash',
-			close: 'bi bi-close'
-		},
-		components: {
-			calendar: true,
-			date: true,
-			month: true,
-			year: true,
-			decades: true,
-			clock: true,
-			hours: true,
-			minutes: true,
-			seconds: false
-		}
-	},
-	localization: {
-		format: 'yyyy-MM-dd HH:mm',
-	  }
-};
-
-new tempusDominus.TempusDominus(el, options);
-new tempusDominus.TempusDominus(el2, options);
-</script>
-
-<script>
-let editor;
-editor = SUNEDITOR.create(document.getElementById('menu'), {
-	height: 100,
-	buttonList: [
-		['undo', 'redo'],
-		['font', 'fontSize', 'formatBlock'],
-		['bold', 'italic', 'underline', 'strike'],
-		['fontColor', 'hiliteColor', 'align', 'list'],
-		['table', 'link', 'image'],
-		['fullScreen', 'codeView']
-	]
-});
-
-// Sync content back to textarea on submit
-document.getElementById('contentEditForm').addEventListener('submit', function(e) {
-	document.getElementById('value').value = editor.getContents();
-});
-</script>
+<p><em>Guest List generated on <?= formatDate(date('c')) . " " . formatTime(date('c')); ?> by <?= $user->getUsername(); ?></em></p>

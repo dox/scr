@@ -28,7 +28,7 @@ echo pageTitle(
 			'permission' => 'meals',
 			'title' => 'Guest List',
 			'class' => '',
-			'event' => 'index.php?page=guestlist',
+			'event' => 'index.php?page=guestlist&uid=' . $meal->uid,
 			'icon' => 'calendar2-week'
 		],
 		[
@@ -106,7 +106,7 @@ echo pageTitle(
 			<div class="row">
 				<div class="col-6 mb-3">
 					<label for="date_meal" class="form-label">Meal Date/Time</label>
-					<div class="input-group" id="datetimepicker">
+					<div class="input-group">
 						<span class="input-group-text"><i class="bi bi-calendar-date"></i></span>
 						<input type="text" class="form-control" name="date_meal" id="date_meal" placeholder="" value="<?php echo $meal->date_meal; ?>" required>
 					</div>
@@ -117,7 +117,7 @@ echo pageTitle(
 				
 				<div class="col-6 mb-3">
 					<label for="date_cutoff" class="form-label">Meal Date/Time Cut-Off</label>
-					<div class="input-group" id="datetimepicker">
+					<div class="input-group">
 						<span class="input-group-text"><i class="bi bi-calendar-date"></i></span>
 						<input type="text" class="form-control" name="date_cutoff" id="date_cutoff" placeholder="" value="<?php echo $meal->date_cutoff; ?>" required>
 					</div>

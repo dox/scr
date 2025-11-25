@@ -122,7 +122,7 @@ class Booking extends Model {
 		$output .= '<h6 class="my-0">';
 		$output .= '<a href="' . $linkUrl . '" class="' . $class . '">' . $member->name() . '</a>';
 		$output .= '</h6>';
-		$output .= '<small class="' . $class . '">' . formatDate($this->date, 'short') . " " . formatTime($this->date, 'short') . '</small>';
+		$output .= '<small class="' . $class . '">' . formatDate($this->date, 'short') . " " . formatTime($this->date) . '</small>';
 		$output .= '</div>';
 		
 		if (count($this->guests()) > 0) {

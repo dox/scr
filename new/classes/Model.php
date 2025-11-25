@@ -290,7 +290,7 @@ class Terms extends Model {
 		}
 	}
 	
-	function firstDayOfWeek(?string $inputDate = null): string {
+	public function firstDayOfWeek(?string $inputDate = null): string {
 		$date = new DateTime($inputDate ?? 'now');
 		// Subtract days until we reach Sunday (0 = Sunday)
 		$dayOfWeek = (int)$date->format('w'); // 0 (Sun) to 6 (Sat)
@@ -300,7 +300,7 @@ class Terms extends Model {
 		return $date->format('Y-m-d');
 	}
 	
-	function lastDayOfWeek(?string $inputDate = null): string {
+	public function lastDayOfWeek(?string $inputDate = null): string {
 		$date = new DateTime($inputDate ?? 'now');
 	
 		// Subtract days to reach Sunday (0 = Sunday)

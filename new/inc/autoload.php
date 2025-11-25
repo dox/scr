@@ -12,8 +12,8 @@ session_start();
 # ------------------------------------------------------------
 # 1. Load configuration
 # ------------------------------------------------------------
-$config = include(__DIR__ . '/../config/config.php');
-$config = include(__DIR__ . '/../inc/global.php');
+$config = require_once(__DIR__ . '/../config/config.php');
+$config = require_once(__DIR__ . '/../inc/global.php');
 
 # ------------------------------------------------------------
 # 2. Set debugging
