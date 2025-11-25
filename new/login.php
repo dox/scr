@@ -10,9 +10,16 @@ if ($user->isLoggedIn()) {
 $error = null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-	$remember = isset($_POST['remember_me']) ? true : false;
+	$remember = isset($_POST['remember_me']);
 
-	if ($user->authenticate($_POST['username'], $_POST['password'], $remember)) {
+	$username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_STRING);
+	$password = filter_input(INPUT_POST, 'password', FILTER_UNSAFE_RAW);
+
+	// Catch whitespace:
+	$username = trim($username);
+	$password = trim($password);
+
+	if ($user->authenticate($username, $password, $remember)) {
 		header('Location: index.php');
 		exit;
 	} else {
