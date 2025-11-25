@@ -93,7 +93,10 @@ class User {
 
 	public function authenticate(string $username, string $password, bool $remember = false): bool {
 		global $log, $db;
-
+		
+		$username = filter_var($username, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+		$password = filter_var($password, FILTER_UNSAFE_RAW);
+		
 		// Bind with service account
 		@ldap_bind($this->ldapConn, LDAP_BIND_USER, LDAP_BIND_PASS);
 

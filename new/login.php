@@ -12,7 +12,7 @@ $error = null;
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	$remember = isset($_POST['remember_me']);
 
-	$username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_STRING);
+	$username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 	$password = filter_input(INPUT_POST, 'password', FILTER_UNSAFE_RAW);
 
 	// Catch whitespace:
