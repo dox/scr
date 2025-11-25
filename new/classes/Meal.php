@@ -182,7 +182,7 @@ class Meal extends Model {
 		$output = "";
 		
 		if (!empty($this->menu)) {
-			$output  = "<a href=\"#\" class=\"load-remote-menu\" id=\"menuUID-" . $this->uid . "\" 
+			$output  = "<a href=\"#\" class=\"load-remote-menu\" id=\"menuUID-" . $this->uid . "\"
 			data-url=\"./ajax/menu_modal.php?mealUID=" . $this->uid . "\"
 			data-bs-toggle=\"modal\"
 			data-bs-target=\"#menuModal\">";
@@ -312,73 +312,12 @@ class Meal extends Model {
 		);
 	}
 	
-	private function bookingButton2() {
-		$bookingsClass = new bookings();
-		$userType = $_SESSION['type'] ?? '';
-		$username = $_SESSION['username'] ?? '';
-		$bookingExists = $bookingsClass->bookingExistCheck($this->uid, $username);
-		
-		$bookingLink = "#";
-		$bookingClass = "btn-primary";
-		$bookingOnClick = "onclick=\"bookMealQuick(this.id)\"";
-		$bookingDisplayText = "Book Meal";
-	  
-		  // If a booking already exists
-		  if ($bookingExists) {
-			  $bookingLink = "index.php?n=booking&mealUID=" . $this->uid;
-			  $bookingClass = "btn-success";
-			  $bookingOnClick = "";
-			  $bookingDisplayText = "Manage Booking";
-		  } else {
-			  // Booking does not exist: check eligibility in priority order
-	  
-			  if (!$this->check_member_ok()) {
-				  $bookingClass = "btn-secondary disabled";
-				  $bookingOnClick = "";
-				  $bookingDisplayText = "Your account is disabled";
-	  
-			  } elseif (!$this->check_member_type_ok(true)) {
-				  $bookingClass = "btn-secondary disabled";
-				  $bookingOnClick = "";
-				  $bookingDisplayText = "Restricted Meal";
-	  
-			  } elseif (!$this->check_capacity_ok()) {
-				  if (checkpoint_charlie("bookings")) {
-					  $bookingClass = "btn-warning";
-					  $bookingDisplayText = "Capacity Reached";
-				  } else {
-					  $bookingClass = "btn-warning disabled";
-					  $bookingOnClick = "";
-					  $bookingDisplayText = "Capacity Reached";
-				  }
-	  
-			  } elseif (!$this->check_cutoff_ok()) {
-				  if (checkpoint_charlie("bookings")) {
-					  $bookingClass = "btn-secondary";
-					  $bookingDisplayText = "Deadline Passed";
-				  } else {
-					  $bookingClass = "btn-secondary disabled";
-					  $bookingOnClick = "";
-					  $bookingDisplayText = "Deadline Passed";
-				  }
-			  }
-		  }
-	  
-		  // Build button HTML
-		  $output  = "<a class=\"btn btn-sm {$bookingClass} w-100\" href=\"" . htmlspecialchars($bookingLink) . "\" ";
-		  $output .= "id=\"mealUID-" . htmlspecialchars($this->uid) . "\" {$bookingOnClick}>";
-		  $output .= htmlspecialchars($bookingDisplayText);
-		  $output .= "</a>";
-	  
-		  return $output;
-	  }
-	
 	public function displayListGroupItem(): string {
 		global $user;
 	
 		// Determine text class: green if today, muted otherwise
-		$class = (date('Y-m-d', strtotime($this->date_meal)) === date('Y-m-d')) 
-			? 'text-success' 
+		$class = (date('Y-m-d', strtotime($this->date_meal)) === date('Y-m-d'))
+			? 'text-success'
 			: 'text-muted';
 	
 		// Determine link: admin sees meal, others see booking

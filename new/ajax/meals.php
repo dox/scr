@@ -1,5 +1,5 @@
 <?php
-include_once('../inc/autoload.php');
+require_once '../inc/autoload.php';
 
 if (!$user->isLoggedIn()) {
 	die("User not logged in.");
@@ -57,4 +57,3 @@ while ($current <= $endDate) {
 
 	$current->modify('+1 day');
 }
-?>

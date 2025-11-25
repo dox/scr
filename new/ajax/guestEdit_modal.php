@@ -1,5 +1,5 @@
 <?php
-include_once('../inc/autoload.php');
+require_once '../inc/autoload.php';
 
 if (!$user->isLoggedIn()) {
 	die("User not logged in.");
@@ -54,11 +54,11 @@ $guest = $booking->guests()[$guestUID];
 								 . 'onclick="checkMaxCheckboxes(' . $dietaryOptionsMax . ')" '
 								 . 'name="dietary[]" '
 								 . 'id="' . $checkboxId . '" '
-								 . 'value="' . $safeValue . '"' 
-								 . $checked 
+								 . 'value="' . $safeValue . '"'
+								 . $checked
 								 . '>';
-						$output .= '<label class="form-check-label" for="' . $checkboxId . '">' 
-								 . $safeValue 
+						$output .= '<label class="form-check-label" for="' . $checkboxId . '">'
+								 . $safeValue
 								 . '</label>';
 						$output .= '</div>';
 					}
