@@ -94,12 +94,11 @@ class User {
 	public function authenticate(string $username, string $password, bool $remember = false): bool {
 		global $log, $db;
 		
-		$username = filter_var($username, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+		$username = ldap_escape($username, '', LDAP_ESCAPE_FILTER);
 		$password = filter_var($password, FILTER_UNSAFE_RAW);
 		
-		// Bind with service account
 		@ldap_bind($this->ldapConn, LDAP_BIND_USER, LDAP_BIND_PASS);
-
+		
 		$filter = "(sAMAccountName={$username})";
 		$search = @ldap_search($this->ldapConn, $this->baseDn, $filter);
 
