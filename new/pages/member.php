@@ -306,10 +306,10 @@ echo pageTitle(
 			}
 			?>
 		</ul>
+		
 		<?php
 		$recentBookings = $member->recentBookings();
 		?>
-		
 		<h4 class="d-flex justify-content-between align-items-center mb-3">
 		  <span>Recent Meals</span>
 		  <span class="badge bg-secondary rounded-pill"><?php echo count($recentBookings); ?></span>

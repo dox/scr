@@ -289,7 +289,7 @@ echo pageTitle(
 		?>
 		<h4 class="d-flex justify-content-between align-items-center mb-3">
 		  <span>Bookings</span>
-		  <span class="badge bg-secondary rounded-pill"><?php echo $meal->totalDiners(); ?></span>
+		  <span class="badge <?= ($meal->totalDiners() > $meal->scr_capacity) ? 'bg-danger' : 'bg-secondary'; ?> rounded-pill"><?php echo $meal->totalDiners(); ?></span>
 		</h4>
 		<ul class="list-group mb-3">
 			<?php
