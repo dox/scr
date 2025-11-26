@@ -46,7 +46,53 @@ function initAjaxLoader(triggerSelector, targetSelector, options = {}) {
 	 if (toClick) toClick.click();
  }
 
-
+document.addEventListener('DOMContentLoaded', function () {
+	 document.body.addEventListener('click', function(e) {
+		 const button = e.target.closest('.meal-book-btn');
+		 if (!button) return;
+ 
+		 const mealUid = button.dataset.mealUid;
+ 
+		 // If already booked, just let it act as a normal link
+		 if (button.dataset.booked === '1') {
+			 return; // allow default click to navigate
+		 }
+ 
+		 e.preventDefault(); // prevent link while booking
+ 
+		 const originalText = button.textContent;
+ 
+		 // Show spinner
+		 button.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Booking...`;
+ 
+		 fetch('./ajax/meal_quickbook.php', {
+			 method: 'POST',
+			 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+			 body: 'meal_uid=' + encodeURIComponent(mealUid)
+		 })
+		 .then(response => response.json())
+		 .then(data => {
+			 if (data.success && data.booking_uid) {
+				 // Booking confirmed: turn into normal link
+				 button.classList.remove('btn-primary');
+				 button.classList.add('btn-success');
+				 button.textContent = 'Manage Booking';
+ 
+				 // Use the returned booking_uid for the link
+				 button.href = `index.php?page=booking&uid=${data.booking_uid}`;
+				 button.dataset.booked = '1'; // mark as booked
+			 } else {
+				 button.textContent = originalText;
+				 alert(data.message || 'Booking failed.');
+			 }
+		 })
+		 .catch(error => {
+			 console.error('Error:', error);
+			 button.textContent = originalText;
+			 alert('Booking failed due to a network error.');
+		 });
+	 });
+});
 
 function filterList(inputSelector, listSelector) {
   const filterValue = document.querySelector(inputSelector).value.toLowerCase();

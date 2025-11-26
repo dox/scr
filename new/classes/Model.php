@@ -248,6 +248,11 @@ class Meals extends Model {
 	}
 }
 
+class Bookings extends Model {
+	protected static string $table = 'bookings';
+	
+}
+
 class Terms extends Model {
 	protected static string $table = 'terms';
 	

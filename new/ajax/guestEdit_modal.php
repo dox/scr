@@ -18,11 +18,6 @@ $guest = $booking->guests()[$guestUID];
 	<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 </div>
 <div class="modal-body">
-	<?php
-	printArray($booking);
-	printArray($guest);
-	?>
-	
 	<div class="mb-3">
 		<label for="name">Guest Name</label>
 		<input type="text" class="form-control" name="guest_name" id="guest_name" aria-describedby="guest_nameHelp" value="<?= $guest['guest_name']; ?>" required="">
@@ -121,7 +116,17 @@ $guest = $booking->guests()[$guestUID];
 </div>
 <div class="modal-footer">
 	<button type="button" class="btn btn-link text-muted" data-bs-dismiss="modal">Close</button>
-	<button type="submit" class="btn btn-primary">Update Guest</button>
+	
+	<div class="btn-group">
+	  <button type="button" class="btn btn-primary">Update Guest</button>
+	  <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+		<span class="visually-hidden">Toggle Dropdown</span>
+	  </button>
+	  <ul class="dropdown-menu">
+		<li><a class="dropdown-item text-danger" href="#">Delete Guest</a></li>
+	  </ul>
+	</div>
+	
 	<input type="hidden" name="booking_uid" value="<?= $booking->uid; ?>">
 	<input type="hidden" name="guest_uid" value="<?= $guestUID; ?>">
 </div>

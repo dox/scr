@@ -1,8 +1,7 @@
 <?php
 $ldap   = $_GET['ldap'] ?? $user->getUsername() ?? null;
 $member = Member::fromLDAP($ldap);
-printArray($_SESSION);
-
+	
 if (!isset($member->uid)) {
 	die("Unknown or unavailable member");
 }

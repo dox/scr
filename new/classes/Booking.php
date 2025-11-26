@@ -80,6 +80,68 @@ class Booking extends Model {
 		}
 	}
 	
+	public function update(array $postData) {
+		global $db;
+	
+		// Map normal text/select fields
+		$fields = [
+			'charge_to'      => $postData['charge_to'] ?? null,
+			'domus_reason'  => $postData['domus_reason'] ?? null,
+			'wine_choice'   => $postData['wine_choice'] ?? null,
+			'dessert'   => $postData['dessert'] ?? 0
+		];
+	
+		// Send to database update
+		$updatedRows = $db->update(
+			static::$table,
+			$fields,
+			['uid' => $this->uid],
+			'logs'
+		);
+	
+		return $updatedRows;
+	}
+	
+	public function addGuest(array $postData): bool|array {
+		global $db;
+	
+		// generate guest uid
+		$guestUid = 'x' . bin2hex(random_bytes(5));
+	
+		// sanitise fields
+		$guest = ['guest_uid' => $guestUid];
+		foreach ($postData as $key => $value) {
+			$guest[$key] = ($key === 'guest_dietary')
+				? $value
+				: htmlspecialchars(trim($value), ENT_QUOTES);
+		}
+	
+		// push into JSON column
+		$payload = json_encode($guest, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+	
+		$sql = "
+			UPDATE " . self::$table . "
+			SET guests_array = JSON_SET(COALESCE(guests_array, '{}'), '$.\"{$guestUid}\"', '{$payload}')
+			WHERE uid = :uid
+			LIMIT 1
+		";
+	
+		$db->query($sql, [':uid' => $this->uid]);
+	
+		// write the log
+		/*$logsClass->create([
+			'category'    => 'booking',
+			'result'      => 'success',
+			'description' =>
+				"Guest '{$guest['guest_name']}' of {$member->displayName()} added to ".
+				"[bookingUID:{$this->uid}] for [mealUID:{$this->meal_uid}]. ".
+				"Dessert: {$this->dessert} Wine: {$guest['guest_wine_choice']}"
+		]);*/
+	
+		// return updated structure
+		return true;
+	}
+	
 	public function guests(): array {
 		if (empty($this->guests_array)) {
 			return [];

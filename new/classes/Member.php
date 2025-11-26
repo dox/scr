@@ -245,6 +245,19 @@ class Member extends Model {
 			'email'      => $postData['email'] ?? null,
 		];
 		
+		// Handle checkboxes / arrays (dietary, permissions)
+		$fields['dietary'] = isset($postData['dietary']) 
+			? implode(',', array_filter($postData['dietary'])) 
+			: '';
+		
+		// Handle switches (checkboxes that may not be submitted)
+		$fields['opt_in']         = isset($postData['opt_in']) ? 1 : 0;
+		$fields['email_reminders'] = isset($postData['email_reminders']) ? 1 : 0;
+		$fields['default_dessert'] = isset($postData['default_dessert']) ? 1 : 0;
+		
+		// Handle radio buttons
+		$fields['default_wine_choice'] = $postData['default_wine_choice'] ?? 'None';
+		
 		// Map privileged text/select fields
 		if ($user->hasPermission("member")) {
 			$fields = array_merge($fields, [
@@ -253,25 +266,12 @@ class Member extends Model {
 				'type'       => $postData['type'] ?? null,
 				'enabled'    => isset($postData['enabled']) ? (int)$postData['enabled'] : 0,
 			]);
-		}
-	
-		// Handle checkboxes / arrays (dietary, permissions)
-		$fields['dietary'] = isset($postData['dietary']) 
-			? implode(',', array_filter($postData['dietary'])) 
-			: '';
 			
-		$fields['permissions'] = isset($postData['permissions']) 
-			? implode(',', array_filter($postData['permissions'])) 
-			: '';
-	
-		// Handle switches (checkboxes that may not be submitted)
-		$fields['opt_in']         = isset($postData['opt_in']) ? 1 : 0;
-		$fields['email_reminders'] = isset($postData['email_reminders']) ? 1 : 0;
-		$fields['default_dessert'] = isset($postData['default_dessert']) ? 1 : 0;
-	
-		// Handle radio buttons
-		$fields['default_wine_choice'] = $postData['default_wine_choice'] ?? 'None';
-	
+			if ($user->hasPermission("global_admin")) {
+				$fields['permissions'] = isset($postData['permissions']) ? implode(',', array_filter($postData['permissions'])) : '';
+			}
+		}
+		
 		// Send to database update
 		$updatedRows = $db->update(
 			static::$table,
@@ -279,7 +279,7 @@ class Member extends Model {
 			['uid' => $this->uid],
 			'logs'
 		);
-	
+		
 		return $updatedRows;
 	}
 	

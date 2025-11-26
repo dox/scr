@@ -256,6 +256,26 @@ class Meal extends Model {
 		return $output;
 	}
 	
+	public function bookingButton(): string {
+		$booking = Booking::fromMealUID($this->uid);
+		
+		$text = $this->getBookingButtonText();
+		$class = $this->getBookingButtonClass();
+		$href = $this->getBookingButtonLink();
+		
+		// Determine if already booked
+		$dataBooked = $booking->exists() ? '1' : '0';
+	
+		return sprintf(
+			'<a href="%s" class="btn btn-sm %s w-100 meal-book-btn" data-meal-uid="%s" data-booked="%s">%s</a>',
+			htmlspecialchars($href),
+			htmlspecialchars($class),
+			htmlspecialchars($this->uid),
+			$dataBooked,
+			htmlspecialchars($text)
+		);
+	}
+	
 	private function getBookingButtonText(): string {
 		$booking = Booking::fromMealUID($this->uid);
 	
@@ -275,14 +295,22 @@ class Meal extends Model {
 	}
 	
 	private function getBookingButtonClass(): string {
+		global $user;
+		
 		$booking = Booking::fromMealUID($this->uid);
 	
 		if ($booking->exists()) {
 			return "btn-success";
 		}
+		
+		
 	
 		if (!$this->isCutoffValid() || !$this->hasCapacity()) {
-			return "btn-secondary disabled";
+			if ($user->hasPermission("bookings")) {
+				return "btn-secondary";
+			} else {
+				return "btn-secondary disabled";
+			}
 		}
 	
 		return "btn-primary";
@@ -296,20 +324,6 @@ class Meal extends Model {
 		}
 	
 		return "#";
-	}
-	
-	public function bookingButton(): string {
-		$text = $this->getBookingButtonText();
-		$class = $this->getBookingButtonClass();
-		$link = $this->getBookingButtonLink();
-	
-		return sprintf(
-			'<a href="%s" id="mealUID-%s" class="btn btn-sm %s w-100">%s</a>',
-			htmlspecialchars($link),
-			htmlspecialchars($this->uid),
-			$class,
-			htmlspecialchars($text)
-		);
 	}
 	
 	public function displayListGroupItem(): string {
