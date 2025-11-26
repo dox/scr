@@ -27,62 +27,72 @@ echo pageTitle(
 <div class="alert alert-danger text-center"><strong>Warning!</strong> Making changes to these settings can disrupt the running of this site.  Proceed with caution.</div>
 
 <div class="accordion" id="accordionExample">
-<?php foreach ($settings->getAll() as $setting): 
-	$uid   = (int) $setting['uid']; // enforce numeric UID, if that is its nature
+<?php foreach ($settings->getAll() as $setting):
+	$uid   = (int) $setting['uid'];
 	$name  = htmlspecialchars($setting['name'], ENT_QUOTES, 'UTF-8');
 	$desc  = htmlspecialchars($setting['description'], ENT_QUOTES, 'UTF-8');
 	$type  = htmlspecialchars($setting['type'], ENT_QUOTES, 'UTF-8');
 	$value = htmlspecialchars($setting['value'], ENT_QUOTES, 'UTF-8');
 
-	$isActive = isset($_GET['settingUID']) && $_GET['settingUID'] == $uid;
-
-	$headingClass = $isActive ? "accordion-button" : "accordion-button collapsed";
+	$isActive      = isset($_GET['settingUID']) && $_GET['settingUID'] == $uid;
+	$headingClass  = $isActive ? "accordion-button" : "accordion-button collapsed";
 	$collapseClass = $isActive ? "accordion-collapse show" : "accordion-collapse collapse";
-
-	$itemName = "collapse-{$uid}";
-	$url = htmlspecialchars($_SERVER['REQUEST_URI'], ENT_QUOTES, 'UTF-8');
+	$itemName      = "collapse-{$uid}";
+	$url           = htmlspecialchars($_SERVER['REQUEST_URI'], ENT_QUOTES, 'UTF-8');
 ?>
 	<div class="accordion-item">
 		<h2 class="accordion-header" id="heading-<?= $uid ?>">
-			<button class="<?= $headingClass ?>" type="button" data-bs-toggle="collapse"
-					data-bs-target="#<?= $itemName ?>" aria-expanded="<?= $isActive ? "true" : "false" ?>"
+			<button class="<?= $headingClass ?>" type="button"
+					data-bs-toggle="collapse"
+					data-bs-target="#<?= $itemName ?>"
+					aria-expanded="<?= $isActive ? "true" : "false" ?>"
 					aria-controls="<?= $itemName ?>">
-				<strong><?= $name ?></strong>: <?= $desc ?> <span class="badge bg-secondary"><?= $type ?></span>
+				<strong><?= $name ?></strong> — <?= $desc ?>
+				<span class="badge bg-secondary ms-2"><?= $type ?></span>
 			</button>
 		</h2>
 
-		<div id="<?= $itemName ?>" class="<?= $collapseClass ?>" aria-labelledby="heading-<?= $uid ?>" data-bs-parent="#accordionExample">
+		<div id="<?= $itemName ?>" class="<?= $collapseClass ?>"
+			 aria-labelledby="heading-<?= $uid ?>" data-bs-parent="#accordionExample">
+
 			<div class="accordion-body">
-				<form method="post" id="form-<?= $uid ?>" action="<?= $url ?>">
-					
+				<form method="post" action="<?= $url ?>">
+
 					<?php switch ($type):
 						case 'numeric': ?>
-							<div class="input-group">
+							<div class="input-group mb-3">
 								<input type="number" class="form-control" name="value" value="<?= $value ?>">
 								<button class="btn btn-primary" type="submit">Update</button>
 							</div>
-						<?php break; ?>
+							<?php break; ?>
 
 						<?php case 'boolean':
 							$checked = ($setting['value'] === "true") ? "checked" : ""; ?>
-							<div class="form-check">
+							<div class="form-check mb-3">
 								<input type="hidden" name="value" value="false">
 								<input type="checkbox" class="form-check-input" name="value" value="true" <?= $checked ?>>
-								<button class="btn btn-primary" type="submit">Update</button>
+								<label class="form-check-label">Enable</label>
 							</div>
-						<?php break; ?>
+							<button class="btn btn-primary" type="submit">Update</button>
+							<?php break; ?>
 
 						<?php case 'html': ?>
-							<textarea rows="10" class="form-control" name="value"><?= $value ?></textarea>
+							<textarea rows="10" class="form-control mb-3" name="value"><?= $value ?></textarea>
 							<button class="btn btn-primary" type="submit">Update</button>
-						<?php break; ?>
+							<?php break; ?>
 
 						<?php case 'hidden': ?>
-							<div>Setting cannot be changed here</div>
-						<?php break; ?>
+							<p class="text-muted">Setting cannot be changed here</p>
+							<?php break; ?>
+						
+						<?php case 'json': ?>
+							<textarea rows="10" class="form-control font-monospace mb-3"
+								  name="value"><?= $value ?></textarea>
+							<button class="btn btn-primary" type="submit">Update</button>
+							<?php break; ?>
 
 						<?php default: ?>
-							<div class="input-group">
+							<div class="input-group mb-3">
 								<input type="text" class="form-control" name="value" value="<?= $value ?>">
 								<button class="btn btn-primary" type="submit">Update</button>
 							</div>
@@ -94,9 +104,9 @@ echo pageTitle(
 			</div>
 		</div>
 	</div>
-
 <?php endforeach; ?>
 </div>
+
 
 
 <!-- Add Setting Modal -->
