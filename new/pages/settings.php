@@ -96,8 +96,7 @@ echo pageTitle(
 </div>
 
 <?php
-function renderSettingField(string $type, string $value, array $setting): string
-{
+function renderSettingField(string $type, string $value, array $setting): string {
 	switch ($type) {
 		case 'numeric':
 			return '<input type="number" class="form-control" name="value" value="'. $value .'">';
