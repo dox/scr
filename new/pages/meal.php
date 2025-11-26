@@ -392,13 +392,16 @@ while ($current <= $endDate) {
 
 <script>
 const ctx = document.getElementById('chart_bookingsByDay');
+const labels = <?= json_encode(array_column($points, 'date')) ?>;
+const data = <?= json_encode(array_column($points, 'cumulative')) ?>;
+
 new Chart(ctx, {
 	type: 'line',
 	data: {
-		labels: <?= json_encode(array_column($points, 'date')) ?>,
+		labels: labels,
 		datasets: [{
 			label: 'Bookings',
-			data: <?= json_encode(array_column($points, 'cumulative')) ?>,
+			data: data,
 			borderWidth: 2,
 			tension: 0.3,
 			pointRadius: 0,
@@ -406,9 +409,7 @@ new Chart(ctx, {
 		}]
 	},
 	options: {
-		plugins: {
-		  legend: { display: false }
-		},
+		plugins: { legend: { display: false } },
 		scales: {
 			x: { title: { display: false } },
 			y: { beginAtZero: true, title: { display: false } }
