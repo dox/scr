@@ -17,3 +17,15 @@
 		</div>
 	</footer>
 </div>
+
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+	<?php
+	if (isset($_SESSION['toasts']) && !empty($_SESSION['toasts'])) {
+		foreach ($_SESSION['toasts'] as $toast) {
+			echo displayToast($toast);
+		}
+		// Clear all toasts after displaying
+		unset($_SESSION['toasts']);
+	}
+	?>
+</div>

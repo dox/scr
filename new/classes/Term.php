@@ -44,6 +44,8 @@ class Term extends Model {
 			['uid' => $this->uid],
 			'logs'
 		);
+		
+		toast('Term Updated', 'Term sucesfully updated', 'text-success');
 	
 		return $updatedRows;
 	}
@@ -57,6 +59,8 @@ class Term extends Model {
 			['uid' => $this->uid],
 			'logs'
 		);
+		
+		toast('Term Deleted', 'Term sucesfully updated', 'text-success');
 	}
 	
 	public function mealsInTerm() {

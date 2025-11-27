@@ -133,3 +133,35 @@ function pageTitle(string $title, string $subtitle = '', array $actions = []): s
 
 	return $html;
 }
+
+function toast($title, $message, $class = 'text-success') {
+	$_SESSION['toasts'][] = [
+		'title'   => $title,
+		'message' => $message,
+		'class'    => $class
+	];
+}
+
+function displayToast($array) {
+	$title   = $array['title']   ?? 'Notification';
+	$message = $array['message'] ?? '';
+	
+	// Only allow valid Bootstrap text classes
+	$allowedClasses = ['text-primary', 'text-secondary', 'text-success', 'text-danger', 'text-warning', 'text-info', 'text-light', 'text-dark'];
+	$class = $array['class'] ?? 'text-success';
+	if (!in_array($class, $allowedClasses, true)) {
+		$class = 'text-success';
+	}
+	
+	$output  = '<div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="5000">';
+	$output .= '<div class="toast-header">';
+	$output .= '<i class="bi bi-square-fill ' . $class . ' me-2"></i>';
+	$output .= '<strong class="me-auto">' . htmlspecialchars($title) . '</strong>';
+	$output .= '<small>just now</small>';
+	$output .= '<button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>';
+	$output .= '</div>';
+	$output .= '<div class="toast-body">' . htmlspecialchars($message) . '</div>';
+	$output .= '</div>';
+	
+	return $output;
+}

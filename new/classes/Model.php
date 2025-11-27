@@ -161,6 +161,7 @@ class Settings extends Model {
 			'logs'
 		);
 		
+		toast('Setting Updated', 'Setting sucesfully updated', 'text-success');
 		return $updatedRows;
 	}
 }

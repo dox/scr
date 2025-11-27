@@ -26,6 +26,7 @@ if (!$meal->isCutoffValid() && !$user->hasPermission("bookings")) {
 
 try {
 	if ($booking->delete()) {
+		toast('Booking Deleted', 'Booking sucesfully deleted', 'text-success');
 		echo json_encode(['success' => true, 'message' => 'Booking deleted.']);
 	} else {
 		echo json_encode(['success' => false, 'message' => 'Booking deletion failed.']);

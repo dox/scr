@@ -222,3 +222,12 @@ function toggleReason(selectClass, inputClass, triggerValue) {
 		update(); // initial state
 	});
 }
+
+// auto hide toasts (if any).  Picks up data-bs-autohide and data-bs-delay
+document.addEventListener('DOMContentLoaded', function() {
+  const toastElList = document.querySelectorAll('.toast');
+  toastElList.forEach(toastEl => {
+	const toast = new bootstrap.Toast(toastEl);
+	toast.show();
+  });
+});

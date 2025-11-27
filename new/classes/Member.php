@@ -280,6 +280,8 @@ class Member extends Model {
 			'logs'
 		);
 		
+		toast('Member Updated', 'Member sucesfully updated', 'text-success');
+		
 		return $updatedRows;
 	}
 	
@@ -341,6 +343,8 @@ class Member extends Model {
 			['uid' => $this->uid],
 			'logs'
 		);
+		
+		toast('Member Deleted', 'Member sucesfully updated', 'text-success');
 		
 		return true;
 	}
