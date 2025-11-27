@@ -73,21 +73,28 @@ if (isset($_POST['impersonate'])) {
 
 		$member = Member::fromUID($targetId);
 
+		$_SESSION['impersonating'] = true;
 		$_SESSION['user']['uid']              = $member->uid;
 		$_SESSION['user']['samaccountname']   = $member->ldap;
+		$_SESSION['user']['type']   = $member->type;
+		$_SESSION['user']['category']   = $member->category;
+		$_SESSION['user']['name']   = $member->name();
+		$_SESSION['user']['email']   = $member->email;
 		$_SESSION['user']['permissions']      = $member->permissions();
 
 		if (isset($_POST['maintainAdminAccess'])) {
 			$_SESSION['user']['permissions'] = $existingPermissions;
 		}
+		
+		$user = new User();
 	}
 }
 
 // Restore impersonation
 if (isset($_POST['restore_impersonation']) && isset($_SESSION['impersonation_backup'])) {
-	$_SESSION['user']['uid']            = $_SESSION['impersonation_backup']['uid'];
-	$_SESSION['user']['samaccountname'] = $_SESSION['impersonation_backup']['samaccountname'];
-	$_SESSION['user']['permissions']    = $_SESSION['impersonation_backup']['permissions'];
-
+	unset($_SESSION['impersonating']);
+	$_SESSION['user'] = $_SESSION['impersonation_backup'];
 	unset($_SESSION['impersonation_backup']);
+	
+	$user = new User();
 }

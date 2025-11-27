@@ -36,7 +36,7 @@ if (APP_DEBUG) {
 			
 			<div class="d-flex align-items-center gap-3">
 				<?php
-				if (isset($_SESSION['impersonation_backup'])) {
+				if (isset($_SESSION['impersonating'])) {
 					$output  = "<a class=\"btn btn-sm btn-info\" href=\"index.php?page=impersonate\" role=\"button\" aria-disabled=\"true\">Impersonating</a>";
 					echo $output;
 				}
@@ -86,7 +86,7 @@ if (APP_DEBUG) {
 				</div>
 				
 				<div class="dropdown">
-					<a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><?php echo $_SESSION['user']['samaccountname']; ?></a>
+					<a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><?= $user->getUsername(); ?></a>
 					<ul class="dropdown-menu dropdown-menu-end text-small">
 						<?php
 						if($user->hasPermission("impersonate")) {

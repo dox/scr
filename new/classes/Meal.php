@@ -69,6 +69,11 @@ class Meal extends Model {
 			'allowed_wine'   => $postData['allowed_wine'] ?? '0',
 			'allowed_dessert'   => $postData['allowed_dessert'] ?? '0'
 		];
+		
+		// Handle checkboxes / arrays (dietary, permissions)
+		$fields['allowed'] = isset($postData['allowed']) 
+			? implode(',', array_filter($postData['allowed'])) 
+			: '';
 	
 		// Send to database update
 		$updatedRows = $db->update(
@@ -139,6 +144,16 @@ class Meal extends Model {
 		}
 	
 		return $count;
+	}
+	
+	public function allowedGroups(): array {
+		if (empty($this->allowed)) {
+			return [];
+		}
+	
+		$groups = array_filter(array_map('trim', explode(',', $this->allowed)));
+	
+		return $groups;
 	}
 	
 	public function delete() {
@@ -290,6 +305,10 @@ class Meal extends Model {
 		if (!$this->hasCapacity()) {
 			return "Capacity Reached";
 		}
+		
+		if (!$this->isAllowedGroupsValid()) {
+			return "Restricted Meal";
+		}
 	
 		return "Book Meal";
 	}
@@ -303,9 +322,7 @@ class Meal extends Model {
 			return "btn-success";
 		}
 		
-		
-	
-		if (!$this->isCutoffValid() || !$this->hasCapacity()) {
+		if (!$this->isCutoffValid() || !$this->hasCapacity() || !$this->isAllowedGroupsValid()) {
 			if ($user->hasPermission("bookings")) {
 				return "btn-secondary";
 			} else {
@@ -371,6 +388,20 @@ class Meal extends Model {
 		return new DateTime() < new DateTime($this->date_cutoff);
 	}
 	
+	public function isAllowedGroupsValid(): bool {
+		global $user;
+		
+		$member = Member::fromLDAP($user->getUsername());
+			
+		if (empty($this->allowedGroups())) return true;
+		
+		if (in_array($member->category, $this->allowedGroups())) {
+			return true;
+		}
+		
+		return false;
+	}
+	
 	public function hasGuestCapacity(): bool {
 		// this needs to be a booking check??
 		return $this->totalDiners() < $this->scr_guests;
@@ -378,8 +409,8 @@ class Meal extends Model {
 	
 	public function canBook(): bool {
 		return $this->hasCapacity()
-			&& $this->hasDessertCapacity()
+			//&& $this->hasDessertCapacity()
 			&& $this->isCutoffValid()
-			&& $this->hasGuestCapacity();
+			&& $this->isAllowedGroupsValid();
 	}
 }

@@ -7,7 +7,6 @@ use LdapRecord\Models\ActiveDirectory\User as AdUser;
 class User {
 	protected $userData = [];
 	protected $loggedIn = false;
-	protected $uid = null;
 
 	const COOKIE_NAME     = 'scr_user_token';
 	const COOKIE_LIFETIME = 2592000; // 30 days
@@ -21,7 +20,6 @@ class User {
 		if (!empty($_SESSION['user'])) {
 			$this->userData = $_SESSION['user'];
 			$this->loggedIn = true;
-			$this->uid      = $_SESSION['user']['uid'] ?? null;
 			return;
 		}
 
@@ -73,7 +71,11 @@ class User {
 		$this->uid = $member->uid;
 		$this->userData = [
 			'samaccountname' => $member->ldap,
-			'permissions'    => explode(',', $member->permissions ?? ''),
+			'type'    => $member->type ?? null,
+			'category'    => $member->category ?? null,
+			'name'    => $member->name() ?? null,
+			'email'    => $member->email ?? null,
+			'permissions'    => explode(',', $member->permissions ?? null),
 			'uid'            => $member->uid
 		];
 
@@ -109,11 +111,14 @@ class User {
 			$this->logout();
 			return false;
 		}
-
-		$this->uid = $member->uid;
+		
 		$this->userData = [
 			'samaccountname' => $member->ldap,
-			'permissions'    => explode(',', $member->permissions ?? ''),
+			'type'    => $member->type ?? null,
+			'category'    => $member->category ?? null,
+			'name'    => $member->name() ?? null,
+			'email'    => $member->email ?? null,
+			'permissions'    => explode(',', $member->permissions ?? null),
 			'uid'            => $member->uid
 		];
 
@@ -169,7 +174,6 @@ class User {
 		unset($_SESSION['impersonation_backup']);
 		$this->loggedIn = false;
 		$this->userData = [];
-		$this->uid = null;
 	}
 
 	// Permissions

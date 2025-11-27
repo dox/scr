@@ -1,5 +1,6 @@
 <?php
-if (!isset($_SESSION['impersonation_backup'])) {
+// allow this page if the user is already impersonating, otherwise restrict to role
+if (isset($_SESSION['impersonating'])) {
 	$user->pageCheck('impersonate');
 }
 
@@ -14,15 +15,15 @@ echo pageTitle(
 		<input
 			type="text"
 			id="member-search"
-			<?= isset($_SESSION['impersonation_backup']) ? ' value="' . $_SESSION['user']['samaccountname'] . '"' : '' ?>
+			<?= isset($_SESSION['impersonating']) ? ' value="' . $_SESSION['user']['name'] . '"' : '' ?>
 			class="form-control mb-2"
 			placeholder="Search Members"
 			autocomplete="off"
 			required
-			<?= isset($_SESSION['impersonation_backup']) ? 'disabled' : '' ?>
+			<?= isset($_SESSION['impersonating']) ? 'disabled' : '' ?>
 		>
 		
-		<?php if (isset($_SESSION['impersonation_backup'])): ?>
+		<?php if (isset($_SESSION['impersonating'])): ?>
 			<button 
 				type="submit"
 				id="restore_impersonation"

@@ -16,6 +16,13 @@ if (!$meal_uid) {
 	exit;
 }
 
+$meal = new Meal($meal_uid);
+
+if (!$meal->canBook()) {
+	echo json_encode(['success' => false, 'message' => 'Meal is not bookable.']);
+	exit;
+}
+
 try {
 	$data['meal_uid'] = $meal_uid;
 	$data['member_ldap'] = $user->getUsername();
