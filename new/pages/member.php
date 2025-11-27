@@ -328,7 +328,7 @@ echo pageTitle(
 		</ul>
 		
 		<div class="text-end">
-			<a class="btn btn-sm btn-outline-light" href="report.php" role="button" onkeydown="if(event.key === 'Enter' || event.key === ' ') this.click();"><i class="bi bi-download"></i> export COMING SOON</a>
+			<a class="btn btn-sm btn-outline-light" href="report.php?page=member_bookings&uid=<?= $member->uid; ?>" role="button"><i class="bi bi-download"></i> export</a>
 		</div>
 		
 		<hr>
