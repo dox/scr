@@ -67,8 +67,7 @@ class User {
 
 		$member = Member::fromUID($record['member_uid']);
 		if (!$member) return false;
-
-		$this->uid = $member->uid;
+		
 		$this->userData = [
 			'samaccountname' => $member->ldap,
 			'type'    => $member->type ?? null,

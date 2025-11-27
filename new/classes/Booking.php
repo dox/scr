@@ -142,6 +142,57 @@ class Booking extends Model {
 		return true;
 	}
 	
+	public function editGuest(array $postData): bool|array {
+		global $db;
+	
+		// existing guest UID must be present
+		if (empty($postData['guest_uid'])) {
+			return ['error' => 'Missing guest UID'];
+		}
+	
+		$guestUid = $postData['guest_uid'];
+	
+		// sanitise fields
+		$guest = ['guest_uid' => $guestUid];
+		foreach ($postData as $key => $value) {
+			$guest[$key] = ($key === 'guest_dietary')
+				? $value
+				: htmlspecialchars(trim($value), ENT_QUOTES);
+		}
+	
+		// push into JSON column (overwrite this guest entry)
+		$payload = json_encode($guest, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+	
+		$sql = "
+			UPDATE " . self::$table . "
+			SET guests_array = JSON_SET(guests_array, '$.\"{$guestUid}\"', '{$payload}')
+			WHERE uid = :uid
+			LIMIT 1
+		";
+	
+		$db->query($sql, [':uid' => $this->uid]);
+	
+		return true;
+	}
+	
+	public function deleteGuest(string $guestUid): bool {
+		global $db;
+	
+		// Remove the guest key entirely from the JSON structure
+		$sql = "
+			UPDATE " . self::$table . "
+			SET guests_array = JSON_REMOVE(guests_array, '$.\"{$guestUid}\"')
+			WHERE uid = :uid
+			LIMIT 1
+		";
+	
+		$db->query($sql, [
+			':uid' => $this->uid
+		]);
+	
+		return true;
+	}
+	
 	public function guests(): array {
 		if (empty($this->guests_array)) {
 			return [];
@@ -200,5 +251,20 @@ class Booking extends Model {
 		$meal = new Meal($this->meal_uid);
 	
 		return $meal->displayListGroupItem();
+	}
+	
+	public function delete() {
+		global $db;
+		
+		if (!isset($this->uid)) return false;
+		
+		// Send to database to delete bookings
+		$deleteBooking = $db->delete(
+			'bookings',
+			['uid' => $this->uid],
+			'logs'
+		);
+		
+		return true;
 	}
 }

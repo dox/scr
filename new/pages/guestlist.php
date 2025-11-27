@@ -21,7 +21,7 @@ echo pageTitle(
 				$guests = $totalDiners - $totalBookings;
 				?>
 				<div class="card-title"><h2>SCR Diners</h2></div>
-				<div class="card-text text-muted"><h4><?= $totalDiners . " (" . $totalBookings . " +" . $guests . " guests)" ?></h4></div>
+				<div class="card-text <?= ($meal->totalDiners() > $meal->scr_capacity) ? 'text-danger' : 'text-muted"'; ?>"><h4><?= $totalDiners . " (" . $totalBookings . " +" . $guests . " guests)" ?></h4></div>
 			</div>
 		</div>
 	</div>
@@ -32,7 +32,7 @@ echo pageTitle(
 				$totalDessertDiners = $meal->totalDessertDiners();
 				?>
 				<div class="card-title"><h2>SCR Dessert</h2></div>
-				<div class="card-text text-muted"><h4><?= $totalDessertDiners ?></h4></div>
+				<div class="card-text <?= ($meal->totalDessertDiners() > $meal->scr_dessert_capacity) ? 'text-danger' : 'text-muted"'; ?>"><h4><?= $totalDessertDiners ?></h4></div>
 			</div>
 		</div>
 	</div>
@@ -43,22 +43,16 @@ echo pageTitle(
 <table class="table">
 	<thead>
 		<tr>
-			<th scope="col" width="2em">#</th>
+			<th scope="col" width="5%">#</th>
 			<th scope="col">Name</th>
-			<th scope="col" width="2em">
-				<svg width="2em" height="2em" class="mx-1 text-muted">
-					<use xlink:href="img/icons.svg#wine-glass"/>
-				</svg>
+			<th scope="col" width="3%">
+				<h2><i class="bi bi-cup-straw text-muted"></i></h2>
 			</th>
-			<th scope="col" width="2em">
-				<svg width="2em" height="2em" class="mx-1 text-muted">
-					<use xlink:href="img/icons.svg#cookie"/>
-				</svg>
+			<th scope="col" width="3%">
+				<h2><i class="bi bi-cookie text-muted"></i></h2>
 			</th>
-			<th scope="col" width="2em">
-				<svg width="2em" height="2em" class="mx-1 text-muted">
-					<use xlink:href="img/icons.svg#graduation-cap"/>
-				</svg>
+			<th scope="col" width="3%">
+				<h2><i class="bi bi-mortarboard text-muted"></i></h2>
 			</th>
 		</tr>
 	</thead>
@@ -80,18 +74,18 @@ echo pageTitle(
 		  $output .= "</td>";
 		  
 		  $output .= "<td>";
-			if ($booking->wine != "None") {
-			  $output .= "<svg width=\"2em\" height=\"2em\"><use xlink:href=\"assets/images/icons.svg#wine-glass\"/></svg>";
+			if ($booking->wine_choice != "None") {
+				$output .= "<h2><i class=\"bi bi-cup-straw\"></i></h2>";
 			}
 		  $output .= "</td>";
 		  $output .= "<td>";
 			if ($booking->dessert == "1") {
-			  $output .= "<i class=\"bi bi-cookie\" style=\"font-size: 2em\"></i>";
+				$output .= "<h2><i class=\"bi bi-cookie\"></i></h2>";
 			}
 		  $output .= "</td>";
 		  $output .= "<td>";
 			if ($booking->charge_to != "Dining Entitlement") {
-			  $output .= "<i class=\"bi bi-mortarboard\" style=\"font-size: 2em\"></i>";
+				$output .= "<h2><i class=\"bi bi-mortarboard\"></i></h2>";
 			}
 		  $output .= "</td>";
 		  $output .= "</tr>";
@@ -109,17 +103,17 @@ echo pageTitle(
 			  $output .= "</td>";
 			  $output .= "<td>";
 				if ($guest['guest_wine_choice'] != "None" && $guest['guest_wine_choice'] != "") {
-				  $output .= "<svg width=\"2em\" height=\"2em\"><use xlink:href=\"assets/images/icons.svg#wine-glass\"/></svg>";
+					$output .= "<h2><i class=\"bi bi-cup-straw\"></i></h2>";
 				}
 			  $output .= "</td>";
 			  $output .= "<td>";
 				if ($booking->dessert == "1") {
-				  $output .= "<i class=\"bi bi-cookie\" style=\"font-size: 2em\"></i>";
+				$output .= "<h2><i class=\"bi bi-cookie\"></i></h2>";
 				}
 			  $output .= "</td>";
 			  $output .= "<td>";
-				if ($guest['guest_charge_to'] != "Dining Entitlement") {
-				  $output .= "<i class=\"bi bi-mortarboard\" style=\"font-size: 2em\"></i>";
+				if ($guest['guest_charge_to'] == "Domus") {
+				$output .= "<h2><i class=\"bi bi-mortarboard\"></i></h2>";
 				}
 			  $output .= "</td>";
 			  

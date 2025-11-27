@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', function () {
 		 const button = e.target.closest('.meal-book-btn');
 		 if (!button) return;
  
-		 const mealUid = button.dataset.mealUid;
+		 const mealUid = button.dataset.meal_uid;
  
 		 // If already booked, just let it act as a normal link
 		 if (button.dataset.booked === '1') {
@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', function () {
 		 // Show spinner
 		 button.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Booking...`;
  
-		 fetch('./ajax/meal_quickbook.php', {
+		 fetch('./ajax/booking_create.php', {
 			 method: 'POST',
 			 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 			 body: 'meal_uid=' + encodeURIComponent(mealUid)
@@ -94,6 +94,44 @@ document.addEventListener('DOMContentLoaded', function () {
 	 });
 });
 
+document.addEventListener('DOMContentLoaded', function () {
+	 document.body.addEventListener('click', function(e) {
+		 const button = e.target.closest('.booking-delete-btn');
+		 if (!button) return;
+ 
+		 const bookingUID = button.dataset.booking_uid;
+		 
+		 e.preventDefault(); // prevent link while booking
+ 
+		 const originalText = button.textContent;
+ 
+		 // Show spinner
+		 button.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Deleting...`;
+ 
+		 fetch('./ajax/booking_delete.php', {
+			 method: 'POST',
+			 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+			 body: 'booking_uid=' + encodeURIComponent(bookingUID)
+		 })
+		 .then(response => response.json())
+		 .then(data => {
+			 if (data.success) {
+				 // Deletion confirmed
+				 window.location.href = "index.php"
+			 } else {
+				 button.textContent = originalText;
+				 alert(data.message || 'Deleting booking failed.');
+			 }
+		 })
+		 .catch(error => {
+			 console.error('Error:', error);
+			 button.textContent = originalText;
+			 alert('Deleting booking failed due to a network error.');
+		 });
+	 });
+});
+
+// quick filter for members
 function filterList(inputSelector, listSelector) {
   const filterValue = document.querySelector(inputSelector).value.toLowerCase();
   const items = document.querySelectorAll(`${listSelector} li`);
@@ -104,6 +142,27 @@ function filterList(inputSelector, listSelector) {
   });
 }
 
+// limit dietary options to a maximum value
+document.addEventListener('DOMContentLoaded', function () {
+	// Find all containers with dietary checkboxes
+	const containers = document.querySelectorAll('.accordion-body[data-max]');
+
+	containers.forEach(container => {
+		const max = parseInt(container.dataset.max, 10); // get max from data attribute
+		const checkboxes = container.querySelectorAll('.dietaryOptionsMax');
+
+		function checkMaxCheckboxes() {
+			const checkedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
+			checkboxes.forEach(cb => {
+				cb.disabled = !cb.checked && checkedCount >= max;
+			});
+		}
+
+		checkboxes.forEach(cb => cb.addEventListener('change', checkMaxCheckboxes));
+	});
+});
+
+// load remote content into a div
 function remoteModalLoader(triggerSelector, modalSelector, bodySelector) {
   document.addEventListener('click', e => {
 	const trigger = e.target.closest(triggerSelector);
@@ -141,16 +200,25 @@ function enableOnExactMatch(inputId, buttonId, triggerText) {
 	button.disabled = (field.value !== triggerText);
 }
 
-function toggleReason(dropdownId, inputId, triggerValue) {
-	const select = document.getElementById(dropdownId);
-	const input = document.getElementById(inputId);
+// enforce domus_reason when charging to Domus (supports multiple forms)
+function toggleReason(selectClass, inputClass, triggerValue) {
+	// get all matching selects
+	document.querySelectorAll(`.${selectClass}`).forEach(select => {
 
-	function update() {
-		const show = select.value === triggerValue; // only when equal
-		input.classList.toggle('d-none', !show);
-		input.required = show;
-	}
+		// find the input within the same form (or closest container)
+		const container = select.closest('form'); // or use a specific wrapper
+		if (!container) return;
 
-	select.addEventListener('change', update);
-	update();
+		const input = container.querySelector(`.${inputClass}`);
+		if (!input) return;
+
+		function update() {
+			const show = select.value === triggerValue;
+			input.classList.toggle('d-none', !show);
+			input.required = show;
+		}
+
+		select.addEventListener('change', update);
+		update(); // initial state
+	});
 }

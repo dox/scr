@@ -1,6 +1,6 @@
 <?php
 // allow this page if the user is already impersonating, otherwise restrict to role
-if (isset($_SESSION['impersonating'])) {
+if (!isset($_SESSION['impersonating'])) {
 	$user->pageCheck('impersonate');
 }
 

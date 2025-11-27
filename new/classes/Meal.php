@@ -282,7 +282,7 @@ class Meal extends Model {
 		$dataBooked = $booking->exists() ? '1' : '0';
 	
 		return sprintf(
-			'<a href="%s" class="btn btn-sm %s w-100 meal-book-btn" data-meal-uid="%s" data-booked="%s">%s</a>',
+			'<a href="%s" class="btn btn-sm %s w-100 meal-book-btn" data-meal_uid="%s" data-booked="%s">%s</a>',
 			htmlspecialchars($href),
 			htmlspecialchars($class),
 			htmlspecialchars($this->uid),
@@ -408,6 +408,10 @@ class Meal extends Model {
 	}
 	
 	public function canBook(): bool {
+		global $user;
+		
+		if ($user->hasPermission("bookings")) return true;
+		
 		return $this->hasCapacity()
 			//&& $this->hasDessertCapacity()
 			&& $this->isCutoffValid()

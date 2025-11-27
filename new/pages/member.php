@@ -195,10 +195,10 @@ echo pageTitle(
 			<div class="accordion mb-3" id="accordionDietary">
 				<div class="accordion-item">
 					<h2 class="accordion-header">
-						<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne"> Dietary Information&nbsp;<i>(Maximum: <?php echo $settings->get('meal_dietary_allowed'); ?>)</i></button>
+						<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">Dietary Information <i>(Maximum: <?php echo $settings->get('meal_dietary_allowed'); ?>)</i></button>
 					</h2>
 					<div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
-						<div class="accordion-body">
+						<div class="accordion-body" data-max="<?php echo $settings->get('meal_dietary_allowed'); ?>">
 							<?php
 							$dietaryOptions    = array_map('trim', explode(',', $settings->get('meal_dietary')));
 							$dietaryOptionsMax = (int) $settings->get('meal_dietary_allowed');
@@ -214,7 +214,6 @@ echo pageTitle(
 								$output .= '<div class="form-check">';
 								$output .= '<input class="form-check-input dietaryOptionsMax" '
 										 . 'type="checkbox" '
-										 . 'onclick="checkMaxCheckboxes(' . $dietaryOptionsMax . ')" '
 										 . 'name="dietary[]" '
 										 . 'id="' . $checkboxId . '" '
 										 . 'value="' . $safeValue . '"' 

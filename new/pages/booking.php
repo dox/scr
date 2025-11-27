@@ -10,18 +10,42 @@ if (!$user->hasPermission("meals") && $booking->member_ldap != $user->getUsernam
 	die("Unknown or unavailable booking");
 }
 
-if (isset($_POST['bookingUID'])) {
-	$booking->update($_POST);
-	$booking = Booking::fromUID($bookingUID);
-}
-
-if (isset($_POST['bookingAddGuest'])) {
-	printArray($_POST);
-	$booking->addGuest($_POST);
+if (isset($_POST)) {
+	//printArray($_POST);
+	
+	// update booking
+	if (isset($_POST['bookingUID'])) {
+		$booking->update($_POST);
+		
+	}
+	
+	// add new guest
+	if (isset($_POST['guest_add'])) {
+		$booking->addGuest($_POST);
+	}
+	
+	// edit guest
+	if (isset($_POST['guest_uid'])) {
+		$booking->editGuest($_POST);
+	}
+	
+	// delete guest
+	if (isset($_POST['delete_guest']) && $_POST['delete_guest'] == "1") {
+		$booking->deleteGuest($_POST['guest_uid']);
+	}
+	
 	$booking = Booking::fromUID($bookingUID);
 }
 
 $meal = new Meal($booking->meal_uid);
+
+$icons[] = [
+	'permission' => 'meals',
+	'title' => 'Guest List',
+	'class' => '',
+	'event' => 'index.php?page=guestlist&uid=' . $meal->uid,
+	'icon' => 'card-list'
+];
 
 if (count($booking->guests()) < $meal->scr_guests || $user->hasPermission("bookings")) {
 	$icons[] = [
@@ -57,7 +81,7 @@ echo pageTitle(
 ?>
 
 <div class="row">
-	<div class="col-md-7 col-lg-8">
+	<div class="col-md-7 col-lg-8 order-2 order-md-1">
 		<h4>Guest List</h4>
 		<?php
 		$output = '<ul>';
@@ -122,13 +146,13 @@ echo pageTitle(
 		</div>
 		
 	</div>
-	<div class="col-md-5 col-lg-4">
+	<div class="col-md-5 col-lg-4 order-1 order-md-2">
 		<h4>Booking Details</h4>
 		
 		<form method="post" action="<?= htmlspecialchars($_SERVER['REQUEST_URI']) ?>">
 		<div class="mb-3">
 			<label for="type" class="form-label">Charge-To</label>
-			<select class="form-select" name="charge_to" id="charge_to" required>
+			<select class="form-select charge_to" name="charge_to" required>
 				<?php
 				$chargeToOptions = explode(',', $settings->get('booking_charge-to'));
 				
@@ -140,9 +164,8 @@ echo pageTitle(
 				?>
 			</select>
 		
-			<input class="form-control mt-3 d-none"
+			<input class="form-control domus_reason mt-3 d-none"
 				   type="text"
-				   id="domus_reason"
 				   name="domus_reason"
 				   placeholder="Domus Reason (required)"
 				   aria-label="Domus Reason (required)"
@@ -153,38 +176,53 @@ echo pageTitle(
 		</div>
 		
 		<div class="mb-3">
-			<span class="form-check-label" for="">Wine <small>(charged via Battels)</small></label></span>
+		<?php if ($meal->allowed_wine == 1): ?>
+			<span class="form-check-label">Wine <small>(charged via Battels)</small></span>
 			<?php
 			$wineOptions = explode(",", $settings->get('booking_wine_options'));
-			
-			foreach($wineOptions as $wineOption) {
-				// Remove all non-alphanumeric characters
+			$lastIndex   = count($wineOptions) - 1;
+			$anyChecked  = false;
+		
+			foreach ($wineOptions as $i => $wineOption) {
 				$id = preg_replace('/[^a-z0-9]/', '', strtolower($wineOption));
-				
-				$checked = ($wineOption == $booking->wine_choice) ? " checked" : "";
-				
-				$output  = "<div class=\"form-check\">";
-				$output .= "<input class=\"form-check-input\" type=\"radio\" name=\"wine_choice\" id=\"" . $id . "\" value=\"" . htmlspecialchars($wineOption, ENT_QUOTES, 'UTF-8') . "\" " . $checked . ">";
-				$output .= "<label class=\"form-check-label\" for=\"wine_choice\">" . $wineOption . "</label>";
-				$output .= "</div>";
-				
+		
+				// check if this option matches the current booking choice
+				$checked = ($wineOption == $booking->wine_choice);
+				if ($checked) $anyChecked = true;
+		
+				$output  = '<div class="form-check">';
+				$output .= '<input class="form-check-input" type="radio" name="wine_choice" id="' . $id . '" value="' . htmlspecialchars($wineOption, ENT_QUOTES, 'UTF-8') . '"';
+				// temporarily leave checked empty
+				$output .= ($checked) ? ' checked' : '';
+				$output .= '>';
+				$output .= '<label class="form-check-label" for="' . $id . '">' . $wineOption . '</label>';
+				$output .= '</div>';
+		
+				// if this is the last option and nothing matched, mark it checked
+				if ($i === $lastIndex && !$anyChecked) {
+					$output = str_replace('<input ', '<input checked ', $output);
+				}
+		
 				echo $output;
 			}
 			?>
+		<?php endif; ?>
 		</div>
 		
-		<div class="mb-3">
-			<input type="hidden" name="dessert" value="0">
-			<input class="form-check-input"
-				   id="dessert"
-				   name="dessert"
-				   value="1"
-				   type="checkbox"
-				   <?= $booking->dessert == "1" ? "checked" : "" ?>>
-			<label for="dessert" class="form-label">
-				Dessert <i>(applies to your guests)</i>
-			</label>
-		</div>
+		<?php if ($meal->allowed_dessert == 1): ?>
+			<div class="mb-3">
+				<input type="hidden" name="dessert" value="0">
+				<input class="form-check-input"
+					   id="dessert"
+					   name="dessert"
+					   value="1"
+					   type="checkbox"
+					   <?= $booking->dessert == "1" ? "checked" : "" ?>>
+				<label for="dessert" class="form-label">
+					Dessert <i>(applies to your guests)</i>
+				</label>
+			</div>
+		<?php endif; ?>
 		
 		<div class="mb-3">
 		  <button type="submit" class="btn btn-primary w-100">Update Booking Preferences</button>
@@ -202,13 +240,15 @@ echo pageTitle(
 		<?php
 		$output  = '<ul class="list-group mb-3">';
 		foreach ($booking->guests() as $guest) {
+			$modalTarget = "#editGuestModal_" . $guest['guest_uid'];
+			
 			$output .= '<li class="list-group-item d-flex flex-column">';
 		
 			// Top row: name on left, edit icon on right
 			$output .= '<div class="d-flex justify-content-between align-items-center">';
 			$output .= '<h6 class="mb-1">' . htmlspecialchars($guest['guest_name']) . '</h6>';
 			
-			$output .= '<a href="#" class="load-remote-guest_edit" id="guestUID-' . $guest['guest_uid'] . '" data-url="./ajax/guestEdit_modal.php?booking_uid=' . $booking->uid . '&guest_uid=' . $guest['guest_uid'] . '" data-bs-toggle="modal" data-bs-target="#menuModal"><i class="bi bi-pencil-square"></i></a>';
+			$output .= '<a href="#" class="load-remote-guest_edit" id="guestUID-' . $guest['guest_uid'] . '" data-bs-toggle="modal" data-bs-target="' . $modalTarget . '"><i class="bi bi-pencil-square"></i></a>';
 			
 			$output .= '</div>';
 		
@@ -220,15 +260,19 @@ echo pageTitle(
 		
 			// Wine/Dessert
 			$wineDessert = [];
-			if (!empty($guest['wine'])) $wineDessert[] = '<i class="bi bi-cup-straw"></i>';
-			if (!empty($booking->dessert)) $wineDessert[] = '<i class="bi bi-cookie"></i>';
-			if (!empty($wineDessert)) {
-				$output .= '<small class="text-muted d-block">' . implode(' ', $wineDessert) . '</small>';
+			if ($guest['guest_charge_to'] == "Domus") {
+				$wineDessert[] = '<span><i class="bi bi-mortarboard me-2"></i>' . htmlspecialchars($guest['guest_domus_reason']) . '</span>';
 			}
-		
-			$output .= '</li>';
+			if (!empty($guest['guest_wine_choice'])) {
+				$wineDessert[] = '<span><i class="bi bi-cup-straw me-2"></i>' . $guest['guest_wine_choice'] . '</span>';
+			}
+			if (!empty($booking->dessert)) {
+				$wineDessert[] = '<span><i class="bi bi-cookie me-2"></i>Dessert</span>';
+			}
 			
-		
+			$output .= implode('', $wineDessert);
+			
+			$output .= '</li>';
 		}
 		$output .= '</ul>';
 		
@@ -240,126 +284,44 @@ echo pageTitle(
 
 
 <!-- Add Guest Modal -->
-<div class="modal fade" tabindex="-1" id="addGuestModal" data-backdrop="static" data-keyboard="false" aria-hidden="true">
-	<form method="post" action="<?= htmlspecialchars($_SERVER['REQUEST_URI']) ?>">
+<div class="modal fade" id="addGuestModal" tabindex="-1" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title">Add Guest</h5>
-				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-			</div>
-			<div class="modal-body">
-				<div class="mb-3">
-					<label for="name">Guest Name</label>
-					<input type="text" class="form-control" name="guest_name" id="guest_name" value="" required="">
-					
-					<?php
-					if (!$member->opt_in == 1) {
-						echo "<small class=\"form-text text-muted\">This name will be hidden on the sign-up list.  You can change your default privacy settings in <a href=\"index.php?page=member\">your profile</a></small>";
-					}
-					?>
-				</div>
-				
-				<div class="accordion mb-3" id="accordionDietary">
-					<div class="accordion-item">
-						<h2 class="accordion-header">
-							<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne"> Dietary Information&nbsp;<i>(Maximum: <?php echo $settings->get('meal_dietary_allowed'); ?>)</i></button>
-						</h2>
-						<div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
-							<div class="accordion-body">
-								<?php
-								$dietaryOptions    = array_map('trim', explode(',', $settings->get('meal_dietary')));
-								$dietaryOptionsMax = (int) $settings->get('meal_dietary_allowed');
-								
-								$output = '';
-								
-								foreach ($dietaryOptions as $index => $dietaryOption) {
-									$safeValue  = htmlspecialchars($dietaryOption, ENT_QUOTES);
-									$checkboxId = "dietary_{$index}";
-								
-									$output .= '<div class="form-check">';
-									$output .= '<input class="form-check-input dietaryOptionsMax" '
-											 . 'type="checkbox" '
-											 . 'onclick="checkMaxCheckboxes(' . $dietaryOptionsMax . ')" '
-											 . 'name="guest_dietary[]" '
-											 . 'id="' . $checkboxId . '" '
-											 . 'value="' . $safeValue . '"'
-											 . '>';
-									$output .= '<label class="form-check-label" for="' . $checkboxId . '">' 
-											 . $safeValue 
-											 . '</label>';
-									$output .= '</div>';
-								}
-								
-								echo $output;
-								?>
-								
-								<small id="nameHelp" class="form-text text-muted"><?php echo $settings->get('meal_dietary_message'); ?></small>
-							</div>
-						</div>
-					</div>
-				</div>
-				
-				<div class="mb-3">
-					<label for="type" class="form-label">Charge-To</label>
-					<select class="form-select" name="guest_charge_to" id="guest_charge_to" required>
-						<?php
-						$chargeToOptions = explode(',', $settings->get('booking_charge-to'));
-						
-						foreach ($chargeToOptions as $guest_charge_to) {
-							$guest_charge_to = trim($guest_charge_to);
-							$selected = ($guest_charge_to === 'Battels') ? ' selected' : '';
-							echo "<option value=\"{$guest_charge_to}\"{$selected}>{$guest_charge_to}</option>";
-						}
-						?>
-					</select>
-				
-					<input class="form-control mt-3 d-none"
-						   type="text"
-						   id="guest_domus_reason"
-						   name="guest_domus_reason"
-						   placeholder="Domus Reason (required)"
-						   aria-label="Domus Reason (required)"
-						   value="<?= $booking->domus_reason; ?>">
-				
-					<div id="charge_toHelp" class="form-text">* wine charged via Battels</div>
-					<div class="invalid-feedback">Default Charge-To is required.</div>
-				</div>
-				
-				<div class="mb-3">
-					<span class="form-check-label" for="">Wine <small>(charged via Battels)</small></label></span>
-					<?php
-					$wineOptions = explode(",", $settings->get('booking_wine_options'));
-					
-					foreach($wineOptions as $wineOption) {
-						// Remove all non-alphanumeric characters
-						$id = preg_replace('/[^a-z0-9]/', '', strtolower($wineOption));
-						
-						$checked = ($wineOption == $booking->wine_choice) ? " checked" : "";
-						
-						$output  = "<div class=\"form-check\">";
-						$output .= "<input class=\"form-check-input\" type=\"radio\" name=\"guest_wine_choice\" id=\"" . $id . "\" value=\"" . htmlspecialchars($wineOption, ENT_QUOTES, 'UTF-8') . "\" " . $checked . ">";
-						$output .= "<label class=\"form-check-label\" for=\"guest_wine_choice\">" . $wineOption . "</label>";
-						$output .= "</div>";
-						
-						echo $output;
-					}
-					?>
-				</div>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-link text-muted" data-bs-dismiss="modal">Close</button>
-				<button type="submit" class="btn btn-primary">Add Guest</button>
-				<input type="hidden" name="bookingAddGuest" id="bookingAddGuest" value="1">
+			<?php
+			  $guestUID = null;      // or ''
+			  $guest     = [];       // empty guest
+			  include '_guest_modal.php';
+			  ?>
+		</div>
+	</div>
+</div>
+
+<!-- Edit Guest Modal(s) -->
+<?php
+$guestModalOutput = '';
+foreach ($booking->guests() as $row) {
+	$guestUID = $row['guest_uid'];
+	$guest    = $row;
+
+	ob_start(); // begin capture
+	?>
+	<div class="modal fade" id="editGuestModal_<?= $guestUID; ?>" tabindex="-1" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<?php include '_guest_modal.php'; ?>
 			</div>
 		</div>
 	</div>
-	</form>
-</div>
+	<!-- christmas -->
+	<?php
+	$guestModalOutput .= ob_get_clean(); // append captured block
+}
+
+echo $guestModalOutput;
+?>
 
 <!-- Delete Booking Modal -->
 <div class="modal fade" tabindex="-1" id="deleteBookingModal" data-backdrop="static" data-keyboard="false" aria-hidden="true">
-	<form method="post" action="index.php">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -371,33 +333,29 @@ echo pageTitle(
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-link text-muted" data-bs-dismiss="modal">Close</button>
-				<button type="submit" class="btn btn-danger">Delete Booking</button>
-				<input type="hidden" name="deleteTermUID" value="<?= $booking->uid; ?>">
+				<button type="submit" class="btn btn-danger booking-delete-btn" data-booking_uid="<?= $booking->uid; ?>">Delete Booking</button>
 			</div>
 		</div>
 	</div>
-	</form>
 </div>
-
-<!-- Edit Guest Modal -->
-<div class="modal fade" id="editGuestModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog">
-	<div class="modal-content" id="modalContent">
-	</div>
-  </div>
-</div>
-
 
 <script>
 // enforce domus_reason for charge_to
 toggleReason('charge_to', 'domus_reason', 'Domus');
-toggleReason('guest_charge_to', 'guest_domus_reason', 'Domus');
+toggleReason('charge_to', 'guest_domus_reason', 'Domus');
+</script>
 
-// enforce guest_domus_reason for charge_to with guest edit modal
-document.addEventListener('ajax-modal-loaded', () => {
-	
+<script>
+document.addEventListener('click', function(e) {
+	const btn = e.target.closest('[data-delete-guest]');
+	if (!btn) return;
+
+	e.preventDefault();
+
+	const form  = btn.closest('form');
+	const field = form.querySelector('input[name="delete_guest"]');
+
+	field.value = '1';
+	form.submit();
 });
-
-// Load AJAX menu
-remoteModalLoader('.load-remote-guest_edit', '#editGuestModal', '#modalContent');
 </script>
