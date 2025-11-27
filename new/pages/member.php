@@ -131,23 +131,66 @@ echo pageTitle(
 				?>
 			</div>
 			
-			<div class="mb-3">
-				<label for="title" class="form-label">Member Category</label>
-				<select class="form-select" name="category" id="category" <?= $user->hasPermission('members') ? '' : 'disabled' ?> required>
-					<?php
-					$memberCategories = explode(',', $settings->get('member_categories'));
-					
-					foreach ($memberCategories as $category) {
-						$category = trim($category);
-						$selected = ($category === $member->category) ? ' selected' : '';
-						echo "<option value=\"{$category}\"{$selected}>{$category}</option>";
-					}
-					?>
-				</select>
-				<div class="invalid-feedback">
-					Valid category is required.
+			<div class="row">
+				<div class="col">
+					<div class="mb-3">
+						<label for="type" class="form-label">Member Type</label>
+						<select class="form-select" name="type" id="type" <?= $user->hasPermission('members') ? '' : 'disabled' ?> required>
+							<?php
+							$memberTypes = explode(',', $settings->get('member_types'));
+							
+							foreach ($memberTypes as $type) {
+								$type = trim($type);
+								$selected = ($type === $member->type) ? ' selected' : '';
+								echo "<option value=\"{$type}\"{$selected}>{$type}</option>";
+							}
+							?>
+						</select>
+						<div class="invalid-feedback">
+							Valid member type is required.
+						</div>
+					</div>
+				</div>
+				<div class="col">
+					<div class="mb-3">
+						<label for="title" class="form-label">Member Category</label>
+						<select class="form-select" name="category" id="category" <?= $user->hasPermission('members') ? '' : 'disabled' ?> required>
+							<?php
+							$memberCategories = explode(',', $settings->get('member_categories'));
+							
+							foreach ($memberCategories as $category) {
+								$category = trim($category);
+								$selected = ($category === $member->category) ? ' selected' : '';
+								echo "<option value=\"{$category}\"{$selected}>{$category}</option>";
+							}
+							?>
+						</select>
+						<div class="invalid-feedback">
+							Valid category is required.
+						</div>
+					</div>
 				</div>
 			</div>
+			
+			<div class="mb-3">
+				<label for="email" class="form-label">Email <span class="text-muted">(Optional)</span></label>
+				<input type="email" class="form-control" name="email" id="email" placeholder="Email address" value="<?php echo $member->email; ?>">
+			</div>
+			
+			<div class="mb-3">
+				<label for="enabled" class="form-label">Enabled/Disabled Status</label>
+				<select class="form-select" name="enabled" id="enabled" <?= $user->hasPermission('members') ? '' : 'disabled' ?> required>
+					<option value="1" <?php if ($member->enabled == "1") { echo " selected"; } ?>>Enabled</option>
+					<option value="0" <?php if ($member->enabled == "0") { echo " selected"; } ?>>Disabled</option>
+				</select>
+				<div class="invalid-feedback">
+					Enabled/disabled status is required.
+				</div>
+			</div>
+			
+			<hr>
+			
+			<h4>Default Preferences</h4>
 			
 			<div class="accordion mb-3" id="accordionDietary">
 				<div class="accordion-item">
@@ -192,43 +235,6 @@ echo pageTitle(
 				</div>
 			</div>
 			
-			<div class="mb-3">
-				<label for="email" class="form-label">Email <span class="text-muted">(Optional)</span></label>
-				<input type="email" class="form-control" name="email" id="email" placeholder="Email address" value="<?php echo $member->email; ?>">
-			</div>
-			
-			<div class="mb-3">
-				<label for="type" class="form-label">Member Type</label>
-				<select class="form-select" name="type" id="type" <?= $user->hasPermission('members') ? '' : 'disabled' ?> required>
-					<?php
-					$memberTypes = explode(',', $settings->get('member_types'));
-					
-					foreach ($memberTypes as $type) {
-						$type = trim($type);
-						$selected = ($type === $member->type) ? ' selected' : '';
-						echo "<option value=\"{$type}\"{$selected}>{$type}</option>";
-					}
-					?>
-				</select>
-				<div class="invalid-feedback">
-					Valid member type is required.
-				</div>
-			</div>
-			
-			<div class="mb-3">
-				<label for="enabled" class="form-label">Enabled/Disabled Status</label>
-				<select class="form-select" name="enabled" id="enabled" <?= $user->hasPermission('members') ? '' : 'disabled' ?> required>
-					<option value="1" <?php if ($member->enabled == "1") { echo " selected"; } ?>>Enabled</option>
-					<option value="0" <?php if ($member->enabled == "0") { echo " selected"; } ?>>Disabled</option>
-				</select>
-				<div class="invalid-feedback">
-					Enabled/disabled status is required.
-				</div>
-			</div>
-			
-			<hr>
-			
-			<h4>Default Preferences</h4>
 			<div class="form-check form-switch">
 				<input class="form-check-input" type="checkbox" id="opt_in" name="opt_in" value="1" <?php if ($member->opt_in == "1") { echo " checked";} ?> switch>
 				<label class="form-check-label" for="opt_in">Allow my name to appear on dining lists (also applies to my guests</label>
