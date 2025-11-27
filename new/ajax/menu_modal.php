@@ -8,18 +8,17 @@ $mealUID = filter_input(INPUT_GET, 'mealUID', FILTER_VALIDATE_INT);
 $mealObject = new Meal($mealUID);
 ?>
 
-<h3 class="modal-title mt-3 text-center"><?= $mealObject->type ?> Menu</h3>
-
 <div class="modal-body">
-	<p class="text-center">
+	<h3 class="text-center"><?= $mealObject->name ?></h3>
+	<h5 class="text-secondary text-center mb-3">
 		<i>
 		<?= $mealObject->location ?>,
 		<?= formatDate($mealObject->date_meal, 'long') ?>
 		<?= formatTime($mealObject->date_meal) ?>
 		</i>
-	</p>
+	</h5>
 	
-	<div class="text-center">
+	<div class="text-center my-3">
 		<?= !empty($mealObject->menu)
 		  ? nl2br($mealObject->menu)
 		  : "Menu not available"

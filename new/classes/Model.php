@@ -218,10 +218,15 @@ class Meals extends Model {
 	
 		// Normalize to YYYY-MM-DD
 		if ($start instanceof DateTime) {
-			$start = $start->format('Y-m-d');
+			$start = $start->format('Y-m-d 00:00:00');
+		} else {
+			$start = date('Y-m-d 00:00:00', strtotime($start));
 		}
+		
 		if ($end instanceof DateTime) {
-			$end = $end->format('Y-m-d');
+			$end = $end->format('Y-m-d 23:59:59');
+		} else {
+			$end = date('Y-m-d 23:59:59', strtotime($end));
 		}
 	
 		$sql = "SELECT uid

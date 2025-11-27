@@ -82,7 +82,9 @@ class Meal extends Model {
 			['uid' => $this->uid],
 			'logs'
 		);
-	
+		
+		toast('Meal Updated', 'Meal sucesfully updated', 'text-success');
+		
 		return $updatedRows;
 	}
 	

@@ -60,7 +60,7 @@ class Term extends Model {
 			'logs'
 		);
 		
-		toast('Term Deleted', 'Term sucesfully updated', 'text-success');
+		toast('Term Deleted', 'Term sucesfully deleted', 'text-success');
 	}
 	
 	public function mealsInTerm() {

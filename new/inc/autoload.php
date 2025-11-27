@@ -60,6 +60,7 @@ try {
 // Create shared objects
 $log      = new Log();
 $terms    = new Terms();
+$meals    = new Meals();
 $user     = new User();
 $settings = new Settings();
 
