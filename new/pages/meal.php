@@ -230,7 +230,7 @@ echo pageTitle(
 														<input class="form-check-input" type="radio" 
 															   name="photo" 
 															   value="<?= basename($cardImage) ?>" 
-															   <?= ($meal->photo === basename($cardImage)) ? 'checked' : '' ?>>
+															   <?= ($meal->photographURL() === htmlspecialchars($cardImage)) ? 'checked' : '' ?>>
 														<?= basename($cardImage) ?>
 													</label>
 												</p>

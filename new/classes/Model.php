@@ -233,16 +233,18 @@ class Meals extends Model {
 		return array_map(fn($row) => new Meal($row['uid']), $rows);
 	}
 	
-	public function cardImages() {
+	public function cardImages(): array {
 		$mealCardDirectory = "./uploads/meal_cards/";
+		$defaultImage = "./assets/images/card_default.png"; // path to your default image
 	
-		$files = scandir($mealCardDirectory, SCANDIR_SORT_DESCENDING);
-		$cleanFiles = array_diff($files, array('..', '.'));
+		// Scan directory and remove . and ..
+		$files = array_diff(scandir($mealCardDirectory, SCANDIR_SORT_DESCENDING), ['.', '..']);
 	
-		// Prepend the directory path to each file
-		$fullPaths = array_map(function($file) use ($mealCardDirectory) {
-			return $mealCardDirectory . $file;
-		}, $cleanFiles);
+		// Prepend directory path to each file
+		$fullPaths = array_map(fn($file) => $mealCardDirectory . $file, $files);
+	
+		// Include the default image at the beginning
+		array_unshift($fullPaths, $defaultImage);
 	
 		return $fullPaths;
 	}

@@ -183,14 +183,14 @@ class Meal extends Model {
 		$filePath = $_SERVER['DOCUMENT_ROOT'] . $urlPath;
 	
 		// Use default if photo is empty
-		$filename = $this->photo ?: 'generic.png';
+		$filename = $this->photo;
 	
 		// If the file does not exist on disk, fall back to default
 		if (!file_exists($filePath . $filename)) {
-			$filename = 'generic.png';
+			return './assets/images/card_default.png';
 		}
 	
-		return $urlPath . $filename;
+		return './uploads/meal_cards/' . $filename;
 	}
 	
 	public function menuTooltip() {
