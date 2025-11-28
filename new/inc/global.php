@@ -103,28 +103,38 @@ function pageTitle(string $title, string $subtitle = '', array $actions = []): s
 
 		foreach ($actions as $action) {
 			if ($action['permission'] == "everyone" || $user->hasPermission($action['permission'])) {
+		
 				$titleAttr = htmlspecialchars($action['title']);
 				$classAttr = htmlspecialchars($action['class'] ?? '');
 				$icon = !empty($action['icon']) ? '<i class="bi me-2 bi-' . htmlspecialchars($action['icon']) . '"></i> ' : '';
-				
-				// Handle JavaScript or URL event
-				$onclick = '';
 				$eventAttr = $action['event'] ?? '';
-				if (str_starts_with($eventAttr, 'javascript:')) {
-					$onclick = 'onclick="' . substr($eventAttr, 11) . '"';
-				} elseif ($eventAttr !== '') {
-					$onclick = 'onclick="window.open(\'' . htmlspecialchars($eventAttr) . '\')"';
-				}
-				
-				// Handle Bootstrap data attributes (e.g., modal)
 				$extraAttrs = '';
+		
+				// Handle Bootstrap data attributes (modals, etc.)
 				if (!empty($action['data']) && is_array($action['data'])) {
 					foreach ($action['data'] as $k => $v) {
 						$extraAttrs .= ' data-' . htmlspecialchars($k) . '="' . htmlspecialchars($v) . '"';
 					}
 				}
-				
-				$html .= '<li class="dropdown-item ' . $classAttr . '" ' . $onclick . $extraAttrs . '>' . $icon . $titleAttr . '</li>';
+		
+				// Determine rendering
+				if (!empty($eventAttr)) {
+					if (str_starts_with($eventAttr, 'javascript:')) {
+						// Inline JS
+						$html .= '<li><a class="dropdown-item ' . $classAttr . '" href="#" onclick="' 
+							   . substr($eventAttr, 11) . '"' . $extraAttrs . '>' 
+							   . $icon . $titleAttr . '</a></li>';
+					} else {
+						// Treat as normal link, same window
+						$html .= '<li><a class="dropdown-item ' . $classAttr . '" href="' 
+							   . htmlspecialchars($eventAttr) . '"' . $extraAttrs . '>' 
+							   . $icon . $titleAttr . '</a></li>';
+					}
+				} else {
+					// No href, maybe modal only
+					$html .= '<li class="dropdown-item ' . $classAttr . '"' . $extraAttrs . '>' 
+						   . $icon . $titleAttr . '</li>';
+				}
 			}
 		}
 

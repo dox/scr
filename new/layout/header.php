@@ -42,13 +42,13 @@ if (APP_DEBUG) {
 				}
 				?>
 				
-				<button type="button" class="btn btn-link position-relative">
+				<!--<button type="button" class="btn btn-link position-relative">
 					<i class="bi bi-bell"></i>
 					<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
 						99+
 						<span class="visually-hidden">notifications</span>
 					</span>
-				</button>
+				</button>-->
 				
 				<div class="dropdown">
 					<a href="#" id="bd-theme" class="d-block link-body-emphasis text-decoration-none dropdown-toggle"
@@ -112,7 +112,7 @@ if (APP_DEBUG) {
 						}
 						
 						if($user->hasPermission("notifications")) {
-							echo "<li><a class=\"dropdown-item\" href=\"index.php?page=notifications\"><i class=\"bi me-2 bi-bell\" aria-hidden=\"true\"></i>Notifications</a></li>";
+							//echo "<li><a class=\"dropdown-item\" href=\"index.php?page=notifications\"><i class=\"bi me-2 bi-bell\" aria-hidden=\"true\"></i>Notifications</a></li>";
 						}
 						
 						if($user->hasPermission("reports")) {

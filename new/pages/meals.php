@@ -8,8 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		$meal = new Meal($deleteMealUID);
 		$meal->delete();
 	} else {
-		//$newMember = new Members();
-		//$newMember->create($_POST);
+		$meals->create($_POST);
 	}
 }
 
@@ -18,15 +17,11 @@ echo pageTitle(
 	"All meals both past and present",
 	[
 		[
-			'permission' => 'settings',
+			'permission' => 'meals',
 			'title' => 'Add new',
 			'class' => '',
-			'event' => '',
-			'icon' => 'plus-circle',
-			'data' => [
-				'bs-toggle' => 'modal',
-				'bs-target' => '#addMemberModal'
-			]
+			'event' => 'index.php?page=meal',
+			'icon' => 'plus-circle'
 		]
 	]
 );
@@ -48,16 +43,16 @@ if (strtotime($dateFrom) > strtotime($dateTo)) {
 ?>
 
 <form method="post" id="mealsBetweenDates" action="<?= htmlspecialchars($_SERVER['REQUEST_URI']) ?>">
-	<div class="row align-items-end g-2">
-		<div class="col-auto">
+	<div class="row align-items-end">
+		<div class="col">
 			<label for="dateFrom" class="form-label">Date From</label>
 			<input type="date" class="form-control" id="dateFrom" name="date_from" value="<?= $dateFrom ?>">
 		</div>
-		<div class="col-auto">
+		<div class="col">
 			<label for="dateTo" class="form-label">Date To</label>
 			<input type="date" class="form-control" id="dateTo" name="date_to" value="<?= $dateTo ?>">
 		</div>
-		<div class="col-auto">
+		<div class="col">
 			<button type="submit" class="btn btn-primary mt-3 w-100">Submit</button>
 		</div>
 	</div>

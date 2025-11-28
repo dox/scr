@@ -41,7 +41,7 @@ class User {
 	}
 
 	private function tryTokenRestore(): bool {
-		global $db;
+		global $db, $log;
 
 		if (empty($_COOKIE[self::COOKIE_NAME])) {
 			return false;
@@ -80,6 +80,9 @@ class User {
 
 		$_SESSION['user'] = $this->userData;
 		$this->loggedIn   = true;
+		
+		$log->add("User authenticated: {$member->ldap} (with cookie)", Log::INFO);
+		toast('Login Successful', 'Login successful via stored cookie', 'text-success');
 		
 		return true;
 	}

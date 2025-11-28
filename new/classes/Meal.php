@@ -31,6 +31,27 @@ class Meal extends Model {
 	
 		if ($uid !== null) {
 			$this->getOne($uid);
+		} else {
+			//$this->template;
+			$this->name = "";
+			$this->type;
+			$this->date_meal = date('Y-m-d 12:30:00');
+			$this->date_cutoff = date('Y-m-d 10:00:00', strtotime('1 day ago'));
+			$this->location = "";
+			$this->allowed;
+			$this->domus;
+			$this->charge_to;
+			$this->allowed_wine = 0;
+			$this->allowed_dessert;
+			$this->scr_capacity = 0;
+			//$this->mcr_capacity;
+			$this->scr_guests = 0;
+			//$this->mcr_guests;
+			$this->scr_dessert_capacity = 0;
+			//$this->mcr_dessert_capacity;
+			$this->menu = "";
+			$this->notes = "";
+			$this->photo;
 		}
 	}
 	
@@ -178,21 +199,21 @@ class Meal extends Model {
 	}
 	
 	public function photographURL(): string {
-		// Path relative to the public folder (for browser)
-		$urlPath = '/new/uploads/meal_cards/';
-	
-		// Full filesystem path for file_exists()
+		$urlPath  = '/new/uploads/meal_cards/';
 		$filePath = $_SERVER['DOCUMENT_ROOT'] . $urlPath;
 	
-		// Use default if photo is empty
-		$filename = $this->photo;
+		// Choose the candidate filename (null or empty means default)
+		$filename = trim((string) $this->photo);
 	
-		// If the file does not exist on disk, fall back to default
-		if (!file_exists($filePath . $filename)) {
+		// If no filename at all, skip straight to default
+		if ($filename === '') {
 			return './assets/images/card_default.png';
 		}
 	
-		return './uploads/meal_cards/' . $filename;
+		// If file exists, return its public path; otherwise, fall to default
+		return file_exists($filePath . $filename)
+			? './uploads/meal_cards/' . $filename
+			: './assets/images/card_default.png';
 	}
 	
 	public function menuTooltip() {
@@ -387,7 +408,11 @@ class Meal extends Model {
 	}
 	
 	public function isCutoffValid(): bool {
-		return new DateTime() < new DateTime($this->date_cutoff);
+		if ($this->date_cutoff) {
+			return new DateTime() < new DateTime($this->date_cutoff);
+		}
+		
+		return false;
 	}
 	
 	public function isAllowedGroupsValid(): bool {
