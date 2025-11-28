@@ -141,8 +141,8 @@ $guestDietary     = $guest['guest_dietary']      ?? [];
 
 	<?php if ($isEdit): ?>
 		<div class="btn-group">
-			<button type="submit" class="btn btn-primary">Update Guest</button>
-			<button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split"
+			<button type="submit" class="btn btn-primary <?php if (!$meal->canBook() || !$user->hasPermission("bookings")) { echo " disabled"; }?>">Update Guest</button>
+			<button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split <?php if (!$meal->canBook() || !$user->hasPermission("bookings")) { echo " disabled"; }?>"
 					data-bs-toggle="dropdown"></button>
 			<ul class="dropdown-menu">
 				<li><a class="dropdown-item text-danger" href="#" data-delete-guest>Delete Guest</a></li>
@@ -151,7 +151,7 @@ $guestDietary     = $guest['guest_dietary']      ?? [];
 		<input type="hidden" name="guest_uid" value="<?= $guestUID; ?>">
 		<input type="hidden" name="delete_guest" value="false">
 	<?php else: ?>
-		<button type="submit" class="btn btn-primary">Add Guest</button>
+		<button type="submit" class="btn btn-primary <?php if (!$meal->canBook() || !$user->hasPermission("bookings")) { echo " disabled"; }?>">Add Guest</button>
 		<input type="hidden" name="guest_add" value="1"">
 	<?php endif; ?>
 	

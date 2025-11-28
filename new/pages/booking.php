@@ -1,6 +1,7 @@
 <?php
 $bookingUID = filter_input(INPUT_GET, 'uid', FILTER_SANITIZE_NUMBER_INT);
 $booking = Booking::fromUID($bookingUID);
+$meal = new Meal($booking->meal_uid);
 
 if (!isset($booking->uid)) {
 	die("Unknown or unavailable booking");
@@ -13,31 +14,30 @@ if (!$user->hasPermission("meals") && $booking->member_ldap != $user->getUsernam
 if (isset($_POST)) {
 	//printArray($_POST);
 	
-	// update booking
-	if (isset($_POST['bookingUID'])) {
-		$booking->update($_POST);
+	if ($meal->isCutoffValid() || $user->hasPermission("bookings")) {
+		// update booking
+		if (isset($_POST['bookingUID'])) {
+			$booking->update($_POST);
+		}
 		
+		// add new guest
+		if (isset($_POST['guest_add'])) {
+			$booking->addGuest($_POST);
+		}
+		
+		// edit guest
+		if (isset($_POST['guest_uid'])) {
+			$booking->editGuest($_POST);
+		}
+		
+		// delete guest
+		if (isset($_POST['delete_guest']) && $_POST['delete_guest'] == "1") {
+			$booking->deleteGuest($_POST['guest_uid']);
+		}
+		
+		$booking = Booking::fromUID($bookingUID);
 	}
-	
-	// add new guest
-	if (isset($_POST['guest_add'])) {
-		$booking->addGuest($_POST);
-	}
-	
-	// edit guest
-	if (isset($_POST['guest_uid'])) {
-		$booking->editGuest($_POST);
-	}
-	
-	// delete guest
-	if (isset($_POST['delete_guest']) && $_POST['delete_guest'] == "1") {
-		$booking->deleteGuest($_POST['guest_uid']);
-	}
-	
-	$booking = Booking::fromUID($bookingUID);
 }
-
-$meal = new Meal($booking->meal_uid);
 
 $icons[] = [
 	'permission' => 'meals',
@@ -45,6 +45,13 @@ $icons[] = [
 	'class' => '',
 	'event' => 'index.php?page=guestlist&uid=' . $meal->uid,
 	'icon' => 'card-list'
+];
+$icons[] = [
+	'permission' => 'meals',
+	'title' => 'Edit Meal',
+	'class' => '',
+	'event' => 'index.php?page=meal&uid=' . $meal->uid,
+	'icon' => 'fork-knife'
 ];
 
 if (count($booking->guests()) < $meal->scr_guests || $user->hasPermission("bookings")) {
@@ -217,6 +224,7 @@ echo pageTitle(
 					   name="dessert"
 					   value="1"
 					   type="checkbox"
+					   <?= (!$meal->hasDessertCapacity()) ? "disabled" : "" ?>
 					   <?= $booking->dessert == "1" ? "checked" : "" ?>>
 				<label for="dessert" class="form-label">
 					Dessert <i>(applies to your guests)</i>

@@ -24,11 +24,16 @@ if (!$meal->canBook()) {
 }
 
 try {
-	$data['meal_uid'] = $meal_uid;
-	$data['member_ldap'] = $user->getUsername();
-	$data['type'] = "SCR";
-	
 	$bookings = new Bookings();
+	$member = Member::fromLDAP($user->getUsername());
+	
+	$data['meal_uid'] = $meal->uid;
+	$data['member_ldap'] = $member->ldap;
+	$data['type'] = $member->type;
+	$data['charge_to'] = $meal->charge_to;
+	$data['wine_choice'] = ($meal->allowed_wine) ? $member->default_wine_choice : '0';
+	$data['dessert'] = ($meal->hasDessertCapacity()) ? $member->default_dessert : '0';
+	
 	$bookingSuccessUID = $bookings->create($data); // or false if something fails
 	
 	if ($bookingSuccessUID) {

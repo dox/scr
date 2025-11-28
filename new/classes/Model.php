@@ -145,7 +145,14 @@ class Settings extends Model {
 		if ($row) return $row['uid'];
 	}
 	
-	public function update(array $postData) {
+	public function getName($uid) {
+		$query = "SELECT name FROM " . static::$table . " WHERE uid = ?";
+		$row = $this->db->fetch($query, [$uid]);
+		
+		if ($row) return $row['name'];
+	}
+	
+	public function update(array $postData, $log = true) {
 		global $db;
 	
 		// Map normal text/select fields
@@ -158,7 +165,7 @@ class Settings extends Model {
 			static::$table,
 			$fields,
 			['uid' => $postData['uid']],
-			'logs'
+			$log
 		);
 		
 		toast('Setting Updated', 'Setting sucesfully updated', 'text-success');

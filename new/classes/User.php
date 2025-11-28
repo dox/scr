@@ -207,6 +207,10 @@ class User {
 		return $this->loggedIn;
 	}
 
+	public function getUID(): ?int {
+		return $this->userData['uid'] ?? null;
+	}
+	
 	public function getUsername(): ?string {
 		return $this->userData['samaccountname'] ?? null;
 	}

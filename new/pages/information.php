@@ -1,6 +1,9 @@
 <?php
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-	$settings->update($_POST);
+	$settingUID = filter_input(INPUT_POST, 'uid', FILTER_SANITIZE_NUMBER_INT);
+	$settingName = $settings->getName($settingUID);
+	$settings->update($_POST, false); // don't log here
+	$log->add("Setting " . $settingUID . " (" . $settingName . ") updated", "INFO");
 }
 
 // Allow only these paths

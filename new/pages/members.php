@@ -256,6 +256,9 @@ endforeach;
 					<div class="modal-footer">
 						<button type="button" class="btn btn-link text-muted" data-bs-dismiss="modal">Close</button>
 						<button type="submit" class="btn btn-primary">Add Member</button>
+						<input type="hidden" name="precedence" value="999">
+						<input type="hidden" name="opt_in" value="1">
+						<input type="hidden" name="calendar_hash" value="<?= bin2hex(random_bytes(8)) ?>">
 					</div>
 				</form>
 			</div>
