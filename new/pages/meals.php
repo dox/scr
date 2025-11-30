@@ -7,7 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		
 		$meal = new Meal($deleteMealUID);
 		$meal->delete();
-	} else {
+	} elseif(isset($_POST['createMeal'])) {
 		$meals->create($_POST);
 	}
 }

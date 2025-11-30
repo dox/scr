@@ -175,3 +175,7 @@ function displayToast($array) {
 	
 	return $output;
 }
+
+function autoPluralise ($singular, $plural, $count = 1) {
+	return ($count == 1)? $singular : $plural;
+}

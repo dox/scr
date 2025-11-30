@@ -255,6 +255,7 @@ echo pageTitle(
 			<button type="submit" class="btn btn-primary">
 				<?= $isNew ? 'Create Meal' : 'Update Meal' ?>
 			</button>
+			<?= $isNew ? '<input type="hidden" name="createMeal" value="1">' : '' ?>
 		</form>
 	</div>
 

@@ -73,14 +73,12 @@ echo makeTitle($title, $subtitle, $icons, true);
 	foreach ($categories as $wine_category) {
 		$winesByCategory = $wineClass->allWines(array('cellar_uid' => $cellar->uid, 'wine_wines.category' => $wine_category), true);
 		
-		if (count($winesByCategory) > 0) {
+		if ($total > 0) {
 			$wineBottlesCount = 0;
 			foreach($winesByCategory as $wine) {
-				$wine = new wine($wine['uid']);
-				$wineBottlesCount = $wineBottlesCount + $wine->currentQty();
+				$wineBottlesCount += $wine->currentQty();
 			}
-			$url = "index.php?n=wine_search&filter=category&value=" . $wine_category . "&cellar_uid=" . $cellar->uid;
-			
+			$url = "index.php?n=wine_search&filter=category&value=" . $wine_category;
 			$output  = "<div class=\"col\">";
 			$output .= "<div class=\"card mb-3\">";
 			$output .= "<div class=\"card-body\">";
@@ -92,7 +90,6 @@ echo makeTitle($title, $subtitle, $icons, true);
 			
 			echo $output;
 		}
-		
 	}
 	?>
 </div>
