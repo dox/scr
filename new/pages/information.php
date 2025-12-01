@@ -39,7 +39,7 @@ echo pageTitle(
 			'title' => 'Edit',
 			'class' => '',
 			'event' => '',
-			'icon' => 'calendar2-week',
+			'icon' => 'pencil',
 			'data' => [
 				'bs-toggle' => 'modal',
 				'bs-target' => '#editContentModal'
@@ -56,14 +56,12 @@ echo $content;
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title">Add New Term</h5>
 				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
 			<div class="modal-body">
 				<form method="post" id="contentEditForm" action="<?= htmlspecialchars($_SERVER['REQUEST_URI']) ?>">
 					<div class="modal-body">
 						<div class="mb-3">
-							<label for="name">Term Name</label>
 							<textarea class="form-control" id="value" name="value" rows="3"><?php echo $content;?></textarea>
 							<input type="hidden" name="uid" value="<?php echo $settings->getUID($subpage); ?>">
 						</div>

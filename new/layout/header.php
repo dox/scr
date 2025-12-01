@@ -27,10 +27,10 @@ if (APP_DEBUG) {
 					<a href="index.php?page=member" class="nav-link"><i class="bi bi-person me-2"></i>Profile</a>
 				</li>
 				<li>
-					<a href="index.php?page=information&subpage=scr_information" class="nav-link"><i class="bi bi-journal-text me-2"></i>Information</a>
+					<a href="index.php?page=information&subpage=scr_information" class="nav-link"><i class="bi  bi-info-circle me-2"></i>SCR Information</a>
 				</li>
 				<li>
-					<a href="index.php?page=information&subpage=dining_arrangements" class="nav-link"><i class="bi bi-info-circle me-2"></i>Dining Arrangements</a>
+					<a href="index.php?page=information&subpage=dining_arrangements" class="nav-link"><i class="bi bi-journal-text me-2"></i>Dining Arrangements</a>
 				</li>
 			</ul>
 			
@@ -53,7 +53,7 @@ if (APP_DEBUG) {
 				<div class="dropdown">
 					<a href="#" id="bd-theme" class="d-block link-body-emphasis text-decoration-none dropdown-toggle"
 					   data-bs-toggle="dropdown" aria-expanded="true" aria-label="Toggle theme (auto)">
-						<i class="bi bi-circle-half me-2"></i>
+						<i class="bi bi-circle-half"></i>
 						<span class="visually-hidden" id="bd-theme-text">Toggle theme</span>
 					</a>
 				

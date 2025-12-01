@@ -1,34 +1,11 @@
 <?php
 
-// Basic check: only allow POST
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-	//echo json_encode(['success' => false, 'message' => 'Invalid request method.']);
-	//exit;
-}
 
-// Get and sanitize input
-$meal_uid = filter_input(INPUT_POST, 'meal_uid', FILTER_VALIDATE_INT);
-$meal_uid = '9844';
-if (!$meal_uid) {
-	echo json_encode(['success' => false, 'message' => 'Invalid meal UID.']);
-	exit;
-}
+$i = 0;
 
-
-
-try {
-	$data['meal_uid'] = $meal_uid;
-	$data['member_ldap'] = $user->getUsername();
-	$data['type'] = "SCR";
+do {
+	echo "<p>Error: " . $i . "</p>";
+	error_log("Error: test error: " . $i, LOG_NOTICE);
 	
-	$bookings = new Bookings();
-	$bookingSuccessUID = $bookings->create($data); // or false if something fails
-	
-	if ($bookingSuccessUID) {
-		echo json_encode(['success' => true, 'booking_uid' => $bookingSuccessUID]);
-	} else {
-		echo json_encode(['success' => false, 'message' => 'Could not book this meal.']);
-	}
-} catch (Exception $e) {
-	echo json_encode(['success' => false, 'message' => 'Server error: ' . $e->getMessage()]);
-}
+	$i++;
+} while ($i < 20);
