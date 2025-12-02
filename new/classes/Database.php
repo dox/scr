@@ -38,6 +38,11 @@ class Database {
 		$stmt = $this->query($sql, $params);
 		return $stmt->fetchAll();
 	}
+	
+	public function fetchColumn(string $sql, array $params = []): array {
+		$stmt = $this->query($sql, $params);
+		return $stmt->fetchAll(PDO::FETCH_COLUMN);
+	}
 
 	public function lastInsertId() {
 		return $this->pdo->lastInsertId();

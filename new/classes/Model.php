@@ -411,6 +411,34 @@ class Wines extends Model {
 		return $cellars;
 	}
 	
+	public function listFromWines(string $column): array{
+		global $db;
+	
+		// Guard the column name to prevent injection
+		$allowed = [
+			'supplier', 'category', 'grape', 'country_of_origin',
+			'region_of_origin', 'status', 'bin_uid', 'vintage'
+		];
+	
+		if (!in_array($column, $allowed, true)) {
+			throw new InvalidArgumentException("Invalid column: $column");
+		}
+	
+		$sql = "SELECT DISTINCT `$column` FROM " . self::$table_wines . " WHERE 1=1";
+		
+		$params = [];
+		// Default rule: ignore closed, unless querying status itself
+		if ($column !== 'status') {
+			$sql .= " AND status <> 'Closed' ";
+		}
+		
+		$sql .= " ORDER BY `$column` ASC";
+		
+		$result = $db->fetchColumn($sql);
+		
+		return $result;
+	}
+	
 	public function wineBottlesTotal() {
 		global $db;
 		
@@ -446,6 +474,9 @@ class Wines extends Model {
 				if (strtoupper($operator) === 'IN' && is_array($value)) {
 					$value = array_map(fn($v) => "'" . addslashes($v) . "'", $value);
 					$conditions[] = "$key IN (" . implode(',', $value) . ")";
+				} elseif ($operator === 'LIKE') {
+					$value = '%' . addslashes($value) . '%';
+					$conditions[] = "$key LIKE '$value'";
 				} else {
 					$value = addslashes($value);
 					$conditions[] = "$key $operator '$value'";
@@ -732,33 +763,6 @@ class Wines extends Model {
 		$sql .= "LIMIT 20";
 		
 		//echo $sql;
-		
-		$results = $db->query($sql)->fetchAll();
-		
-		return $results;
-	}
-	
-	
-	
-	public function listFromWines($columnName, $whereFilterArray = null) {
-		global $db;
-		
-		$sql  = "SELECT DISTINCT " . $columnName . " FROM " . self::$table_wines;
-		if ($columnName != "status") {
-			$sql .= " WHERE status != 'Closed'";
-		}
-		if (!empty($whereFilterArray)) {
-			$conditions = [];
-			foreach ($whereFilterArray as $key => $value) {
-				// Escaping the key and value for safety
-				$escapedKey = addslashes($key);
-				$escapedValue = addslashes($value);
-				$conditions[] = "$escapedKey = '$escapedValue'";
-			}
-			$sql .= " AND " . implode(' AND ', $conditions);
-		}
-		
-		$sql .= " ORDER BY " . $columnName . " ASC";
 		
 		$results = $db->query($sql)->fetchAll();
 		

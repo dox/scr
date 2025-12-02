@@ -363,12 +363,11 @@ echo pageTitle(
 				<p>This will also delete <strong>all</strong> bookings (past and present) for this member.</p>
 				<p><span class="text-danger"><strong>THIS ACTION CANNOT BE UNDONE!</strong></span></p>
 				<input type="text" class="form-control mb-3" id="delete_confirm" placeholder="Type 'DELETE' to confirm" oninput="enableOnExactMatch('delete_confirm', 'delete_button', 'DELETE')">
-				
-				<div class="modal-footer">
-					<button type="button" class="btn btn-link text-muted" data-bs-dismiss="modal">Close</button>
-					<button type="submit" class="btn btn-danger" id="delete_button" disabled>Delete Member</button>
-					<input type="hidden" name="deleteMemberUID" value="<?= $member->uid; ?>">
-				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-link text-muted" data-bs-dismiss="modal">Close</button>
+				<button type="submit" class="btn btn-danger" id="delete_button" disabled>Delete Member</button>
+				<input type="hidden" name="deleteMemberUID" value="<?= $member->uid; ?>">
 			</div>
 		</div>
 	</div>

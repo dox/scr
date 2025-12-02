@@ -112,7 +112,7 @@ echo pageTitle(
 </div>
 
 
-<!-- Delete Term Modal -->
+<!-- Add Cellar Modal -->
 <div class="modal fade" tabindex="-1" id="addCellarModal" data-backdrop="static" data-keyboard="false" aria-hidden="true">
 	<form method="post" action="<?= htmlspecialchars($_SERVER['REQUEST_URI']) ?>">
 	<div class="modal-dialog">
@@ -131,13 +131,13 @@ echo pageTitle(
 					</div>
 					<div class="col-9">
 						<div class="mb-3">
-							<label for="name" class="form-label">Cellar Name</label>
+							<label for="name" class="form-label">Name</label>
 							<input type="text" class="form-control" id="name" name="name">
 						</div>
 					</div>
 				</div>
 				<div class="mb-3">
-					<label for="description" class="form-label">Bin Types</label>
+					<label for="description" class="form-label">Sections</label>
 					<textarea class="form-control" id="bin_types" name="bin_types" rows="3"></textarea>
 					<div id="bin-typesHelp" class="form-text">Comma,Separated,List</div>
 				</div>

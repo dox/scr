@@ -20,7 +20,7 @@ echo pageTitle(
 			'title' => 'Edit Cellar',
 			'class' => '',
 			'event' => '',
-			'icon' => 'plus-circle',
+			'icon' => 'pencil',
 			'data' => [
 				'bs-toggle' => 'modal',
 				'bs-target' => '#editCellarModal'
@@ -105,8 +105,8 @@ $isCurrent = true;
 <?php foreach ($cellar->sections() as $cellarSection): ?>
 	<?php
 		// Prefixed IDs
-		$paneId = 'week-' . htmlspecialchars($cellarSection);
-		$tabId  = 'week-tab-' . htmlspecialchars($cellarSection);
+		$paneId = 'section-' . htmlspecialchars($cellarSection);
+		$tabId  = 'section-tab-' . htmlspecialchars($cellarSection);
 	?>
 	<li class="nav-item" role="presentation">
 		<a class="nav-link <?= $isCurrent ? 'active' : '' ?>"
@@ -131,15 +131,14 @@ $isCurrent = true;
 <div class="tab-content" id="binsContent">
 <?php foreach ($cellar->sections() as $cellarSection): ?>
 	<?php
-		$paneId = 'week-' . htmlspecialchars($cellarSection);
-		$tabId  = 'week-tab-' . htmlspecialchars($cellarSection);
+		$paneId = 'section-' . htmlspecialchars($cellarSection);
+		$tabId  = 'section-tab-' . htmlspecialchars($cellarSection);
 		$isCurrent = true;
 	?>
 	<div class="tab-pane fade <?= $isCurrent ? 'show active' : '' ?> "
 		id="<?= $paneId ?>"
 		role="tabpanel"
-		aria-labelledby="<?= $tabId ?>"
-		data-url="./ajax/bins_tab.php?cellar_uid=<?= urlencode($cellar->uid) ?>&section=<?= urlencode($cellarSection) ?>">
+		aria-labelledby="<?= $tabId ?>">
 		
 		<div class="d-flex justify-content-center">
 		  <div class="spinner-border" role="status">

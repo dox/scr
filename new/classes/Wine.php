@@ -142,7 +142,7 @@ class Wine {
 		}
 		
 		$output  = "<div class=\"col\">";
-		$output .= "<div class=\"card " . $cardClass . " shadow-sm\">";
+		$output .= "<div class=\"card " . $cardClass . " mb-3\">";
 		$output .= "<div class=\"card-body\">";
 		$output .= "<h5 class=\"card-title text-truncate\">" . $title . "</h5>";
 		$output .= "<p class=\"card-text text-truncate\">" . $cellar->name . " / " . $bin->name . "</p>";

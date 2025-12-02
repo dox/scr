@@ -71,35 +71,33 @@ echo pageTitle(
 				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
 			<div class="modal-body">
-					<div class="modal-body">
-						<div class="mb-3">
-							<label for="name">Term Name</label>
-							<input type="text" class="form-control" name="name" id="name" aria-describedby="nameHelp">
-							<small id="nameHelp" class="form-text text-muted">e.g. 'Trinity <?php echo date('Y')+1; ?></small>
-						</div>
-						
-						<div class="mb-3">
-							<label for="date_start" class="form-label">Term Start Date</label>
-							<div class="input-group">
-								<span class="input-group-text"><i class="bi bi-calendar-date"></i></span>
-								<input type="text" class="form-control" name="date_start" id="date_start" placeholder="" value="<?php echo ""; ?>" required>
-							</div>
-							<small id="date_startHelp" class="form-text text-muted">Sunday of 1st week</small>
-						</div>
-						
-						<div class="mb-3">
-							<label for="date_end" class="form-label">Term End Date</label>
-							<div class="input-group">
-								<span class="input-group-text"><i class="bi bi-calendar-date"></i></span>
-								<input type="text" class="form-control" name="date_end" id="date_end" placeholder="" value="<?php echo ""; ?>" required>
-							</div>
-							<small id="date_endHelp" class="form-text text-muted">Saturday of 8th week</small>
-						</div>
+				<div class="mb-3">
+					<label for="name">Term Name</label>
+					<input type="text" class="form-control" name="name" id="name" aria-describedby="nameHelp">
+					<small id="nameHelp" class="form-text text-muted">e.g. 'Trinity <?php echo date('Y')+1; ?></small>
+				</div>
+				
+				<div class="mb-3">
+					<label for="date_start" class="form-label">Term Start Date</label>
+					<div class="input-group">
+						<span class="input-group-text"><i class="bi bi-calendar-date"></i></span>
+						<input type="text" class="form-control" name="date_start" id="date_start" placeholder="" value="<?php echo ""; ?>" required>
 					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-link text-muted" data-bs-dismiss="modal">Close</button>
-						<button type="submit" class="btn btn-primary">Add Term</button>
+					<small id="date_startHelp" class="form-text text-muted">Sunday of 1st week</small>
+				</div>
+				
+				<div class="mb-3">
+					<label for="date_end" class="form-label">Term End Date</label>
+					<div class="input-group">
+						<span class="input-group-text"><i class="bi bi-calendar-date"></i></span>
+						<input type="text" class="form-control" name="date_end" id="date_end" placeholder="" value="<?php echo ""; ?>" required>
 					</div>
+					<small id="date_endHelp" class="form-text text-muted">Saturday of 8th week</small>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-link text-muted" data-bs-dismiss="modal">Close</button>
+				<button type="submit" class="btn btn-primary">Add Term</button>
 			</div>
 		</div>
 	</div>
