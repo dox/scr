@@ -10,11 +10,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	$term = new Term($termUID);
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-	$term->update($_POST);
-	$term = new Term($termUID);
-}
-
 echo pageTitle(
 	"Term: " . $term->name,
 	"Term dates from <a href=\"https://www.ox.ac.uk/about/facts-and-figures/dates-of-term\">Oxford's website</a>",

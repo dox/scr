@@ -1,15 +1,21 @@
 <?php
-class Cellar extends Model {
+class Transaction extends Model {
 	public $uid;
+	public $date;
+	public $date_posted;
+	public $username;
+	public $type;
+	public $cellar_uid;
+	public $wine_uid;
+	public $bottles;
+	public $price_per_bottle;
 	public $name;
-	public $short_code;
-	public $notes;
-	public $bin_types;
-	public $photograph;
+	public $description;
+	public $snapshot;
+	public $linked;
 	
 	protected $db;
-	protected static string $table = 'wine_cellars';
-	protected static string $table_bins = 'wine_bins';
+	protected static string $table = 'wine_transactions';
 	
 	public function __construct($uid = null) {
 		$this->db = Database::getInstance();
@@ -28,30 +34,6 @@ class Cellar extends Model {
 				$this->$key = $value;
 			}
 		}
-	}
-	
-	public function sections(): array{
-		$rows = $this->db->fetch(
-			"SELECT category FROM " . static::$table_bins . " WHERE cellar_uid = ?",
-			[$this->uid]
-		);
-	
-		// Extract the category column directly
-		$binSections = array_column($rows, 'category');
-	
-		// Convert the stored CSV into an array (if empty, fall back to [])
-		$cellarSections = $this->bin_types
-			? array_map('trim', explode(',', $this->bin_types))
-			: [];
-	
-		// Merge, remove duplicates, discard empties, and reindex neatly
-		return array_values(
-			array_filter(
-				array_unique(
-					array_merge($binSections, $cellarSections)
-				)
-			)
-		);
 	}
 	
 	public function update(array $postData) {

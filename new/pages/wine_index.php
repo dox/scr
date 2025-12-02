@@ -70,44 +70,12 @@ echo pageTitle(
 </div>
 <ul id="wine_search_results" class="list-group"></ul>
 
-<div class="row">
-	<div class="col">
-		<div class="card mb-3">
-			<div class="card-body">
-				<h5 class="card-title"><?php echo $wines->wineBottlesTotal(); ?></h5>
-				<h6 class="card-subtitle mb-2 text-body-secondary">Bottles</h6>
-			</div>
-		</div>
+<div id="wine_stats_container">
+	<div class="d-flex justify-content-center">
+	  <div class="spinner-border" role="status">
+		<span class="visually-hidden">Loading...</span>
+	  </div>
 	</div>
-	<?php
-	$wine_categories = array_slice(explode(",", $settings->get('wine_category')), 0, 5, true);
-	
-	foreach ($wine_categories as $wine_category) {
-		$winesByCategory = $wines->wines([
-			'wine_wines.category' => ['=', $wine_category]
-		]);
-		
-		$total = count($winesByCategory);
-		
-		if ($total > 0) {
-			$wineBottlesCount = 0;
-			foreach($winesByCategory as $wine) {
-				$wineBottlesCount += $wine->currentQty();
-			}
-			$url = "index.php?n=wine_search&filter=category&value=" . $wine_category;
-			$output  = "<div class=\"col\">";
-			$output .= "<div class=\"card mb-3\">";
-			$output .= "<div class=\"card-body\">";
-			$output .= "<h5 class=\"card-title\">" . $wineBottlesCount . "</h5>";
-			$output .= "<h6 class=\"card-subtitle mb-2 text-truncate text-body-secondary\"><a href=\"" . $url . "\">" . $wine_category . "</a></h6>";
-			$output .= "</div>";
-			$output .= "</div>";
-			$output .= "</div>";
-			
-			echo $output;
-		}
-	}
-	?>
 </div>
 
 <div class="row">
@@ -131,10 +99,15 @@ echo pageTitle(
 		
 		<p><a href="index.php?page=wine_transactions" class="float-end">View all</a></p>
 		<?php
-		  //$transaction = new transaction();
-		  //$subsetOfTransactions = array_slice($wines->allTransactions(), 0, 20, true);
-		  //echo $transaction->transactionsTable($subsetOfTransactions);
-		  ?>
+		$daysToInclude = $settings->get('logs_display');
+		$transactions = $wines->transactions([
+			'DATE(date)' => ['>', date('Y-m-d', strtotime('- ' . $daysToInclude . ' days '))]
+		]);
+		
+		foreach ($transactions as $transaction) {
+			echo "<p>" . $transaction->name . "</p>";
+		}
+		?>
 	</div>
 </div>
 
@@ -235,8 +208,6 @@ document.getElementById('wine_search').addEventListener('keyup', function() {
 </script>
 
 <?php
-$daysToInclude = $settings->get('logs_display');
-
 $dateArray = array();
 for ($i = 0; $i < $daysToInclude; $i++) {
   // Generate the date string for $i days ago
@@ -247,18 +218,18 @@ for ($i = 0; $i < $daysToInclude; $i++) {
 }
 
 foreach ($dateArray as $date => $value) {
-	$transactions = $wines->allTransactions(array('DATE(date)' => $date));
+	$transactions = $wines->transactions(array('DATE(date)' => $date));
 	
 	$bottlesTotal = 0;
 	foreach ($transactions as $transaction) {
 		if (isset($transaction)) {
-			$bottlesTotal= $bottlesTotal + abs($transaction['bottles']);
+			$bottlesTotal += abs($transaction->bottles);
 		}
 	}
-	$transactionsTotal[$date] += $bottlesTotal;
+	$dateArray[$date] += $bottlesTotal;
 }
 
-ksort($transactionsTotal);
+ksort($dateArray);
 ?>
 
 <script>
@@ -267,10 +238,10 @@ ksort($transactionsTotal);
   new Chart(ctx, {
 	type: 'bar',
 	data: {
-	  labels: ['<?php echo implode("','", array_keys($transactionsTotal)); ?>'],
+	  labels: ['<?php echo implode("','", array_keys($dateArray)); ?>'],
 	  datasets: [{
-		label: '# of logs',
-		data: [<?php echo implode(",", $transactionsTotal); ?>],
+		label: '# of bottles in transactions',
+		data: [<?php echo implode(",", $dateArray); ?>],
 		borderWidth: 1
 	  }]
 	},
@@ -288,4 +259,19 @@ ksort($transactionsTotal);
 	  }
 	}
   });
+</script>
+
+<script>
+// Initialize stats
+document.addEventListener('DOMContentLoaded', () => {
+  const target = document.getElementById('wine_stats_container');
+  const url = './ajax/wine_stats.php';
+
+  target.innerHTML = '<div class="text-muted">Loading…</div>';
+
+  fetch(url)
+	.then(r => r.text())
+	.then(html => target.innerHTML = html)
+	.catch(() => target.innerHTML = '<div class="text-danger">Error loading content</div>');
+});
 </script>

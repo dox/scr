@@ -28,6 +28,37 @@ class Bin extends Model {
 		}
 	}
 	
+	public function wines(): array {
+		global $db;
+		
+		$wines = new Wines();
+		$wines = $wines->wines([
+			'wine_bins.uid' => ['=', $this->uid],
+			'wine_wines.status' => ['<>', 'Closed'],
+		]);
 	
-
+		return $wines;
+	}
+	
+	public function winesClosed(): array {
+		global $db;
+		
+		$binsBySection = $wines->bins([
+			'cellar_uid' => ['=', $cellar_uid],
+			'wine_bins.category' => ['=', $cellar_section]
+		]);
+		
+		$sql = "SELECT * FROM wine_wines WHERE bin_uid = ?";
+	
+		$rows = $db->fetchAll($sql, [$this->uid]);
+		
+		$wines = [];
+		foreach ($rows as $row) {
+			$wines[] = new Wine($row['uid']);
+		}
+	
+		return $wines;
+	}
+	
+	
 }

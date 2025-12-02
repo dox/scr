@@ -45,7 +45,7 @@ echo pageTitle(
 		id="<?= $paneId ?>"
 		role="tabpanel"
 		aria-labelledby="<?= $tabId ?>"
-		data-url="./ajax/meals.php?week=<?= urlencode($week) ?>">
+		data-url="./ajax/meals_tab.php?week=<?= urlencode($week) ?>">
 		
 		<div class="d-flex justify-content-center">
 		  <div class="spinner-border" role="status">

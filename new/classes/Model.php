@@ -473,6 +473,98 @@ class Wines extends Model {
 	
 		return $wines;
 	}
+	
+	public function bins(array $whereFilterArray = []) : array {
+		global $db;
+	
+		$sql = "SELECT *
+				FROM " . self::$table_bins . " ";
+	
+		$conditions = [];
+	
+		foreach ($whereFilterArray as $key => $rule) {
+			$key = addslashes($key);
+	
+			// Allow [operator, value] style input
+			if (is_array($rule)) {
+				[$operator, $value] = $rule;
+	
+				if (strtoupper($operator) === 'IN' && is_array($value)) {
+					$value = array_map(fn($v) => "'" . addslashes($v) . "'", $value);
+					$conditions[] = "$key IN (" . implode(',', $value) . ")";
+				} else {
+					$value = addslashes($value);
+					$conditions[] = "$key $operator '$value'";
+				}
+	
+			} else {
+				// Fallback to simple equals
+				$value = addslashes($rule);
+				$conditions[] = "$key = '$value'";
+			}
+		}
+	
+		if ($conditions) {
+			$sql .= " WHERE " . implode(' AND ', $conditions);
+		}
+	
+		$sql .= " ORDER BY wine_bins.name ASC";
+	
+		$rows = $db->query($sql)->fetchAll();
+	
+		$bins = [];
+		foreach ($rows as $row) {
+			$bins[] = new Bin($row['uid']);
+		}
+	
+		return $bins;
+	}
+	
+	public function transactions(array $whereFilterArray = []) : array {
+		global $db;
+	
+		$sql = "SELECT *
+				FROM " . self::$table_transactions . " ";
+	
+		$conditions = [];
+	
+		foreach ($whereFilterArray as $key => $rule) {
+			$key = addslashes($key);
+	
+			// Allow [operator, value] style input
+			if (is_array($rule)) {
+				[$operator, $value] = $rule;
+	
+				if (strtoupper($operator) === 'IN' && is_array($value)) {
+					$value = array_map(fn($v) => "'" . addslashes($v) . "'", $value);
+					$conditions[] = "$key IN (" . implode(',', $value) . ")";
+				} else {
+					$value = addslashes($value);
+					$conditions[] = "$key $operator '$value'";
+				}
+	
+			} else {
+				// Fallback to simple equals
+				$value = addslashes($rule);
+				$conditions[] = "$key = '$value'";
+			}
+		}
+	
+		if ($conditions) {
+			$sql .= " WHERE " . implode(' AND ', $conditions);
+		}
+	
+		$sql .= " ORDER BY date ASC";
+	
+		$rows = $db->query($sql)->fetchAll();
+	
+		$transactions = [];
+		foreach ($rows as $row) {
+			$transactions[] = new Transaction($row['uid']);
+		}
+	
+		return $transactions;
+	}
 
 	
 	
@@ -538,28 +630,7 @@ class Wines extends Model {
 	}
 	
 	
-	public function allTransactions($whereFilterArray = null) {
-		global $db;
-		
-		$sql  = "SELECT * FROM " . self::$table_transactions;
-		
-		if (!empty($whereFilterArray)) {
-			$conditions = [];
-			foreach ($whereFilterArray as $key => $value) {
-				// Escaping the key and value for safety
-				$escapedKey = addslashes($key);
-				$escapedValue = addslashes($value);
-				$conditions[] = "$escapedKey = '$escapedValue'";
-			}
-			$sql .= " WHERE " . implode(' AND ', $conditions);
-		}
-		
-		$sql .= " ORDER BY date_posted DESC, date DESC";
-		
-		$transactions = $db->query($sql)->fetchAll();
-		
-		return $transactions;
-	}
+	
 	
 	public function allLists($whereFilterArray = null) {
 		global $db;

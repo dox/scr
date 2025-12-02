@@ -6,9 +6,14 @@ $cleanUID = filter_var($_GET['uid'], FILTER_SANITIZE_NUMBER_INT);
 $cellar = new cellar($cleanUID);
 $meals = new Meals();
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+	$cellar->update($_POST);
+	$cellar = new Cellar($cleanUID);
+}
+
 echo pageTitle(
 	$cellar->name . " Wine Cellar",
-	count($cellar->bins()) . autoPluralise(" bin", " bins", count($cellar->bins())),
+	htmlspecialchars($cellar->notes),
 	[
 		[
 			'permission' => 'wine',
@@ -77,56 +82,19 @@ echo pageTitle(
 	</div>
 </div>
 
-<div class="row">
-	<div class="col">
-		<div class="card mb-3">
-			<div class="card-body">
-				<h5 class="card-title countup"><?php echo $cellar->bottlesCount(); ?></h5>
-				<h6 class="card-subtitle mb-2 text-body-secondary">Bottles</h6>
-			</div>
-		</div>
+<div id="wine_stats_container">
+	<div class="d-flex justify-content-center">
+	  <div class="spinner-border" role="status">
+		<span class="visually-hidden">Loading...</span>
+	  </div>
 	</div>
-	<?php
-	$categories = array_slice(explode(",", $settings->get('wine_category')), 0, 5, true);
-	
-	foreach ($categories as $wine_category) {
-		$winesByCategory = $wines->wines([
-			'cellar_uid' => ['=', $cellar->uid],
-			'wine_bins.category' => ['=', $wine_category],
-			'wine_wines.status' => ['<>', 'Closed']
-		]);
-		
-		if (count($winesByCategory) > 0) {
-			$wineBottlesCount = 0;
-			foreach($winesByCategory as $wine) {
-				$wineBottlesCount = $wineBottlesCount + $wine->currentQty();
-			}
-			$url = "index.php?n=wine_search&filter=category&value=" . $wine_category . "&cellar_uid=" . $cellar->uid;
-			
-			$output  = "<div class=\"col\">";
-			$output .= "<div class=\"card mb-3\">";
-			$output .= "<div class=\"card-body\">";
-			$output .= "<h5 class=\"card-title\">" . $wineBottlesCount . "</h5>";
-			$output .= "<h6 class=\"card-subtitle mb-2 text-truncate text-body-secondary\"><a href=\"" . $url . "\">" . $wine_category . "</a></h6>";
-			$output .= "</div>";
-			$output .= "</div>";
-			$output .= "</div>";
-			
-			echo $output;
-		}
-		
-	}
-	?>
 </div>
 
-chart
-
 <?php
-$binTypes = explode(',', $cellar->bin_types);
-foreach ($binTypes as $binType) {
-	$winesByBin[$binType] = $wines->wines([
+foreach ($cellar->sections() as $cellarSection) {
+	$winesByBin[$cellarSection] = $wines->wines([
 		'wine_bins.cellar_uid' => ['=', $cellar->uid],
-		'wine_bins.category' => ['=', $binType],
+		'wine_bins.category' => ['=', $cellarSection],
 		'wine_wines.status' => ['<>', 'Closed']
 	]);
 }
@@ -134,11 +102,11 @@ $isCurrent = true;
 ?>
 
 <ul class="nav nav-tabs nav-fill mb-3" id="binsTabs" role="tablist">
-<?php foreach ($binTypes as $binType): ?>
+<?php foreach ($cellar->sections() as $cellarSection): ?>
 	<?php
 		// Prefixed IDs
-		$paneId = 'week-' . htmlspecialchars($binType);
-		$tabId  = 'week-tab-' . htmlspecialchars($binType);
+		$paneId = 'week-' . htmlspecialchars($cellarSection);
+		$tabId  = 'week-tab-' . htmlspecialchars($cellarSection);
 	?>
 	<li class="nav-item" role="presentation">
 		<a class="nav-link <?= $isCurrent ? 'active' : '' ?>"
@@ -149,8 +117,8 @@ $isCurrent = true;
 		   aria-controls="<?= $paneId ?>"
 		   aria-selected="<?= $isCurrent ? 'true' : 'false' ?>"
 		   data-selected="<?= $isCurrent ? 'true' : 'false' ?>"
-		   data-url="./ajax/wines.php?cellar_uid=<?= urlencode($cellar->uid) ?>&bin_type=<?= urlencode($binType) ?>">
-		   <?= $binType . " (" . count($winesByBin[$binType]) . ")" ?>
+		   data-url="./ajax/bins_tab.php?cellar_uid=<?= urlencode($cellar->uid) ?>&section=<?= urlencode($cellarSection) ?>">
+		   <?= $cellarSection . " (" . count($winesByBin[$cellarSection]) . ")" ?>
 		</a>
 	</li>
 <?php 
@@ -161,17 +129,17 @@ $isCurrent = true;
 </ul>
 
 <div class="tab-content" id="binsContent">
-<?php foreach ($binTypes as $binType): ?>
+<?php foreach ($cellar->sections() as $cellarSection): ?>
 	<?php
-		$paneId = 'week-' . htmlspecialchars($binType);
-		$tabId  = 'week-tab-' . htmlspecialchars($binType);
+		$paneId = 'week-' . htmlspecialchars($cellarSection);
+		$tabId  = 'week-tab-' . htmlspecialchars($cellarSection);
 		$isCurrent = true;
 	?>
 	<div class="tab-pane fade <?= $isCurrent ? 'show active' : '' ?> "
 		id="<?= $paneId ?>"
 		role="tabpanel"
 		aria-labelledby="<?= $tabId ?>"
-		data-url="./ajax/wines.php?cellar_uid=<?= urlencode($cellar->uid) ?>&bin_type=<?= urlencode($binType) ?>">
+		data-url="./ajax/bins_tab.php?cellar_uid=<?= urlencode($cellar->uid) ?>&section=<?= urlencode($cellarSection) ?>">
 		
 		<div class="d-flex justify-content-center">
 		  <div class="spinner-border" role="status">
@@ -188,7 +156,7 @@ endforeach; ?>
 
 <!-- Edit Cellar Modal -->
 <div class="modal fade" tabindex="-1" id="editCellarModal" data-backdrop="static" data-keyboard="false" aria-hidden="true">
-	<form method="post" action="index.php?page=terms">
+	<form method="post" action="<?= htmlspecialchars($_SERVER['REQUEST_URI']) ?>">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -200,7 +168,7 @@ endforeach; ?>
 				<div class="col-3">
 					<div class="mb-3">
 						<div class="mb-3">
-							<label for="short_code" class="form-label">Short Code</label>
+							<label for="short_code" class="form-label text-truncate">Short Code</label>
 							<input type="text" class="form-control" id="short_code" name="short_code" value="<?= htmlspecialchars($cellar->short_code) ?>" maxlength="2">
 						</div>
 					</div>
@@ -228,7 +196,7 @@ endforeach; ?>
 													<img src="<?= htmlspecialchars($cardImage) ?>" class="card-img-top">
 													<div class="card-body">
 														<label>
-															<input type="radio" name="photo"
+															<input type="radio" name="photograph"
 																value="<?= basename($cardImage) ?>"
 																<?= ($cellar->photographURL() === $cardImage) ? 'checked' : '' ?>>
 															<?= basename($cardImage) ?>
@@ -244,7 +212,7 @@ endforeach; ?>
 					</div>
 				</div>
 				<div class="mb-3">
-					<label for="description" class="form-label">Bin Types</label>
+					<label for="description" class="form-label">Sections</label>
 					<textarea class="form-control" id="bin_types" name="bin_types" rows="3"><?= htmlspecialchars($cellar->bin_types) ?></textarea>
 					<div id="bin-typesHelp" class="form-text">Comma,Separated,List</div>
 				</div>
@@ -256,21 +224,31 @@ endforeach; ?>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-link text-muted" data-bs-dismiss="modal">Close</button>
 				<button type="submit" class="btn btn-primary">Edit Cellar</button>
-				<input type="hidden" name="cellarUID" value="<?= $cellar->uid ?>">
+				<input type="hidden" name="uid" value="<?= $cellar->uid ?>">
 			</div>
 		</div>
 	</div>
 	</form>
 </div>
 
-
-
-
-
 <script>
-// Initialize week tabs
+// Initialize bin tabs
 document.addEventListener('DOMContentLoaded', () => {
 	initAjaxLoader('#binsTabs .nav-link', '#binsContent');
 });
 </script>
 
+<script>
+// Initialize stats
+document.addEventListener('DOMContentLoaded', () => {
+  const target = document.getElementById('wine_stats_container');
+  const url = './ajax/wine_stats.php?cellar_uid=<?= $cellar->uid ?>';
+
+  target.innerHTML = '<div class="text-muted">Loading…</div>';
+
+  fetch(url)
+	.then(r => r.text())
+	.then(html => target.innerHTML = html)
+	.catch(() => target.innerHTML = '<div class="text-danger">Error loading content</div>');
+});
+</script>

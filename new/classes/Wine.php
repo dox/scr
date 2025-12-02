@@ -130,7 +130,7 @@ class Wine {
 		$bin = new bin($this->bin_uid);
 		$cellar = new cellar($bin->cellar_uid);
 		
-		$url = "index.php?n=wine_wine&wine_uid=" . $this->uid;
+		$url = "index.php?page=wine_wine&uid=" . $this->uid;
 		$title = "<a href=\"" . $url . "\">" . $this->name . "</a>";
 		
 		if ($this->status == "Closed") {
@@ -148,7 +148,7 @@ class Wine {
 		$output .= "<p class=\"card-text text-truncate\">" . $cellar->name . " / " . $bin->name . "</p>";
 		$output .= "<div class=\"d-flex justify-content-between align-items-center\">";
 		$output .= "<div class=\"btn-group\">";
-		$output .= "<a href=\"index.php?n=wine_search&filter=price&value=" . $this->price_purchase . "\" type=\"button\" class=\"btn btn-sm btn-outline-secondary\">" . currencyDisplay($this->price_purchase) . "</a>";
+		$output .= "<a href=\"index.php?n=wine_search&filter=price&value=" . $this->price_purchase . "\" type=\"button\" class=\"btn btn-sm btn-outline-secondary\">" . formatMoney($this->price_purchase) . "</a>";
 		$output .= "<a href=\"index.php?n=wine_search&filter=code&value=" . $this->code . "\" type=\"button\" class=\"btn btn-sm btn-outline-secondary\">" . $this->code . "</a>";
 		$output .= "<a href=\"index.php?n=wine_search&filter=vintage&value=" . $this->vintage . "\" type=\"button\" class=\"btn btn-sm btn-outline-secondary\">" . $this->vintage() . "</a>";
 		$output .= "</div>";

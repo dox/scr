@@ -7,7 +7,6 @@ $wine = new Wine($cleanUID);
 $bin = new Bin($wine->bin_uid);
 $cellar = new Cellar($bin->cellar_uid);
 
-
 $fields = ['grape', 'region_of_origin', 'category'];
 $subtitleArray = [];
 

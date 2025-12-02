@@ -57,6 +57,30 @@ echo pageTitle(
 
 <hr/>
 
+<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 mb-3">
+	<?php
+	$closedWines = [];
+	foreach ($bin->wines() as $wine) {
+		if ($wine->status != "Closed") {
+			echo "<div class=\"col\">";
+			echo $wine->card();
+			echo "</div>";
+		} else {
+			$closedWines[] = $wine;
+		}
+	}
+	?>
+</div>
+
 <?php
-printArray($bin);
+if (!empty($closedWines)) {
+	echo "<h4>Closed Wines</h4>";
+	echo "<div class=\"row row-cols-1 row-cols-sm-2 row-cols-md-3\">";
+		foreach ($closedWines as $wine) {
+			echo "<div class=\"col\">";
+			echo $wine->card();
+			echo "</div>";
+		}
+	echo "</div>";
+}
 ?>
