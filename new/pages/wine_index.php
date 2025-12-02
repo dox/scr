@@ -155,58 +155,6 @@ echo pageTitle(
 	</form>
 </div>
 
-<script>
-document.getElementById('wine_search').addEventListener('keyup', function() {
-	let query = this.value;
-	let resultsDiv = document.getElementById('wine_search_results');
-	
-	// Clear the results if the input is empty
-	if (query.trim() === '') {
-		resultsDiv.innerHTML = '';
-		return;
-	}
-	
-	// Create a new XMLHttpRequest object
-	let xhr = new XMLHttpRequest();
-	
-	// Configure it: GET-request for the URL with the query
-	xhr.open('GET', 'actions/wine_search.php?q=' + encodeURIComponent(query), true);
-	
-	// Set up the callback function
-	xhr.onload = function() {
-		if (xhr.status === 200) {
-			// Parse JSON response
-			let response = JSON.parse(xhr.responseText);
-			
-			// Display the results
-			resultsDiv.innerHTML = '';
-
-			if (response.data.length === 0) {
-				let listItem = document.createElement('li');
-				listItem.className = "list-group-item";
-				listItem.textContent = 'No results found';
-				
-				resultsDiv.appendChild(listItem);
-			} else {
-				response.data.forEach(function(item) {
-					let listItem = document.createElement('li');
-					listItem.className = "list-group-item";
-					var link = document.createElement("a");
-					link.href = "index.php?n=wine_wine&wine_uid=" + item.uid;
-					link.textContent = item.name;
-					listItem.appendChild(link);
-					
-					resultsDiv.appendChild(listItem);
-				});
-			}
-		}
-	};
-	
-	// Send the request
-	xhr.send();
-});
-</script>
-
 <?php
 $dateArray = array();
 for ($i = 0; $i < $daysToInclude; $i++) {
@@ -274,4 +222,12 @@ document.addEventListener('DOMContentLoaded', () => {
 	.then(html => target.innerHTML = html)
 	.catch(() => target.innerHTML = '<div class="text-danger">Error loading content</div>');
 });
+</script>
+
+<script>
+liveSearch(
+	'wine_search',
+	'wine_search_results',
+	'./ajax/wine_livesearch.php'
+);
 </script>

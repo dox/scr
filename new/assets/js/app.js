@@ -223,6 +223,54 @@ function toggleReason(selectClass, inputClass, triggerValue) {
 	});
 }
 
+// live search for wines
+function liveSearch(inputId, resultsId, endpoint, extraParams = {}) {
+	const input = document.getElementById(inputId);
+	const results = document.getElementById(resultsId);
+
+	input.addEventListener('keyup', function () {
+		const query = this.value.trim();
+		if (query === '') {
+			results.innerHTML = '';
+			return;
+		}
+
+		// Build query string
+		let params = new URLSearchParams({ q: query, ...extraParams });
+
+		let xhr = new XMLHttpRequest();
+		xhr.open('GET', `${endpoint}?${params.toString()}`, true);
+
+		xhr.onload = function () {
+			results.innerHTML = '';
+
+			if (xhr.status !== 200) return;
+
+			let response = JSON.parse(xhr.responseText);
+
+			if (!response.data || response.data.length === 0) {
+				let li = document.createElement('li');
+				li.className = "list-group-item";
+				li.textContent = 'No results found';
+				results.appendChild(li);
+				return;
+			}
+
+			response.data.forEach(item => {
+				let li = document.createElement('li');
+				li.className = "list-group-item";
+				let link = document.createElement('a');
+				link.href = `index.php?page=wine_wine&uid=${item.uid}`;
+				link.textContent = item.name;
+				li.appendChild(link);
+				results.appendChild(li);
+			});
+		};
+
+		xhr.send();
+	});
+}
+
 // auto hide toasts (if any).  Picks up data-bs-autohide and data-bs-delay
 document.addEventListener('DOMContentLoaded', function() {
   const toastElList = document.querySelectorAll('.toast');

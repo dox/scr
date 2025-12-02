@@ -252,3 +252,12 @@ document.addEventListener('DOMContentLoaded', () => {
 	.catch(() => target.innerHTML = '<div class="text-danger">Error loading content</div>');
 });
 </script>
+
+<script>
+liveSearch(
+	'wine_search',
+	'wine_search_results',
+	'./ajax/wine_livesearch.php',
+	{ cellar_uid: <?= $cellar->uid ?> }
+);
+</script>
