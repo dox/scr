@@ -285,6 +285,26 @@ class Member extends Model {
 		return $updatedRows;
 	}
 	
+	public function updatePosition(int $precedence) {
+		global $db;
+	
+		// Map normal text/select fields
+		$fields = [
+			'precedence'      => $precedence ?? '999'
+		];
+		
+		// Send to database update
+		$updatedRows = $db->update(
+			static::$table,
+			$fields,
+			['uid' => $this->uid]
+		);
+		
+		//toast('Member Precedence Updated', 'Member precedence sucesfully updated', 'text-success');
+		
+		return $updatedRows;
+	}
+	
 	public function bookingsByDay(): array {
 		global $db;
 	

@@ -1,22 +1,40 @@
 <?php
 $user->pageCheck('members');
 
-$memberTypes = explode(',', $settings->get('member_types'));
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-	if (isset($_POST['deleteMemberUID'])) {
-		$deleteMemberUID = filter_input(INPUT_POST, 'deleteMemberUID', FILTER_SANITIZE_NUMBER_INT);
-		
+	// Handle member deletion
+	$deleteMemberUID = filter_input(INPUT_POST, 'deleteMemberUID', FILTER_SANITIZE_NUMBER_INT);
+	if ($deleteMemberUID) {
 		$member = Member::fromUID($deleteMemberUID);
-		$member->delete();
-	} else {
+		if ($member) {
+			$member->delete();
+		}
+	}
+
+	// Handle reordering
+	$order = filter_input(INPUT_POST, 'order', FILTER_UNSAFE_RAW);
+	if ($order) {
+		$uidArray = array_map('trim', explode(',', $order));
+		foreach ($uidArray as $position => $uid) {
+			$member = Member::fromUID($uid);
+			$member->updatePosition($position + 1);
+		}
+	}
+
+	// Handle new member creation
+	$ldap = filter_input(INPUT_POST, 'ldap', FILTER_UNSAFE_RAW);
+	if ($ldap) {
 		$newMember = new Members();
 		$newMember->create($_POST);
 	}
 }
 
+$memberTypes = explode(',', $settings->get('member_types'));
+$membersClass = new Members();
 foreach ($memberTypes as $type) {
-	$members[$type] = Members::getAllByType($type);
+	$members[$type] = $membersClass->all([
+		'type' => ['=', $type]
+	]);
 }
 
 $first = true; // to mark the first tab as active
@@ -75,20 +93,24 @@ foreach ($members as $type => $contents):
 	  </div>
 		 
 		<?php if (!empty($contents)): ?>
+			<form method="post" action="<?= htmlspecialchars($_SERVER['REQUEST_URI']) ?>" id="memberForm">
 			<ul class="list-group mt-2" id="<?= $type ?>-sortable">
 				<?php foreach ($contents as $member): ?>
-					<li class="list-group-item">
-						<i class="bi bi-grip-vertical"></i>
-						<a href="index.php?page=member&ldap=<?= $member->ldap ?>"><?= $member->name() ?></a>
+					<li class="list-group-item <?= $member->enabled ? '' : ' list-group-item-secondary' ?>" data-uid="<?= $member->uid ?>">
+						<i class="bi bi-grip-vertical" style="cursor: grab;" draggable="true"></i>
+						<a href="index.php?page=member&uid=<?= $member->uid ?>"><?= $member->name() ?></a>
 						<span class="text-muted">@<?= strtoupper($member->ldap) ?></span>
-
-
 						<span class="float-end"><?= $member->stewardBadge() ?>
 						<span class="text-muted"><?= $member->category ?></span>
 						</span>
 					</li>
 				<?php endforeach; ?>
 			</ul>
+			
+			<!-- Hidden input to store order -->
+			<input type="hidden" name="order" id="memberOrder">
+			<button type="submit">Submit</button>
+			</form>
 		<?php else: ?>
 			<p class="text-muted mt-2">No members in this category.</p>
 		<?php endif; ?>
@@ -264,3 +286,66 @@ endforeach;
 		</form>
 	</div>
 </div>
+
+<script>
+const list = document.getElementById('SCR-sortable');
+let dragSrcEl = null;
+
+function handleDragStart(e) {
+	// Only allow dragging if clicked on the gripper icon
+	if(e.target.tagName !== 'I') return;
+	dragSrcEl = this;
+	e.dataTransfer.effectAllowed = 'move';
+	e.dataTransfer.setData('text/html', this.outerHTML);
+	this.classList.add('dragElem');
+}
+
+function handleDragOver(e) {
+	if (e.preventDefault) e.preventDefault();
+	return false;
+}
+
+function handleDragEnter() {
+	this.classList.add('over');
+}
+
+function handleDragLeave() {
+	this.classList.remove('over');
+}
+
+function handleDrop(e) {
+	if (e.stopPropagation) e.stopPropagation();
+
+	if (dragSrcEl != this) {
+		this.parentNode.removeChild(dragSrcEl);
+		let dropHTML = e.dataTransfer.getData('text/html');
+		this.insertAdjacentHTML('beforebegin', dropHTML);
+		addDnDHandlers(this.previousSibling);
+	}
+	this.classList.remove('over');
+	return false;
+}
+
+function handleDragEnd() {
+	this.classList.remove('over');
+	this.classList.remove('dragElem');
+}
+
+// Add drag & drop handlers to each LI
+function addDnDHandlers(li) {
+	li.addEventListener('dragstart', handleDragStart, false);
+	li.addEventListener('dragenter', handleDragEnter, false);
+	li.addEventListener('dragover', handleDragOver, false);
+	li.addEventListener('dragleave', handleDragLeave, false);
+	li.addEventListener('drop', handleDrop, false);
+	li.addEventListener('dragend', handleDragEnd, false);
+}
+
+[].forEach.call(list.querySelectorAll('li'), addDnDHandlers);
+
+// Before submit, update the hidden input with the current order
+document.getElementById('memberForm').addEventListener('submit', function() {
+	const order = Array.from(list.querySelectorAll('li')).map(li => li.dataset.uid);
+	document.getElementById('memberOrder').value = order.join(',');
+});
+</script>

@@ -194,6 +194,52 @@ class Members extends Model {
 	
 		return $members;
 	}
+	
+	public function all(array $whereFilterArray = []) : array {
+		global $db;
+	
+		$sql = "SELECT *
+				FROM " . self::$table . " ";
+	
+		$conditions = [];
+	
+		foreach ($whereFilterArray as $key => $rule) {
+			$key = addslashes($key);
+	
+			// Allow [operator, value] style input
+			if (is_array($rule)) {
+				[$operator, $value] = $rule;
+	
+				if (strtoupper($operator) === 'IN' && is_array($value)) {
+					$value = array_map(fn($v) => "'" . addslashes($v) . "'", $value);
+					$conditions[] = "$key IN (" . implode(',', $value) . ")";
+				} else {
+					$value = addslashes($value);
+					$conditions[] = "$key $operator '$value'";
+				}
+	
+			} else {
+				// Fallback to simple equals
+				$value = addslashes($rule);
+				$conditions[] = "$key = '$value'";
+			}
+		}
+	
+		if ($conditions) {
+			$sql .= " WHERE " . implode(' AND ', $conditions);
+		}
+	
+		$sql .= " ORDER BY precedence ASC, lastname ASC, firstname ASC";
+	
+		$rows = $db->query($sql)->fetchAll();
+	
+		$members = [];
+		foreach ($rows as $row) {
+			$members[] = Member::fromUID($row['uid']);
+		}
+	
+		return $members;
+	}
 }
 
 class Meals extends Model {

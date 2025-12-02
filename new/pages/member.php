@@ -1,6 +1,6 @@
 <?php
-$ldap   = $_GET['ldap'] ?? $user->getUsername() ?? null;
-$member = Member::fromLDAP($ldap);
+$uid   = $_GET['uid'] ?? $user->getUID() ?? null;
+$member = Member::fromUID($uid);
 
 if (!isset($member->uid)) {
 	die("Unknown or unavailable member");
