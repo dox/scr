@@ -1,6 +1,6 @@
 <?php
 if (APP_DEBUG) {
-	$output  = "<header class=\"py-3 border-bottom sticky-top bg-warning text-dark\">";
+	$output  = "<header class=\"py-3 border-bottom sticky-top bg-warning text-dark d-print-none\">";
 	$output .= "<div class=\"container text-center\">";
 	$output .= "<i class=\"bi bi-exclamation-triangle mx-3\"></i><strong>DEBUG MODE</strong> Site is in debug mode. All data is for testing purposes only. No emails will be sent.<i class=\"bi bi-exclamation-triangle mx-3\"></i>";
 	$output .= "</div>";
@@ -9,7 +9,7 @@ if (APP_DEBUG) {
 	echo $output;
 }
 ?>
-<nav class="navbar navbar-expand-lg bg-body-tertiary">
+<nav class="navbar navbar-expand-lg bg-body-tertiary d-print-none">
 	<div class="container">
 		<a class="navbar-brand" href="index.php">
 			<svg class="me-2" width="1.3em" height="1.3em" aria-hidden="true">

@@ -93,7 +93,7 @@ function pageTitle(string $title, string $subtitle = '', array $actions = []): s
 	$html .= '</div>';
 
 	if (!empty($actions)) {
-		$html .= '<div class="row mb-3">';
+		$html .= '<div class="row d-print-none mb-3">';
 		$html .= '<div class="col-8"></div>';
 		$html .= '<div class="col-4 text-end">';
 		$html .= '<div class="d-inline-flex gap-2">';
