@@ -1,3 +1,5 @@
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+
 <?php
 $user->pageCheck('members');
 
@@ -12,13 +14,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	}
 
 	// Handle reordering
-	$order = filter_input(INPUT_POST, 'order', FILTER_UNSAFE_RAW);
-	if ($order) {
-		$uidArray = array_map('trim', explode(',', $order));
-		foreach ($uidArray as $position => $uid) {
-			$member = Member::fromUID($uid);
-			$member->updatePosition($position + 1);
+	if (!empty($_POST['order']) && is_array($_POST['order'])) {
+		foreach ($_POST['order'] as $type => $orderString) {
+			$uidArray = array_map('trim', explode(',', $orderString));
+			foreach ($uidArray as $position => $uid) {
+				$member = Member::fromUID($uid);
+				if ($member) {
+					$member->updatePosition($position + 1);
+				}
+			}
 		}
+		
+		toast('Member Order Updated', 'Member precedence order updated sucesfully', 'text-success');
 	}
 
 	// Handle new member creation
@@ -88,16 +95,22 @@ foreach ($members as $type => $contents):
 	
 	<div class="row mb-3">
 		<div class="col">
-		  <input type="text" id="filterInput" class="form-control form-control-lg" placeholder="Quick search" autocomplete="off" spellcheck="false" aria-describedby="wine_searchHelp">
+		  <input 
+			type="text" 
+			class="form-control form-control-lg filter-input"
+			data-target="#<?= htmlspecialchars($type) ?>_sortable"
+			placeholder="Quick search"
+			autocomplete="off"
+			spellcheck="false">
 		</div>
 	  </div>
 		 
 		<?php if (!empty($contents)): ?>
 			<form method="post" action="<?= htmlspecialchars($_SERVER['REQUEST_URI']) ?>" id="memberForm">
-			<ul class="list-group mt-2" id="<?= $type ?>-sortable">
+			<ul class="list-group mt-2 sortable-list" id="<?= htmlspecialchars($type) ?>_sortable">
 				<?php foreach ($contents as $member): ?>
-					<li class="list-group-item <?= $member->enabled ? '' : ' list-group-item-secondary' ?>" data-uid="<?= $member->uid ?>">
-						<i class="bi bi-grip-vertical" style="cursor: grab;" draggable="true"></i>
+					<li class="list-group-item <?= $member->enabled ? '' : ' list-group-item-secondary' ?>" data-id="<?= $member->uid ?>">
+						<i class="bi bi-grip-vertical"></i>
 						<a href="index.php?page=member&uid=<?= $member->uid ?>"><?= $member->name() ?></a>
 						<span class="text-muted">@<?= strtoupper($member->ldap) ?></span>
 						<span class="float-end"><?= $member->stewardBadge() ?>
@@ -108,31 +121,29 @@ foreach ($members as $type => $contents):
 			</ul>
 			
 			<!-- Hidden input to store order -->
-			<input type="hidden" name="order" id="memberOrder">
-			<button type="submit">Submit</button>
+			<input type="hidden" 
+			   name="order[<?= htmlspecialchars($type) ?>]" 
+			   id="<?= htmlspecialchars($type) ?>_order">
 			</form>
 		<?php else: ?>
 			<p class="text-muted mt-2">No members in this category.</p>
 		<?php endif; ?>
 	</div>
 	
-	<script>
-	document.querySelector('#filterInput')
-	  .addEventListener('input', () => filterList('#filterInput', '#<?= $type ?>-sortable'));
-	</script>
+	
+	
 <?php
 	$first = false;
 endforeach;
 ?>
+
+<button 
+  id="globalSaveOrderBtn"
+  class="btn btn-primary shadow-lg d-none"
+  style="position: fixed; bottom: 40px; right: 50%; z-index: 1050;">
+  Save Order
+</button>
 </div>
-
-
-
-
-
-
-
-
 
 
 <!-- Add Member Modal -->
@@ -288,64 +299,50 @@ endforeach;
 </div>
 
 <script>
-const list = document.getElementById('SCR-sortable');
-let dragSrcEl = null;
+// filter list for members
+document.querySelectorAll('.filter-input').forEach(input => {
+  input.addEventListener('input', function () {
+	const list = document.querySelector(this.dataset.target);
+	const filter = this.value.toLowerCase();
 
-function handleDragStart(e) {
-	// Only allow dragging if clicked on the gripper icon
-	if(e.target.tagName !== 'I') return;
-	dragSrcEl = this;
-	e.dataTransfer.effectAllowed = 'move';
-	e.dataTransfer.setData('text/html', this.outerHTML);
-	this.classList.add('dragElem');
-}
+	list.querySelectorAll('li').forEach(li => {
+	  li.style.display = li.textContent.toLowerCase().includes(filter)
+		? ''
+		: 'none';
+	});
+  });
+});
 
-function handleDragOver(e) {
-	if (e.preventDefault) e.preventDefault();
-	return false;
-}
+// draggable list for members
+document.addEventListener('DOMContentLoaded', function () {
+  const saveBtn = document.getElementById('globalSaveOrderBtn');
+  let orderChanged = false;
 
-function handleDragEnter() {
-	this.classList.add('over');
-}
+  document.querySelectorAll('.sortable-list').forEach(list => {
+	const type = list.id.replace('_sortable', '');
+	const orderInput = document.getElementById(type + '_order');
 
-function handleDragLeave() {
-	this.classList.remove('over');
-}
+	const sortable = Sortable.create(list, {
+	  animation: 150,
+	  onEnd: function () {
+		const ids = sortable.toArray();
+		orderInput.value = ids.join(',');
 
-function handleDrop(e) {
-	if (e.stopPropagation) e.stopPropagation();
+		if (!orderChanged) {
+		  orderChanged = true;
+		  saveBtn.classList.remove('d-none');
+		}
+	  }
+	});
 
-	if (dragSrcEl != this) {
-		this.parentNode.removeChild(dragSrcEl);
-		let dropHTML = e.dataTransfer.getData('text/html');
-		this.insertAdjacentHTML('beforebegin', dropHTML);
-		addDnDHandlers(this.previousSibling);
-	}
-	this.classList.remove('over');
-	return false;
-}
+	orderInput.value = sortable.toArray().join(',');
 
-function handleDragEnd() {
-	this.classList.remove('over');
-	this.classList.remove('dragElem');
-}
+  });
 
-// Add drag & drop handlers to each LI
-function addDnDHandlers(li) {
-	li.addEventListener('dragstart', handleDragStart, false);
-	li.addEventListener('dragenter', handleDragEnter, false);
-	li.addEventListener('dragover', handleDragOver, false);
-	li.addEventListener('dragleave', handleDragLeave, false);
-	li.addEventListener('drop', handleDrop, false);
-	li.addEventListener('dragend', handleDragEnd, false);
-}
+  saveBtn.addEventListener('click', function () {
+	const activeForm = document.querySelector('.tab-pane.active form');
+	if (activeForm) activeForm.submit();
+  });
 
-[].forEach.call(list.querySelectorAll('li'), addDnDHandlers);
-
-// Before submit, update the hidden input with the current order
-document.getElementById('memberForm').addEventListener('submit', function() {
-	const order = Array.from(list.querySelectorAll('li')).map(li => li.dataset.uid);
-	document.getElementById('memberOrder').value = order.join(',');
 });
 </script>
