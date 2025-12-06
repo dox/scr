@@ -24,3 +24,13 @@
   height: 1rem;
   fill: currentColor
 }
+
+#wine_search_results {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 1050;
+  max-height: 300px;
+  overflow-y: auto;
+}

@@ -72,14 +72,22 @@ echo pageTitle(
 
 <hr/>
 
-<div class="row pb-3">
-	<div class="col">
-		<div class="input-group mb-3">
-		  <input type="text" class="form-control form-control-lg" id="wine_search" placeholder="Quick search <?php echo $cellar->name; ?> wine cellar" autocomplete="off" spellcheck="false">
-		  <a href="index.php?page=wine_filter" type="button" class="btn btn-lg btn-outline-secondary">Advanced Filter</a>
-		</div>
-		<ul id="wine_search_results" class="list-group"></ul>
-	</div>
+<div class="wine-search-wrapper position-relative">
+  <div class="input-group mb-3">
+	<input 
+	  type="text"
+	  class="form-control form-control-lg"
+	  id="wine_search"
+	  placeholder="Quick search all cellars"
+	  autocomplete="off"
+	  spellcheck="false"
+	>
+	<a href="index.php?page=wine_filter" type="button" class="btn btn-lg btn-outline-secondary">
+	  Advanced Filter
+	</a>
+  </div>
+
+  <ul id="wine_search_results" class="list-group"></ul>
 </div>
 
 <div id="wine_stats_container">
@@ -251,7 +259,6 @@ document.addEventListener('DOMContentLoaded', () => {
 	.catch(() => target.innerHTML = '<div class="text-danger">Error loading content</div>');
 });
 </script>
-
 <script>
 liveSearch(
 	'wine_search',

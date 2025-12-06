@@ -11,7 +11,7 @@ $response = [
 ];
 
 $q = isset($_GET['q']) ? trim($_GET['q']) : '';
-$cellar = isset($_GET['cellar_uid']) ? intval($_GET['cellar_uid']) : null;
+$cellarUID = isset($_GET['cellar_uid']) ? intval($_GET['cellar_uid']) : null;
 
 if ($q === '') {
 	echo json_encode($response);
@@ -27,14 +27,17 @@ $sql = "SELECT wine_wines.uid, wine_wines.name
 			OR wine_wines.grape LIKE ?
 			OR wine_wines.region_of_origin LIKE ?
 			OR wine_wines.country_of_origin LIKE ?
-		)";
+		)
+		";
 
 $params = ["%$q%", "%$q%", "%$q%", "%$q%"];
 
-if ($cellar !== null) {
+if ($cellarUID !== null) {
 	$sql .= " AND wine_bins.cellar_uid = ?";
-	$params[] = $cellar;
+	$params[] = $cellarUID;
 }
+
+$sql .= " LIMIT 8";
 
 // Assume $db->fetchAll returns array of rows
 $rows = $db->fetchAll($sql, $params);

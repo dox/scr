@@ -64,11 +64,23 @@ echo pageTitle(
 
 <hr/>
 
-<div class="input-group mb-3">
-  <input type="text" class="form-control form-control-lg" id="wine_search" placeholder="Quick search all cellars" autocomplete="off" spellcheck="false">
-  <a href="index.php?page=wine_filter" type="button" class="btn btn-lg btn-outline-secondary">Advanced Filter</a>
+<div class="wine-search-wrapper position-relative">
+  <div class="input-group mb-3">
+	<input 
+	  type="text"
+	  class="form-control form-control-lg"
+	  id="wine_search"
+	  placeholder="Quick search all cellars"
+	  autocomplete="off"
+	  spellcheck="false"
+	>
+	<a href="index.php?page=wine_filter" type="button" class="btn btn-lg btn-outline-secondary">
+	  Advanced Filter
+	</a>
+  </div>
+
+  <ul id="wine_search_results" class="list-group"></ul>
 </div>
-<ul id="wine_search_results" class="list-group"></ul>
 
 <div id="wine_stats_container">
 	<div class="d-flex justify-content-center">
