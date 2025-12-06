@@ -71,6 +71,22 @@ class User {
 			return false;
 		}
 		
+		// Map normal text/select fields
+		$fields = [
+			'charge_to'      => $postData['charge_to'] ?? null,
+			'domus_reason'  => $postData['domus_reason'] ?? null,
+			'wine_choice'   => $postData['wine_choice'] ?? null,
+			'dessert'   => $postData['dessert'] ?? 0
+		];
+		
+		// Update member lastlogon to now		
+		$db->update(
+			'members',
+			['date_lastlogon' => date('c')],
+			['uid' => $member->uid],
+			false
+		);
+		
 		$this->userData = [
 			'samaccountname'	=> $member->ldap,
 			'type'				=> $member->type ?? null,
@@ -91,7 +107,7 @@ class User {
 	}
 
 	public function authenticate(string $username, string $password, bool $remember = false): bool {
-		global $log;
+		global $db, $log;
 		
 		try {
 			$user = AdUser::whereEquals('samaccountname', $username)->firstOrFail();
@@ -119,6 +135,14 @@ class User {
 			$this->logout();
 			return false;
 		}
+		
+		// Update member lastlogon to now		
+		$db->update(
+			'members',
+			['date_lastlogon' => date('c')],
+			['uid' => $member->uid],
+			false
+		);
 		
 		$this->userData = [
 			'samaccountname' => $member->ldap,

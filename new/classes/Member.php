@@ -368,4 +368,10 @@ class Member extends Model {
 		
 		return true;
 	}
+	
+	public function lastLogon(): ?string{
+		return isset($this->date_lastlogon)
+			? $this->date_lastlogon
+			: null;
+	}
 }
