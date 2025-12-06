@@ -89,16 +89,14 @@ class Log extends Model {
 	public function add(string $description, string $category = self::INFO): bool {
 		global $user;
 		
-		$type = strtoupper($category);
-	
 		$sql = "INSERT INTO " . static::$table . " (username, ip, description, category, result, date)
 				VALUES (:username, :ip, :description, :category, :result, NOW())";
 	
 		$params = [
-			':username'		=> (isset($user) && $user?->getUsername()) ?? null,
+			':username'		=> ($user ?? null) ? $user->getUsername() : null,
 			':ip'			=> ip2long($this->detectIp()),
 			':description'	=> $description,
-			':category'		=> $type, // use the uppercase version
+			':category'		=> strtoupper($category),
 			':result'		=> "result",
 		];
 	

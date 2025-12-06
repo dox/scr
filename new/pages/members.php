@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 				}
 			}
 		}
-		
+		$log->add("Member Order Updated", Log::INFO);
 		toast('Member Order Updated', 'Member precedence order updated sucesfully', 'text-success');
 	}
 

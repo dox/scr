@@ -194,7 +194,7 @@ endforeach; ?>
 												<div class="card mb-3">
 													<img src="<?= htmlspecialchars($cardImage) ?>" class="card-img-top">
 													<div class="card-body">
-														<label>
+														<label class="text-truncate">
 															<input type="radio" name="photograph"
 																value="<?= basename($cardImage) ?>"
 																<?= ($cellar->photographURL() === $cardImage) ? 'checked' : '' ?>>

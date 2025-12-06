@@ -160,19 +160,19 @@ echo pageTitle(
 
 			<div class="row mb-3">
 				<div class="col">
-					<label class="form-label">Capacity</label>
+					<label class="form-label text-truncate">Capacity</label>
 					<input type="number" class="form-control" name="scr_capacity"
 						   value="<?= $meal->scr_capacity ?>" min="0" required>
 				</div>
 
 				<div class="col">
-					<label class="form-label">Dessert Capacity</label>
+					<label class="form-label text-truncate">Dessert Capacity</label>
 					<input type="number" class="form-control" name="scr_dessert_capacity"
 						   value="<?= $meal->scr_dessert_capacity ?>" min="0" required>
 				</div>
 
 				<div class="col">
-					<label class="form-label">Guests</label>
+					<label class="form-label text-truncate">Guests</label>
 					<input type="number" class="form-control" name="scr_guests"
 						   value="<?= $meal->scr_guests ?>" min="0" required>
 				</div>
@@ -207,7 +207,7 @@ echo pageTitle(
 										<div class="card mb-3">
 											<img src="<?= htmlspecialchars($cardImage) ?>" class="card-img-top">
 											<div class="card-body">
-												<label>
+												<label class="text-truncate">
 													<input type="radio" name="photo"
 														value="<?= basename($cardImage) ?>"
 														<?= ($meal->photographURL() === $cardImage) ? 'checked' : '' ?>>
