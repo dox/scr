@@ -125,7 +125,9 @@ echo pageTitle(
 					</div>
 				</div>
 				<?php
-				echo "<small class=\"form-text text-muted\">Last logon: " . formatDate($member->lastLogon()) . " " . formatTime($member->lastLogon()) . "</small>";
+				if ($member->lastLogon()) {
+					echo "<small class=\"form-text text-muted\">Last logon: " . formatDate($member->lastLogon()) . " " . formatTime($member->lastLogon()) . "</small>";
+				}
 				?>
 			</div>
 			

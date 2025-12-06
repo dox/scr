@@ -27,7 +27,7 @@ echo pageTitle(
 		   aria-controls="<?= $paneId ?>"
 		   aria-selected="<?= $isCurrent ? 'true' : 'false' ?>"
 		   data-selected="<?= $isCurrent ? 'true' : 'false' ?>"
-		   data-url="./ajax/meals.php?date=<?= urlencode($week) ?>">
+		   data-url="./ajax/meals_tab.php?date=<?= urlencode($week) ?>">
 		   <?= $label ?>
 		</a>
 	</li>

@@ -52,13 +52,6 @@ require_once __DIR__ . '/../classes/Cellar.php';
 require_once __DIR__ . '/../classes/Bin.php';
 require_once __DIR__ . '/../classes/Transaction.php';
 
-// OLD CLASSES (FOR NOW)
-require_once __DIR__ . '/../classes/class_wineBin.php';
-require_once __DIR__ . '/../classes/class_wineCellar.php';
-require_once __DIR__ . '/../classes/class_wineList.php';
-require_once __DIR__ . '/../classes/class_wine.php';
-
-
 // Initialise shared database instance
 try {
 	global $db;
