@@ -31,10 +31,10 @@ echo pageTitle(
 		],
 		[
 			'permission' => 'wine',
-			'title' => 'Add Multi-Transaction',
+			'title' => 'Add Transaction',
 			'class' => '',
 			'event' => '',
-			'icon' => 'plus-circle',
+			'icon' => 'receipt',
 			'data' => [
 				'bs-toggle' => 'modal',
 				'bs-target' => '#deleteTermModal'

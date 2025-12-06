@@ -31,7 +31,7 @@ echo pageTitle(
 			'title' => 'Delete Member',
 			'class' => 'text-danger',
 			'event' => '',
-			'icon' => 'person-x',
+			'icon' => 'trash3',
 			'data' => [
 				'bs-toggle' => 'modal',
 				'bs-target' => '#deleteMemberModal'

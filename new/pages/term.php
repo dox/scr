@@ -19,7 +19,7 @@ echo pageTitle(
 			'title' => 'Delete',
 			'class' => '',
 			'event' => '',
-			'icon' => 'plus-circle',
+			'icon' => 'trash3',
 			'data' => [
 				'bs-toggle' => 'modal',
 				'bs-target' => '#deleteTermModal'

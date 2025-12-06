@@ -15,7 +15,7 @@ echo pageTitle(
 			'title' => 'Edit Bin',
 			'class' => '',
 			'event' => '',
-			'icon' => 'plus-circle',
+			'icon' => 'pencil',
 			'data' => [
 				'bs-toggle' => 'modal',
 				'bs-target' => '#addCellarModal'
@@ -35,9 +35,9 @@ echo pageTitle(
 		[
 			'permission' => 'wine',
 			'title' => 'Delete Bin',
-			'class' => '',
+			'class' => 'text-danger',
 			'event' => '',
-			'icon' => 'plus-circle',
+			'icon' => 'trash3',
 			'data' => [
 				'bs-toggle' => 'modal',
 				'bs-target' => '#deleteTermModal'

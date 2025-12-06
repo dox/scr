@@ -54,7 +54,7 @@ echo pageTitle(
 			'title' => 'Delete Meal',
 			'class' => 'text-danger',
 			'event' => '',
-			'icon' => 'x-octagon',
+			'icon' => 'trash3',
 			'data' => [
 				'bs-toggle' => 'modal',
 				'bs-target' => '#deleteMealModal'

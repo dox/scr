@@ -71,12 +71,14 @@ $settings = new Settings();
 // Handle impersonation
 if (isset($_POST['impersonate'])) {
 	$targetId = $_POST['impersonate'] ?? null;
-
+	
 	if ($targetId) {
+		$member = Member::fromUID($targetId);
+		
+		$log->add("{$user->getUsername()} impersonating {$member->ldap} ({$member->public_displayName()})", Log::INFO);
+		
 		$_SESSION['impersonation_backup'] = $_SESSION['user'];
 		$existingPermissions = $_SESSION['user']['permissions'];
-
-		$member = Member::fromUID($targetId);
 
 		$_SESSION['impersonating'] = true;
 		$_SESSION['user']['uid']              = $member->uid;
@@ -97,9 +99,12 @@ if (isset($_POST['impersonate'])) {
 
 // Restore impersonation
 if (isset($_POST['restore_impersonation']) && isset($_SESSION['impersonation_backup'])) {
+	$impersonatingUser = $user->getUsername();
+	
 	unset($_SESSION['impersonating']);
 	$_SESSION['user'] = $_SESSION['impersonation_backup'];
 	unset($_SESSION['impersonation_backup']);
 	
 	$user = new User();
+	$log->add("{$user->getUsername()} no longer impersonating {$impersonatingUser}", Log::INFO);
 }
