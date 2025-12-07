@@ -14,7 +14,7 @@ if (!$user->hasPermission("meals") && $booking->member_ldap != $user->getUsernam
 if (isset($_POST)) {
 	//printArray($_POST);
 	
-	if ($meal->isCutoffValid() || $user->hasPermission("bookings")) {
+	if ($meal->canBook(true)) {
 		// update booking
 		if (isset($_POST['bookingUID'])) {
 			$booking->update($_POST);
@@ -39,22 +39,26 @@ if (isset($_POST)) {
 	}
 }
 
-$icons[] = [
-	'permission' => 'meals',
-	'title' => 'Guest List',
-	'class' => '',
-	'event' => 'index.php?page=guestlist&uid=' . $meal->uid,
-	'icon' => 'card-list'
-];
-$icons[] = [
-	'permission' => 'meals',
-	'title' => 'Edit Meal',
-	'class' => '',
-	'event' => 'index.php?page=meal&uid=' . $meal->uid,
-	'icon' => 'fork-knife'
-];
+$icons = [];
+if ($user->hasPermission("meals")) {
+	$icons[] = [
+		'permission' => 'meals',
+		'title' => 'Guest List',
+		'class' => '',
+		'event' => 'index.php?page=guestlist&uid=' . $meal->uid,
+		'icon' => 'card-list'
+	];
+	$icons[] = [
+		'permission' => 'meals',
+		'title' => 'Edit Meal',
+		'class' => '',
+		'event' => 'index.php?page=meal&uid=' . $meal->uid,
+		'icon' => 'fork-knife'
+	];
+}
 
-if (count($booking->guests()) < $meal->scr_guests || $user->hasPermission("bookings")) {
+
+if ($meal->canBook(true)) {
 	$icons[] = [
 		'permission' => 'everyone',
 		'title' => 'Add Guest',
@@ -66,19 +70,18 @@ if (count($booking->guests()) < $meal->scr_guests || $user->hasPermission("booki
 			'bs-target' => '#addGuestModal'
 		]
 	];
+	$icons[] = [
+		'permission' => 'everyone',
+		'title' => 'Delete Booking',
+		'class' => 'text-danger',
+		'event' => '',
+		'icon' => 'trash3',
+		'data' => [
+			'bs-toggle' => 'modal',
+			'bs-target' => '#deleteBookingModal'
+		]
+	];
 }
-
-$icons[] = [
-	'permission' => 'everyone',
-	'title' => 'Delete Booking',
-	'class' => 'text-danger',
-	'event' => '',
-	'icon' => 'trash3',
-	'data' => [
-		'bs-toggle' => 'modal',
-		'bs-target' => '#deleteBookingModal'
-	]
-];
 
 echo pageTitle(
 	$meal->name,
@@ -141,8 +144,6 @@ echo pageTitle(
 		
 		echo $output;
 		?>
-
-		
 		
 		<div class="card mb-3">
 			<div class="card-body text-center">
@@ -159,7 +160,7 @@ echo pageTitle(
 		<form method="post" action="<?= htmlspecialchars($_SERVER['REQUEST_URI']) ?>">
 		<div class="mb-3">
 			<label for="type" class="form-label">Charge-To</label>
-			<select class="form-select charge_to" name="charge_to" <?= ($meal->isCutoffValid() || $user->hasPermission("bookings")) ? '' : 'disabled' ?> required>
+			<select class="form-select charge_to" name="charge_to" <?= $meal->canBook(true) ? '' : 'disabled' ?> required>
 				<?php
 				$chargeToOptions = explode(',', $settings->get('booking_charge-to'));
 				
@@ -220,12 +221,19 @@ echo pageTitle(
 			<div class="mb-3">
 				<input type="hidden" name="dessert" value="0">
 				<input class="form-check-input"
-					   id="dessert"
-					   name="dessert"
-					   value="1"
-					   type="checkbox"
-					   <?= (!$meal->hasDessertCapacity()) ? "disabled" : "" ?>
-					   <?= $booking->dessert == "1" ? "checked" : "" ?>>
+				   id="dessert"
+				   name="dessert"
+				   value="1"
+				   type="checkbox"
+				   <?= (
+					   !$meal->isCutoffValid(true) // cutoff reached → disable
+					   || (
+						   !$booking->dessert // only care if box not already checked
+						   && !$meal->hasGuestDessertCapacity(count($booking->guests(), true) // not enough slots for dessert
+						   )
+					   )
+				   ) ? 'disabled' : '' ?>
+				   <?= $booking->dessert == "1" ? "checked" : "" ?>>
 				<label for="dessert" class="form-label">
 					Dessert <i>(applies to your guests)</i>
 				</label>
@@ -233,7 +241,7 @@ echo pageTitle(
 		<?php endif; ?>
 		
 		<div class="mb-3">
-		  <button type="submit" class="btn <?= ($meal->isCutoffValid() || $user->hasPermission("bookings")) ? 'btn-primary' : 'btn-secondary disabled' ?> w-100"><?= ($meal->isCutoffValid() || $user->hasPermission("bookings")) ? 'Update Booking Preferences' : 'Meal Cut-Off Passed' ?></button>
+		  <button type="submit" class="btn <?= $meal->canBook(true) ? 'btn-primary' : 'btn-secondary disabled' ?> w-100"><?= $meal->canBook(true) ? 'Update Booking Preferences' : 'Deadline Passed' ?></button>
 		  <input type="hidden" name="bookingUID" id="bookingUID" value="<?= $booking->uid; ?>">
 		</div>
 		</form>
@@ -285,6 +293,10 @@ echo pageTitle(
 		$output .= '</ul>';
 		
 		echo $output;
+		
+		if ($meal->hasGuestCapacity(count($booking->guests()), true) || $meal->canBook(true)) {
+			echo "<button type=\"button\" class=\"btn btn-primary w-100\" data-bs-toggle=\"modal\" data-bs-target=\"#addGuestModal\">Add Guest</button>";
+		}
 		?>
 	</div>
 </div>
@@ -341,7 +353,7 @@ echo $guestModalOutput;
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-link text-muted" data-bs-dismiss="modal">Close</button>
-				<button type="submit" class="btn <?= ($meal->isCutoffValid() || $user->hasPermission("bookings")) ? 'btn-danger' : 'btn-secondary disabled' ?> booking-delete-btn" data-booking_uid="<?= $booking->uid; ?>"><?= ($meal->isCutoffValid() || $user->hasPermission("bookings")) ? 'Delete Booking' : 'Meal Cut-Off Passed' ?></button>
+				<button type="submit" class="btn <?= $meal->canBook(true) ? 'btn-danger' : 'btn-secondary disabled' ?> booking-delete-btn" data-booking_uid="<?= $booking->uid; ?>"><?= $meal->canBook(true) ? 'Delete Booking' : 'Deadline Passed' ?></button>
 			</div>
 		</div>
 	</div>

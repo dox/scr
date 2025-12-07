@@ -397,17 +397,50 @@ class Meal extends Model {
 	}
 	
 	// Meal booking logic
-	public function hasCapacity(): bool {
+	public function hasCapacity(bool $factorInAdmin = true): bool {
+		global $user;
+	
+		if ($factorInAdmin && $user->hasPermission("bookings")) {
+			return true;
+		}
+	
 		return $this->totalDiners() < $this->scr_capacity;
 	}
 	
-	public function hasDessertCapacity(): bool {
+	public function hasDessertCapacity(bool $factorInAdmin = true): bool {
+		global $user;
+	
+		if ($factorInAdmin && $user->hasPermission("bookings")) {
+			return true;
+		}
+	
 		if (!$this->allowed_dessert) return false;
 		
 		return $this->totalDessertDiners() < $this->scr_dessert_capacity;
 	}
 	
-	public function isCutoffValid(): bool {
+	public function hasGuestDessertCapacity(int $guests, bool $factorInAdmin = true): bool {
+		global $user;
+	
+		if ($factorInAdmin && $user->hasPermission("bookings")) {
+			return true;
+		}
+	
+		if (!$this->allowed_dessert) return false;
+		
+		$totalIfAdded = $this->totalDessertDiners() + $guests + 1;
+		
+		// true only if adding would NOT exceed capacity
+		return $totalIfAdded <= $this->scr_dessert_capacity;
+	}
+	
+	public function isCutoffValid(bool $factorInAdmin = true): bool {
+		global $user;
+	
+		if ($factorInAdmin && $user->hasPermission("bookings")) {
+			return true;
+		}
+	
 		if ($this->date_cutoff) {
 			return new DateTime() < new DateTime($this->date_cutoff);
 		}
@@ -415,9 +448,13 @@ class Meal extends Model {
 		return false;
 	}
 	
-	public function isAllowedGroupsValid(): bool {
+	public function isAllowedGroupsValid(bool $factorInAdmin = true): bool {
 		global $user;
-		
+	
+		if ($factorInAdmin && $user->hasPermission("bookings")) {
+			return true;
+		}
+	
 		$member = Member::fromLDAP($user->getUsername());
 			
 		if (empty($this->allowedGroups())) return true;
@@ -429,18 +466,31 @@ class Meal extends Model {
 		return false;
 	}
 	
-	public function hasGuestCapacity(): bool {
-		// this needs to be a booking check??
-		return $this->totalDiners() < $this->scr_guests;
+	public function hasGuestCapacity(int $existingGuests, bool $factorInAdmin = true): bool {
+		global $user;
+	
+		if ($factorInAdmin && $user->hasPermission("bookings")) {
+			return true;
+		}
+		
+		if ($this->totalDiners() < $this->scr_capacity) {
+			if ($existingGuests < $this->scr_guests) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 	
-	public function canBook(): bool {
+	public function canBook(bool $factorInAdmin = true): bool {
 		global $user;
-		
-		if ($user->hasPermission("bookings")) return true;
-		
+	
+		if ($factorInAdmin && $user->hasPermission("bookings")) {
+			return true;
+		}
+	
 		return $this->hasCapacity()
-			//&& $this->hasDessertCapacity()
+			// && $this->hasDessertCapacity()
 			&& $this->isCutoffValid()
 			&& $this->isAllowedGroupsValid();
 	}

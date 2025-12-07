@@ -28,15 +28,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	}
 }
 
-// Debug / meal info
-echo "<p>totalDiners: " . $meal->totalDiners() . "</p>";
-echo "<p>totalDessertDiners: " . $meal->totalDessertDiners() . "</p><hr>";
-echo "<p>hasCapacity: " . $meal->hasCapacity() . "</p>";
-echo "<p>hasDessertCapacity: " . $meal->hasDessertCapacity() . "</p>";
-echo "<p>isCutoffValid: " . $meal->isCutoffValid() . "</p>";
-echo "<p>hasGuestCapacity: " . $meal->hasGuestCapacity() . "</p>";
-echo "<p>canBook: " . $meal->canBook() . "</p>";
-
 // Title and action buttons
 echo pageTitle(
 	$isNew ? "Add New Meal" : $meal->name(),
