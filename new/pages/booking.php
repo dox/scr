@@ -159,7 +159,7 @@ echo pageTitle(
 		<form method="post" action="<?= htmlspecialchars($_SERVER['REQUEST_URI']) ?>">
 		<div class="mb-3">
 			<label for="type" class="form-label">Charge-To</label>
-			<select class="form-select charge_to" name="charge_to" required>
+			<select class="form-select charge_to" name="charge_to" <?= ($meal->isCutoffValid() || $user->hasPermission("bookings")) ? '' : 'disabled' ?> required>
 				<?php
 				$chargeToOptions = explode(',', $settings->get('booking_charge-to'));
 				
@@ -233,7 +233,7 @@ echo pageTitle(
 		<?php endif; ?>
 		
 		<div class="mb-3">
-		  <button type="submit" class="btn btn-primary w-100">Update Booking Preferences</button>
+		  <button type="submit" class="btn <?= ($meal->isCutoffValid() || $user->hasPermission("bookings")) ? 'btn-primary' : 'btn-secondary disabled' ?> w-100"><?= ($meal->isCutoffValid() || $user->hasPermission("bookings")) ? 'Update Booking Preferences' : 'Meal Cut-Off Passed' ?></button>
 		  <input type="hidden" name="bookingUID" id="bookingUID" value="<?= $booking->uid; ?>">
 		</div>
 		</form>
@@ -341,7 +341,7 @@ echo $guestModalOutput;
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-link text-muted" data-bs-dismiss="modal">Close</button>
-				<button type="submit" class="btn btn-danger booking-delete-btn" data-booking_uid="<?= $booking->uid; ?>">Delete Booking</button>
+				<button type="submit" class="btn <?= ($meal->isCutoffValid() || $user->hasPermission("bookings")) ? 'btn-danger' : 'btn-secondary disabled' ?> booking-delete-btn" data-booking_uid="<?= $booking->uid; ?>"><?= ($meal->isCutoffValid() || $user->hasPermission("bookings")) ? 'Delete Booking' : 'Meal Cut-Off Passed' ?></button>
 			</div>
 		</div>
 	</div>
