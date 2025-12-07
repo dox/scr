@@ -25,6 +25,7 @@
   fill: currentColor
 }
 
+//floating div for wine quick search results
 #wine_search_results {
   position: absolute;
   top: 100%;

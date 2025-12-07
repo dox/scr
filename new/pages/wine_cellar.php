@@ -101,11 +101,14 @@ echo pageTitle(
   <ul id="wine_search_results" class="list-group"></ul>
 </div>
 
+<a href="#wine_stats_container"
+   class="wine_stats_link d-none"
+   data-url="./ajax/wine_stats.php?cellar_uid=<?= $cellar->uid ?>"
+   data-selected="true">
+</a>
 <div id="wine_stats_container">
-	<div class="d-flex justify-content-center">
-	  <div class="spinner-border" role="status">
+	<div class="spinner-border" role="status">
 		<span class="visually-hidden">Loading...</span>
-	  </div>
 	</div>
 </div>
 
@@ -254,23 +257,11 @@ endforeach; ?>
 document.addEventListener('DOMContentLoaded', () => {
 	initAjaxLoader('#binsTabs .nav-link', '#binsContent');
 });
-</script>
 
-<script>
-// Initialize stats
-document.addEventListener('DOMContentLoaded', () => {
-  const target = document.getElementById('wine_stats_container');
-  const url = './ajax/wine_stats.php?cellar_uid=<?= $cellar->uid ?>';
+// Initialize stats links
+initAjaxLoader('.wine_stats_link', '#wine_stats_container');
 
-  target.innerHTML = '<div class="text-muted">Loading…</div>';
-
-  fetch(url)
-	.then(r => r.text())
-	.then(html => target.innerHTML = html)
-	.catch(() => target.innerHTML = '<div class="text-danger">Error loading content</div>');
-});
-</script>
-<script>
+// Handle wine live searching
 liveSearch(
 	'wine_search',
 	'wine_search_results',

@@ -102,9 +102,7 @@ if (APP_DEBUG) {
 						}
 						
 						if($user->hasPermission("wine")) {
-							echo "<li><a class=\"dropdown-item\" href=\"index.php?page=wine_index\"><svg class=\"me-2\" width=\"1em\" height=\"1em\" aria-hidden=\"true\">
-								<use xlink:href=\"assets/images/icons.svg#wine-glass\"></use>
-							</svg>Wine</a></li>";
+							echo "<li><a class=\"dropdown-item\" href=\"index.php?page=wine_index\"><i class=\"bi me-2 bi-cup-straw\" aria-hidden=\"true\"></i>Wine</a></li>";
 						}
 						
 						if($user->hasPermission("terms")) {

@@ -44,7 +44,7 @@ $mealObject = new Meal($mealUID);
 				<?php $class = ($mealObject->allowed_wine == 1) ? "" : " text-muted"; ?>
 				<div class="card-body <?= $class; ?>">
 					<h5 class="card-title text-truncate">Wine</h5>
-					<h1><svg width="1em" height="1em"><use xlink:href="assets/images/icons.svg#wine-glass"/></svg></h1>
+					<h1><i class="bi bi-cup-straw" style="font-size: 2rem;"></i></h1>
 				</div>
 			</div>
 		</div>

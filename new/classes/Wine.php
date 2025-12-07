@@ -70,17 +70,22 @@ class Wine {
 		return $bin->name;
 	}
 	
-	public function photographURL() {
-		$img_dir = "img/wines/";
-		$image = "img/blank.jpg";
-		
-		if (!empty($this->photograph)) {
-			if (file_exists($img_dir . $this->photograph)) {
-				$image = $img_dir . $this->photograph;
-			}
+	public function photographURL(): string {
+		$urlPath  = '/new/uploads/wines/';
+		$filePath = $_SERVER['DOCUMENT_ROOT'] . $urlPath;
+	
+		// Choose the candidate filename (null or empty means default)
+		$filename = trim((string) $this->photograph);
+	
+		// If no filename at all, skip straight to default
+		if ($filename === '') {
+			return './assets/images/blank.png';
 		}
-		
-		return $image;
+	
+		// If file exists, return its public path; otherwise, fall to default
+		return file_exists($filePath . $filename)
+			? './uploads/wines/' . $filename
+			: './assets/images/blank.png';
 	}
 	
 	public function pricePerBottle($target = "Internal") {

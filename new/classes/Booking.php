@@ -249,8 +249,30 @@ class Booking extends Model {
 	
 	public function displayMemberListGroupItem(): string {
 		$meal = new Meal($this->meal_uid);
-	
-		return $meal->displayListGroupItem();
+		
+		// Determine text class: green if today, muted otherwise
+		$class = (date('Y-m-d', strtotime($meal->date_meal)) === date('Y-m-d'))
+			? 'text-success'
+			: 'text-muted';
+		
+		// Determine link: admin sees meal, others see booking
+		$linkUrl = "index.php?page=booking&uid=" . urlencode($this->uid);
+		
+		$mealName     = htmlspecialchars($meal->name, ENT_QUOTES);
+		$mealLocation = htmlspecialchars($meal->location, ENT_QUOTES);
+		$mealDate     = formatDate($meal->date_meal, 'short');
+		
+		$output  = '<li class="list-group-item d-flex justify-content-between lh-sm">';
+		$output .= '<div class="' . $class . ' d-inline-block text-truncate" style="max-width: 73%;">';
+		$output .= '<h6 class="my-0">';
+		$output .= '<a href="' . $linkUrl . '" class="' . $class . '">' . $mealName . '</a>';
+		$output .= '</h6>';
+		$output .= '<small class="' . $class . '">' . $mealLocation . '</small>';
+		$output .= '</div>';
+		$output .= '<span class="' . $class . '">' . $mealDate . '</span>';
+		$output .= '</li>';
+		
+		return $output;
 	}
 	
 	public function delete() {

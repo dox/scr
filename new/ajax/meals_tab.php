@@ -24,6 +24,11 @@ $end   = $terms->lastDayOfWeek($validDate);
 
 $mealsBetweenDates = $meals->betweenDates($start, $end);
 
+/*$mealsBetweenDates = $meals->all([
+	'date_meal' => ['>=', $start],
+	'date_meal' => ['<=', $end]
+]);*/
+
 // Group meals by date
 $mealsByDate = [];
 foreach ($mealsBetweenDates as $meal) {

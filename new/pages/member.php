@@ -55,15 +55,12 @@ echo pageTitle(
 			</li>
 		</ul>
 		<div id="member_stats_container">
-			<div class="d-flex justify-content-center">
-			  <div class="spinner-border" role="status">
+			<div class="spinner-border" role="status">
 				<span class="visually-hidden">Loading...</span>
-			  </div>
 			</div>
 		</div>
 	</div>
 </div>
-
 
 <hr>
 

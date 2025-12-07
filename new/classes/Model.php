@@ -243,6 +243,50 @@ class Members extends Model {
 class Meals extends Model {
 	protected static string $table = 'meals';
 	
+	public function all(array $whereFilterArray = []) : array {
+		global $db;
+	
+		$sql = "SELECT uid
+				FROM " . self::$table;
+	
+		$conditions = [];
+	
+		foreach ($whereFilterArray as $key => $rule) {
+			$key = addslashes($key);
+	
+			// Allow [operator, value] style input
+			if (is_array($rule)) {
+				[$operator, $value] = $rule;
+	
+				if (strtoupper($operator) === 'IN' && is_array($value)) {
+					$value = array_map(fn($v) => "'" . addslashes($v) . "'", $value);
+					$conditions[] = "$key IN (" . implode(',', $value) . ")";
+				} elseif ($operator === 'LIKE') {
+					$value = '%' . addslashes($value) . '%';
+					$conditions[] = "$key LIKE '$value'";
+				} else {
+					$value = addslashes($value);
+					$conditions[] = "$key $operator '$value'";
+				}
+	
+			} else {
+				// Fallback to simple equals
+				$value = addslashes($rule);
+				$conditions[] = "$key = '$value'";
+			}
+		}
+	
+		if ($conditions) {
+			$sql .= " WHERE " . implode(' AND ', $conditions);
+		}
+	
+		$sql .= " ORDER BY date_meal ASC";
+	
+		$rows = $db->query($sql)->fetchAll();
+		
+		return array_map(fn($row) => new Meal($row['uid']), $rows);
+	}
+	
 	public static function locations(): array {
 		global $db;
 		

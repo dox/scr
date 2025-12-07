@@ -24,7 +24,12 @@ function initAjaxLoader(triggerSelector, targetSelector, options = {}) {
  
 			 if (useCache && target.dataset.loadedUrl === url) return;
  
-			 target.innerHTML = '<div class="text-muted">Loading...</div>';
+			 target.innerHTML = `
+			   <div class="d-flex justify-content-center align-items-center">
+				 <div class="spinner-border" role="status">
+				   <span class="visually-hidden">Loading...</span>
+				 </div>
+			   </div>`;
  
 			 fetch(url)
 				 .then(resp => resp.text())

@@ -47,10 +47,8 @@ echo pageTitle(
 		aria-labelledby="<?= $tabId ?>"
 		data-url="./ajax/meals_tab.php?week=<?= urlencode($week) ?>">
 		
-		<div class="d-flex justify-content-center">
-		  <div class="spinner-border" role="status">
+		<div class="spinner-border" role="status">
 			<span class="visually-hidden">Loading...</span>
-		  </div>
 		</div>
 	</div>
 <?php endforeach; ?>
@@ -66,14 +64,13 @@ document.addEventListener('DOMContentLoaded', () => {
 <style>
 .nav-tabs {
   overflow-x: auto;
+  overflow-y: hidden;  /* forbid up/down scroll */
   white-space: nowrap;
   -webkit-overflow-scrolling: touch; /* smooth scrolling on iOS */
 }
-
 .nav-tabs .nav-item {
   display: inline-block;
 }
-
 .nav-tabs .nav-link {
   white-space: nowrap; /* prevent breaking */
 }

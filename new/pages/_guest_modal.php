@@ -76,7 +76,7 @@ $guestDietary     = $guest['guest_dietary']      ?? [];
 	<!-- Charge-To -->
 	<div class="mb-3">
 		<label class="form-label">Guest Charge-To</label>
-		<select class="form-select charge_to mb-3" name="guest_charge_to" required>
+		<select class="form-select charge_to" name="guest_charge_to" required>
 			<?php
 			$chargeToOptions = explode(',', $settings->get('booking_charge-to'));
 			foreach ($chargeToOptions as $charge_to):
@@ -89,7 +89,7 @@ $guestDietary     = $guest['guest_dietary']      ?? [];
 			<?php endforeach; ?>
 		</select>
 
-		<input class="form-control guest_domus_reason mb-3 d-none"
+		<input class="form-control guest_domus_reason mt-3 d-none"
 			   type="text"
 			   name="guest_domus_reason"
 			   placeholder="Domus Reason (required)"
