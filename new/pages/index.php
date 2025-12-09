@@ -83,12 +83,12 @@ document.addEventListener('DOMContentLoaded', () => {
 		<div class="modal-header">
 			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 		</div>
-		<div class="modal-body" id="modalBody"></div>
+		<div id="modal-ajax"></div>
 	</div>
   </div>
 </div>
 
 <script>
 // Load AJAX menu
-remoteModalLoader('.load-remote-menu', '#menuModal', '#modalBody');
+remoteModalLoader('.load-remote-menu', '#menuModal', '#modal-ajax');
 </script>

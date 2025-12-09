@@ -186,20 +186,14 @@ endforeach; ?>
 			</div>
 			<div class="modal-body">
 				<div class="row">
-				<div class="col-3">
-					<div class="mb-3">
-						<div class="mb-3">
-							<label for="short_code" class="form-label text-truncate">Short Code</label>
-							<input type="text" class="form-control" id="short_code" name="short_code" value="<?= htmlspecialchars($cellar->short_code) ?>" maxlength="2">
-						</div>
+					<div class="col-3 mb-3">
+						<label for="short_code" class="form-label text-truncate">Short Code</label>
+						<input type="text" class="form-control" id="short_code" name="short_code" value="<?= htmlspecialchars($cellar->short_code) ?>" maxlength="2">
 					</div>
-				</div>
-				<div class="col-9">
-					<div class="mb-3">
-						<label for="name" class="form-label">Cellar Name</label>
+					<div class="col-9 mb-3">
+						<label for="name" class="form-label text-truncate">Cellar Name</label>
 						<input type="text" class="form-control" id="name" name="name" value="<?= htmlspecialchars($cellar->name) ?>">
 					</div>
-				</div>
 				</div>
 				<div class="mb-3">
 					<div class="accordion" id="accordionPhotograph">
@@ -212,7 +206,7 @@ endforeach; ?>
 								<div class="accordion-body">
 									<div class="row">
 										<?php foreach ($meals->cardImages() as $cardImage): ?>
-											<div class="col-6 col-md-4">
+											<div class="col-6">
 												<div class="card mb-3">
 													<img src="<?= htmlspecialchars($cardImage) ?>" class="card-img-top">
 													<div class="card-body">

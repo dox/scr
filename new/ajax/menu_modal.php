@@ -29,33 +29,20 @@ $mealObject = new Meal($mealUID);
 	<hr>
 	<?php endif; ?>
 	
-	<div class="row text-center">
-		<div class="col">
-			<div class="card mb-3">
-				<?php $class = ($mealObject->domus == 1) ? "" : " text-muted"; ?>
-				<div class="card-body <?= $class; ?>">
-					<h5 class="card-title text-truncate">Domus</h5>
-					<h1><i class="bi bi-mortarboard" style="font-size: 2rem;"></i></h1>
-				</div>
-			</div>
+	<div class="d-flex justify-content-around align-items-center border-top pt-3 mt-4 small">
+		<div class="text-center <?= ($mealObject->charge_to == "Domus") ? "" : "opacity-25"; ?>">
+			<div><i class="bi bi-mortarboard fs-4"></i></div>
+			<div class="text-uppercase fw-semibold">Domus</div>
 		</div>
-		<div class="col">
-			<div class="card mb-3">
-				<?php $class = ($mealObject->allowed_wine == 1) ? "" : " text-muted"; ?>
-				<div class="card-body <?= $class; ?>">
-					<h5 class="card-title text-truncate">Wine</h5>
-					<h1><i class="bi bi-cup-straw" style="font-size: 2rem;"></i></h1>
-				</div>
-			</div>
+	
+		<div class="text-center <?= ($mealObject->allowed_wine == 1) ? "" : " opacity-25 "; ?>">
+			<div><i class="bi bi-cup-straw fs-4"></i></div>
+			<div class="text-uppercase fw-semibold">Wine</div>
 		</div>
-		<div class="col">
-			<div class="card mb-3">
-				<?php $class = ($mealObject->allowed_dessert == 1) ? "" : " text-muted"; ?>
-				<div class="card-body <?= $class; ?>">
-					<h5 class="card-title text-truncate">Dessert</h5>
-					<h1><i class="bi bi-cookie" style="font-size: 2rem;"></i></h1>
-				</div>
-			</div>
+	
+		<div class="text-center <?= ($mealObject->allowed_dessert == 1) ? "" : " opacity-25 "; ?>">
+			<div><i class="bi bi-cookie fs-4"></i></div>
+			<div class="text-uppercase fw-semibold">Dessert</div>
 		</div>
 	</div>
 </div>
