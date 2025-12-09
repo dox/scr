@@ -17,9 +17,15 @@ if (!$meal_uid) {
 }
 
 $meal = new Meal($meal_uid);
-
 if (!$meal->canBook()) {
 	echo json_encode(['success' => false, 'message' => 'Meal is not bookable.']);
+	exit;
+}
+
+$booking = Booking::fromMealUID($meal->uid);
+if ($booking->exists()) {
+	// Don't permit double bookings, instead, return the existing booking UID (without error)
+	echo json_encode(['success' => true, 'booking_uid' => $booking->uid]);
 	exit;
 }
 
@@ -32,7 +38,7 @@ try {
 	$data['type'] = $member->type;
 	$data['charge_to'] = $meal->charge_to;
 	$data['domus_reason'] = ($meal->charge_to === 'Domus') ? 'Meal marked as Domus' : null; // fill Domus reason if meal Domus
-	$data['wine_choice'] = ($meal->allowed_wine) ? $member->default_wine_choice : '0';
+	$data['wine_choice'] = ($meal->allowed_wine) ? $member->default_wine_choice : 'None';
 	$data['dessert'] = ($meal->hasDessertCapacity()) ? $member->default_dessert : '0';
 	
 	$bookingSuccessUID = $bookings->create($data); // or false if something fails

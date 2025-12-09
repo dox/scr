@@ -11,34 +11,6 @@ if (!$user->hasPermission("meals") && $booking->member_ldap != $user->getUsernam
 	die("Unknown or unavailable booking");
 }
 
-if (isset($_POST)) {
-	//printArray($_POST);
-	
-	if ($meal->canBook(true)) {
-		// update booking
-		if (isset($_POST['bookingUID'])) {
-			$booking->update($_POST);
-		}
-		
-		// add new guest
-		if (isset($_POST['guest_add'])) {
-			$booking->addGuest($_POST);
-		}
-		
-		// edit guest
-		if (isset($_POST['guest_uid'])) {
-			$booking->editGuest($_POST);
-		}
-		
-		// delete guest
-		if (isset($_POST['delete_guest']) && $_POST['delete_guest'] == "1") {
-			$booking->deleteGuest($_POST['guest_uid']);
-		}
-		
-		$booking = Booking::fromUID($bookingUID);
-	}
-}
-
 $icons = [];
 if ($user->hasPermission("meals")) {
 	$icons[] = [
@@ -67,7 +39,7 @@ if ($meal->canBook(true)) {
 		'icon' => 'person-plus',
 		'data' => [
 			'bs-toggle' => 'modal',
-			'bs-target' => '#addGuestModal'
+			'bs-target' => '#addEditGuestModal'
 		]
 	];
 	$icons[] = [
@@ -122,7 +94,7 @@ echo pageTitle(
 					}
 					
 					$output .= '<li>';
-					$output .= htmlspecialchars($guest['guest_name']) . ' ';
+					$output .= htmlspecialchars($guest['guest_name'] ?? '') . ' ';
 					
 					// Guest wine/dessert
 					$guestWineDessert = [];
@@ -159,8 +131,8 @@ echo pageTitle(
 		
 		<form method="post" action="<?= htmlspecialchars($_SERVER['REQUEST_URI']) ?>">
 		<div class="mb-3">
-			<label for="type" class="form-label">Charge-To</label>
-			<select class="form-select charge_to" name="charge_to" <?= $meal->canBook(true) ? '' : 'disabled' ?> required>
+			<label for="charge_to" class="form-label">Charge-To</label>
+			<select class="form-select" id="charge_to" <?= $meal->canBook(true) ? '' : 'disabled' ?> required>
 				<?php
 				$chargeToOptions = explode(',', $settings->get('booking_charge-to'));
 				
@@ -172,57 +144,36 @@ echo pageTitle(
 				?>
 			</select>
 		
-			<input class="form-control domus_reason mt-3 d-none"
+			<input class="form-control mt-3 <?= ($booking->charge_to != 'Domus') ? 'd-none' : '' ?>"
 				   type="text"
-				   name="domus_reason"
+				   id="domus_reason"
 				   placeholder="Domus Reason (required)"
 				   aria-label="Domus Reason (required)"
 				   value="<?= $booking->domus_reason; ?>">
-		
-			<div id="charge_toHelp" class="form-text">* wine charged via Battels</div>
 			<div class="invalid-feedback">Default Charge-To is required.</div>
 		</div>
 		
-		<div class="mb-3">
 		<?php if ($meal->allowed_wine == 1): ?>
-			<span class="form-check-label">Wine <small>(charged via Battels)</small></span>
-			<?php
-			$wineOptions = explode(",", $settings->get('booking_wine_options'));
-			$lastIndex   = count($wineOptions) - 1;
-			$anyChecked  = false;
-		
-			foreach ($wineOptions as $i => $wineOption) {
-				$id = preg_replace('/[^a-z0-9]/', '', strtolower($wineOption));
-		
-				// check if this option matches the current booking choice
-				$checked = ($wineOption == $booking->wine_choice);
-				if ($checked) $anyChecked = true;
-		
-				$output  = '<div class="form-check">';
-				$output .= '<input class="form-check-input" type="radio" name="wine_choice" id="' . $id . '" value="' . htmlspecialchars($wineOption, ENT_QUOTES, 'UTF-8') . '"';
-				// temporarily leave checked empty
-				$output .= ($checked) ? ' checked' : '';
-				$output .= '>';
-				$output .= '<label class="form-check-label" for="' . $id . '">' . $wineOption . '</label>';
-				$output .= '</div>';
-		
-				// if this is the last option and nothing matched, mark it checked
-				if ($i === $lastIndex && !$anyChecked) {
-					$output = str_replace('<input ', '<input checked ', $output);
-				}
-		
-				echo $output;
-			}
-			?>
+			<div class="mb-3">
+				<label for="wine_choice" class="form-label">Wine <small>(charged via Battels)</small></label>
+				<select class="form-select" id="wine_choice" <?= $meal->canBook(true) ? '' : 'disabled' ?> required>
+					<?php
+					$wineOptions = explode(",", $settings->get('booking_wine_options'));
+					
+					foreach ($wineOptions as $i => $wineOption) {
+						$wineOption = trim($wineOption);
+						$selected = ($wineOption === $booking->wine_choice) ? ' selected' : '';
+						echo "<option value=\"{$wineOption}\"{$selected}>{$wineOption}</option>";
+					}
+					?>
+				</select>
+			</div>
 		<?php endif; ?>
-		</div>
 		
 		<?php if ($meal->allowed_dessert == 1): ?>
 			<div class="mb-3">
-				<input type="hidden" name="dessert" value="0">
 				<input class="form-check-input"
 				   id="dessert"
-				   name="dessert"
 				   value="1"
 				   type="checkbox"
 				   <?= (
@@ -235,13 +186,15 @@ echo pageTitle(
 				   ) ? 'disabled' : '' ?>
 				   <?= $booking->dessert == "1" ? "checked" : "" ?>>
 				<label for="dessert" class="form-label">
-					Dessert <i>(applies to your guests)</i>
+					Dessert <i><?= ($meal->hasGuestDessertCapacity(count($booking->guests()), false) ? '(applies to your guests)' : 'Unavailable capacity') ?></i>
+					<?= ($meal->hasDessertCapacity(false) ? '' : '<span class="badge rounded-pill text-bg-danger">Capacity Reached</span>') ?>
+					
 				</label>
 			</div>
 		<?php endif; ?>
 		
 		<div class="mb-3">
-		  <button type="submit" class="btn <?= $meal->canBook(true) ? 'btn-primary' : 'btn-secondary disabled' ?> w-100"><?= $meal->canBook(true) ? 'Update Booking Preferences' : 'Deadline Passed' ?></button>
+		  <button type="submit" class="btn booking-update-btn <?= $meal->canBook(true) ? 'btn-primary' : 'btn-secondary disabled' ?> w-100" data-booking_uid="<?= $booking->uid ?>"><?= $meal->canBook(true) ? 'Update Booking Preferences' : 'Deadline Passed' ?></button>
 		  <input type="hidden" name="bookingUID" id="bookingUID" value="<?= $booking->uid; ?>">
 		</div>
 		</form>
@@ -262,9 +215,15 @@ echo pageTitle(
 		
 			// Top row: name on left, edit icon on right
 			$output .= '<div class="d-flex justify-content-between align-items-center">';
-			$output .= '<h6 class="mb-1">' . htmlspecialchars($guest['guest_name']) . '</h6>';
+			$output .= '<h6 class="mb-1">' . htmlspecialchars($guest['guest_name'] ?? '') . '</h6>';
 			
-			$output .= '<a href="#" class="load-remote-guest_edit" id="guestUID-' . $guest['guest_uid'] . '" data-bs-toggle="modal" data-bs-target="' . $modalTarget . '"><i class="bi bi-pencil-square"></i></a>';
+			$output .= '<a href="#" class="open-guest-modal" 
+					data-bs-toggle="modal" 
+					data-bs-target="#addEditGuestModal"
+					data-action="edit" 
+					data-guest_uid="' . $guest['guest_uid'] . '">
+			  <i class="bi bi-pencil-square"></i>
+			</a>';
 			
 			$output .= '</div>';
 		
@@ -276,8 +235,8 @@ echo pageTitle(
 		
 			// Wine/Dessert
 			$wineDessert = [];
-			if ($guest['guest_charge_to'] == "Domus") {
-				$wineDessert[] = '<span><i class="bi bi-mortarboard me-2"></i>' . htmlspecialchars($guest['guest_domus_reason']) . '</span>';
+			if (($guest['guest_charge_to'] ?? null) === "Domus") {
+				$wineDessert[] = '<span><i class="bi bi-mortarboard me-2"></i>' . htmlspecialchars($guest['guest_domus_reason'] ?? '') . '</span>';
 			}
 			if (!empty($guest['guest_wine_choice'])) {
 				$wineDessert[] = '<span><i class="bi bi-cup-straw me-2"></i>' . $guest['guest_wine_choice'] . '</span>';
@@ -295,50 +254,29 @@ echo pageTitle(
 		echo $output;
 		
 		if ($meal->hasGuestCapacity(count($booking->guests()), true) || $meal->canBook(true)) {
-			echo "<button type=\"button\" class=\"btn btn-primary w-100\" data-bs-toggle=\"modal\" data-bs-target=\"#addGuestModal\">Add Guest</button>";
+			echo "<button type=\"button\" class=\"btn btn-primary w-100 mb-3\" data-bs-toggle=\"modal\" data-bs-target=\"#addEditGuestModal\">Add Guest</button>";
 		}
 		?>
+		
+		<hr>
 	</div>
 </div>
 
 
 
 <!-- Add Guest Modal -->
-<div class="modal fade" id="addGuestModal" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="addEditGuestModal" tabindex="-1" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
+			<!-- AJAX content will go here -->
 			<?php
-			  $guestUID = null;      // or ''
-			  $guest     = [];       // empty guest
-			  include '_guest_modal.php';
+			  //$guestUID = null;      // or ''
+			  //$guest     = [];       // empty guest
+			  //include '_guest_modal.php';
 			  ?>
 		</div>
 	</div>
 </div>
-
-<!-- Edit Guest Modal(s) -->
-<?php
-$guestModalOutput = '';
-foreach ($booking->guests() as $row) {
-	$guestUID = $row['guest_uid'];
-	$guest    = $row;
-
-	ob_start(); // begin capture
-	?>
-	<div class="modal fade" id="editGuestModal_<?= $guestUID; ?>" tabindex="-1" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<?php include '_guest_modal.php'; ?>
-			</div>
-		</div>
-	</div>
-	<!-- christmas -->
-	<?php
-	$guestModalOutput .= ob_get_clean(); // append captured block
-}
-
-echo $guestModalOutput;
-?>
 
 <!-- Delete Booking Modal -->
 <div class="modal fade" tabindex="-1" id="deleteBookingModal" data-backdrop="static" data-keyboard="false" aria-hidden="true">
@@ -360,12 +298,94 @@ echo $guestModalOutput;
 </div>
 
 <script>
-// enforce domus_reason for charge_to
-toggleReason('charge_to', 'domus_reason', 'Domus');
-toggleReason('charge_to', 'guest_domus_reason', 'Domus');
-</script>
+const guestModalEl = document.getElementById('addEditGuestModal');
 
-<script>
+guestModalEl.addEventListener('show.bs.modal', function (event) {
+  const button = event.relatedTarget;
+
+  // Default to 'add'
+  let action = 'add';
+  let guestUID = '';
+
+  if (button) {
+	action = button.getAttribute('data-action') || 'add';
+	guestUID = button.getAttribute('data-guest_uid') || '';
+  }
+
+  // Build URL
+  const url = new URL('new/ajax/guest_modal.php', window.location.origin);
+  url.search = new URLSearchParams({
+	action: action,
+	guest_uid: guestUID,
+	booking_uid: <?= json_encode($booking->uid) ?>
+  });
+
+  // Fetch and insert modal content
+  fetch(url)
+	.then(res => res.text())
+	.then(html => {
+	  guestModalEl.querySelector('.modal-content').innerHTML = html;
+
+	  // --- DOMUS Reason Logic ---
+	  const chargeEl = guestModalEl.querySelector('#guest_charge_to');
+	  const reasonEl = guestModalEl.querySelector('#guest_domus_reason');
+	  if (chargeEl && reasonEl) {
+		// Initial visibility
+		reasonEl.classList.toggle('d-none', chargeEl.value !== 'Domus');
+		reasonEl.required = chargeEl.value === 'Domus';
+
+		// Listen for changes
+		chargeEl.addEventListener('change', () => {
+		  if (chargeEl.value === 'Domus') {
+			reasonEl.classList.remove('d-none');
+			reasonEl.required = true;
+		  } else {
+			reasonEl.classList.add('d-none');
+			reasonEl.required = false;
+			reasonEl.value = '';
+		  }
+		});
+	  }
+
+	  // --- Dietary Options Max Logic (optional, if you have limits) ---
+	  const dietaryContainer = guestModalEl.querySelector('.accordion-body[data-max]');
+	  if (dietaryContainer) {
+		const max = parseInt(dietaryContainer.dataset.max, 10) || 0;
+		const checkboxes = dietaryContainer.querySelectorAll('input[type="checkbox"]');
+		checkboxes.forEach(cb => {
+		  cb.addEventListener('change', () => {
+			const checkedCount = Array.from(checkboxes).filter(i => i.checked).length;
+			checkboxes.forEach(i => {
+			  if (!i.checked) i.disabled = checkedCount >= max;
+			  else i.disabled = false;
+			});
+		  });
+		});
+	  }
+
+	  // --- Wine Choice Logic (optional) ---
+	  // Example: enforce a default if none selected
+	  const wineRadios = guestModalEl.querySelectorAll('input[name="guest_wine_choice"]');
+	  if (wineRadios.length) {
+		const hasChecked = Array.from(wineRadios).some(r => r.checked);
+		if (!hasChecked) wineRadios[0].checked = true;
+	  }
+	})
+	.catch(err => {
+	  console.error('Error loading modal:', err);
+	  guestModalEl.querySelector('.modal-content').innerHTML =
+		'<p class="p-3 text-danger">Failed to load content.</p>';
+	});
+});
+
+
+
+
+
+
+
+
+
 document.addEventListener('click', function(e) {
 	const btn = e.target.closest('[data-delete-guest]');
 	if (!btn) return;
@@ -378,4 +398,29 @@ document.addEventListener('click', function(e) {
 	field.value = '1';
 	form.submit();
 });
+</script>
+
+<script>
+  const chargeEl = document.getElementById('charge_to');
+  const reasonEl = document.getElementById('domus_reason');
+
+  // Initial visibility
+  if (chargeEl.value === 'Domus') {
+	reasonEl.classList.remove('d-none');
+	reasonEl.required = true;
+  }
+
+  // Change listener
+  chargeEl.addEventListener('change', () => {
+	if (chargeEl.value === 'Domus') {
+	  reasonEl.classList.remove('d-none');
+	  reasonEl.required = true;
+	} else {
+	  reasonEl.classList.add('d-none');
+	  reasonEl.required = false;
+	  reasonEl.value = '';
+	}
+  });
+  
+
 </script>

@@ -1,0 +1,149 @@
+<?php
+require_once '../inc/autoload.php';
+
+if (!$user->isLoggedIn()) {
+	die("User not logged in.");
+}
+
+$action = ($_GET['action'] ?? 'add') === 'edit' ? 'edit' : 'add';
+$guestUID = $_GET['guest_uid'] ?? null;
+$bookingUID = $_GET['booking_uid'] ?? null;
+$booking = Booking::fromUID($bookingUID);
+$meal = new Meal($booking->meal_uid);
+
+// what if no guest UID, or invalid?
+
+$guestName        = $booking->guests()[$guestUID]['guest_name']         ?? '';
+$guestChargeTo    = $booking->guests()[$guestUID]['guest_charge_to']    ?? '';
+$guestDomusReason = $booking->guests()[$guestUID]['guest_domus_reason'] ?? '';
+$guestWineChoice  = $booking->guests()[$guestUID]['guest_wine_choice']  ?? '';
+$guestDietary     = $booking->guests()[$guestUID]['guest_dietary']      ?? [];
+?>
+
+<div class="modal-header">
+	<h5 class="modal-title"><?= ($action === 'add') ? 'Add Guest' : 'Update Guest'; ?></h5>
+	<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+</div>
+
+<div class="modal-body">
+	<?php if (!$meal->hasDessertCapacity(true) && $booking->dessert == "1"): ?>
+		<p>Dessert capacity has been reached. Please remove yourself from dessert if you wish to add a guest.</p>
+	<?php elseif ($action === 'add' && !$meal->hasGuestCapacity(count($booking->guests()), true)): ?>
+		<p>Capacity has been reached.</p>
+	<?php elseif (!$meal->canBook(true)): ?>
+		<p>Deadline Passed</p>
+	<?php else: ?>
+		<!-- Guest Name -->
+		<div class="mb-3">
+			<label for="guest_name">Guest Name</label>
+			<input type="text"
+				   class="form-control"
+				   name="guest_name"
+				   id="guest_name"
+				   value="<?= htmlspecialchars($guestName, ENT_QUOTES); ?>"
+				   required>
+			<small class="form-text text-muted">This name will appear on the sign-up list</small>
+		</div>
+		
+		<!-- Dietary Options -->
+		<div class="accordion mb-3" id="accordionDietary">
+			<div class="accordion-item">
+				<h2 class="accordion-header">
+					<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDietary">
+						Dietary Information
+						<i>(Maximum: <?= $settings->get('meal_dietary_allowed'); ?>)</i>
+					</button>
+				</h2>
+				<div id="collapseDietary" class="accordion-collapse collapse">
+					<div class="accordion-body" data-max="<?= $settings->get('meal_dietary_allowed'); ?>">
+						<?php
+						$dietaryOptions = array_map('trim', explode(',', $settings->get('meal_dietary')));
+						foreach ($dietaryOptions as $i => $option):
+							$safe    = htmlspecialchars($option, ENT_QUOTES, 'UTF-8');
+							$checked = (is_array($guestDietary) && in_array($option, $guestDietary)) ? ' checked' : '';
+							$id      = "dietary_{$i}";
+						?>
+						<div class="form-check">
+							<input class="form-check-input dietaryOptionsMax"
+								type="checkbox"
+								id="guest_dietary[]"
+								id="<?= $id; ?>"
+								value="<?= $safe; ?>"<?= $checked; ?>>
+								<label class="form-check-label" for="<?= $id; ?>">
+									<?= $safe; ?>
+								</label>
+							</div>
+						<?php endforeach; ?>
+						
+						<small class="form-text text-muted">
+							<?= $settings->get('meal_dietary_message'); ?>
+						</small>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<!-- Charge-To -->
+		<div class="mb-3">
+			<label class="form-label">Guest Charge-To</label>
+			<select class="form-select" id="guest_charge_to" required>
+				<?php foreach (explode(',', $settings->get('booking_charge-to')) as $charge_to):
+					$charge_to = trim($charge_to); ?>
+					<option value="<?= htmlspecialchars($charge_to); ?>"
+						<?= $charge_to === $guestChargeTo ? 'selected' : ''; ?>>
+						<?= htmlspecialchars($charge_to); ?>
+					</option>
+				<?php endforeach; ?>
+			</select>
+			
+			<input class="form-control mt-3 <?= ($guestChargeTo != 'Domus') ? 'd-none' : '' ?>"
+			   type="text"
+			   id="guest_domus_reason"
+			   placeholder="Domus Reason (required)"
+			   aria-label="Domus Reason (required)"
+			   value="<?= $guestDomusReason; ?>">
+			
+			<!-- Wine -->
+			<?php if ($meal->allowed_wine == 1): ?>
+				<div class="mb-3">
+					<label for="guest_wine_choice" class="form-label">Wine <small>(charged via Battels)</small></label>
+					<select class="form-select" id="guest_wine_choice" <?= $meal->canBook(true) ? '' : 'disabled' ?> required>
+						<?php
+						$wineOptions = explode(",", $settings->get('booking_wine_options'));
+						
+						foreach ($wineOptions as $i => $wineOption) {
+							$wineOption = trim($wineOption);
+							$selected = ($wineOption === $guestWineChoice) ? ' selected' : '';
+							echo "<option value=\"{$wineOption}\"{$selected}>{$wineOption}</option>";
+						}
+						?>
+					</select>
+				</div>
+			<?php endif; ?>
+		<?php endif; ?>
+	</div>
+</div>
+<!-- Footer -->
+<div class="modal-footer">
+	<button type="button" class="btn btn-link text-muted" data-bs-dismiss="modal">Close</button>
+	
+	<?php if ($meal->canBook(true)): ?>
+		<?php if ($action === 'edit'): ?>
+			<div class="btn-group">
+				<button type="submit" class="btn guest-update-btn btn-primary <?= !$meal->canBook(true) ? ' disabled' : ''; ?>" data-booking_uid="<?= $booking->uid ?>">Update Guest</button>
+				
+				<button type="button"
+						class="btn btn-primary dropdown-toggle dropdown-toggle-split<?= !$meal->canBook(true) ? ' disabled' : ''; ?>"
+						data-bs-toggle="dropdown"></button>
+				<ul class="dropdown-menu">
+					<li><a class="dropdown-item guest-delete-btn text-danger" href="#" data-booking_uid="<?= $booking->uid ?>" data-delete-guest>Delete Guest</a></li>
+				</ul>
+			</div>
+	
+			<input type="hidden" id="guest_uid" value="<?= $guestUID; ?>">
+	
+		<?php elseif($meal->canBook(true) && $meal->hasGuestCapacity(count($booking->guests()), true)): ?>
+			<button type="submit" class="btn guest-add-btn btn-primary" data-booking_uid="<?= $booking->uid ?>">Add Guest</button>
+		<?php endif; ?>
+	<?php endif; ?>
+</div>
