@@ -52,52 +52,219 @@ function initAjaxLoader(triggerSelector, targetSelector, options = {}) {
  }
 
 document.addEventListener('DOMContentLoaded', function () {
-	 document.body.addEventListener('click', function(e) {
-		 const button = e.target.closest('.meal-book-btn');
-		 if (!button) return;
- 
-		 const mealUid = button.dataset.meal_uid;
- 
-		 // If already booked, just let it act as a normal link
-		 if (button.dataset.booked === '1') {
-			 return; // allow default click to navigate
-		 }
- 
-		 e.preventDefault(); // prevent link while booking
- 
-		 const originalText = button.textContent;
- 
-		 // Show spinner
-		 button.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Booking...`;
- 
-		 fetch('./ajax/booking_create.php', {
-			 method: 'POST',
-			 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-			 body: 'meal_uid=' + encodeURIComponent(mealUid)
-		 })
-		 .then(response => response.json())
-		 .then(data => {
-			 if (data.success && data.booking_uid) {
-				 // Booking confirmed: turn into normal link
-				 button.classList.remove('btn-primary');
-				 button.classList.add('btn-success');
-				 button.textContent = 'Manage Booking';
- 
-				 // Use the returned booking_uid for the link
-				 button.href = `index.php?page=booking&uid=${data.booking_uid}`;
-				 button.dataset.booked = '1'; // mark as booked
-			 } else {
-				 button.textContent = originalText;
-				 alert(data.message || 'Booking failed.');
-			 }
-		 })
-		 .catch(error => {
-			 console.error('Error:', error);
-			 button.textContent = originalText;
-			 alert('Booking failed due to a network error.');
-		 });
-	 });
+	document.body.addEventListener('click', function(e) {
+		const button = e.target.closest('.meal-book-btn');
+		if (!button) return;
+		
+		const mealUid = button.dataset.meal_uid;
+		
+		// If already booked, just let it act as a normal link
+		if (button.dataset.booked === '1') {
+			return; // allow default click to navigate
+		}
+		
+		e.preventDefault(); // prevent link while booking
+		const originalText = button.textContent;
+		
+		// Show spinner
+		button.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Booking...`;
+		
+		fetch('./ajax/booking_create.php', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+			body: 'meal_uid=' + encodeURIComponent(mealUid)
+		})
+		.then(response => response.json())
+		.then(data => {
+			if (data.success && data.booking_uid) {
+				// Booking confirmed: turn into normal link
+				button.classList.remove('btn-primary');
+				button.classList.add('btn-success');
+				button.textContent = 'Manage Booking';
+				
+				// Use the returned booking_uid for the link
+				button.href = `index.php?page=booking&uid=${data.booking_uid}`;
+				button.dataset.booked = '1'; // mark as booked
+			} else {
+				button.textContent = originalText;
+				alert(data.message || 'Booking failed.');
+			}
+		})
+		.catch(error => {
+			console.error('Error:', error);
+			button.textContent = originalText;
+			alert('Booking failed due to a network error.');
+		});
+	});
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+
+  document.body.addEventListener('click', async (e) => {
+	const button = e.target.closest('.booking-update-btn');
+	if (!button) return;
+
+	e.preventDefault();
+
+	const container = button.closest('form');
+	if (!container) return;
+
+	const chargeToEl     = container.querySelector('#charge_to');
+	const domusReasonEl = container.querySelector('#domus_reason');
+	const wineEl        = container.querySelector('#wine_choice');
+	const dessertEl     = container.querySelector('#dessert');
+
+	// Domus validation
+	if (chargeToEl?.value === 'Domus' && (!domusReasonEl?.value || domusReasonEl.value.trim() === '')) {
+	  alert('Please provide a reason for Domus.');
+	  domusReasonEl.focus();
+	  return;
+	}
+
+	const bookingUid = button.dataset.booking_uid;
+
+	const originalText = button.textContent;
+	button.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Updating...`;
+
+	const data = new URLSearchParams({
+	  action: 'booking_update',
+	  booking_uid: bookingUid,
+	  charge_to: chargeToEl?.value || '',
+	  domus_reason: domusReasonEl?.value || '',
+	  wine_choice: wineEl?.value || '',
+	  dessert: dessertEl?.checked ? 1 : 0
+	});
+
+	try {
+	  const res = await fetch('./ajax/booking_update.php', {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+		body: data.toString()
+	  });
+
+	  const json = await res.json();
+
+	  if (json.success) {
+		button.classList.replace('btn-primary', 'btn-success');
+		button.textContent = 'Success';
+
+		setTimeout(() => {
+		  window.location.reload();
+		}, 400);
+
+	  } else {
+		button.textContent = originalText;
+		alert(json.message || 'Booking update failed.');
+	  }
+
+	} catch (err) {
+	  console.error(err);
+	  button.textContent = originalText;
+	  alert('Booking failed due to a network error.');
+	}
+
+  });
+
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+
+  document.body.addEventListener('click', async (e) => {
+	const button = e.target.closest('.guest-add-btn, .guest-update-btn, .guest-delete-btn');
+	if (!button) return;
+
+	e.preventDefault();
+
+	// Determine action
+	let action = '';
+	if (button.classList.contains('guest-add-btn')) action = 'guest_add';
+	else if (button.classList.contains('guest-update-btn')) action = 'guest_update';
+	else if (button.classList.contains('guest-delete-btn')) action = 'guest_delete';
+	if (!action) return;
+
+	const container = button.closest('form, .modal-content');
+	if (!container) return;
+
+	const chargeToEl     = container.querySelector('#guest_charge_to');
+	const domusReasonEl = container.querySelector('#guest_domus_reason');
+	const wineEl        = container.querySelector('#guest_wine_choice');
+	const dessertEl     = container.querySelector('#guest_dessert');
+
+	const guest_uidEl  = container.querySelector('#guest_uid');
+	const guest_nameEl = container.querySelector('#guest_name');
+
+	const guestDietaryEls = container.querySelectorAll('input[id="guest_dietary[]"]:checked');
+	const guestDietaryValues = Array.from(guestDietaryEls).map(el => el.value);
+
+	// Domus validation
+	if (chargeToEl?.value === 'Domus' && (!domusReasonEl?.value || domusReasonEl.value.trim() === '')) {
+	  alert('Please provide a reason for Domus.');
+	  domusReasonEl.focus();
+	  return;
+	}
+
+	const bookingUid = button.dataset.booking_uid;
+
+	const originalText = button.textContent;
+	button.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Working...`;
+
+	const data = new URLSearchParams({
+	  action: action,
+	  booking_uid: bookingUid,
+	  guest_name: guest_nameEl?.value || '',
+	  guest_uid: guest_uidEl?.value || '',
+	  charge_to: chargeToEl?.value || '',
+	  domus_reason: domusReasonEl?.value || '',
+	  wine_choice: wineEl?.value || '',
+	  dessert: dessertEl?.checked ? 1 : 0
+	});
+
+	guestDietaryValues.forEach(val => {
+	  data.append('guest_dietary[]', val);
+	});
+
+	try {
+	  const res = await fetch('./ajax/booking_update.php', {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+		body: data.toString()
+	  });
+
+	  const json = await res.json();
+
+	  if (json.success) {
+		button.classList.replace('btn-primary', 'btn-success');
+		button.textContent = 'Success';
+
+		setTimeout(() => {
+
+		  if (action === 'guest_add' || action === 'guest_update') {
+			bootstrap.Modal.getInstance(
+			  document.getElementById('addEditGuestModal')
+			)?.hide();
+		  }
+
+		  window.location.reload();
+
+		}, 400);
+
+	  } else {
+		button.textContent = originalText;
+		alert(json.message || 'Guest action failed.');
+	  }
+
+	} catch (err) {
+	  console.error(err);
+	  button.textContent = originalText;
+	  alert('Guest action failed due to a network error.');
+	}
+
+  });
+
+});
+
+
+
 
 document.addEventListener('DOMContentLoaded', function () {
 	 document.body.addEventListener('click', function(e) {
@@ -203,29 +370,6 @@ function enableOnExactMatch(inputId, buttonId, triggerText) {
 	const button = document.getElementById(buttonId);
 
 	button.disabled = (field.value !== triggerText);
-}
-
-// enforce domus_reason when charging to Domus (supports multiple forms)
-function toggleReason(selectClass, inputClass, triggerValue) {
-	// get all matching selects
-	document.querySelectorAll(`.${selectClass}`).forEach(select => {
-
-		// find the input within the same form (or closest container)
-		const container = select.closest('form'); // or use a specific wrapper
-		if (!container) return;
-
-		const input = container.querySelector(`.${inputClass}`);
-		if (!input) return;
-
-		function update() {
-			const show = select.value === triggerValue;
-			input.classList.toggle('d-none', !show);
-			input.required = show;
-		}
-
-		select.addEventListener('change', update);
-		update(); // initial state
-	});
 }
 
 // live search for wines

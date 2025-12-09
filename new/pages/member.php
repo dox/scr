@@ -240,24 +240,18 @@ echo pageTitle(
 				<label class="form-check-label" for="email_reminders">Send me an email confirmation when I book a meal</label>
 			</div>
 			<div class="mb-3">
-				<span class="form-check-label" for="">Default Wine <small>(when available)</small></label></span>
-				<?php
-				$wineOptions = explode(",", $settings->get('booking_wine_options'));
-				
-				foreach($wineOptions as $wineOption) {
-					// Remove all non-alphanumeric characters
-					$id = preg_replace('/[^a-z0-9]/', '', strtolower($wineOption));
+				<label for="wine_choice" class="form-label">Default Wine <small>(when available)</small></label>
+				<select class="form-select" id="wine_choice" required>
+					<?php
+					$wineOptions = explode(",", $settings->get('booking_wine_options'));
 					
-					$checked = ($wineOption == $member->default_wine_choice) ? " checked" : "";
-					
-					$output  = "<div class=\"form-check\">";
-					$output .= "<input class=\"form-check-input\" type=\"radio\" name=\"default_wine_choice\" id=\"" . $id . "\" value=\"" . htmlspecialchars($wineOption, ENT_QUOTES, 'UTF-8') . "\" " . $checked . ">";
-					$output .= "<label class=\"form-check-label\" for=\"default_wine_choice\">" . $wineOption . "</label>";
-					$output .= "</div>";
-					
-					echo $output;
-				}
-				?>
+					foreach ($wineOptions as $i => $wineOption) {
+						$wineOption = trim($wineOption);
+						$selected = ($wineOption === $member->default_wine_choice) ? ' selected' : '';
+						echo "<option value=\"{$wineOption}\"{$selected}>{$wineOption}</option>";
+					}
+					?>
+				</select>
 			</div>
 			<div class="form-check form-switch mb-3">
 				<input class="form-check-input" type="checkbox" id="default_dessert" name="default_dessert" value="1" <?php if ($member->default_dessert == "1") { echo " checked";} ?> switch>
