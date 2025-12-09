@@ -40,94 +40,94 @@ class User {
 		Container::addConnection($connection);
 	}
 
-	private function tryTokenRestore(): bool {
+	private function finalizeLogin(Member $member, bool $remember = false, bool $viaCookie = false): void {
 		global $db, $log;
-
-		if (empty($_COOKIE[self::COOKIE_NAME])) {
-			return false;
-		}
-
-		$token = $_COOKIE[self::COOKIE_NAME];
-
-		$record = $db->fetch("
-			SELECT member_uid, token_expiry
-			FROM tokens
-			WHERE token = ?
-			LIMIT 1
-		", [$token]);
-
-		if (!$record) {
-			return false;
-		}
-
-		if (strtotime($record['token_expiry']) < time()) {
-			$db->delete('tokens', ['token' => $token], false);
-			return false;
-		}
-
-		$member = Member::fromUID($record['member_uid']);
-		if (!$member) {
-			error_log("Error: Failed login attempt for member UID: {$record['member_uid']} from {$_SERVER['REMOTE_ADDR']}");
-			return false;
-		}
-		
-		// Map normal text/select fields
-		$fields = [
-			'charge_to'      => $postData['charge_to'] ?? null,
-			'domus_reason'  => $postData['domus_reason'] ?? null,
-			'wine_choice'   => $postData['wine_choice'] ?? null,
-			'dessert'   => $postData['dessert'] ?? 0
-		];
-		
-		// Update member lastlogon to now		
+	
+		// Update last login
 		$db->update(
 			'members',
 			['date_lastlogon' => date('c')],
 			['uid' => $member->uid],
 			false
 		);
-		
+	
 		$this->userData = [
-			'samaccountname'	=> $member->ldap,
-			'type'				=> $member->type ?? null,
-			'category'			=> $member->category ?? null,
-			'name'				=> $member->name() ?? null,
-			'email'				=> $member->email ?? null,
-			'permissions'		=> explode(',', $member->permissions ?? null),
-			'uid'				=> $member->uid
+			'samaccountname' => $member->ldap,
+			'type'          => $member->type ?? null,
+			'category'      => $member->category ?? null,
+			'name'          => $member->name() ?? null,
+			'email'         => $member->email ?? null,
+			'permissions'  => explode(',', $member->permissions ?? ''),
+			'uid'           => $member->uid
 		];
-
+	
 		$_SESSION['user'] = $this->userData;
 		$this->loggedIn   = true;
-		
-		$log->add("User authenticated: {$member->ldap} (with cookie)", Log::INFO);
-		toast('Login Successful', 'Login successful via stored cookie', 'text-success');
-		
+	
+		if ($remember) {
+			$this->setToken($member->uid);
+		}
+	
+		$suffix = $viaCookie ? ' (with cookie)' : '';
+		$log->add("User authenticated: {$member->ldap}{$suffix}", Log::INFO);
+	
+		if ($viaCookie) {
+			toast('Login Successful', 'Login successful via stored cookie', 'text-success');
+		}
+	}
+	
+	private function tryTokenRestore(): bool {
+		global $db, $log;
+	
+		if (empty($_COOKIE[self::COOKIE_NAME])) {
+			return false;
+		}
+	
+		$token = $_COOKIE[self::COOKIE_NAME];
+	
+		$record = $db->fetch("
+			SELECT member_uid, token_expiry
+			FROM tokens
+			WHERE token = ?
+			LIMIT 1
+		", [$token]);
+	
+		if (!$record || strtotime($record['token_expiry']) < time()) {
+			$db->delete('tokens', ['token' => $token], false);
+			return false;
+		}
+	
+		$member = Member::fromUID($record['member_uid']);
+		if (!$member) {
+			error_log("Error: Failed login attempt for member UID: {$record['member_uid']} from {$_SERVER['REMOTE_ADDR']}");
+			return false;
+		}
+	
+		$this->finalizeLogin($member, false, true);
 		return true;
 	}
-
+	
 	public function authenticate(string $username, string $password, bool $remember = false): bool {
-		global $db, $log;
-		
+		global $log;
+	
 		try {
 			$user = AdUser::whereEquals('samaccountname', $username)->firstOrFail();
 		} catch (\Exception $e) {
 			$log->add("LDAP user not found: {$username}", Log::ERROR);
 			error_log("Error: Failed login attempt for {$username} from {$_SERVER['REMOTE_ADDR']}");
 			$this->logout();
-			
 			return false;
 		}
-		
+	
 		$connection = $user->getConnection();
-		
+	
 		if (!$connection->auth()->attempt($user->getDn(), $password)) {
 			$log->add("Invalid credentials for: {$username}", Log::ERROR);
 			error_log("Error: Failed login attempt for {$username} from {$_SERVER['REMOTE_ADDR']}");
 			$this->logout();
 			return false;
 		}
-
+	
 		$member = Member::fromLDAP($user->samaccountname[0]);
 		if (!$member) {
 			$log->add("Member DB record missing: {$username}", Log::ERROR);
@@ -135,34 +135,8 @@ class User {
 			$this->logout();
 			return false;
 		}
-		
-		// Update member lastlogon to now		
-		$db->update(
-			'members',
-			['date_lastlogon' => date('c')],
-			['uid' => $member->uid],
-			false
-		);
-		
-		$this->userData = [
-			'samaccountname' => $member->ldap,
-			'type'    => $member->type ?? null,
-			'category'    => $member->category ?? null,
-			'name'    => $member->name() ?? null,
-			'email'    => $member->email ?? null,
-			'permissions'    => explode(',', $member->permissions ?? null),
-			'uid'            => $member->uid
-		];
-
-		$_SESSION['user'] = $this->userData;
-		$this->loggedIn   = true;
-
-		if ($remember) {
-			$this->setToken($member->uid);
-		}
-
-		$log->add("User authenticated: {$member->ldap}", Log::INFO);
-
+	
+		$this->finalizeLogin($member, $remember);
 		return true;
 	}
 
