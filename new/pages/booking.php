@@ -3,11 +3,8 @@ $bookingUID = filter_input(INPUT_GET, 'uid', FILTER_SANITIZE_NUMBER_INT);
 $booking = Booking::fromUID($bookingUID);
 $meal = new Meal($booking->meal_uid);
 
-if (!isset($booking->uid)) {
-	die("Unknown or unavailable booking");
-}
-
-if (!$user->hasPermission("meals") && $booking->member_ldap != $user->getUsername()) {
+if (!isset($booking->uid) || (!$user->hasPermission("meals") && $booking->member_ldap != $user->getUsername())) {
+	include_once('404.php');
 	die("Unknown or unavailable booking");
 }
 
@@ -78,7 +75,7 @@ echo pageTitle(
 		
 			// Person's wine/dessert
 			$wineDessert = [];
-			if (!empty($guestListBooking->wine)) $wineDessert[] = '<i class="bi bi-cup-straw"></i>';
+			if ($guestListBooking->wineChoice() != "None") $wineDessert[] = '<i class="bi bi-cup-straw"></i>';
 			if (!empty($guestListBooking->dessert)) $wineDessert[] = '<i class="bi bi-cookie"></i>';
 			if (!empty($wineDessert)) {
 				$output .=  implode(' ', $wineDessert);
@@ -98,7 +95,7 @@ echo pageTitle(
 					
 					// Guest wine/dessert
 					$guestWineDessert = [];
-					if (!empty($guest['guest_wine'])) $guestWineDessert[] = '<i class="bi bi-cup-straw"></i>';
+					if ($guestListBooking->wineChoice() != "None" && !empty($guest['guest_wine'])) $guestWineDessert[] = '<i class="bi bi-cup-straw"></i>';
 					if (!empty($guestListBooking->dessert)) $guestWineDessert[] = '<i class="bi bi-cookie"></i>';
 					if (!empty($guestWineDessert)) {
 						$output .= implode(' ', $guestWineDessert);

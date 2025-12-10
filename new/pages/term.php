@@ -60,7 +60,7 @@ echo pageTitle(
 				</div>
 			</div>
 			
-			<button type="submit" class="btn btn-primary">Update Term</button>
+			<button type="submit" class="btn btn-primary w-100">Update Term</button>
 		</form>
 	</div>
 	<div class="col-md-5 col-lg-4">

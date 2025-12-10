@@ -243,7 +243,7 @@ echo pageTitle(
 				<label class="form-check-label">Dessert Available</label>
 			</div>
 
-			<button type="submit" class="btn btn-primary">
+			<button type="submit" class="btn btn-primary w-100">
 				<?= $isNew ? 'Create Meal' : 'Update Meal' ?>
 			</button>
 			<?= $isNew ? '<input type="hidden" name="createMeal" value="1">' : '' ?>

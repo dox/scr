@@ -111,7 +111,7 @@ foreach ($members as $type => $contents):
 				<?php foreach ($contents as $member): ?>
 					<li class="list-group-item <?= $member->enabled ? '' : ' list-group-item-secondary' ?>" data-id="<?= $member->uid ?>">
 						<i class="bi bi-grip-vertical"></i>
-						<a href="index.php?page=member&uid=<?= $member->uid ?>"><?= $member->name() ?></a>
+						<a href="index.php?page=member&ldap=<?= htmlspecialchars($member->ldap) ?>"><?= $member->name() ?></a>
 						<span class="text-muted">@<?= strtoupper($member->ldap) ?></span>
 						<span class="float-end"><?= $member->stewardBadge() ?>
 						<span class="text-muted"><?= $member->category ?></span>

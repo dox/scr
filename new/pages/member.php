@@ -1,6 +1,6 @@
 <?php
-$uid   = $_GET['uid'] ?? $user->getUID() ?? null;
-$member = Member::fromUID($uid);
+$ldap   = $_GET['ldap'] ?? $user->getUsername() ?? null;
+$member = Member::fromLDAP($ldap);
 
 if (!isset($member->uid)) {
 	die("Unknown or unavailable member");
@@ -283,7 +283,7 @@ echo pageTitle(
 			  }
 			  ?>
 			  
-			  <button type="submit" class="btn btn-primary">Update</button>
+			  <button type="submit" class="btn btn-primary w-100">Update Profile</button>
 		</form>
 	</div>
 	<div class="col-md-5 col-lg-4">

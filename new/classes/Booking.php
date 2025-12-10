@@ -212,6 +212,16 @@ class Booking extends Model {
 		return $decoded;
 	}
 	
+	public function wineChoice(): string {
+		$meal = new Meal($this->meal_uid);
+		
+		if ($meal->allowed_wine != 1) {
+			return "None";
+		} else {
+			return $this->wine_choice;
+		}
+	}
+	
 	public function displayMealListGroupItem(): string {
 		global $user;
 	

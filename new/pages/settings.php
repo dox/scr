@@ -62,12 +62,11 @@ echo pageTitle(
 			 aria-labelledby="heading-<?= $uid ?>" data-bs-parent="#accordionExample">
 
 			<div class="accordion-body">
-				<form method="post" action="<?= $url ?>">
-
+				<form method="post" action="<?= $url ?>" class="d-flex align-items-center gap-3">
 					<?= renderSettingField($type, $value, $setting) ?>
 
 					<?php if ($type !== 'hidden'): ?>
-						<button class="btn btn-primary mt-3" type="submit">Update</button>
+						<button class="btn btn-primary" type="submit">Update</button>
 					<?php endif; ?>
 
 					<input type="hidden" name="uid" value="<?= $uid ?>">
@@ -135,8 +134,8 @@ function renderSettingField(string $type, string $value, array $setting): string
 
 		case 'boolean':
 			$checked = ($setting['value'] === "true") ? "checked" : "";
-			return '<input type="hidden" name="value" value="false">
-					<input type="checkbox" class="form-check-input" name="value" value="true" '. $checked .'>';
+			return '<div class="form-check m-0"><input type="hidden" name="value" value="false">
+					<input type="checkbox" class="form-check-input" name="value" value="true" '. $checked .'></div>';
 
 		case 'html':
 		case 'json':

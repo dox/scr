@@ -74,7 +74,7 @@ echo pageTitle(
 		  $output .= "</td>";
 		  
 		  $output .= "<td>";
-			if ($booking->wine_choice != "None") {
+			if ($booking->wineChoice() != "None") {
 				$output .= "<h2><i class=\"bi bi-cup-straw\"></i></h2>";
 			}
 		  $output .= "</td>";
@@ -102,8 +102,10 @@ echo pageTitle(
 				}
 			  $output .= "</td>";
 			  $output .= "<td>";
-				if ($guest['guest_wine_choice'] != "None" && $guest['guest_wine_choice'] != "") {
-					$output .= "<h2><i class=\"bi bi-cup-straw\"></i></h2>";
+			  	if ($booking->wineChoice() != "None") {
+					  if (!empty($guest['guest_wine_choice']) && $guest['guest_wine_choice'] !== 'None') {
+						  $output .= '<h2><i class="bi bi-cup-straw"></i></h2>';
+					  }
 				}
 			  $output .= "</td>";
 			  $output .= "<td>";
