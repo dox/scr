@@ -3,6 +3,19 @@ $user->pageCheck('wine');
 
 $wines = new Wines();
 
+/**
+ * Optional pre-fill via GET
+ * ?filter=wine_wines.supplier&value=Majestic&operator==
+ */
+$prefill = null;
+if (!empty($_GET['filter']) && isset($_GET['value'])) {
+	$prefill = [
+		'field'    => $_GET['filter'],
+		'operator' => $_GET['operator'] ?? '=',
+		'value'    => $_GET['value'],
+	];
+}
+
 echo pageTitle(
 	"Wine Filter",
 	"Filter wines based on multiple criteria"
@@ -49,27 +62,28 @@ $fields = [
 <div class="p-3 mb-3 border rounded">
 	<form id="searchForm" method="POST">
 		<div id="conditionsContainer"></div>
+
 		<div class="mb-3">
 			<button type="button" class="btn btn-info" id="addBtn">+ Add Condition</button>
 		</div>
+
 		<div class="mb-3">
 			<button type="submit" class="btn btn-primary w-100 mt-3">Submit</button>
 		</div>
 	</form>
 </div>
 
-
-
 <div id="resultsContainer"></div>
-
-
 
 <script>
 const fieldDefinitions = <?= json_encode($fields) ?>;
-const fieldSources = <?= json_encode($fieldSources) ?>;
+const fieldSources     = <?= json_encode($fieldSources) ?>;
+const prefillCondition = <?= json_encode($prefill) ?>;
 
 function makeFieldOptions() {
-	return fieldDefinitions.map(f => `<option value="${f.value}">${f.label}</option>`).join('');
+	return fieldDefinitions
+		.map(f => `<option value="${f.value}">${f.label}</option>`)
+		.join('');
 }
 
 function makeOperatorOptions(ops = ['=']) {
@@ -86,15 +100,13 @@ function makeValueInput(def, idx) {
 		const opts = source.map(v => `<option value="${v}">${v}</option>`).join('');
 		return `<select name="conditions[${idx}][value]" class="form-select value-input">${opts}</select>`;
 	}
-	return `<input type="text" name="conditions[${idx}][value]" class="form-control value-input"/>`;
+	return `<input type="text" name="conditions[${idx}][value]" class="form-control value-input">`;
 }
 
-// Add a new condition row
-document.getElementById('addBtn').addEventListener('click', () => {
+function addConditionRow({ field, operator, value } = {}) {
 	const idx = Date.now();
-	const defaultField = fieldDefinitions[0];
-	const defaultOps = defaultField.operators || ['='];
-	const valueInput = makeValueInput(defaultField, idx);
+	const def = findFieldDef(field) || fieldDefinitions[0];
+	const ops = def.operators || ['='];
 
 	const html = `
 	<div class="d-flex gap-2 mb-2 condition-row" data-idx="${idx}">
@@ -103,36 +115,46 @@ document.getElementById('addBtn').addEventListener('click', () => {
 		</select>
 
 		<select name="conditions[${idx}][operator]" class="form-select operator-select">
-			${makeOperatorOptions(defaultOps)}
+			${makeOperatorOptions(ops)}
 		</select>
 
-		${valueInput}
+		${makeValueInput(def, idx)}
 
 		<button type="button" class="btn btn-danger btn-sm removeRow">Remove</button>
 	</div>
 	`;
 
-	document.getElementById('conditionsContainer').insertAdjacentHTML('beforeend', html);
+	document.getElementById('conditionsContainer')
+		.insertAdjacentHTML('beforeend', html);
+
+	const row = document.querySelector(`.condition-row[data-idx="${idx}"]`);
+
+	row.querySelector('.field-select').value    = def.value;
+	row.querySelector('.operator-select').value = operator || ops[0];
+
+	if (value !== undefined) {
+		row.querySelector('.value-input').value = value;
+	}
+}
+
+// Add button
+document.getElementById('addBtn').addEventListener('click', () => {
+	addConditionRow();
 });
 
-// Delegated listener: update operators and value input when field changes
+// Field change handler
 document.getElementById('conditionsContainer').addEventListener('change', e => {
-	const el = e.target;
-	if (!el.classList.contains('field-select')) return;
+	if (!e.target.classList.contains('field-select')) return;
 
-	const row = el.closest('.condition-row');
-	const selectedValue = el.value;
-	const def = findFieldDef(selectedValue);
+	const row = e.target.closest('.condition-row');
+	const def = findFieldDef(e.target.value);
+	if (!def) return;
 
-	if (!def || !row) return;
+	row.querySelector('.operator-select').innerHTML =
+		makeOperatorOptions(def.operators);
 
-	// Update operators
-	const operatorSelect = row.querySelector('.operator-select');
-	operatorSelect.innerHTML = makeOperatorOptions(def.operators);
-
-	// Update value input
-	const oldInput = row.querySelector('.value-input');
-	oldInput.outerHTML = makeValueInput(def, row.dataset.idx);
+	row.querySelector('.value-input').outerHTML =
+		makeValueInput(def, row.dataset.idx);
 });
 
 // Remove row
@@ -142,11 +164,14 @@ document.getElementById('conditionsContainer').addEventListener('click', e => {
 	}
 });
 
-// Submit form and load results via AJAX
+// Submit via AJAX
 document.getElementById('searchForm').addEventListener('submit', e => {
 	e.preventDefault();
+
 	const results = document.getElementById('resultsContainer');
-	results.innerHTML = `<div class="text-center my-4"><div class="spinner-border"></div></div>`;
+	results.innerHTML = `<div class="text-center my-4">
+		<div class="spinner-border"></div>
+	</div>`;
 
 	fetch('./ajax/wine_filter.php', {
 		method: 'POST',
@@ -154,7 +179,16 @@ document.getElementById('searchForm').addEventListener('submit', e => {
 	})
 	.then(r => r.text())
 	.then(html => results.innerHTML = html)
-	.catch(err => results.innerHTML = `<div class="alert alert-danger">${err}</div>`);
+	.catch(err => results.innerHTML =
+		`<div class="alert alert-danger">${err}</div>`);
 });
-</script>
 
+// Apply prefill on load
+if (prefillCondition) {
+	addConditionRow(prefillCondition);
+
+	// Auto-submit once the condition exists
+	document.getElementById('searchForm')
+		.dispatchEvent(new Event('submit', { cancelable: true }));
+}
+</script>
