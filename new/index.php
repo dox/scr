@@ -11,6 +11,7 @@ if (!$user->isLoggedIn()) {
 	<?php require_once "layout/html_head.php"; ?>
 </head>
 <body>
+	<?php require_once "layout/header_debug.php"; ?>
 	<?php require_once "layout/header.php"; ?>
 	
 	<div class="container">

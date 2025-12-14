@@ -32,6 +32,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	<?php include_once "layout/html_head.php"; ?>
 </head>
 <body>
+	<?php require_once "layout/header_debug.php"; ?>
+	
 	<div class="container text-center">
 		<div class="row justify-content-center pt-5">
 			<div class="col-12 col-sm-8 col-md-6 col-lg-4 mx-auto">

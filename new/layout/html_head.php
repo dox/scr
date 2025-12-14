@@ -4,9 +4,9 @@
 <meta name="author" content="Andrew Breakspear">
 <meta name="generator" content="Panic Nova">
 
-<title><?php echo APP_NAME; ?></title>
+<title><?= APP_NAME ?></title>
 
-<link rel="canonical" href="https://scr2.seh.ox.ac.uk">
+<link rel="canonical" href="<?= APP_URL ?>">
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
@@ -31,6 +31,6 @@
 <link rel="icon" type="image/svg+xml" href="./assets/favicon/favicon.svg" />
 <link rel="shortcut icon" href="./assets/favicon/favicon.ico" />
 <link rel="apple-touch-icon" sizes="180x180" href="./assets/favicon/apple-touch-icon.png" />
-<meta name="apple-mobile-web-app-title" content="<?php echo APP_NAME; ?>" />
+<meta name="apple-mobile-web-app-title" content="<?= APP_NAME ?>" />
 <link rel="manifest" href="./site.webmanifest" />
 <meta name="theme-color" content="3b3a4a">
