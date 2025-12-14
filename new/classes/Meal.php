@@ -220,7 +220,7 @@ class Meal extends Model {
 		$output = "";
 		
 		if (!empty($this->menu)) {
-			$output  = "<a href=\"#\" class=\"load-remote-menu\" id=\"menuUID-" . $this->uid . "\"
+			$output  = "<a href=\"javascript:void(0)\" class=\"load-remote-menu\" id=\"menuUID-" . $this->uid . "\"
 			data-url=\"./ajax/menu_modal.php?mealUID=" . $this->uid . "\"
 			data-bs-toggle=\"modal\"
 			data-bs-target=\"#menuModal\">";
@@ -321,15 +321,15 @@ class Meal extends Model {
 			return "Manage Booking";
 		}
 	
-		if (!$this->isCutoffValid()) {
+		if (!$this->isCutoffValid(false)) {
 			return "Deadline Passed";
 		}
 	
-		if (!$this->hasCapacity()) {
+		if (!$this->hasCapacity(false)) {
 			return "Capacity Reached";
 		}
 		
-		if (!$this->isAllowedGroupsValid()) {
+		if (!$this->isAllowedGroupsValid(false)) {
 			return "Restricted Meal";
 		}
 	
@@ -345,7 +345,7 @@ class Meal extends Model {
 			return "btn-success";
 		}
 		
-		if (!$this->isCutoffValid() || !$this->hasCapacity() || !$this->isAllowedGroupsValid()) {
+		if (!$this->isCutoffValid(false) || !$this->hasCapacity(false) || !$this->isAllowedGroupsValid(false)) {
 			if ($user->hasPermission("bookings")) {
 				return "btn-secondary";
 			} else {

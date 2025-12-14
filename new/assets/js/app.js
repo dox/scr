@@ -316,11 +316,10 @@ function filterList(inputSelector, listSelector) {
 
 // limit dietary options to a maximum value
 document.addEventListener('DOMContentLoaded', function () {
-	// Find all containers with dietary checkboxes
 	const containers = document.querySelectorAll('.accordion-body[data-max]');
 
 	containers.forEach(container => {
-		const max = parseInt(container.dataset.max, 10); // get max from data attribute
+		const max = parseInt(container.dataset.max, 10);
 		const checkboxes = container.querySelectorAll('.dietaryOptionsMax');
 
 		function checkMaxCheckboxes() {
@@ -330,7 +329,11 @@ document.addEventListener('DOMContentLoaded', function () {
 			});
 		}
 
+		// bind change events
 		checkboxes.forEach(cb => cb.addEventListener('change', checkMaxCheckboxes));
+
+		// enforce the rule immediately
+		checkMaxCheckboxes();
 	});
 });
 

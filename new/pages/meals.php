@@ -68,10 +68,10 @@ if (strtotime($dateFrom) > strtotime($dateTo)) {
 		echo '<table class="table table-striped">';
 		echo '<thead>';
 		echo '<tr>';
-		echo '<th>Date</th>';
-		echo '<th>Meal Name</th>';
-		echo '<th>Location</th>';
-		echo '<th>Guests</th>';
+		echo '<th scope="col">Date</th>';
+		echo '<th scope="col">Meal Name</th>';
+		echo '<th scope="col">Location</th>';
+		echo '<th scope="col">Guests</th>';
 		echo '</tr>';
 		echo '</thead>';
 		echo '<tbody>';
@@ -87,14 +87,14 @@ if (strtotime($dateFrom) > strtotime($dateTo)) {
 			echo '<tr>';
 			echo '<td>' . formatDate($meal->date_meal, 'short') . ' ' . formatTime($meal->date_meal) . '</td>';
 			
-			echo '<td class="d-flex justify-content-between align-items-center">';
+			echo '<td>';
 			echo '<a href="' . $link . '">' . htmlspecialchars($meal->name) . '</a>' . $menu;
 			echo '</td>';
 			
 			echo '<td>' . htmlspecialchars($meal->location) . '</td>';
 			
 			$capacityClass = ($meal->totalDiners() > $meal->scr_capacity) ? 'text-danger' : '';
-			echo '<td class="' . $capacityClass . '">' . $meal->totalDiners() . ' / ' . $meal->scr_capacity . '</td>';
+			echo '<td class="{$capacityClass}">' . $meal->totalDiners() . ' / ' . $meal->scr_capacity . '</td>';
 			
 			echo '</tr>';
 		}
@@ -120,3 +120,10 @@ if (strtotime($dateFrom) > strtotime($dateTo)) {
 // Load AJAX menu
 remoteModalLoader('.load-remote-menu', '#menuModal', '#modalBody');
 </script>
+
+<style>
+.load-remote-menu {
+  float: right;
+  margin-left: 0.5rem; /* spacing between text and icon */
+}
+</style>

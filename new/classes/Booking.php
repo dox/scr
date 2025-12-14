@@ -222,6 +222,16 @@ class Booking extends Model {
 		}
 	}
 	
+	public function dessertChoice(): string {
+		$meal = new Meal($this->meal_uid);
+		
+		if ($meal->allowed_dessert != 1) {
+			return "0";
+		} else {
+			return $this->dessert;
+		}
+	}
+	
 	public function displayMealListGroupItem(): string {
 		global $user;
 	

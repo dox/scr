@@ -79,7 +79,7 @@ echo pageTitle(
 			}
 		  $output .= "</td>";
 		  $output .= "<td>";
-			if ($booking->dessert == "1") {
+			if ($booking->dessertChoice() == "1") {
 				$output .= "<h2><i class=\"bi bi-cookie\"></i></h2>";
 			}
 		  $output .= "</td>";

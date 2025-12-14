@@ -76,7 +76,7 @@ echo pageTitle(
 			// Person's wine/dessert
 			$wineDessert = [];
 			if ($guestListBooking->wineChoice() != "None") $wineDessert[] = '<i class="bi bi-cup-straw"></i>';
-			if (!empty($guestListBooking->dessert)) $wineDessert[] = '<i class="bi bi-cookie"></i>';
+			if ($guestListBooking->dessertChoice() == "1") $wineDessert[] = '<i class="bi bi-cookie"></i>';
 			if (!empty($wineDessert)) {
 				$output .=  implode(' ', $wineDessert);
 			}
@@ -96,7 +96,7 @@ echo pageTitle(
 					// Guest wine/dessert
 					$guestWineDessert = [];
 					if ($guestListBooking->wineChoice() != "None" && !empty($guest['guest_wine'])) $guestWineDessert[] = '<i class="bi bi-cup-straw"></i>';
-					if (!empty($guestListBooking->dessert)) $guestWineDessert[] = '<i class="bi bi-cookie"></i>';
+					if ($guestListBooking->dessertChoice() == "1") $guestWineDessert[] = '<i class="bi bi-cookie"></i>';
 					if (!empty($guestWineDessert)) {
 						$output .= implode(' ', $guestWineDessert);
 					}
@@ -176,15 +176,15 @@ echo pageTitle(
 				   <?= (
 					   !$meal->isCutoffValid(true) // cutoff reached → disable
 					   || (
-						   !$booking->dessert // only care if box not already checked
+						   !$booking->dessertChoice() // only care if box not already checked
 						   && !$meal->hasGuestDessertCapacity(count($booking->guests(), true) // not enough slots for dessert
 						   )
 					   )
 				   ) ? 'disabled' : '' ?>
-				   <?= $booking->dessert == "1" ? "checked" : "" ?>>
+				   <?= $booking->dessertChoice() == "1" ? "checked" : "" ?>>
 				<label for="dessert" class="form-label">
-					Dessert <i><?= ($meal->hasGuestDessertCapacity(count($booking->guests()), false) ? '(applies to your guests)' : 'Unavailable capacity') ?></i>
-					<?= ($meal->hasDessertCapacity(false) ? '' : '<span class="badge rounded-pill text-bg-danger">Capacity Reached</span>') ?>
+					Dessert <i><?= ($meal->hasGuestDessertCapacity(count($booking->guests()), false) ? '(applies to your guests)' : '(Unavailable capacity)') ?></i>
+					<?= ($user->hasPermission("meals") && !$meal->hasDessertCapacity(false) ? '<span class="badge rounded-pill text-bg-danger">Capacity Reached</span>' : '') ?>
 					
 				</label>
 			</div>
