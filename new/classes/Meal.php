@@ -220,7 +220,7 @@ class Meal extends Model {
 		$output = "";
 		
 		if (!empty($this->menu)) {
-			$output  = "<a href=\"javascript:void(0)\" class=\"load-remote-menu\" id=\"menuUID-" . $this->uid . "\"
+			$output  = "<a href=\"javascript:void(0)\" class=\"load-remote-menu\"
 			data-url=\"./ajax/menu_modal.php?mealUID=" . $this->uid . "\"
 			data-bs-toggle=\"modal\"
 			data-bs-target=\"#menuModal\">";

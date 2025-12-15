@@ -30,22 +30,22 @@ $mealObject = new Meal($mealUID);
 	<?php endif; ?>
 	
 	<div class="d-flex justify-content-around align-items-center border-top pt-3 mt-4 small">
-		<div class="text-center <?= ($mealObject->charge_to == "Domus") ? "" : "opacity-25"; ?>">
+		<div class="text-center <?= ($mealObject->charge_to == "Domus") ? "" : "opacity-0" ?>">
 			<div><i class="bi bi-mortarboard fs-4"></i></div>
 			<div class="text-uppercase fw-semibold">Domus</div>
 		</div>
 	
-		<div class="text-center <?= ($mealObject->allowed_wine == 1) ? "" : " opacity-25 "; ?>">
+		<div class="text-center <?= ($mealObject->allowed_wine == 1) ? "" : "opacity-0" ?>">
 			<div><i class="bi bi-cup-straw fs-4"></i></div>
 			<div class="text-uppercase fw-semibold">Wine</div>
 		</div>
 	
-		<div class="text-center <?= ($mealObject->allowed_dessert == 1) ? "" : " opacity-25 "; ?>">
+		<div class="text-center <?= ($mealObject->allowed_dessert == 1) ? "" : "opacity-0" ?>">
 			<div><i class="bi bi-cookie fs-4"></i></div>
 			<div class="text-uppercase fw-semibold">Dessert</div>
 		</div>
 	</div>
 </div>
 <div class="modal-footer">
-	<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+	<button type="button" class="btn btn-link text-muted" data-bs-dismiss="modal">Close</button>
 </div>

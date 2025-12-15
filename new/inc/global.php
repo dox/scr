@@ -82,7 +82,7 @@ function formatTime(string|int|\DateTimeInterface|null $time): string {
 	return $time->format('H:i');
 }
 
-function pageTitle(string $title, string $subtitle = '', array $actions = []): string {
+function pageTitle(string $title, string $subtitle = '', array $actions = [], bool $wineFavIcon = false): string {
 	global $user;
 	
 	$html = '<div class="p-3 p-md-5 text-center">';
@@ -94,9 +94,13 @@ function pageTitle(string $title, string $subtitle = '', array $actions = []): s
 
 	if (!empty($actions)) {
 		$html .= '<div class="row d-print-none mb-3">';
-		$html .= '<div class="col-8"></div>';
-		$html .= '<div class="col-4 text-end">';
-		$html .= '<div class="d-inline-flex gap-2">';
+		$html .= '<div class="col text-end">';
+		$html .= '<div class="d-inline-flex align-items-center gap-2">';
+		
+		if ($wineFavIcon) {
+			$html .= '<button type="button" class="btn btn-link load-remote-winefav" data-url="./ajax/wine_favourite_modal.php?mealUID=9873" data-bs-toggle="modal" data-bs-target="#wineFavouriteModal"><i class="bi bi-heart text-danger"></i></button>';
+		}
+		
 		$html .= '<div class="dropdown">';
 		$html .= '<button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Actions</button>';
 		$html .= '<ul class="dropdown-menu">';

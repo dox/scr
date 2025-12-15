@@ -28,8 +28,10 @@ $guestDietary     = $booking->guests()[$guestUID]['guest_dietary']      ?? [];
 <div class="modal-body">
 	<?php if (!$meal->hasDessertCapacity(true) && $booking->dessert == "1"): ?>
 		<p>Dessert capacity has been reached. Please remove yourself from dessert if you wish to add a guest.</p>
+	<?php elseif ($action === 'add' && !$meal->hasCapacity(true)): ?>
+		<p>Meal capacity has been reached.</p>
 	<?php elseif ($action === 'add' && !$meal->hasGuestCapacity(count($booking->guests()), true)): ?>
-		<p>Capacity has been reached.</p>
+		<p>You have added the maximum number of guests allowed for this meal.</p>
 	<?php elseif (!$meal->canBook(true)): ?>
 		<p>Deadline Passed</p>
 	<?php else: ?>

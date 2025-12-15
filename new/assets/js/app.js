@@ -174,7 +174,10 @@ document.addEventListener('DOMContentLoaded', () => {
 	if (!button) return;
 
 	e.preventDefault();
-
+	
+	// disable the button
+	button.disabled = true;
+	
 	// Determine action
 	let action = '';
 	if (button.classList.contains('guest-add-btn')) action = 'guest_add';
@@ -197,9 +200,13 @@ document.addEventListener('DOMContentLoaded', () => {
 	const guestDietaryValues = Array.from(guestDietaryEls).map(el => el.value);
 
 	// Domus validation
-	if (chargeToEl?.value === 'Domus' && (!domusReasonEl?.value || domusReasonEl.value.trim() === '')) {
+	if (action != 'guest_delete' && chargeToEl?.value === 'Domus' && (!domusReasonEl?.value || domusReasonEl.value.trim() === '')) {
 	  alert('Please provide a reason for Domus.');
 	  domusReasonEl.focus();
+	  
+	  // re-enable the button
+	  button.disabled = false;
+	  
 	  return;
 	}
 
@@ -243,24 +250,25 @@ document.addEventListener('DOMContentLoaded', () => {
 			  document.getElementById('addEditGuestModal')
 			)?.hide();
 		  }
-
+		  
 		  window.location.reload();
-
 		}, 400);
 
 	  } else {
+		// re-enable the button
 		button.textContent = originalText;
+		button.disabled = false;
 		alert(json.message || 'Guest action failed.');
 	  }
 
 	} catch (err) {
 	  console.error(err);
+	  // re-enable the button
 	  button.textContent = originalText;
+	  button.disabled = false;
 	  alert('Guest action failed due to a network error.');
 	}
-
   });
-
 });
 
 
