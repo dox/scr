@@ -41,108 +41,144 @@ echo pageTitle(
 ?>
 
 <form class="needs-validation" id="wine_addEdit" novalidate="">
-
-<div class="card mb-3">
-	<div class="card-body">
-		<div class="row">
-			<div class="col-4 mb-3">
-				<label for="cellar_uid" class="form-label">Cellar</label>
-				<select class="form-select" name="cellar_uid" id="cellar_uid" disabled required>
-					<?php
-					foreach ($wines->cellars() as $cellarChoice) {
-						$title = trim($cellarChoice->name);
-						$selected = ($title === $bin->cellar_uid) ? ' selected' : '';
-						echo "<option value=\"{$cellarChoice->uid}\"{$selected}>{$title}</option>";
+<div class="row">
+	<div class="col-4 mb-3">
+		<label for="cellar_uid" class="form-label">Cellar</label>
+		<select class="form-select" name="cellar_uid" id="cellar_uid" disabled required>
+			<?php
+			foreach ($wines->cellars() as $cellarChoice) {
+				$title = trim($cellarChoice->name);
+				$selected = ($title === $bin->cellar_uid) ? ' selected' : '';
+				echo "<option value=\"{$cellarChoice->uid}\"{$selected}>{$title}</option>";
+			}
+			?>
+		</select>
+	</div>
+	<div class="col-4 mb-3">
+		<label for="cellar_uid" class="form-label">Bin</label>
+		<select class="form-select" name="bin_uid" id="bin_uid" required>
+			<?php
+			foreach ($cellar->sections() AS $section) {
+				$output = "<optgroup label=\"" . $section . "\">";
+				
+				foreach ($cellar->bins(['category' => $section]) AS $binOption) {
+					if ($binOption->uid == $wine->bin_uid) {
+						$output .= "<option value=\"" . $binOption->uid . "\" selected>" . $binOption->name . "</option>";
+					} else {
+						$output .= "<option value=\"" . $binOption->uid . "\">" . $binOption->name . "</option>";
 					}
-					?>
-				</select>
-			</div>
-			<div class="col-4 mb-3">
-				<label for="cellar_uid" class="form-label">Bin</label>
-				<select class="form-select" id="bin_uid" name="bin_uid" required="">
-					
-					<?php
-					foreach ($cellar->sections() AS $section) {
-						$output = "<optgroup label=\"" . $section . "\">";
-						
-						$filter = ['key' => 'category', 'value' => $section];
-						foreach ($cellar->bins($filter) AS $binOption) {
-							if ($binOption->uid == $wine->bin_uid) {
-								//$output .= "<option value=\"" . $binOption->uid . "\" selected>" . $binOption->name . "</option>";
-							} else {
-								//$output .= "<option value=\"" . $binOption->uid . "\">" . $binOption->name . "</option>";
-							}
-						}
-						
-						$output .= "</optgroup>";
-						
-						
-						echo $output;
-					}
-					?>
-				</select>
-			</div>
-			<div class="col-4 mb-3">
-				<label for="status" class="form-label">Status</label>
-				<select class="form-select" id="status" name="status" required="">
-					<option selected="">In Use</option><option>In-Bond</option><option>Awaiting Delivery</option><option>Closed</option>				</select>
-			</div>
-		</div>
+				}
+				
+				$output .= "</optgroup>";
+				
+				echo $output;
+			}
+			?>
+		</select>
+	</div>
+	<div class="col-4 mb-3">
+		<label for="status" class="form-label">Status</label>
+		<select class="form-select" name="status" id="status" required>
+			<?php
+			$wineStatuses = explode(',', $settings->get('wine_status'));
+			
+			foreach ($wineStatuses as $wineStatus) {
+				$type = trim($wineStatus);
+				$selected = ($type === $wine->status) ? ' selected' : '';
+				echo "<option value=\"{$type}\"{$selected}>{$type}</option>";
+			}
+			?>
+		</select>
 	</div>
 </div>
 
 <div class="row">
-	<div class="col">
-		<div class="card mb-3">
-			<div class="card-body">
-				<div class="row">
-					<div class="col-4 mb-3">
-						<label for="category" class="form-label">Category</label>
-						<select class="form-select" id="category" name="category" required="">
-							<option>White</option><option>Red</option><option>Sparkling</option><option>Port</option><option>Sherry</option><option>Other</option><option selected="">White Bin-End</option><option>Red Bin-End</option>						</select>
-					</div>
-					<div class="col-8 mb-3">
-						<label for="name" class="form-label">Wine Name</label>
-						<input type="text" class="form-control" id="name" name="name" value="Paarl Heights Sauvignon Blanc" required="">
-					</div>
-				</div>
-				<div class="row">
-					<div class="col mb-3">
-						<label for="name" class="form-label">Supplier</label>
-						<input type="text" class="form-control" id="supplier" name="supplier" value="TJ Wines" list="suppliers">
-						<datalist id="suppliers">
-							<option id="" value=""></option><option id="Anthony Byrne" value="Anthony Byrne"></option><option id="Bancroft Wines" value="Bancroft Wines"></option><option id="Berry Bros" value="Berry Bros"></option><option id="Bibendum" value="Bibendum"></option><option id="Cambridge Wine Merchants" value="Cambridge Wine Merchants"></option><option id="Charles" value="Charles"></option><option id="Charles Taylor Wines" value="Charles Taylor Wines"></option><option id="Clarion Wines" value="Clarion Wines"></option><option id="Clark Foyster Wines" value="Clark Foyster Wines"></option><option id="Corney &amp; Barrow" value="Corney &amp; Barrow"></option><option id="Danebury Vineyards" value="Danebury Vineyards"></option><option id="Decorum Vintners" value="Decorum Vintners"></option><option id="Direct Wine Supplier" value="Direct Wine Supplier"></option><option id="Edward Sheldon" value="Edward Sheldon"></option><option id="Ellis of Richmond Ltd" value="Ellis of Richmond Ltd"></option><option id="First Class Products" value="First Class Products"></option><option id="Flint Wines" value="Flint Wines"></option><option id="Geodhuis" value="Geodhuis"></option><option id="GOEDHUIS" value="GOEDHUIS"></option><option id="Guantleys" value="Guantleys"></option><option id="Haynes Hanson Clark" value="Haynes Hanson Clark"></option><option id="Hayward Bros" value="Hayward Bros"></option><option id="HS Fine Wines" value="HS Fine Wines"></option><option id="Imbibros" value="Imbibros"></option><option id="Imibros" value="Imibros"></option><option id="John Armit Wines" value="John Armit Wines"></option><option id="Justerini &amp; Brooks" value="Justerini &amp; Brooks"></option><option id="Lay &amp; Wheeler" value="Lay &amp; Wheeler"></option><option id="Lee &amp; Sandeman" value="Lee &amp; Sandeman"></option><option id="LOEB" value="LOEB"></option><option id="Majestic" value="Majestic"></option><option id="Manley Wines UK" value="Manley Wines UK"></option><option id="Miscellaneous" value="Miscellaneous"></option><option id="Morris &amp; Verdin" value="Morris &amp; Verdin"></option><option id="Nethergate" value="Nethergate"></option><option id="Nicholsons" value="Nicholsons"></option><option id="Oddbins" value="Oddbins"></option><option id="Oxford Wine Company" value="Oxford Wine Company"></option><option id="Private Cellar" value="Private Cellar"></option><option id="S H Jones" value="S H Jones"></option><option id="Seckford Agencies" value="Seckford Agencies"></option><option id="Sheldon's Wine Cellar" value="Sheldon's Wine Cellar"></option><option id="Stevens Garnier" value="Stevens Garnier"></option><option id="Summerlee" value="Summerlee"></option><option id="T J Wines" value="T J Wines"></option><option id="The Wine Barn Ltd" value="The Wine Barn Ltd"></option><option id="TJ Wines" value="TJ Wines"></option><option id="Veritas &amp; Co" value="Veritas &amp; Co"></option><option id="Vine Partners Limited" value="Vine Partners Limited"></option><option id="Waters Wine Merchant" value="Waters Wine Merchant"></option><option id="Wine Barn" value="Wine Barn"></option><option id="Wine Traders" value="Wine Traders"></option><option id="Yapp Brothers" value="Yapp Brothers"></option>						</datalist>
-					</div>
-					<div class="col mb-3">
-						<label for="name" class="form-label">Supplier Order Reference</label>
-						<input type="text" class="form-control" id="supplier_ref" name="supplier_ref" value="">
-					</div>
-				</div>
-				<div class="row">
-					<div class="col-4 mb-3">
-						<label for="name" class="form-label">Country of Origin</label>
-						<input type="text" class="form-control" id="country_of_origin" name="country_of_origin" list="codes-countries" value="South Africa">
-						<datalist id="codes-countries">
-							<option id="" value=""></option><option id="Argentina" value="Argentina"></option><option id="Australia" value="Australia"></option><option id="Chile" value="Chile"></option><option id="China" value="China"></option><option id="England" value="England"></option><option id="France" value="France"></option><option id="Germany" value="Germany"></option><option id="Greece" value="Greece"></option><option id="Israel" value="Israel"></option><option id="Italy" value="Italy"></option><option id="New Zealand" value="New Zealand"></option><option id="Portugal" value="Portugal"></option><option id="South Africa" value="South Africa"></option><option id="Spain" value="Spain"></option><option id="United Kingdom" value="United Kingdom"></option><option id="USA" value="USA"></option>						</datalist>
-					</div>
-					<div class="col-4 mb-3">
-						<label for="name" class="form-label">Region of Origin</label>
-						<input type="text" class="form-control" id="region_of_origin" name="region_of_origin" list="codes-regions" value="">
-						<datalist id="codes-regions">
-							<option id="" value=""></option><option id="Alsace" value="Alsace"></option><option id="Barossa Valley" value="Barossa Valley"></option><option id="Beaujolais" value="Beaujolais"></option><option id="Bordeaux" value="Bordeaux"></option><option id="Burgundy" value="Burgundy"></option><option id="California" value="California"></option><option id="Casablanca Valley" value="Casablanca Valley"></option><option id="Catalonia" value="Catalonia"></option><option id="Catalunya" value="Catalunya"></option><option id="Central Coast" value="Central Coast"></option><option id="Central Valley" value="Central Valley"></option><option id="Champagne" value="Champagne"></option><option id="Hampshire" value="Hampshire"></option><option id="Jerez" value="Jerez"></option><option id="Languedoc" value="Languedoc"></option><option id="Languedoc Roussillon" value="Languedoc Roussillon"></option><option id="Loire" value="Loire"></option><option id="Madeira" value="Madeira"></option><option id="Mantinia" value="Mantinia"></option><option id="Marlborough" value="Marlborough"></option><option id="Medoc" value="Medoc"></option><option id="Mendoza" value="Mendoza"></option><option id="Nahe" value="Nahe"></option><option id="Pfalz" value="Pfalz"></option><option id="Pomerol" value="Pomerol"></option><option id="Provence" value="Provence"></option><option id="Puglia" value="Puglia"></option><option id="Rhone" value="Rhone"></option><option id="Rioja" value="Rioja"></option><option id="Riverina" value="Riverina"></option><option id="Sancerre" value="Sancerre"></option><option id="Sicilia" value="Sicilia"></option><option id="South West" value="South West"></option><option id="South West France" value="South West France"></option><option id="Southern Australia" value="Southern Australia"></option><option id="Southern France" value="Southern France"></option><option id="Tuscany" value="Tuscany"></option><option id="Veneto" value="Veneto"></option><option id="Venezia" value="Venezia"></option><option id="Verona" value="Verona"></option><option id="Yarra Valley" value="Yarra Valley"></option>						</datalist>
-					</div>
-					<div class="col-4 mb-3">
-						<label for="name" class="form-label">Grape</label>
-						<input type="text" class="form-control" id="grape" name="grape" list="codes-grapes" value="">
-						<datalist id="codes-grapes">
-							<option id="" value=""></option><option id="60% Merlot 40% Cabernet Sauvignon" value="60% Merlot 40% Cabernet Sauvignon"></option><option id="App" value="App"></option><option id="Barbera" value="Barbera"></option><option id="Cabernet Franc" value="Cabernet Franc"></option><option id="Cabernet Sauvignon" value="Cabernet Sauvignon"></option><option id="Chardonnay" value="Chardonnay"></option><option id="Chewing Blanc" value="Chewing Blanc"></option><option id="Cinsault" value="Cinsault"></option><option id="Colombard-Sauvignon" value="Colombard-Sauvignon"></option><option id="Gamay" value="Gamay"></option><option id="Garganega" value="Garganega"></option><option id="Garnacha / Samso" value="Garnacha / Samso"></option><option id="Glera" value="Glera"></option><option id="Grenache" value="Grenache"></option><option id="Grenache, Chardonnay" value="Grenache, Chardonnay"></option><option id="GSM" value="GSM"></option><option id="Malbec" value="Malbec"></option><option id="Med" value="Med"></option><option id="Melon Blanc" value="Melon Blanc"></option><option id="Merlot" value="Merlot"></option><option id="Moschofilero" value="Moschofilero"></option><option id="Nebbiolo" value="Nebbiolo"></option><option id="Palomino" value="Palomino"></option><option id="Pinot Grigio" value="Pinot Grigio"></option><option id="Pinot Gris" value="Pinot Gris"></option><option id="Pinot Noir" value="Pinot Noir"></option><option id="Piquepoul" value="Piquepoul"></option><option id="Primitivo" value="Primitivo"></option><option id="Riesling" value="Riesling"></option><option id="Sangiovese" value="Sangiovese"></option><option id="Sauvignon Blanc" value="Sauvignon Blanc"></option><option id="Sauvignon Blanc &amp; Semillon" value="Sauvignon Blanc &amp; Semillon"></option><option id="Semillon" value="Semillon"></option><option id="Sercial" value="Sercial"></option><option id="Shiraz" value="Shiraz"></option><option id="Syrah" value="Syrah"></option><option id="Tempranillo" value="Tempranillo"></option><option id="Viognier" value="Viognier"></option>						</datalist>
-					</div>
-					
-				</div>
-			</div>
-		</div>
+	<div class="col-4 mb-3">
+		<label for="category" class="form-label">Category</label>
+		<select class="form-select" name="category" id="category" required>
+			<?php
+			$wine_categories = explode(',', $settings->get('wine_category'));
+			
+			foreach ($wine_categories as $wine_category) {
+				$type = trim($wine_category);
+				$selected = ($type === $wine->category) ? ' selected' : '';
+				echo "<option value=\"{$type}\"{$selected}>{$type}</option>";
+			}
+			?>
+		</select>
+	</div>
+	<div class="col-8 mb-3">
+		<label for="name" class="form-label">Wine Name</label>
+		<input type="text" class="form-control" id="name" name="name" value="<?= $wine->name ?>" required>
 	</div>
 </div>
+
+<hr>
+
+<div class="row">
+	<div class="col mb-3">
+		<label for="name" class="form-label">Supplier</label>
+		<input type="text" class="form-control" name="supplier" id="supplier" value="<?= htmlspecialchars($wine->supplier) ?>" list="suppliers">
+		<datalist id="suppliers">
+			<?php
+			foreach ($wines->listFromWines("supplier") as $supplier) {
+				echo '<option id="' . htmlspecialchars($supplier) . '" value="' . htmlspecialchars($supplier) . '"></option>';
+			}
+			?>
+		</datalist>
+	</div>
+	<div class="col mb-3">
+		<label for="name" class="form-label">Supplier Order Reference</label>
+		<input type="text" class="form-control" name="supplier_ref" id="supplier_ref" value="<?= htmlspecialchars($wine->supplier_ref) ?>">
+	</div>
+</div>
+
+<hr>
+
+<div class="row">
+	<div class="col-4 mb-3">
+		<label for="name" class="form-label">Country of Origin</label>
+		<input type="text" class="form-control" id="country_of_origin" name="country_of_origin" list="codes-countries" value="<?= htmlspecialchars($wine->country_of_origin) ?>">
+		<datalist id="codes-countries">
+			<?php
+			foreach ($wines->listFromWines("country_of_origin") as $country_of_origin) {
+				echo '<option id="' . htmlspecialchars($country_of_origin) . '" value="' . htmlspecialchars($country_of_origin) . '"></option>';
+			}
+			?>
+		</datalist>
+	</div>
+	<div class="col-4 mb-3">
+		<label for="name" class="form-label">Region of Origin</label>
+		<input type="text" class="form-control" id="region_of_origin" name="region_of_origin" list="codes-regions" value="<?= htmlspecialchars($wine->region_of_origin) ?>">
+		<datalist id="codes-regions">
+			<?php
+			foreach ($wines->listFromWines("region_of_origin") as $region_of_origin) {
+				echo '<option id="' . htmlspecialchars($region_of_origin) . '" value="' . htmlspecialchars($region_of_origin) . '"></option>';
+			}
+			?>
+		</datalist>
+	</div>
+	<div class="col-4 mb-3">
+		<label for="name" class="form-label">Grape</label>
+		<input type="text" class="form-control" id="grape" name="grape" list="codes-grapes" value="<?= htmlspecialchars($wine->grape) ?>">
+		<datalist id="codes-grapes">
+			<?php
+			foreach ($wines->listFromWines("grape") as $grape) {
+				echo '<option id="' . htmlspecialchars($grape) . '" value="' . htmlspecialchars($grape) . '"></option>';
+			}
+			?>
+		</datalist>
+	</div>
+</div>
+
+
+
+
+
+
+
+
+
 
 <div class="row">
 	<div class="col">
@@ -225,4 +261,3 @@ echo pageTitle(
 	
 	<input type="hidden" id="uid" name="uid" value="543"></div>
 </form>
-
