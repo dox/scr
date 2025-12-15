@@ -82,20 +82,35 @@ class Cellar extends Model {
 	public function bins(array $whereFilterArray = []) : array {
 		global $db;
 	
+		$sql = "SELECT *
+				FROM " . self::$table_bins . " ";
+	
 		// Always enforce cellar constraint first
-		$whereFilterArray[] = ['key' => 'cellar_uid', 'value' => $this->uid];
+		$conditions[] = 'cellar_uid = "' . $this->uid . '"';
 	
-		$sql = "SELECT * FROM " . self::$table_bins;
+		foreach ($whereFilterArray as $key => $rule) {
+			$key = addslashes($key);
 	
-		if (!empty($whereFilterArray)) {
-			$conditions = [];
+			// Allow [operator, value] style input
+			if (is_array($rule)) {
+				[$operator, $value] = $rule;
 	
-			foreach ($whereFilterArray as $filter) {
-				$key   = addslashes($filter['key']);
-				$value = addslashes($filter['value']);
+				if (strtoupper($operator) === 'IN' && is_array($value)) {
+					$value = array_map(fn($v) => "'" . addslashes($v) . "'", $value);
+					$conditions[] = "$key IN (" . implode(',', $value) . ")";
+				} else {
+					$value = addslashes($value);
+					$conditions[] = "$key $operator '$value'";
+				}
+	
+			} else {
+				// Fallback to simple equals
+				$value = addslashes($rule);
 				$conditions[] = "$key = '$value'";
 			}
-	
+		}
+		
+		if ($conditions) {
 			$sql .= " WHERE " . implode(' AND ', $conditions);
 		}
 	
@@ -104,13 +119,14 @@ class Cellar extends Model {
 		$rows = $db->query($sql)->fetchAll();
 	
 		$bins = [];
-	
 		foreach ($rows as $row) {
 			$bins[] = new Bin($row['uid']);
 		}
 	
 		return $bins;
 	}
+	
+	
 	
 	public function bottlesCount() {
 		global $db;

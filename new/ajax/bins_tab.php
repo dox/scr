@@ -6,11 +6,9 @@ $wines = new Wines();
 
 $cellar_uid = filter_var($_GET['cellar_uid'], FILTER_SANITIZE_NUMBER_INT);
 $cellar_section = filter_var($_GET['section'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+$cellar = new Cellar($cellar_uid);
 
-$binsBySection = $wines->bins([
-	'cellar_uid' => ['=', $cellar_uid],
-	'wine_bins.category' => ['=', $cellar_section]
-]);
+$bins = $cellar->bins(['category' => $cellar_section]);
 ?>
 
 
@@ -24,7 +22,7 @@ $binsBySection = $wines->bins([
 		</tr>
 	</thead>
 	<tbody>
-		<?php foreach ($binsBySection as $bin):
+		<?php foreach ($bins as $bin):
 			$wines = $bin->wines();
 			
 			if (count($wines) == 1) {

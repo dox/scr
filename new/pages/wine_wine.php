@@ -26,25 +26,10 @@ echo pageTitle(
 	[
 		[
 			'permission' => 'wine',
-			'title' => 'Add To List',
-			'class' => '',
-			'event' => '',
-			'icon' => 'heart',
-			'data' => [
-				'bs-toggle' => 'modal',
-				'bs-target' => '#deleteTermModal'
-			]
-		],
-		[
-			'permission' => 'wine',
 			'title' => 'Edit Wine',
 			'class' => '',
-			'event' => '',
-			'icon' => 'pencil',
-			'data' => [
-				'bs-toggle' => 'modal',
-				'bs-target' => '#addCellarModal'
-			]
+			'event' => 'index.php?page=wine_wine_edit&uid=' . $wine->uid,
+			'icon' => 'pencil'
 		],
 		[
 			'permission' => 'wine',
@@ -68,7 +53,8 @@ echo pageTitle(
 				'bs-target' => '#deleteTermModal'
 			]
 		]
-	]
+	],
+	true
 );
 ?>
 
@@ -242,3 +228,22 @@ echo $wine->statusBanner();
 	  ?>
   </div>
 </div>
+
+
+
+<div class="modal fade" id="wineFavouriteModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+	<div class="modal-content">
+		<div class="modal-header">
+			<h5 class="modal-title">Wine Favourite Lists</h5>
+			<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+		</div>
+		<div id="modal-ajax"></div>
+	</div>
+  </div>
+</div>
+
+<script>
+// Load AJAX menu
+remoteModalLoader('.load-remote-winefav', '#wineFavouriteModal', '#modal-ajax');
+</script>
