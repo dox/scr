@@ -599,6 +599,83 @@ class Wines extends Model {
 		return $wines;
 	}
 	
+	
+	public function transactionsGrouped2(array $whereFilterArray = []) : array {
+		global $db;
+		
+		$sql = "SELECT group_head.uid
+		FROM (
+			SELECT 
+				COALESCE(linked, uid) AS group_key,
+				MIN(uid) AS uid,
+				MAX(date) AS max_date
+			FROM wine_transactions
+			GROUP BY group_key
+		) AS group_head
+		ORDER BY group_head.max_date DESC";
+		
+		$rows = $db->query($sql)->fetchAll();
+	
+		$transactions = [];
+		foreach ($rows as $row) {
+			$transactions[] = new Transaction($row['uid']);
+		}
+	
+		return $transactions;
+	}
+	
+	public function transactionsGrouped(array $whereFilterArray = []) : array {
+		global $db;
+	
+		$sql = "SELECT group_head.uid
+		FROM (
+			SELECT 
+				COALESCE(linked, uid) AS group_key,
+				MIN(uid) AS uid,
+				MAX(date) AS max_date
+			FROM wine_transactions ";
+	
+		$conditions = [];
+	
+		foreach ($whereFilterArray as $key => $rules) {
+			$key = addslashes($key);
+		
+			if (!is_array($rules[0])) {
+				// single rule
+				$rules = [$rules];
+			}
+		
+			foreach ($rules as $rule) {
+				[$operator, $value] = $rule;
+		
+				if (strtoupper($operator) === 'IN' && is_array($value)) {
+					$value = array_map(fn($v) => "'" . addslashes($v) . "'", $value);
+					$conditions[] = "$key IN (" . implode(',', $value) . ")";
+				} else {
+					$value = addslashes($value);
+					$conditions[] = "$key $operator '$value'";
+				}
+			}
+		}
+	
+		if ($conditions) {
+			$sql .= " WHERE " . implode(' AND ', $conditions);
+		}
+	
+		$sql .= " GROUP BY group_key
+		) AS group_head
+		ORDER BY group_head.max_date DESC ";
+		
+		$rows = $db->query($sql)->fetchAll();
+	
+		$transactions = [];
+		foreach ($rows as $row) {
+			$transactions[] = new Transaction($row['uid']);
+		}
+	
+		return $transactions;
+	}
+	
 	public function transactions(array $whereFilterArray = []) : array {
 		global $db;
 	
@@ -633,7 +710,7 @@ class Wines extends Model {
 			$sql .= " WHERE " . implode(' AND ', $conditions);
 		}
 	
-		$sql .= " ORDER BY date ASC";
+		$sql .= " ORDER BY date DESC";
 	
 		$rows = $db->query($sql)->fetchAll();
 	

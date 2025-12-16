@@ -36,117 +36,47 @@ class Transaction extends Model {
 		}
 	}
 	
-	public function update(array $postData) {
-		global $db;
-	
-		// Map normal text/select fields
-		$fields = [
-			'name'      => $postData['name'] ?? null,
-			'short_code'  => $postData['short_code'] ?? null,
-			'notes'   => $postData['notes'] ?? null,
-			'bin_types'   => $postData['bin_types'] ?? null,
-			'photograph'   => $postData['photograph'] ?? null
-		];
-		
-		// Send to database update
-		$updatedRows = $db->update(
-			static::$table,
-			$fields,
-			['uid' => $this->uid],
-			'logs'
-		);
-		
-		toast('Cellar Updated', 'Cellar sucesfully updated', 'text-success');
-	
-		return $updatedRows;
+	public function isLinked(): bool {
+		return !empty($this->linked);
 	}
 	
-	public function bins(array $whereFilterArray = []) : array {
-		global $db;
+	public function linkedTransactions(): array {
+		if ($this->isLinked()) {
+			global $wines;
+			
+			$conditionArray['linked'] = ['=', $this->linked];
+			$linkedTransactions = $wines->transactions($conditionArray);
+			
+			return $linkedTransactions;
+		} else {
+			return array();
+		}
+	}
 	
-		// Always enforce cellar constraint first
-		$whereFilterArray[] = ['key' => 'cellar_uid', 'value' => $this->uid];
+	public function totalBottles(): int {
+		if ($this->isLinked()) {
+			// linked row: sum all bottles in the group
+			$query = "SELECT SUM(bottles) AS bottles FROM " . static::$table . " WHERE linked = ?";
+			$row = $this->db->fetch($query, [$this->linked]);
 	
-		$sql = "SELECT * FROM " . self::$table_bins;
+			return (int) (abs($row['bottles']) ?? 0);
+		} else {
+			// unlinked row: just its own bottles
+			return abs((int) $this->bottles);
+		}
+	}
 	
-		if (!empty($whereFilterArray)) {
-			$conditions = [];
-	
-			foreach ($whereFilterArray as $filter) {
-				$key   = addslashes($filter['key']);
-				$value = addslashes($filter['value']);
-				$conditions[] = "$key = '$value'";
+	public function totalValue(): int {
+		if ($this->isLinked()) {
+			$total = 0;
+			foreach ($this->linkedTransactions() as $transaction) {
+				$total += ($transaction->bottles * $transaction->price_per_bottle);
 			}
-	
-			$sql .= " WHERE " . implode(' AND ', $conditions);
+		} else {
+			$total = ($this->bottles * $this->price_per_bottle);
 		}
-	
-		$sql .= " ORDER BY name ASC";
-	
-		$rows = $db->query($sql)->fetchAll();
-	
-		$bins = [];
-	
-		foreach ($rows as $row) {
-			$bins[] = new Bin($row['uid']);
-		}
-	
-		return $bins;
-	}
-	
-	public function bottlesCount() {
-		global $db;
 		
-		$sql = "SELECT SUM(wine_total) AS total_bottles_in_cellar
-		FROM (
-			SELECT cellar_uid, wine_uid, GREATEST(0, SUM(bottles)) AS wine_total
-			FROM wine_transactions
-			WHERE cellar_uid = '" . $this->uid . "'
-			GROUP BY cellar_uid, wine_uid
-		) AS wine_sums";
-		
-		$result = $db->query($sql)->fetch();
-		
-		return $result['total_bottles_in_cellar'];
-	}
-	
-	public function card() {
-		$output  = "<div class=\"col-sm-12 col-md-6 mb-3\">";
-		$output .= "<div class=\"card shadow-sm\">";
-		$output .= "<img src=\"" . $this->photographURL() . "\" class=\"card-img-top\" alt=\"Cellar photograph\">";
-		$output .= "<div class=\"card-body\">";
-		$output .= "<h5 class=\"card-title\"><i>(" . $this->short_code . ")</i> " . $this->name . "</h5>";
-		$output .= "<div class=\"d-flex justify-content-between align-items-center\">";
-		$output .= "<a href=\"index.php?page=wine_cellar&uid=" . $this->uid . "\" type=\"button\" class=\"btn btn-sm btn-outline-secondary\">View</a>";
-		$output .= "<small class=\"text-body-secondary\">";
-		$output .= number_format(count($this->bins())) . autoPluralise(" bin", " bins", count($this->bins()));
-		$output .= " / ";
-		$output .= number_format($this->bottlesCount()) . autoPluralise(" bottle", " bottles", $this->bottlesCount());
-		$output .= "</small>";
-		$output .= "</div>";
-		$output .= "</div>";
-		$output .= "</div>";
-		$output .= "</div>";
-		
-		return $output;
-	}
-	
-	public function photographURL(): string {
-		$urlPath  = '/new/uploads/meal_cards/';
-		$filePath = $_SERVER['DOCUMENT_ROOT'] . $urlPath;
-	
-		// Choose the candidate filename (null or empty means default)
-		$filename = trim((string) $this->photograph);
-	
-		// If no filename at all, skip straight to default
-		if ($filename === '') {
-			return './assets/images/card_default.png';
-		}
-	
-		// If file exists, return its public path; otherwise, fall to default
-		return file_exists($filePath . $filename)
-			? './uploads/meal_cards/' . $filename
-			: './assets/images/card_default.png';
+		return (int) (abs($total) ?? 0);
 	}
 
 }

@@ -28,16 +28,14 @@ class Bin extends Model {
 		}
 	}
 	
-	public function wines(): array {
+	public function wines($whereArray = null): array {
 		global $db;
 		
 		$wines = new Wines();
-		$wines = $wines->wines([
-			'wine_bins.uid' => ['=', $this->uid],
-			'wine_wines.status' => ['<>', 'Closed'],
-		]);
-	
-		return $wines;
+		
+		$whereArray = array_merge(['wine_bins.uid' => ['=', $this->uid]], $whereArray ?? []);
+		
+		return $wines->wines($whereArray);
 	}
 	
 	public function winesClosed(): array {

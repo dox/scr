@@ -74,6 +74,7 @@ echo pageTitle(
 
 <?php
 if (!empty($closedWines)) {
+	echo "<hr>";
 	echo "<h4>Closed Wines</h4>";
 	echo "<div class=\"row row-cols-1 row-cols-sm-2 row-cols-md-3\">";
 		foreach ($closedWines as $wine) {

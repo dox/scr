@@ -23,7 +23,8 @@ $bins = $cellar->bins(['category' => $cellar_section]);
 	</thead>
 	<tbody>
 		<?php foreach ($bins as $bin):
-			$wines = $bin->wines();
+			
+			$wines = $bin->wines(['wine_wines.status' => ['!=', 'Closed']]);
 			
 			if (count($wines) == 1) {
 				$url = "index.php?page=wine_wine&uid=" . $wines[0]->uid;

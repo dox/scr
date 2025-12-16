@@ -113,16 +113,42 @@ echo pageTitle(
 		<div id="chart_transactions_by_day"></div>
 		
 		<p><a href="index.php?page=wine_transactions" class="float-end">View all</a></p>
-		<?php
-		$daysToInclude = $settings->get('logs_display');
-		$transactions = $wines->transactions([
-			'DATE(date)' => ['>', date('Y-m-d', strtotime('- ' . $daysToInclude . ' days '))]
-		]);
 		
-		foreach ($transactions as $transaction) {
-			echo "<p>" . $transaction->name . "</p>";
-		}
-		?>
+		<table class="table">
+		  <thead>
+			<tr>
+			  <th scope="col">Date</th>
+			  <th scope="col">Username</th>
+			  <th scope="col">Bottles</th>
+			  <th scope="col">£</th>
+			  <th scope="col">Name</th>
+			</tr>
+		  </thead>
+		  <tbody>
+			  <?php
+			  $daysToInclude = $settings->get('logs_display');
+			  $transactions = $wines->transactionsGrouped([
+				  'DATE(date)' => ['>', date('Y-m-d', strtotime('- ' . $daysToInclude . ' days '))]
+			  ]);
+			  
+			  foreach ($transactions as $transaction) {
+				  $url = "index.php?page=wine_transaction&uid=" . $transaction->uid;
+				  
+				  $output  = "<tr>";
+				  $output .= "<th scope=\"row\">" . formatDate($transaction->date, 'short') . "</th>";
+				  $output .= "<td>" . ($transaction->username) . "</td>";
+				  $output .= "<td>" . $transaction->totalBottles() . "</td>";
+				  $output .= "<td>" . formatMoney($transaction->totalValue()) . "</td>";
+				  $output .= "<td><a href=\"" . $url . "\">" . htmlspecialchars($transaction->name) . "</a></td>";
+				  $output .= "</tr>";
+				  
+				  echo $output;
+			  }
+			  ?>
+			  
+			
+		  </tbody>
+		</table>
 	</div>
 </div>
 

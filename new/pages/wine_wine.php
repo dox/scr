@@ -133,7 +133,7 @@ echo $wine->statusBanner();
 						 'index.php?page=wine_filter'
 						 . '&conditions[0][field]=wine_wines.vintage'
 						 . '&conditions[0][operator]=='
-						 . '&conditions[0][value]=' . rawurlencode($wine->vintage)
+						 . '&conditions[0][value]=' . rawurlencode($wine->vintage())
 						 . '&conditions[1][field]=wine_wines.status'
 						 . '&conditions[1][operator]=!='
 						 . '&conditions[1][value]=Closed';
@@ -180,11 +180,39 @@ echo $wine->statusBanner();
 			<div class="card mb-3">
 				  <div class="card-body">
 					  <h5 class="card-title">Transactions</h5>
-					  <?php
-					  echo "Coming soon";
-					  //$transaction = new transaction();
-					  //echo $transaction->transactionsTable($wine->transactions());
-					  ?>
+					  
+					  <table class="table mt-3">
+						<thead>
+						  <tr>
+							<th scope="col">Date</th>
+							<th scope="col">Username</th>
+							<th scope="col">Bottles</th>
+							<th scope="col">£</th>
+							<th scope="col">Name</th>
+						  </tr>
+						</thead>
+						<tbody>
+							<?php
+							$transactions = $wines->transactions([
+								'wine_uid' => ['=', $wine->uid]
+							]);
+							
+							foreach ($transactions as $transaction) {
+								$url = "index.php?page=wine_transaction&uid=" . $transaction->uid;
+								
+								$output  = "<tr>";
+								$output .= "<th scope=\"row\">" . formatDate($transaction->date, 'short') . "</th>";
+								$output .= "<td>" . ($transaction->username) . "</td>";
+								$output .= "<td>" . $transaction->totalBottles() . "</td>";
+								$output .= "<td>" . formatMoney($transaction->totalValue()) . "</td>";
+								$output .= "<td><a href=\"" . $url . "\">" . htmlspecialchars($transaction->name) . "</a></td>";
+								$output .= "</tr>";
+								
+								echo $output;
+							}
+							?>
+						</tbody>
+					  </table>
 				  </div>
 			  </div>
 		  </div>
