@@ -23,7 +23,23 @@ foreach ($conditions as $condition) {
 }
 
 $wineResults = $wines->wines($conditionArray);
+
+$total = 0;
+foreach ($wineResults as $wine) {
+	$total += $wine->currentQty();
+}
 ?>
+<?php
+$wineCount   = count($wineResults);
+$bottleCount = $total;
+?>
+
+<h2>
+	<?= $wineCount . autoPluralise(' wine ', ' wines ', $wineCount) ?>
+	<small class="text-muted">
+		<?= $bottleCount . autoPluralise(' bottle', ' bottles', $bottleCount) ?>
+	</small>
+</h2>
 
 <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 mb-3">
 	<?php

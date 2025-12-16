@@ -12,9 +12,15 @@ $subtitleArray = [];
 
 foreach ($fields as $field) {
 	if (!empty($wine->$field)) {
-		$value = htmlspecialchars($wine->$field, ENT_QUOTES, 'UTF-8');
-		$urlValue = urlencode($wine->$field);
-		$subtitleArray[] = "<a href=\"index.php?page=wine_filter&filter=wine_wines.{$field}&value={$urlValue}\">{$value}</a>";
+		$url = "index.php?page=wine_filter
+		&conditions[0][field]=wine_wines." . $field . "
+		&conditions[0][operator]==
+		&conditions[0][value]=" . $wine->$field . "
+		&conditions[1][field]=wine_wines.status
+		&conditions[1][operator]=!=
+		&conditions[1][value]=Closed";
+		
+		$subtitleArray[] = "<a href=\"" . htmlspecialchars($url) . "\">" . $wine->$field . "</a>";
 	}
 }
 
@@ -122,7 +128,17 @@ echo $wine->statusBanner();
 			  <div class="card mb-3">
 				  <div class="card-body">
 					  <div class="subheader text-nowrap text-truncate">Vintage</div>
-					  <div class="h1 text-truncate"><a href="index.php?page=wine_filter&filter=wine_wines.vintage&value=<?php echo $wine->vintage; ?>"><?php echo $wine->vintage(); ?></a></div>
+					 <?php
+					 $url =
+						 'index.php?page=wine_filter'
+						 . '&conditions[0][field]=wine_wines.vintage'
+						 . '&conditions[0][operator]=='
+						 . '&conditions[0][value]=' . rawurlencode($wine->vintage)
+						 . '&conditions[1][field]=wine_wines.status'
+						 . '&conditions[1][operator]=!='
+						 . '&conditions[1][value]=Closed';
+					 ?>
+					  <div class="h1 text-truncate"><a href="<?= htmlspecialchars($url) ?>"><?php echo htmlspecialchars($wine->vintage()); ?></a></div>
 				  </div>
 			  </div>
 		  </div>
@@ -130,7 +146,17 @@ echo $wine->statusBanner();
 			  <div class="card mb-3">
 				  <div class="card-body">
 					  <div class="subheader text-nowrap text-truncate">Wine Code</div>
-					  <div class="h1 text-truncate"><a href="index.php?page=wine_filter&filter=wine_wines.code&value=<?php echo $wine->code; ?>"><?php echo $wine->code; ?></a></div>
+					  <?php
+					   $url =
+						   'index.php?page=wine_filter'
+						   . '&conditions[0][field]=wine_wines.code'
+						   . '&conditions[0][operator]=='
+						   . '&conditions[0][value]=' . rawurlencode($wine->code)
+						   . '&conditions[1][field]=wine_wines.status'
+						   . '&conditions[1][operator]=!='
+						   . '&conditions[1][value]=Closed';
+					   ?>
+					  <div class="h1 text-truncate"><a href="<?= htmlspecialchars($url) ?>"><?php echo htmlspecialchars($wine->code); ?></a></div>
 				  </div>
 			  </div>
 		  </div>
@@ -174,13 +200,22 @@ echo $wine->statusBanner();
 						  <h5 class="card-title">Supplier</h5>
 						  <?php
 						  if (!empty($wine->supplier)) {
-							echo "<p class=\"card-text\"><a href=\"index.php?page=wine_filter&filter=wine_wines.supplier&value=" . $wine->supplier . "\">" . $wine->supplier . "</a></p>";
+							 $url =
+								 'index.php?page=wine_filter'
+								 . '&conditions[0][field]=wine_wines.supplier'
+								 . '&conditions[0][operator]=='
+								 . '&conditions[0][value]=' . rawurlencode($wine->supplier)
+								 . '&conditions[1][field]=wine_wines.status'
+								 . '&conditions[1][operator]=!='
+								 . '&conditions[1][value]=Closed';
+								 
+							echo "<p class=\"card-text\"><a href=\"" . htmlspecialchars($url) . "\">" . htmlspecialchars($wine->supplier) . "</a></p>";
 							}
 							?>
 					  </div>
 					  <?php
 					  if (!empty($wine->supplier)) {
-						  echo "<ul class=\"list-group list-group-flush\"><li class=\"list-group-item\">Ref: " . $wine->supplier_ref . "</li></ul>";
+						  echo "<ul class=\"list-group list-group-flush\"><li class=\"list-group-item\">Ref: " . htmlspecialchars($wine->supplier_ref) . "</li></ul>";
 						}
 						?>
 				  </div>

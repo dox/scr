@@ -70,6 +70,15 @@ class Wine {
 		return $bin->name;
 	}
 	
+	public function code(): string{
+		// If $this->code is null, empty, or only whitespace, return 0
+		if (!isset($this->code) || trim((string)$this->code) === '') {
+			return 0;
+		}
+		
+		return (string) $this->code;
+	}
+	
 	public function photographURL(): string {
 		$urlPath  = '/new/uploads/wines/';
 		$filePath = $_SERVER['DOCUMENT_ROOT'] . $urlPath;
@@ -153,9 +162,36 @@ class Wine {
 		$output .= "<p class=\"card-text text-truncate\">" . $cellar->name . " / " . $bin->name . "</p>";
 		$output .= "<div class=\"d-flex justify-content-between align-items-center\">";
 		$output .= "<div class=\"btn-group\">";
-		$output .= "<a href=\"index.php?page=wine_filter&filter=wine_wines.price_purchase&value=" . $this->price_purchase . "\" type=\"button\" class=\"btn btn-sm btn-outline-secondary\">" . formatMoney($this->price_purchase) . "</a>";
-		$output .= "<a href=\"index.php?page=wine_filter&filter=wine_wines.code&value=" . $this->code . "\" type=\"button\" class=\"btn btn-sm btn-outline-secondary\">" . $this->code . "</a>";
-		$output .= "<a href=\"index.php?page=wine_filter&filter=wine_wines.vintage&value=" . $this->vintage . "\" type=\"button\" class=\"btn btn-sm btn-outline-secondary\">" . $this->vintage() . "</a>";
+		
+		$url =
+		   'index.php?page=wine_filter'
+		   . '&conditions[0][field]=wine_wines.price_purchase'
+		   . '&conditions[0][operator]=='
+		   . '&conditions[0][value]=' . rawurlencode($this->price_purchase)
+		   . '&conditions[1][field]=wine_wines.status'
+		   . '&conditions[1][operator]=!='
+		   . '&conditions[1][value]=Closed';
+		$output .= "<a href=\"" . htmlspecialchars($url) . "\" type=\"button\" class=\"btn btn-sm btn-outline-secondary\">" . formatMoney($this->price_purchase) . "</a>";
+		
+		$url =
+		   'index.php?page=wine_filter'
+		   . '&conditions[0][field]=wine_wines.code'
+		   . '&conditions[0][operator]=='
+		   . '&conditions[0][value]=' . rawurlencode($this->code())
+		   . '&conditions[1][field]=wine_wines.status'
+		   . '&conditions[1][operator]=!='
+		   . '&conditions[1][value]=Closed';
+		$output .= "<a href=\"" . htmlspecialchars($url) . "\" type=\"button\" class=\"btn btn-sm btn-outline-secondary\">" . $this->code . "</a>";
+		
+		$url =
+		   'index.php?page=wine_filter'
+		   . '&conditions[0][field]=wine_wines.vintage'
+		   . '&conditions[0][operator]=='
+		   . '&conditions[0][value]=' . rawurlencode($this->vintage(true))
+		   . '&conditions[1][field]=wine_wines.status'
+		   . '&conditions[1][operator]=!='
+		   . '&conditions[1][value]=Closed';
+		$output .= "<a href=\"" . htmlspecialchars($url) . "\" type=\"button\" class=\"btn btn-sm btn-outline-secondary\">" . $this->vintage() . "</a>";
 		$output .= "</div>";
 		$output .= $this->statusBadge();
 		$output .= "<small class=\"text-body-secondary\">" . $this->currentQty() . autoPluralise(" bottle", " bottles", $this->currentQty()) . " </small>";
@@ -179,19 +215,14 @@ class Wine {
 		return $output;
 	}
 	
-	public function vintage() {
-		// Check if the vintage is null or empty
-		if (empty($this->vintage)) {
-			return 'NV';
+	public function vintage(bool $int = false) {
+		// Normalize empty or null vintages
+		if (empty($this->vintage) || !preg_match('/^\d{4}$/', $this->vintage)) {
+			return $int ? '' : 'NV';
 		}
-		
-		// Check if the vintage is a valid year in the format YYYY
-		if (preg_match('/^\d{4}$/', $this->vintage)) {
-			return $this->vintage;
-		}
-		
-		// If it's not valid, return 'NV'
-		return 'NV';
+	
+		// Return as integer or string based on $int
+		return $int ? (int) $this->vintage : $this->vintage;
 	}
 	
 	public function statusBanner() {

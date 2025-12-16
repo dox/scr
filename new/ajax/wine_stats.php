@@ -30,6 +30,14 @@ if ($cellarUID) {
 	$categories = array_slice(explode(",", $settings->get('wine_category')), 0, 5, true);
 	
 	foreach ($categories as $category): 
+		$url = "index.php?page=wine_filter
+		&conditions[0][field]=wine_wines.category
+		&conditions[0][operator]==
+		&conditions[0][value]=" . htmlspecialchars($category) ."
+		&conditions[1][field]=wine_wines.status
+		&conditions[1][operator]=!=
+		&conditions[1][value]=Closed";
+		
 		if ($cellarUID) {
 			$cellar = new Cellar($cellarUID);
 			
@@ -38,17 +46,31 @@ if ($cellarUID) {
 				'wine_wines.category' => ['=', $category],
 				'wine_wines.status' => ['<>', 'Closed']
 			]);
+			
+			$url .= "&conditions[3][field]=wine_bins.cellar_uid
+			&conditions[3][operator]==
+			&conditions[3][value]=" . $cellarUID;
 		} else {
 			$winesByCategory = $wines->wines([
-				'wine_wines.category' => ['=', $category]
+				'wine_wines.category' => ['=', $category],
+				'wine_wines.status' => ['<>', 'Closed']
 			]);
+		}
+		
+		// get the total number of bottles for each wine
+		$total = 0;
+		foreach ($winesByCategory as $wine) {
+			$total += $wine->currentQty();
 		}
 		?>
 		<div class="col">
 			<div class="card mb-3">
 				<div class="card-body">
-					<div class="subheader text-nowrap text-truncate"><?= htmlspecialchars($category) ?></div>
-					<div class="h1 text-truncate"><?= number_format(count($winesByCategory)) ?></div>
+					<?php
+					
+					?>
+					<div class="subheader text-nowrap text-truncate"><a href="<?= $url ?>"><?= htmlspecialchars($category) ?></a></div>
+					<div class="h1 text-truncate"><?= number_format($total) ?></div>
 				</div>
 			</div>
 		</div>

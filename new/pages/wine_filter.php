@@ -5,15 +5,26 @@ $wines = new Wines();
 
 /**
  * Optional pre-fill via GET
- * ?filter=wine_wines.supplier&value=Majestic&operator==
+ * Example:
+ * ?conditions[0][field]=wine_wines.supplier
+ * &conditions[0][operator]== 
+ * &conditions[0][value]=Majestic
+ * &conditions[1][field]=wine_wines.country_of_origin
+ * &conditions[1][operator]==
+ * &conditions[1][value]=France
  */
-$prefill = null;
-if (!empty($_GET['filter']) && isset($_GET['value'])) {
-	$prefill = [
-		'field'    => $_GET['filter'],
-		'operator' => $_GET['operator'] ?? '=',
-		'value'    => $_GET['value'],
-	];
+$prefill = [];
+
+if (!empty($_GET['conditions']) && is_array($_GET['conditions'])) {
+	foreach ($_GET['conditions'] as $c) {
+		if (!empty($c['field']) && isset($c['value'])) {
+			$prefill[] = [
+				'field'    => $c['field'],
+				'operator' => $c['operator'] ?? '=',
+				'value'    => $c['value'],
+			];
+		}
+	}
 }
 
 echo pageTitle(
@@ -22,12 +33,12 @@ echo pageTitle(
 );
 
 $fieldSources = [
-	'wine_wines.supplier'			=> $wines->listFromWines("supplier"),
-	'wine_wines.category'			=> $wines->listFromWines("category"),
-	'wine_wines.grape'				=> $wines->listFromWines("grape"),
-	'wine_wines.country_of_origin'	=> $wines->listFromWines("country_of_origin"),
-	'wine_wines.region_of_origin'	=> $wines->listFromWines("region_of_origin"),
-	'wine_wines.status'				=> $wines->listFromWines("status"),
+	'wine_wines.supplier'            => $wines->listFromWines("supplier"),
+	'wine_wines.category'            => $wines->listFromWines("category"),
+	'wine_wines.grape'               => $wines->listFromWines("grape"),
+	'wine_wines.country_of_origin'   => $wines->listFromWines("country_of_origin"),
+	'wine_wines.region_of_origin'    => $wines->listFromWines("region_of_origin"),
+	'wine_wines.status'              => $wines->listFromWines("status"),
 ];
 
 $fields = [
@@ -76,9 +87,9 @@ $fields = [
 <div id="resultsContainer"></div>
 
 <script>
-const fieldDefinitions = <?= json_encode($fields) ?>;
-const fieldSources     = <?= json_encode($fieldSources) ?>;
-const prefillCondition = <?= json_encode($prefill) ?>;
+const fieldDefinitions   = <?= json_encode($fields) ?>;
+const fieldSources       = <?= json_encode($fieldSources) ?>;
+const prefillConditions  = <?= json_encode($prefill) ?>;
 
 function makeFieldOptions() {
 	return fieldDefinitions
@@ -91,7 +102,7 @@ function makeOperatorOptions(ops = ['=']) {
 }
 
 function findFieldDef(value) {
-	return fieldDefinitions.find(f => f.value === value) || null;
+	return fieldDefinitions.find(f => f.value === value) || fieldDefinitions[0];
 }
 
 function makeValueInput(def, idx) {
@@ -104,23 +115,33 @@ function makeValueInput(def, idx) {
 }
 
 function addConditionRow({ field, operator, value } = {}) {
-	const idx = Date.now();
-	const def = findFieldDef(field) || fieldDefinitions[0];
+	const idx = Date.now() + Math.random();
+	const def = findFieldDef(field);
 	const ops = def.operators || ['='];
 
 	const html = `
-	<div class="d-flex gap-2 mb-2 condition-row" data-idx="${idx}">
-		<select name="conditions[${idx}][field]" class="form-select field-select">
-			${makeFieldOptions()}
-		</select>
+	<div class="row g-2 mb-2 align-items-center condition-row" data-idx="${idx}">
+		<div class="col">
+			<select name="conditions[${idx}][field]" class="form-select field-select">
+				${makeFieldOptions()}
+			</select>
+		</div>
 
-		<select name="conditions[${idx}][operator]" class="form-select operator-select">
-			${makeOperatorOptions(ops)}
-		</select>
+		<div class="col">
+			<select name="conditions[${idx}][operator]" class="form-select operator-select">
+				${makeOperatorOptions(ops)}
+			</select>
+		</div>
 
-		${makeValueInput(def, idx)}
+		<div class="col">
+			${makeValueInput(def, idx)}
+		</div>
 
-		<button type="button" class="btn btn-danger btn-sm removeRow">Remove</button>
+		<div class="col-auto">
+			<button type="button" class="btn btn-danger btn-sm removeRow">
+				Remove
+			</button>
+		</div>
 	</div>
 	`;
 
@@ -137,18 +158,15 @@ function addConditionRow({ field, operator, value } = {}) {
 	}
 }
 
-// Add button
 document.getElementById('addBtn').addEventListener('click', () => {
 	addConditionRow();
 });
 
-// Field change handler
 document.getElementById('conditionsContainer').addEventListener('change', e => {
 	if (!e.target.classList.contains('field-select')) return;
 
 	const row = e.target.closest('.condition-row');
 	const def = findFieldDef(e.target.value);
-	if (!def) return;
 
 	row.querySelector('.operator-select').innerHTML =
 		makeOperatorOptions(def.operators);
@@ -157,21 +175,20 @@ document.getElementById('conditionsContainer').addEventListener('change', e => {
 		makeValueInput(def, row.dataset.idx);
 });
 
-// Remove row
 document.getElementById('conditionsContainer').addEventListener('click', e => {
 	if (e.target.classList.contains('removeRow')) {
 		e.target.closest('.condition-row').remove();
 	}
 });
 
-// Submit via AJAX
 document.getElementById('searchForm').addEventListener('submit', e => {
 	e.preventDefault();
 
 	const results = document.getElementById('resultsContainer');
-	results.innerHTML = `<div class="text-center my-4">
-		<div class="spinner-border"></div>
-	</div>`;
+	results.innerHTML = `
+		<div class="text-center my-4">
+			<div class="spinner-border"></div>
+		</div>`;
 
 	fetch('./ajax/wine_filter.php', {
 		method: 'POST',
@@ -183,11 +200,10 @@ document.getElementById('searchForm').addEventListener('submit', e => {
 		`<div class="alert alert-danger">${err}</div>`);
 });
 
-// Apply prefill on load
-if (prefillCondition) {
-	addConditionRow(prefillCondition);
+// Apply prefills on load
+if (prefillConditions.length) {
+	prefillConditions.forEach(c => addConditionRow(c));
 
-	// Auto-submit once the condition exists
 	document.getElementById('searchForm')
 		.dispatchEvent(new Event('submit', { cancelable: true }));
 }

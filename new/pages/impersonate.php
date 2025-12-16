@@ -41,7 +41,7 @@ echo pageTitle(
 			
 			<div class="form-check mb-3">
 				<input type="checkbox" class="form-check-input" id="maintainAdminAccess" name="maintainAdminAccess" value="1" checked>
-				<label class="form-check-label" for="maintainAdminAccess">Maintain Current Access Level*</label>
+				<label class="form-check-label" for="maintainAdminAccess">Maintain Current Access Level †</label>
 			</div>
 			
 			<button type="submit" class="btn btn-primary w-100">Impersonate</button>
@@ -50,8 +50,7 @@ echo pageTitle(
 		
 		<p class="small">
 			†<span class="text-muted">
-				By default, when you impersonate another member, you retain your access.  
-				Uncheck to walk in another’s shoes, permissions and all.
+				By default, when you impersonate another member, you retain your current level of access. Uncheck this option to see this site with the same permissions as the other member.
 			</span>
 		</p>
 	</form>

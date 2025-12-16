@@ -42,7 +42,18 @@ $sql .= " LIMIT 8";
 // Assume $db->fetchAll returns array of rows
 $rows = $db->fetchAll($sql, $params);
 
+$wineSearchResults = [];
+
+foreach ($rows as $row) {
+	$wine = new Wine($row['uid']);
+	
+	$wineSearchResults[] = [
+		'uid' => $wine->uid,
+		'name' => $wine->clean_name(true) . " (Qty. " . $wine->currentQty() . ")"
+	];
+}
+
 $response["success"] = true;
-$response["data"] = $rows;
+$response["data"] = $wineSearchResults;
 
 echo json_encode($response);

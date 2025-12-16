@@ -558,7 +558,18 @@ class Wines extends Model {
 			// Allow [operator, value] style input
 			if (is_array($rule)) {
 				[$operator, $value] = $rule;
-	
+			
+				// Handle NULL specially
+				if ($value === null || empty($value)) {
+					if (strtoupper($operator) === '=') {
+						$conditions[] = "$key IS NULL";
+					} elseif (strtoupper($operator) === '!=') {
+						$conditions[] = "$key IS NOT NULL";
+					}
+					continue;
+				}
+			
+				// Existing handling
 				if (strtoupper($operator) === 'IN' && is_array($value)) {
 					$value = array_map(fn($v) => "'" . addslashes($v) . "'", $value);
 					$conditions[] = "$key IN (" . implode(',', $value) . ")";
@@ -569,11 +580,6 @@ class Wines extends Model {
 					$value = addslashes($value);
 					$conditions[] = "$key $operator '$value'";
 				}
-	
-			} else {
-				// Fallback to simple equals
-				$value = addslashes($rule);
-				$conditions[] = "$key = '$value'";
 			}
 		}
 	
@@ -582,7 +588,7 @@ class Wines extends Model {
 		}
 	
 		$sql .= " ORDER BY wine_bins.name ASC";
-	
+		
 		$rows = $db->query($sql)->fetchAll();
 	
 		$wines = [];
