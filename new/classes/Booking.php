@@ -214,12 +214,12 @@ class Booking extends Model {
 	
 	public function wineChoice(): string {
 		$meal = new Meal($this->meal_uid);
-		
+	
 		if ($meal->allowed_wine != 1) {
-			return "None";
-		} else {
-			return $this->wine_choice;
+			return 'None';
 		}
+	
+		return $this->wine_choice ?? 'None';
 	}
 	
 	public function dessertChoice(): string {

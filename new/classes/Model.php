@@ -84,7 +84,6 @@ class Log extends Model {
 	public const WARNING = 'WARNING';
 	public const ERROR   = 'ERROR';
 	public const DEBUG   = 'DEBUG';
-	  
 	
 	public function add(string $description, string $category = self::INFO): bool {
 		global $user;

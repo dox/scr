@@ -69,29 +69,30 @@ echo pageTitle(
 		<h4>Personal Information</h4>
 		
 		<form method="post" action="<?= htmlspecialchars($_SERVER['REQUEST_URI']) ?>">
-			<div class="mb-3">
-				<label for="title" class="form-label">Title</label>
-				<select class="form-select" name="title" id="title" required>
-					<?php
-					$memberTitles = explode(',', $settings->get('member_titles'));
-					
-					foreach ($memberTitles as $title) {
-						$title = trim($title);
-						$selected = ($title === $member->title) ? ' selected' : '';
-						echo "<option value=\"{$title}\"{$selected}>{$title}</option>";
-					}
-					?>
-				</select>
-				<div class="invalid-feedback">
-					Title is required.
+			<div class="row">
+				<div class="col-3 mb-3">
+					<label for="title" class="form-label">Title</label>
+					<select class="form-select" name="title" id="title" required>
+						<?php
+						$memberTitles = explode(',', $settings->get('member_titles'));
+						
+						foreach ($memberTitles as $title) {
+							$title = trim($title);
+							$selected = ($title === $member->title) ? ' selected' : '';
+							echo "<option value=\"{$title}\"{$selected}>{$title}</option>";
+						}
+						?>
+					</select>
+					<div class="invalid-feedback">
+						Title is required.
+					</div>
 				</div>
-			</div>
-			
-			<div class="mb-3">
-				<label for="firstname" class="form-label">First name</label>
-				<input type="text" class="form-control" name="firstname" id="firstname" placeholder="First Name" value="<?php echo $member->firstname; ?>" required>
-				<div class="invalid-feedback">
-					Valid first name is required.
+				<div class="col mb-3">
+					<label for="firstname" class="form-label">First name</label>
+					<input type="text" class="form-control" name="firstname" id="firstname" placeholder="First Name" value="<?php echo $member->firstname; ?>" required>
+					<div class="invalid-feedback">
+						Valid first name is required.
+					</div>
 				</div>
 			</div>
 			
@@ -101,6 +102,11 @@ echo pageTitle(
 				<div class="invalid-feedback">
 					Valid last name is required.
 				</div>
+			</div>
+			
+			<div class="mb-3">
+				<label for="email" class="form-label">Email <span class="text-muted">(Optional)</span></label>
+				<input type="email" class="form-control" name="email" id="email" placeholder="Email address" value="<?php echo $member->email; ?>">
 			</div>
 			
 			<div class="mb-3">
@@ -169,10 +175,7 @@ echo pageTitle(
 				</div>
 			</div>
 			
-			<div class="mb-3">
-				<label for="email" class="form-label">Email <span class="text-muted">(Optional)</span></label>
-				<input type="email" class="form-control" name="email" id="email" placeholder="Email address" value="<?php echo $member->email; ?>">
-			</div>
+			
 			
 			<div class="mb-3">
 				<label for="enabled" class="form-label">Enabled/Disabled Status</label>

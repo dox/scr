@@ -1,11 +1,31 @@
 <?php
 $user->pageCheck('logs');
 
-$logsDisplay = $settings->get('logs_display');
+$logsDisplay   = $settings->get('logs_display');
 $logsRetention = $settings->get('logs_retention');
 
+/* Accept the search term, if offered */
+$searchTerm = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['logs_search'])) {
+	$searchTerm = trim($_POST['logs_search'] ?? '');
+
+	$sql = "
+		SELECT *
+		FROM logs
+		WHERE description LIKE ?
+		   OR username    LIKE ?
+		ORDER BY date DESC";
+
+	$like = '%' . $searchTerm . '%';
+
+	$logResults = $db->fetchAll($sql, [$like, $like]);
+} else {
+	$logResults = $log->getRecent(3);
+}
+
 echo pageTitle(
-	"Logs",
+	'Logs',
 	"Admin/User logs for the last {$logsDisplay} days ({$logsRetention} days available)"
 );
 ?>
@@ -13,6 +33,22 @@ echo pageTitle(
 <div class="mb-3">
 	<canvas id="chart_logsByDay" style="height: 250px;"></canvas>
 </div>
+
+<form method="post" id="logsSearchForm" action="<?= htmlspecialchars($_SERVER['REQUEST_URI']) ?>">
+	<div class="input-group mb-3">
+		<input
+			type="text"
+			class="form-control form-control-lg"
+			name="logs_search"
+			id="logs_search"
+			placeholder="Search logs"
+			value="<?= htmlspecialchars($searchTerm) ?>"
+		>
+		<button class="btn btn-outline-secondary" type="submit">
+			Search
+		</button>
+	</div>
+</form>
 
 <table class="table table-striped">
 	<thead>
@@ -28,7 +64,7 @@ echo pageTitle(
 		<?php
 		$chartData = [];
 		
-		foreach ($log->getRecent(3) as $row) {
+		foreach ($logResults as $row) {
 			if ($row['category'] == "INFO") {
 				$typeBadgeClass = "text-bg-info";
 			} elseif ($row['category'] == "WARNING") {

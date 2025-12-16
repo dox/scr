@@ -1,8 +1,8 @@
 <?php
 include_once "inc/autoload.php";
 
-if (!$user->isLoggedIn()) {
-	die("User not logged in.");
+if (!$user->isLoggedIn() || !$user->hasPermission("reports")) {
+	die("User does not have permission to run reports or is not logged in.");
 }
 
 // Always force CSV download
@@ -19,9 +19,7 @@ $allowed = [
 // Determine requested report
 $report = $_GET['page'] ?? '';
 if (!array_key_exists($report, $allowed)) {
-	// Fail safely
-	echo "error,unknown report\n";
-	exit;
+	die("Unknown report requested.");
 }
 
 // Create a CSV output handle for included pages to write to
