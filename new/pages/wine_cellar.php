@@ -7,8 +7,13 @@ $cellar = new cellar($cleanUID);
 $meals = new Meals();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-	$cellar->update($_POST);
-	$cellar = new Cellar($cleanUID);
+	if (isset($_POST['uid'])) {
+		$cellar->update($_POST);
+		$cellar = new Cellar($cleanUID);
+	} else {
+		$bin = new Bin();
+		$bin->create($_POST);
+	}
 }
 
 echo pageTitle(
@@ -34,7 +39,7 @@ echo pageTitle(
 			'icon' => 'plus-circle',
 			'data' => [
 				'bs-toggle' => 'modal',
-				'bs-target' => '#deleteTermModal'
+				'bs-target' => '#addBinModal'
 			]
 		],
 		[
@@ -54,17 +59,6 @@ echo pageTitle(
 			'class' => '',
 			'event' => '',
 			'icon' => 'receipt',
-			'data' => [
-				'bs-toggle' => 'modal',
-				'bs-target' => '#deleteTermModal'
-			]
-		],
-		[
-			'permission' => 'wine',
-			'title' => 'Delete Cellar',
-			'class' => 'text-danger',
-			'event' => '',
-			'icon' => 'trash3',
 			'data' => [
 				'bs-toggle' => 'modal',
 				'bs-target' => '#deleteTermModal'
@@ -116,7 +110,7 @@ echo pageTitle(
 foreach ($cellar->sections() as $cellarSection) {
 	$winesByBin[$cellarSection] = $wines->wines([
 		'wine_bins.cellar_uid' => ['=', $cellar->uid],
-		'wine_bins.category' => ['=', $cellarSection],
+		'wine_bins.section' => ['=', $cellarSection],
 		'wine_wines.status' => ['<>', 'Closed']
 	]);
 }
@@ -175,6 +169,57 @@ endforeach; ?>
 
 
 
+<!-- Add Bin Modal -->
+<div class="modal fade" tabindex="-1" id="addBinModal" data-backdrop="static" data-keyboard="false" aria-hidden="true">
+	<form method="post" action="<?= htmlspecialchars($_SERVER['REQUEST_URI']) ?>">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Add Bin</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<div class="mb-3">
+					<label for="cellar_uid" class="form-label">Cellar</label>
+					<select class="form-select" name="cellar_uid" id="cellar_uid" required>
+						<?php
+						foreach ($wines->cellars() as $cellarChoice) {
+							$title = trim($cellarChoice->name);
+							$selected = ($cellarChoice->uid === $cellar->uid) ? ' selected' : '';
+							echo "<option value=\"{$cellarChoice->uid}\"{$selected}>{$title}</option>";
+						}
+						?>
+					</select>
+				</div>
+				<div class="mb-3">
+					<label for="name" class="form-label">Bin Name</label>
+					<input type="text" class="form-control" id="name" name="name">
+				</div>
+				<div class="mb-3">
+					<label for="section" class="form-label">Bin Section</label>
+					<select class="form-select" name="section" id="section" required>
+						<?php
+						foreach ($cellar->sections() as $section) {
+							$title = trim($section);
+							echo "<option value=\"{$title}\">{$title}</option>";
+						}
+						?>
+					</select>
+				</div>
+				<div class="mb-3">
+					<label for="description" class="form-label">Bin Description</label>
+					<textarea class="form-control" id="description" name="description" rows="3"></textarea>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-link text-muted" data-bs-dismiss="modal">Close</button>
+				<button type="submit" class="btn btn-primary">Add Bin</button>
+			</div>
+		</div>
+	</div>
+	</form>
+</div>
+
 <!-- Edit Cellar Modal -->
 <div class="modal fade" tabindex="-1" id="editCellarModal" data-backdrop="static" data-keyboard="false" aria-hidden="true">
 	<form method="post" action="<?= htmlspecialchars($_SERVER['REQUEST_URI']) ?>">
@@ -228,7 +273,7 @@ endforeach; ?>
 				</div>
 				<div class="mb-3">
 					<label for="description" class="form-label">Sections</label>
-					<textarea class="form-control" id="bin_types" name="bin_types" rows="3"><?= htmlspecialchars($cellar->bin_types) ?></textarea>
+					<textarea class="form-control" id="sections" name="sections" rows="3"><?= htmlspecialchars($cellar->sections) ?></textarea>
 					<div id="bin-typesHelp" class="form-text">Comma,Separated,List</div>
 				</div>
 				<div class="mb-3">

@@ -3,11 +3,11 @@ class Bin extends Model {
 	public $uid;
 	public $cellar_uid;
 	public $name;
-	public $category;
+	public $section;
 	public $description;
 	
 	protected $db;
-	protected static string $table_bins = 'wine_bins';
+	protected static string $table = 'wine_bins';
 	
 	public function __construct($uid = null) {
 		$this->db = Database::getInstance();
@@ -18,7 +18,7 @@ class Bin extends Model {
 	}
 	
 	public function getOne($uid) {
-		$query = "SELECT * FROM " . static::$table_bins . " WHERE uid = ?";
+		$query = "SELECT * FROM " . static::$table . " WHERE uid = ?";
 		$row = $this->db->fetch($query, [$uid]);
 	
 		if ($row) {
@@ -26,6 +26,30 @@ class Bin extends Model {
 				$this->$key = $value;
 			}
 		}
+	}
+	
+	public function update(array $postData) {
+		global $db;
+	
+		// Map normal text/select fields
+		$fields = [
+			'name'      => $postData['name'] ?? null,
+			'cellar_uid'  => $postData['cellar_uid'] ?? null,
+			'section'   => $postData['section'] ?? null,
+			'description'   => $postData['description'] ?? null
+		];
+		
+		// Send to database update
+		$updatedRows = $db->update(
+			static::$table,
+			$fields,
+			['uid' => $this->uid],
+			'logs'
+		);
+		
+		toast('Bin Updated', 'Bin sucesfully updated', 'text-success');
+	
+		return $updatedRows;
 	}
 	
 	public function wines($whereArray = null): array {
@@ -43,7 +67,7 @@ class Bin extends Model {
 		
 		$binsBySection = $wines->bins([
 			'cellar_uid' => ['=', $cellar_uid],
-			'wine_bins.category' => ['=', $cellar_section]
+			'wine_bins.section' => ['=', $cellar_section]
 		]);
 		
 		$sql = "SELECT * FROM wine_wines WHERE bin_uid = ?";

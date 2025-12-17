@@ -77,7 +77,7 @@ if ($pageType == "add") {
 						
 						$filter = array(
 							'cellar_uid' => $cellar->uid,
-							'category' => $binType
+							'section' => $binType
 						);
 						foreach ($wineClass->allBins($filter) AS $binOption) {
 							if ($binOption['uid'] == $wine->bin_uid) {

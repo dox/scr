@@ -5,7 +5,7 @@ class bin {
 	public $uid;
 	public $cellar_uid;
 	public $name;
-	public $category;
+	public $section;
 	public $description;
 	
 	function __construct($cellarUID = null) {

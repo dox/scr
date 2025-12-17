@@ -10,7 +10,7 @@ if (isset($_POST['addBin'])) {
 	$newBin = new bin();
 	$newBin->cellar_uid = $_POST['cellar_uid'];
 	$newBin->name = $_POST['name'];
-	$newBin->category = $_POST['category'];
+	$newBin->section = $_POST['section'];
 	$newBin->description = $_POST['description'];
 	
 	$newBin->create();
@@ -101,7 +101,7 @@ echo makeTitle($title, $subtitle, $icons, true);
 	$i = 1;
 	foreach ($cellar->binTypes() as $wine_category) {
 		$active = "";
-		$url = "/nodes/widgets/_cellarBinCategory.php?cellar_uid=" . $cellar->uid . "&category=" . $wine_category;
+		$url = "/nodes/widgets/_cellarBinCategory.php?cellar_uid=" . $cellar->uid . "&section=" . $wine_category;
 		$href = "#tab" . $i;
 		
 		if ($i == 1) {

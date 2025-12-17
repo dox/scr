@@ -6,7 +6,7 @@ class cellar {
 	public $name;
 	public $short_code;
 	public $notes;
-	public $bin_types;
+	public $sections;
 	public $photograph;
 	
 	function __construct($cellarUID = null) {
@@ -96,10 +96,10 @@ class cellar {
 	  }
 	
 	public function binTypes() {
-		$types = explode(",", $this->bin_types);
+		$sections = explode(",", $this->sections);
 		
-		foreach ($types AS $type) {
-			$returnArray[] = trim($type);
+		foreach ($sections AS $section) {
+			$returnArray[] = trim($section);
 		}
 		return $returnArray;
 	}

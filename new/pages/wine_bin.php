@@ -6,9 +6,16 @@ $cleanUID = filter_var($_GET['uid'], FILTER_SANITIZE_NUMBER_INT);
 $bin = new Bin($cleanUID);
 $cellar = new Cellar($bin->cellar_uid);
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+	if (isset($_POST['uid'])) {
+		$bin->update($_POST);
+		$bin = new Bin($cleanUID);
+	}
+}
+
 echo pageTitle(
 	$bin->name,
-	$bin->category,
+	$bin->section,
 	[
 		[
 			'permission' => 'wine',
@@ -18,7 +25,7 @@ echo pageTitle(
 			'icon' => 'pencil',
 			'data' => [
 				'bs-toggle' => 'modal',
-				'bs-target' => '#addCellarModal'
+				'bs-target' => '#editBinModal'
 			]
 		],
 		[
@@ -85,3 +92,56 @@ if (!empty($closedWines)) {
 	echo "</div>";
 }
 ?>
+
+<!-- Edit Bin Modal -->
+<div class="modal fade" tabindex="-1" id="editBinModal" data-backdrop="static" data-keyboard="false" aria-hidden="true">
+	<form method="post" action="<?= htmlspecialchars($_SERVER['REQUEST_URI']) ?>">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Edit Bin</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<div class="mb-3">
+					<label for="cellar_uid" class="form-label">Cellar</label>
+					<select class="form-select" name="cellar_uid" id="cellar_uid" required>
+						<?php
+						foreach ($wines->cellars() as $cellarChoice) {
+							$title = trim($cellarChoice->name);
+							$selected = ($cellarChoice->uid === $cellar->uid) ? ' selected' : '';
+							echo "<option value=\"{$cellarChoice->uid}\"{$selected}>{$title}</option>";
+						}
+						?>
+					</select>
+				</div>
+				<div class="mb-3">
+					<label for="name" class="form-label">Bin Name</label>
+					<input type="text" class="form-control" id="name" name="name" value="<?= $bin->name ?>">
+				</div>
+				<div class="mb-3">
+					<label for="section" class="form-label">Bin Section</label>
+					<select class="form-select" name="section" id="section" required>
+						<?php
+						foreach ($cellar->sections() as $section) {
+							$title = trim($section);
+							$selected = ($title === $bin->section) ? ' selected' : '';
+							echo "<option value=\"{$title}\"{$selected}>{$title}</option>";
+						}
+						?>
+					</select>
+				</div>
+				<div class="mb-3">
+					<label for="description" class="form-label">Bin Description</label>
+					<textarea class="form-control" id="description" name="description" rows="3"><?= $bin->description ?></textarea>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-link text-muted" data-bs-dismiss="modal">Close</button>
+				<button type="submit" class="btn btn-primary">Update Bin</button>
+				<input type="hidden" name="uid" value="<?= $bin->uid ?>">
+			</div>
+		</div>
+	</div>
+	</form>
+</div>

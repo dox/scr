@@ -1,6 +1,18 @@
 <?php
 $user->pageCheck('wine');
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+	if (isset($_POST['deleteCellarUID'])) {
+		$deleteCellarUID = filter_input(INPUT_POST, 'deleteCellarUID', FILTER_SANITIZE_NUMBER_INT);
+		
+		//$term = new Term($deleteTermUID);
+		//$term->delete();
+	} else {
+		$cellar = new Cellar();
+		$cellar->create($_POST);
+	}
+}
+
 $wines = new Wines();
 
 echo pageTitle(
@@ -179,7 +191,7 @@ echo pageTitle(
 				</div>
 				<div class="mb-3">
 					<label for="description" class="form-label">Sections</label>
-					<textarea class="form-control" id="bin_types" name="bin_types" rows="3"></textarea>
+					<textarea class="form-control" id="sections" name="sections" rows="3"></textarea>
 					<div id="bin-typesHelp" class="form-text">Comma,Separated,List</div>
 				</div>
 				<div class="mb-3">

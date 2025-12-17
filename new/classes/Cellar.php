@@ -4,7 +4,7 @@ class Cellar extends Model {
 	public $name;
 	public $short_code;
 	public $notes;
-	public $bin_types;
+	public $sections;
 	public $photograph;
 	
 	protected $db;
@@ -31,27 +31,38 @@ class Cellar extends Model {
 	}
 	
 	public function sections(): array{
+		// Convert the stored CSV into an array (if empty, fall back to [])
+		$cellarSections = $this->sections
+			? array_map('trim', explode(',', $this->sections))
+			: [];
+		
 		$rows = $this->db->fetch(
-			"SELECT category FROM " . static::$table_bins . " WHERE cellar_uid = ?",
+			"SELECT section FROM " . static::$table_bins . " WHERE cellar_uid = ?",
 			[$this->uid]
 		);
-	
-		// Extract the category column directly
-		$binSections = array_column($rows, 'category');
-	
-		// Convert the stored CSV into an array (if empty, fall back to [])
-		$cellarSections = $this->bin_types
-			? array_map('trim', explode(',', $this->bin_types))
-			: [];
-	
-		// Merge, remove duplicates, discard empties, and reindex neatly
-		return array_values(
-			array_filter(
-				array_unique(
-					array_merge($binSections, $cellarSections)
+		
+		if (!empty($rows)) {
+			// Extract the section column directly
+			$binSections = array_column($rows, 'section');
+			
+			// Merge, remove duplicates, discard empties, and reindex neatly
+			return array_values(
+				array_filter(
+					array_unique(
+						array_merge($binSections, $cellarSections)
+					)
 				)
-			)
-		);
+			);
+		} else {
+			// Remove duplicates, discard empties, and reindex neatly
+			return array_values(
+				array_filter(
+					array_unique(
+						$cellarSections
+					)
+				)
+			);
+		}
 	}
 	
 	public function update(array $postData) {
@@ -62,7 +73,7 @@ class Cellar extends Model {
 			'name'      => $postData['name'] ?? null,
 			'short_code'  => $postData['short_code'] ?? null,
 			'notes'   => $postData['notes'] ?? null,
-			'bin_types'   => $postData['bin_types'] ?? null,
+			'sections'   => $postData['sections'] ?? null,
 			'photograph'   => $postData['photograph'] ?? null
 		];
 		
@@ -128,20 +139,22 @@ class Cellar extends Model {
 	
 	
 	
-	public function bottlesCount() {
+	public function bottlesCount(): int {
 		global $db;
-		
-		$sql = "SELECT SUM(wine_total) AS total_bottles_in_cellar
-		FROM (
-			SELECT cellar_uid, wine_uid, GREATEST(0, SUM(bottles)) AS wine_total
-			FROM wine_transactions
-			WHERE cellar_uid = '" . $this->uid . "'
-			GROUP BY cellar_uid, wine_uid
-		) AS wine_sums";
-		
-		$result = $db->query($sql)->fetch();
-		
-		return $result['total_bottles_in_cellar'];
+	
+		$sql = "
+			SELECT COALESCE(SUM(wine_total), 0) AS total_bottles_in_cellar
+			FROM (
+				SELECT cellar_uid, wine_uid, GREATEST(0, SUM(bottles)) AS wine_total
+				FROM wine_transactions
+				WHERE cellar_uid = ?
+				GROUP BY cellar_uid, wine_uid
+			) AS wine_sums
+		";
+	
+		$result = $db->query($sql, [$this->uid])->fetch();
+	
+		return (int) ($result['total_bottles_in_cellar'] ?? 0);
 	}
 	
 	public function card() {
