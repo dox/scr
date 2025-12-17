@@ -291,8 +291,7 @@ echo pageTitle(
 	</div>
 	<div class="col-md-5 col-lg-4">
 		<?php
-		$upcomingBookings = $member->upcomingBookings();
-		krsort($upcomingBookings);
+		$upcomingBookings = $member->bookingsBetweenDates(date('Y-m-d'), date('Y-m-d', strtotime('+1 year')));
 		?>
 		<h4 class="d-flex justify-content-between align-items-center mb-3">
 		  <span>Upcoming Meals</span>
@@ -307,7 +306,8 @@ echo pageTitle(
 		</ul>
 		
 		<?php
-		$recentBookings = $member->recentBookings();
+		$recentBookings = $member->bookingsBetweenDates(date('Y-m-d', strtotime('-1 year')), date('Y-m-d', strtotime('-1 day')));
+		krsort($recentBookings);
 		?>
 		<h4 class="d-flex justify-content-between align-items-center mb-3">
 		  <span>Recent Meals</span>

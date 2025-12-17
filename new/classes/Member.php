@@ -1,104 +1,67 @@
 <?php
 
 class Member extends Model {
-	public $uid;
-	public $enabled;
-	public $type;
-	public $ldap;
-	public $permissions;
-	public $title;
-	public $firstname;
-	public $lastname;
-	public $category;
-	public $precedence;
-	public $email;
-	public $dietary;
-	public $opt_in;
-	public $email_reminders;
-	public $default_wine; // retired
-	public $default_wine_choice;
-	public $default_dessert;
-	public $date_lastlogon;
-	public $calendar_hash;
+	public ?int $uid = null;
+	public bool $enabled = false;
+	public ?string $type = null;
+	public string $ldap = 'Unknown';
+	public ?string $permissions = null;
+	public ?string $title = null;
+	public string $firstname = 'Unknown';
+	public string $lastname = 'Unknown';
+	public ?string $category = null;
+	public ?int $precedence = 0;
+	public ?string $email = 'unknown@unknown.com';
+	public ?string $dietary = null;
+	public bool $opt_in = false;
+	public bool $email_reminders = false;
+	public ?string $default_wine_choice = null;
+	public ?string $default_dessert = null;
+	public ?string $date_lastlogon = null;
+	public ?string $calendar_hash = null;
 
 	protected $db;
 	protected static string $table = 'members';
 	
-	public function __construct() {
-		$this->uid = null;
-		$this->enabled = false;
-		$this->type = null;
-		$this->ldap = "Unknown";
-		$this->permissions = [];
-		$this->title = null;
-		$this->firstname = "Unknown";
-		$this->lastname = "Unknown";
-		$this->category = null;
-		$this->precedence = 0;
-		$this->email = "unknown@unknown.com";
-		$this->dietary = null;
-		$this->opt_in = false;
-		$this->email_reminders = false;
-		$this->default_wine_choice = null;
-		$this->default_dessert = null;
-		$this->date_lastlogon = null;
-		$this->calendar_hash = null;
+	protected static function fromField(
+		?string $value,
+		string $field,
+		string $pattern
+	): self {
+		if ($value === null || !preg_match($pattern, $value)) {
+			return new self();
+		}
+		
+		global $db;
+		
+		$row = $db->fetch(
+			"SELECT * FROM " . static::$table . " WHERE {$field} = ?",
+			[$value]
+		);
+		
+		return $row ? self::hydrate($row) : new self();
+	}
+	
+	protected static function hydrate(array $row): self {
+		$self = new self();
+		
+		foreach ($row as $key => $value) {
+			if (property_exists($self, $key)) {
+				$self->$key = $value;
+			}
+		}
+		
+		return $self;
 	}
 	
 	public static function fromLDAP(?string $ldap): self {
-		global $db;
-		
-		$self = new self();
-		
-		// First guard: format
-		if ($ldap === null || !preg_match('/^[a-zA-Z0-9._-]+$/', $ldap)) {
-			return $self; // returns invalid
-		}
-	
-		// Lookup
-		$query = "SELECT * FROM " . static::$table . " WHERE ldap = ?";
-		$row = $db->fetch($query, [$ldap]);
-		
-		
-		if ($row) {
-			foreach ($row as $key => $value) {
-				$self->$key = $value;
-			}
-			
-			return $self;
-		}
-		
-		if (!$row) {
-			return $self;
-		}
+		return self::fromField($ldap, 'ldap', '/^[a-zA-Z0-9._-]+$/');
 	}
-	
 	public static function fromUID(?string $uid): self {
-		global $db;
-		
-		$self = new self();
-		
-		// First guard: format
-		if ($uid === null || !preg_match('/^[0-9._-]+$/', $uid)) {
-			return $self; // returns invalid
-		}
-	
-		// Lookup
-		$query = "SELECT * FROM " . static::$table . " WHERE uid = ?";
-		$row = $db->fetch($query, [$uid]);
-		
-		
-		if ($row) {
-			foreach ($row as $key => $value) {
-				$self->$key = $value;
-			}
-			
-			return $self;
-		}
-		
-		if (!$row) {
-			return $self;
-		}
+		return self::fromField($uid, 'uid', '/^[0-9]+$/');
+	}
+	public static function fromHash(?string $hash): self {
+		return self::fromField($hash, 'calendar_hash', '/^[a-zA-Z0-9._-]+$/');
 	}
 	
 	public function name(): string {
@@ -169,45 +132,37 @@ class Member extends Model {
 		}
 	}
 	
-	public function upcomingBookings(): array {
+	public function bookingsBetweenDates($start, $end): array {
 		global $db;
+	
+		$start = $start instanceof DateTime
+			? $start->format('Y-m-d 00:00:00')
+			: date('Y-m-d 00:00:00', strtotime($start));
+	
+		$end = $end instanceof DateTime
+			? $end->format('Y-m-d 23:59:59')
+			: date('Y-m-d 23:59:59', strtotime($end));
+	
+		$sql = "
+			SELECT b.uid
+			FROM bookings b
+			JOIN meals m ON m.uid = b.meal_uid
+			WHERE UPPER(b.member_ldap) = :ldap
+			  AND m.date_meal BETWEEN :start AND :end
+			ORDER BY m.date_meal ASC
+		";
+		
+		$rows = $db->fetchAll($sql, [
+			'ldap' => $this->ldap,
+			'start' => $start,
+			'end'   => $end,
+		]);
 		
 		$bookings = [];
-	
-		$sql  = "SELECT bookings.uid AS uid
-				 FROM bookings
-				 LEFT JOIN meals ON bookings.meal_uid = meals.uid
-				 WHERE meals.date_meal >= NOW()
-				   AND bookings.member_ldap = :ldap
-				 ORDER BY meals.date_meal DESC";
-	
-		$rows = $db->fetchAll($sql, ['ldap' => $this->ldap]);
-	
 		foreach ($rows as $row) {
 			$bookings[] = Booking::fromUID($row['uid']);
 		}
-	
-		return $bookings;
-	}
-	
-	public function recentBookings(): array {
-		global $db;
 		
-		$bookings = [];
-	
-		$sql  = "SELECT bookings.uid AS uid
-				 FROM bookings
-				 LEFT JOIN meals ON bookings.meal_uid = meals.uid
-				 WHERE meals.date_meal < NOW()
-				   AND bookings.member_ldap = :ldap
-				 ORDER BY meals.date_meal DESC";
-	
-		$rows = $db->fetchAll($sql, ['ldap' => $this->ldap]);
-	
-		foreach ($rows as $row) {
-			$bookings[] = Booking::fromUID($row['uid']);
-		}
-	
 		return $bookings;
 	}
 	
