@@ -47,7 +47,7 @@ echo pageTitle(
 			'icon' => 'trash3',
 			'data' => [
 				'bs-toggle' => 'modal',
-				'bs-target' => '#deleteTermModal'
+				'bs-target' => '#deleteBinModal'
 			]
 		]
 	]
@@ -143,5 +143,31 @@ if (!empty($closedWines)) {
 			</div>
 		</div>
 	</div>
+	</form>
+</div>
+
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteBinModal" tabindex="-1" aria-hidden="true">
+	<form method="post" action="index.php?page=wine_cellar&uid=<?= $cellar->uid ?>">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Delete Bin <span class="text-danger"><strong>WARNING</strong></span></h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+				</div>
+				<div class="modal-body">
+					<p><strong class="text-danger">This action cannot be undone.</strong></p>
+					<input type="text" class="form-control mb-3"
+						placeholder="Type 'DELETE' to confirm"
+						id="delete_confirm"
+						oninput="enableOnExactMatch('delete_confirm', 'delete_button', 'DELETE')">
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-link text-muted" data-bs-dismiss="modal">Close</button>
+					<button type="submit" class="btn btn-danger" id="delete_button" disabled>Delete Bin</button>
+					<input type="hidden" name="deleteBinUID" value="<?= $bin->uid; ?>">
+				</div>
+			</div>
+		</div>
 	</form>
 </div>

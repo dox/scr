@@ -10,6 +10,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	if (isset($_POST['uid'])) {
 		$cellar->update($_POST);
 		$cellar = new Cellar($cleanUID);
+	} elseif (isset($_POST['deleteBinUID'])) {
+		$bin = new Bin($_POST['deleteBinUID']);
+		$bin->delete();
 	} else {
 		$bin = new Bin();
 		$bin->create($_POST);

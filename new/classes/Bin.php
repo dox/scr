@@ -52,6 +52,20 @@ class Bin extends Model {
 		return $updatedRows;
 	}
 	
+	public function delete() {
+		global $db;
+		if (!isset($this->uid)) return false;
+		
+		// Delete meal
+		$db->delete(
+			static::$table,
+			['uid' => $this->uid],
+			'logs'
+		);
+		
+		toast('Bin Deleted', 'Bin sucesfully deleted', 'text-success');
+	}
+	
 	public function wines($whereArray = null): array {
 		global $db;
 		
