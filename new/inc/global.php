@@ -22,6 +22,36 @@ function timeAgoFromSeconds($seconds) {
 	}
 }
 
+
+// Count the number of warnings logged from the current user in the past X minutes.
+function countRecentWarnings(int $minutes = 10): int {
+	global $db;
+
+	// Determine client IP reliably
+	$ip = $_SERVER['REMOTE_ADDR']
+		?? $_SERVER['HTTP_CLIENT_IP']
+		?? $_SERVER['HTTP_X_FORWARDED_FOR']
+		?? '0.0.0.0';
+
+	// Convert to integer for storage/lookup
+	$ipLong = ip2long($ip) ?: 0;
+
+	// Compute the cutoff time
+	$cutoff = date('Y-m-d H:i:s', strtotime("-{$minutes} minutes"));
+
+	// Fetch the count of recent warnings
+	$record = $db->fetch(
+		"SELECT COUNT(*) AS total_warnings 
+		 FROM logs 
+		 WHERE ip = ? 
+		   AND date >= ?
+		   AND (category = 'ERROR' OR category = 'WARNING')",
+		[$ipLong, $cutoff]
+	);
+
+	return (int) ($record['total_warnings'] ?? 0);
+}
+
 function printArray($data): void {
 	echo "<div class=\"alert alert-info\" role=\"alert\" style=\"font-family:monospace;\"><pre>";
 	

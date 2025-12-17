@@ -113,7 +113,7 @@ class User {
 		try {
 			$user = AdUser::whereEquals('samaccountname', $username)->firstOrFail();
 		} catch (\Exception $e) {
-			$log->add("LDAP user not found: {$username}", Log::ERROR);
+			$log->add("LDAP user not found: {$username}", Log::WARNING);
 			error_log("Error: Failed login attempt for {$username} from {$_SERVER['REMOTE_ADDR']}");
 			$this->logout();
 			return false;
@@ -122,7 +122,7 @@ class User {
 		$connection = $user->getConnection();
 	
 		if (!$connection->auth()->attempt($user->getDn(), $password)) {
-			$log->add("Invalid credentials for: {$username}", Log::ERROR);
+			$log->add("Invalid credentials for: {$username}", Log::WARNING);
 			error_log("Error: Failed login attempt for {$username} from {$_SERVER['REMOTE_ADDR']}");
 			$this->logout();
 			return false;
@@ -130,7 +130,7 @@ class User {
 	
 		$member = Member::fromLDAP($user->samaccountname[0]);
 		if (!$member) {
-			$log->add("Member DB record missing: {$username}", Log::ERROR);
+			$log->add("Member DB record missing: {$username}", Log::WARNING);
 			error_log("Error: Member DB record missing for {$username} from {$_SERVER['REMOTE_ADDR']}");
 			$this->logout();
 			return false;
@@ -142,16 +142,16 @@ class User {
 
 	protected function setToken(int $memberUID): void {
 		global $db;
-
+	
 		$token = bin2hex(random_bytes(32));
 		$expiry = (new DateTime('+1 month'))->format('Y-m-d H:i:s');
-
+	
 		$db->query("DELETE FROM tokens WHERE token_expiry < NOW()");
 		$db->query("
 			INSERT INTO tokens (member_uid, token, token_expiry)
 			VALUES (?, ?, ?)
 		", [$memberUID, $token, $expiry]);
-
+	
 		setcookie(self::COOKIE_NAME, $token, [
 			'expires'  => time() + self::COOKIE_LIFETIME,
 			'path'     => '/',
