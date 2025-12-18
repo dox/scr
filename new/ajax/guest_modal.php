@@ -5,9 +5,17 @@ if (!$user->isLoggedIn()) {
 	die("User not logged in.");
 }
 
+$bookingUID = filter_input(INPUT_GET, 'booking_uid', FILTER_VALIDATE_INT);
+$guestUID = filter_input(INPUT_GET, 'guest_uid', FILTER_VALIDATE_REGEXP,[
+	'options' => [
+		'regexp' => '/^[A-Za-z0-9_-]+$/'
+	]
+]
+);
+
 $action = ($_GET['action'] ?? 'add') === 'edit' ? 'edit' : 'add';
-$guestUID = $_GET['guest_uid'] ?? null;
-$bookingUID = $_GET['booking_uid'] ?? null;
+$guestUID = $guestUID ?? null;
+$bookingUID = $bookingUID ?? null;
 $booking = Booking::fromUID($bookingUID);
 $meal = new Meal($booking->meal_uid);
 
