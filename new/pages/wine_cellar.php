@@ -184,7 +184,7 @@ endforeach; ?>
 			<div class="modal-body">
 				<div class="mb-3">
 					<label for="cellar_uid" class="form-label">Cellar</label>
-					<select class="form-select" name="cellar_uid" id="cellar_uid" required>
+					<select class="form-select" name="cellar_uid" required>
 						<?php
 						foreach ($wines->cellars() as $cellarChoice) {
 							$title = trim($cellarChoice->name);
@@ -196,11 +196,11 @@ endforeach; ?>
 				</div>
 				<div class="mb-3">
 					<label for="name" class="form-label">Bin Name</label>
-					<input type="text" class="form-control" id="name" name="name">
+					<input type="text" class="form-control" name="name">
 				</div>
 				<div class="mb-3">
 					<label for="section" class="form-label">Bin Section</label>
-					<select class="form-select" name="section" id="section" required>
+					<select class="form-select" name="section" required>
 						<?php
 						foreach ($cellar->sections() as $section) {
 							$title = trim($section);
@@ -211,7 +211,7 @@ endforeach; ?>
 				</div>
 				<div class="mb-3">
 					<label for="description" class="form-label">Bin Description</label>
-					<textarea class="form-control" id="description" name="description" rows="3"></textarea>
+					<textarea class="form-control" name="description" rows="3"></textarea>
 				</div>
 			</div>
 			<div class="modal-footer">
@@ -236,21 +236,21 @@ endforeach; ?>
 				<div class="row">
 					<div class="col-3 mb-3">
 						<label for="short_code" class="form-label text-truncate">Short Code</label>
-						<input type="text" class="form-control" id="short_code" name="short_code" value="<?= htmlspecialchars($cellar->short_code) ?>" maxlength="2">
+						<input type="text" class="form-control" name="short_code" value="<?= htmlspecialchars($cellar->short_code) ?>" maxlength="2">
 					</div>
 					<div class="col-9 mb-3">
 						<label for="name" class="form-label text-truncate">Cellar Name</label>
-						<input type="text" class="form-control" id="name" name="name" value="<?= htmlspecialchars($cellar->name) ?>">
+						<input type="text" class="form-control" name="name" value="<?= htmlspecialchars($cellar->name) ?>">
 					</div>
 				</div>
 				<div class="mb-3">
-					<div class="accordion" id="accordionPhotograph">
+					<div class="accordion">
 						<div class="accordion-item">
 							<h2 class="accordion-header">
 								<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
 										data-bs-target="#photoSelect">Photograph</button>
 							</h2>
-							<div id="photoSelect" class="accordion-collapse collapse">
+							<div class="accordion-collapse collapse">
 								<div class="accordion-body">
 									<div class="row">
 										<?php foreach ($meals->cardImages() as $cardImage): ?>
@@ -276,12 +276,12 @@ endforeach; ?>
 				</div>
 				<div class="mb-3">
 					<label for="description" class="form-label">Sections</label>
-					<textarea class="form-control" id="sections" name="sections" rows="3"><?= htmlspecialchars($cellar->sections) ?></textarea>
+					<textarea class="form-control" name="sections" rows="3"><?= htmlspecialchars($cellar->sections) ?></textarea>
 					<div id="bin-typesHelp" class="form-text">Comma,Separated,List</div>
 				</div>
 				<div class="mb-3">
 					<label for="description" class="form-label">Notes</label>
-					<textarea class="form-control" id="notes" name="notes" rows="3"><?= htmlspecialchars($cellar->notes) ?></textarea>
+					<textarea class="form-control" name="notes" rows="3"><?= htmlspecialchars($cellar->notes) ?></textarea>
 				</div>
 			</div>
 			<div class="modal-footer">
