@@ -67,11 +67,6 @@ $meals    = new Meals();
 $user     = new User();
 $settings = new Settings();
 
-// lockout if too many errors in logs
-if (countRecentWarnings() > LOCKOUT_COUNT) {
-	die("Too many failed attempts.  Temporary lockout in place.");
-}
-
 // Handle impersonation
 if (isset($_POST['impersonate'])) {
 	$targetId = $_POST['impersonate'] ?? null;
