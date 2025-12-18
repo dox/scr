@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 // Title and action buttons
 echo pageTitle(
 	$isNew ? "Add New Wine" : $wine->clean_name(),
-	$isNew ? "" : ""
+	$isNew ? "initial import" : "Edit"
 );
 ?>
 

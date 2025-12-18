@@ -76,11 +76,11 @@ echo pageTitle(
 				<table class="table align-middle table-nowrap table-centered mb-0">
 					<thead>
 						<tr>
-							<th style="width: 70px;">Bin</th>
-							<th>Item</th>
-							<th>Price</th>
-							<th>Qty.</th>
-							<th class="text-end" style="width: 120px;">Total</th>
+							<th scope="col" style="width: 70px;">Bin</th>
+							<th scope="col" >Item</th>
+							<th scope="col" >Price</th>
+							<th scope="col" >Qty.</th>
+							<th scope="col" class="text-end" style="width: 120px;">Total</th>
 						</tr>
 					</thead>
 					<tbody>

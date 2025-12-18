@@ -27,6 +27,6 @@ $output = fopen('php://output', 'w');
 
 // Make $output available inside included scripts
 // Include the script that writes rows into $output
-include __DIR__ . '/' . $allowed[$report];
+include_once __DIR__ . '/' . $allowed[$report];
 
 fclose($output);

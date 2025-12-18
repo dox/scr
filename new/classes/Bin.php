@@ -75,26 +75,4 @@ class Bin extends Model {
 		
 		return $wines->wines($whereArray);
 	}
-	
-	public function winesClosed(): array {
-		global $db;
-		
-		$binsBySection = $wines->bins([
-			'cellar_uid' => ['=', $cellar_uid],
-			'wine_bins.section' => ['=', $cellar_section]
-		]);
-		
-		$sql = "SELECT * FROM wine_wines WHERE bin_uid = ?";
-	
-		$rows = $db->fetchAll($sql, [$this->uid]);
-		
-		$wines = [];
-		foreach ($rows as $row) {
-			$wines[] = new Wine($row['uid']);
-		}
-	
-		return $wines;
-	}
-	
-	
 }
