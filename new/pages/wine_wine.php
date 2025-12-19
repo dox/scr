@@ -204,7 +204,7 @@ echo $wine->statusBanner();
 								$output .= "<th scope=\"row\">" . formatDate($transaction->date, 'short') . "</th>";
 								$output .= "<td>" . ($transaction->username) . "</td>";
 								$output .= "<td>" . $transaction->totalBottles() . "</td>";
-								$output .= "<td>" . formatMoney($transaction->totalValue()) . "</td>";
+								$output .= "<td>" . formatMoney($transaction->value()) . "</td>";
 								$output .= "<td><a href=\"" . $url . "\">" . htmlspecialchars($transaction->name) . "</a></td>";
 								$output .= "</tr>";
 								
@@ -252,6 +252,7 @@ echo $wine->statusBanner();
   </div>
   
   <div class="tab-pane fade" id="attachments-tab-pane" role="tabpanel" aria-labelledby="attachments-tab" tabindex="0">
+	  <p>Coming soon...</p>
 	  <ul class="list-group mb-3">
 	  <?php
 	  foreach ($wine->attachments() AS $attachment) {

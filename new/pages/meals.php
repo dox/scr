@@ -46,11 +46,11 @@ if (strtotime($dateFrom) > strtotime($dateTo)) {
 	<div class="row align-items-end">
 		<div class="col">
 			<label for="dateFrom" class="form-label">Date From</label>
-			<input type="date" class="form-control" id="dateFrom" name="date_from" value="<?= $dateFrom ?>">
+			<input type="text" class="form-control" id="dateFrom" name="date_from" value="<?= $dateFrom ?>" required>
 		</div>
 		<div class="col">
 			<label for="dateTo" class="form-label">Date To</label>
-			<input type="date" class="form-control" id="dateTo" name="date_to" value="<?= $dateTo ?>">
+			<input type="text" class="form-control" id="dateTo" name="date_to" value="<?= $dateTo ?>" required>
 		</div>
 		<div class="col">
 			<button type="submit" class="btn btn-primary mt-3 w-100">Submit</button>
@@ -127,3 +127,40 @@ remoteModalLoader('.load-remote-menu', '#menuModal', '#modalBody');
   margin-left: 0.5rem; /* spacing between text and icon */
 }
 </style>
+
+<script>
+const el = document.getElementById('dateFrom');
+const el2 = document.getElementById('dateTo');
+
+const options = {
+	defaultDate: '<?php echo $meal->date_meal; ?>',
+	display: {
+		icons: {
+			type: 'icons',
+			time: 'bi bi-clock',
+			date: 'bi bi-calendar',
+			up: 'bi bi-arrow-up',
+			down: 'bi bi-arrow-down',
+			previous: 'bi bi-chevron-left',
+			next: 'bi bi-chevron-right',
+			today: 'bi bi-calendar-check',
+			clear: 'bi bi-trash',
+			close: 'bi bi-close'
+		},
+		components: {
+			calendar: true,
+			date: true,
+			month: true,
+			year: true,
+			decades: true,
+			clock: false
+		}
+	},
+	localization: {
+		format: 'yyyy-MM-dd',
+	  }
+};
+
+new tempusDominus.TempusDominus(el, options);
+new tempusDominus.TempusDominus(el2, options);
+</script>

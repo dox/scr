@@ -503,7 +503,7 @@ class Wines extends Model {
 	
 		// Guard the column name to prevent injection
 		$allowed = [
-			'supplier', 'category', 'grape', 'country_of_origin',
+			'supplier', 'category', 'code', 'grape', 'country_of_origin',
 			'region_of_origin', 'status', 'bin_uid', 'vintage'
 		];
 	

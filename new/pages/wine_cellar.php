@@ -49,12 +49,8 @@ echo pageTitle(
 			'permission' => 'wine',
 			'title' => 'Add Wine',
 			'class' => '',
-			'event' => '',
-			'icon' => 'plus-circle',
-			'data' => [
-				'bs-toggle' => 'modal',
-				'bs-target' => '#deleteTermModal'
-			]
+			'event' => 'index.php?page=wine_wine_edit&cellar_uid=' . $cellar->uid,
+			'icon' => 'plus-circle'
 		],
 		[
 			'permission' => 'wine',

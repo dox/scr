@@ -66,17 +66,23 @@ class Transaction extends Model {
 		}
 	}
 	
-	public function totalValue(): int {
+	public function totalValue(): float {
 		if ($this->isLinked()) {
 			$total = 0;
 			foreach ($this->linkedTransactions() as $transaction) {
-				$total += ($transaction->bottles * $transaction->price_per_bottle);
+				$total += $this->value();
 			}
 		} else {
-			$total = ($this->bottles * $this->price_per_bottle);
+			$total = $this->value();
 		}
 		
-		return (int) (abs($total) ?? 0);
+		return round(abs((float) $total), 2);
+	}
+	
+	public function value(): float {
+		$total = ($this->bottles * $this->price_per_bottle);
+		
+		return round(abs((float) $total), 2);
 	}
 
 }

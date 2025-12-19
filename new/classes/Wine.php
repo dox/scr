@@ -1,6 +1,6 @@
 <?php
 class Wine {
-	protected static $table_wines = "wine_wines";
+	protected static $table = "wine_wines";
 	
 	public $uid;
 	public $date_created;
@@ -35,7 +35,7 @@ class Wine {
 	}
 	
 	public function getOne($uid) {
-		$query = "SELECT * FROM " . static::$table_wines . " WHERE uid = ?";
+		$query = "SELECT * FROM " . static::$table . " WHERE uid = ?";
 		$row = $this->db->fetch($query, [$uid]);
 	
 		if ($row) {
@@ -387,66 +387,42 @@ class Wine {
 		}
 	}
 	
-	public function update($array) {
-		global $db, $logsClass;
+	public function update(array $postData) {
+		global $db;
+	
+		// Map normal text/select fields
+		$fields = [
+			'date_updated'      => date('c'),
+			'code'              => $postData['code'] ?? '0',
+			'bin_uid'           => $postData['bin_uid'] ?? null,
+			'status'            => $postData['status'] ?? null,
+			'name'              => $postData['name'] ?? null,
+			'supplier'          => $postData['supplier'] ?? null,
+			'supplier_ref'      => $postData['supplier_ref'] ?? null,
+			'category'          => $postData['category'] ?? null,
+			'grape'             => $postData['grape'] ?? null,
+			'country_of_origin' => $postData['country_of_origin'] ?? null,
+			'region_of_origin'  => $postData['region_of_origin'] ?? null,
+			'vintage'			=> ($postData['vintage'] === '' ? null : $postData['vintage']),
+			'price_purchase'    => $postData['price_purchase'] ?? null,
+			'price_internal'    => $postData['price_internal'] ?? null,
+			'price_external'    => $postData['price_external'] ?? null,
+			'tasting'           => $postData['tasting'] ?? null,
+			'notes'             => $postData['notes'] ?? null
+		];
+	
+		// Send to database update
+		$updatedRows = $db->update(
+			static::$table,
+			$fields,
+			['uid' => $this->uid],
+			'logs'
+		);
 		
-		// Initialize the set part of the query
-		$setParts = [];
-		
-		//remove the uid
-		unset($array['uid']);
-		
-		// null missing vintage
-		if (isset($array['vintage']) && empty($array['vintage'])) {
-			$array['vintage'] = null;
-		}
-		
-		//upload photo (if empty no worries)
-		$this->updatePhotograph($_FILES);
-		
-		// Loop through the new values array
-		foreach ($array as $field => $newValue) {
-		  if (is_array($newValue)) {
-			$newValue = implode(",", $newValue);
-		  }
-		  
-		  // Check if the field exists in the current values and if the values are different
-		  if ($this->$field != $newValue) {
-			  if (is_null($newValue)) {
-					$setParts[$field] = "`$field` = NULL";
-				} else {
-					// Sanitize the field and value to prevent SQL injection
-					$field = htmlspecialchars($field);
-					$newValue = trim(htmlspecialchars($newValue));
-					// Add to the set part
-					$setParts[$field] = "`$field` = '$newValue'";
-				}
-		  }
-		}
-		
-		// If there are no changes, return null
-		if (empty($setParts)) {
-			return null;
-		}
-		
-		// Combine the set parts into a single string
-		$setParts['date_updated'] = "`date_updated` = '" . date('c') . "'";
-		$setString = implode(", ", $setParts);
-		
-		// Construct the final UPDATE query
-		$sql = "UPDATE wine_wines SET " . $setString;
-		$sql .= " WHERE uid = '" . $this->uid . "' ";
-		$sql .= " LIMIT 1";
-		
-		$update = $db->query($sql);
-		
-		$logArray['category'] = "wine";
-		$logArray['result'] = "success";
-		$logArray['description'] = "Updated [wineUID:" . $this->uid . "] with fields " . $setString;
-		$logsClass->create($logArray);
-		
-		return true;
-	  }
+		toast('Wine Updated', 'Wine sucesfully updated', 'text-success');
+	
+		return $updatedRows;
+	}
 	  
 	public function create($array) {
 		global $db, $logsClass;
