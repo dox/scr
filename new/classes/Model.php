@@ -406,6 +406,23 @@ class Terms extends Model {
 		}
 	}
 	
+	public static function getTermForDate(string|DateTime $date): ?Term {
+		// Ensure $date is a DateTime object
+		if (!$date instanceof DateTime) {
+			$date = new DateTime($date);
+		}
+	
+		$db = Database::getInstance();
+		$sql = "SELECT * FROM " . self::$table . " WHERE ? BETWEEN date_start AND date_end LIMIT 1";
+		$row = $db->fetch($sql, [$date->format('Y-m-d')]);
+	
+		if ($row) {
+			return new Term($row['uid']); // Return the Term object
+		}
+	
+		return null; // No term found
+	}
+	
 	public function firstDayOfWeek(?string $inputDate = null): string {
 		$date = new DateTime($inputDate ?? 'now');
 		// Subtract days until we reach Sunday (0 = Sunday)

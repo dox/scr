@@ -74,11 +74,9 @@ class Term extends Model {
 	public function tabLabel(?string $date = null): string {
 		// Use today if no date provided
 		$dateObj = $date ? new DateTime($date) : new DateTime();
-		$endDateObj = new DateTime($this->date_end);
-	
-		$weekNumber = $this->weekNumber($dateObj);
-	
-		if ($dateObj < $endDateObj) {
+			
+		if ($this->isDateInTerm($date)) {
+			$weekNumber = $this->weekNumber($dateObj);
 			return $this->ordinal($weekNumber) . " week";
 		} else {
 			return "w/c " . $dateObj->format('M jS');
@@ -107,5 +105,17 @@ class Term extends Model {
 			3 => 'rd',
 			default => 'th',
 		};
+	}
+	
+	public function isDateInTerm(string|DateTime $date): bool {
+		// Ensure $date is a DateTime object
+		if (!$date instanceof DateTime) {
+			$date = new DateTime($date);
+		}
+	
+		$start = new DateTime($this->date_start);
+		$end = new DateTime($this->date_end);
+	
+		return $date >= $start && $date <= $end;
 	}
 }

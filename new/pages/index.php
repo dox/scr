@@ -10,9 +10,17 @@ echo pageTitle(
 <ul class="nav nav-tabs mb-3 flex-nowrap" id="weeklyMealsTabs" role="tablist">
 <?php foreach ($terms->navbarWeeks() as $week): ?>
 	<?php
-		$weekName = $currentTerm->tabLabel(htmlspecialchars($week));
+		$term = $terms->getTermForDate($week);
+		
+		if ($term) {
+			$weekName = $term->tabLabel(htmlspecialchars($week));
+		} else {
+			$weekName = $currentTerm->tabLabel(htmlspecialchars($week));
+		}
+		
 		$isCurrent = $terms->isCurrentWeek($week);
 		$label = $isCurrent ? "<strong>$weekName</strong>" : $weekName;
+		
 
 		// Prefixed IDs
 		$paneId = 'week-' . htmlspecialchars($week);
