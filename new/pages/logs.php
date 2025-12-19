@@ -53,7 +53,7 @@ echo pageTitle(
 <table class="table table-striped">
 	<thead>
 		<tr>
-			<th>Date</th>
+			<th style="width: 180px;">Date</th>
 			<th>Type</th>
 			<th>Username</th>
 			<th>IP Address</th>
@@ -89,7 +89,7 @@ echo pageTitle(
 			} else {
 				$event = "";
 			}
-			$output .= "<td>" . $event . "</td>";
+			$output .= "<td class=\"text-wrap text-break\">" . $event . "</td>";
 			$output .= "</tr>";
 			
 			echo $output;

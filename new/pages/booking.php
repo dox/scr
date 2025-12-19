@@ -251,7 +251,7 @@ echo pageTitle(
 		echo $output;
 		
 		if ($meal->hasGuestCapacity(count($booking->guests()), true) || $meal->canBook(true)) {
-			echo "<button type=\"button\" class=\"btn btn-primary w-100 mb-3\" data-bs-toggle=\"modal\" data-bs-target=\"#addEditGuestModal\">Add Guest</button>";
+			echo "<button type=\"button\" class=\"btn " . ($meal->canBook(true) ? 'btn-primary ' : 'btn-secondary disabled ') . "w-100 mb-3\" data-bs-toggle=\"modal\" data-bs-target=\"#addEditGuestModal\">Add Guest</button>";
 		}
 		?>
 		

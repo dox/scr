@@ -22,14 +22,18 @@ $cellarUID = filter_input(INPUT_GET, 'cellar_uid', FILTER_SANITIZE_NUMBER_INT) ?
 $cellar = new Cellar($cellarUID);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-	printArray($_FILES);
 	// Save or update
 	if ($isNew) {
-		//$newUID = $wine->create($_POST);        // Create new record
-		//header("Location: index.php?page=meal&uid={$newUID}");
+		$newWine = new Wine();
+		$uid = $newWine->createWine($_POST);		// Create new record
+		
+		//header("Location: index.php?page=wine_wine&uid={$uid}");
 		//exit;
 	} else {
 		$wine->update($_POST);                // Update existing
+		if (isset($_FILES['photograph']) && $_FILES['photograph']['error'] === UPLOAD_ERR_OK) {
+			$wine->updatePhotograph($_FILES['photograph']);
+		}
 		$wine = new Wine($wineUID);          // Reload object
 	}
 }
@@ -217,7 +221,7 @@ echo pageTitle(
 		<div class="card mb-3">
 			<div class="card-body">
 				<label for="qty" class="form-label text-truncate">Bottles Qty.</label>
-				<input type="text" class="form-control" name="qty" value="<?= $wine->currentQty() ?>" disabled="" required pattern="[0-9]*">
+				<input type="text" class="form-control" name="qty" value="<?= $wine->currentQty() ?>" <?= $isNew ? '' : 'disabled' ?> required pattern="[0-9]*">
 			</div>
 		</div>
 	</div>

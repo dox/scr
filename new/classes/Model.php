@@ -85,18 +85,27 @@ class Log extends Model {
 	public const ERROR   = 'ERROR';
 	public const DEBUG   = 'DEBUG';
 	
-	public function add(string $description, string $category = self::INFO): bool {
+	public function add(
+		string $description,
+		string $category = self::INFO,
+		?string $username = null
+	): bool {
 		global $user;
-		
-		$sql = "INSERT INTO " . static::$table . " (username, ip, description, category, result, date)
+	
+		// Prefer explicitly provided username, then logged-in user, else null
+		$resolvedUsername = $username
+			?? ($user?->getUsername() ?? null);
+	
+		$sql = "INSERT INTO " . static::$table . " 
+				(username, ip, description, category, result, date)
 				VALUES (:username, :ip, :description, :category, :result, NOW())";
 	
 		$params = [
-			':username'		=> ($user ?? null) ? $user->getUsername() : null,
-			':ip'			=> ip2long($this->detectIp()),
-			':description'	=> $description,
-			':category'		=> strtoupper($category),
-			':result'		=> "result",
+			':username'    => $resolvedUsername,
+			':ip'          => ip2long($this->detectIp()),
+			':description' => $description,
+			':category'    => strtoupper($category),
+			':result'      => 'result',
 		];
 	
 		$stmt = $this->db->query($sql, $params);

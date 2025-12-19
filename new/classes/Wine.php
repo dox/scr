@@ -1,6 +1,6 @@
 <?php
-class Wine {
-	protected static $table = "wine_wines";
+class Wine extends Model {
+	protected static string $table = 'wine_wines';
 	
 	public $uid;
 	public $date_created;
@@ -300,91 +300,63 @@ class Wine {
 		return $results;
 	}
 	
-	public function updatePhotograph($file) {
-		global $db, $logsClass;
+	public function updatePhotograph(array $file): bool {
+		global $db, $log;
 		
-		if (!empty($file['photograph']['name'])) {
-			$uploadOk = 1;
-			
-			$target_dir = "../img/wines/";
-			$imageFileType = strtolower(pathinfo($file['photograph']['name'],PATHINFO_EXTENSION));
-			$newFileName = "wine_" . $this->uid . '.' . $imageFileType;
-			$target_file = $target_dir . $newFileName;
-			
-			
-
-			// Check if image file is a actual image or fake image
-			$check = getimagesize($file["photograph"]["tmp_name"]);
-			if($check == false) {
-				$uploadOk = 0;
-			}
-			
-			// Check if file already exists
-			if (file_exists($target_file)) {
-				unlink($target_file);
-			}
-			if (file_exists($target_dir . $this->photograph)) {
-				unlink($target_dir . $this->photograph);
-			}
-			
-			// Check file size
-			if ($file["photograph"]["size"] > 5000000) {
-				echo "Sorry, your file is too large.";
-				$uploadOk = 0;
-				
-				$logArray['category'] = "wine";
-				$logArray['result'] = "warning";
-				$logArray['description'] = $file["photograph"]["size"] . " for [wineUID:" . $this->uid . "] is too large";
-				$logsClass->create($logArray);
-			}
-			
-			// Allow only certain file formats
-			if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" && $imageFileType != "gif" ) {
-				echo "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
-				$uploadOk = 0;
-				
-				$logArray['category'] = "wine";
-				$logArray['result'] = "warning";
-				$logArray['description'] = $file["photograph"]["size"] . " for [wineUID:" . $this->uid . "] has the wrong extension";
-				$logsClass->create($logArray);
-			}
-			
-			// Check if $uploadOk is set to 0 by an error
-			if ($uploadOk == 0) {
-				echo "Sorry, your file was not uploaded.";
-				
-				$logArray['category'] = "wine";
-				$logArray['result'] = "warning";
-				$logArray['description'] = "Could not upload photo for [wineUID:" . $this->uid . "]";
-				$logsClass->create($logArray);
-				
-				// if everything is ok, try to upload file
-			} else {
-				if (move_uploaded_file($file["photograph"]["tmp_name"], $target_file)) {
-					$array['photograph'] = basename($file["photograph"]["name"]);
-					echo "The file ". htmlspecialchars( basename( $file["photograph"]["name"])). " has been uploaded.";
-					
-					// Construct the final UPDATE query
-					$sql = "UPDATE wine_wines SET photograph = '" . $newFileName . "'";
-					$sql .= " WHERE uid = '" . $this->uid . "' ";
-					$sql .= " LIMIT 1";
-					
-					$update = $db->query($sql);
-					
-					$logArray['category'] = "wine";
-					$logArray['result'] = "success";
-					$logArray['description'] = "Photo " . $newFileName . " uploaded  for [wineUID:" . $this->uid . "]";
-					$logsClass->create($logArray);
-				} else {
-					echo "Sorry, there was an error uploading your file.";
-					
-					$logArray['category'] = "wine";
-					$logArray['result'] = "warning";
-					$logArray['description'] = "Could not upload photo for [wineUID:" . $this->uid . "]";
-					$logsClass->create($logArray);
-				}
-			}
+		if (!isset($file) || $file['error'] !== UPLOAD_ERR_OK) {
+			return false; // No file uploaded or error
 		}
+	
+		$upload = $file;
+		$originalName = basename($upload['name']);
+		$ext = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
+		
+		// Validate file type
+		$allowed = ['jpg', 'jpeg', 'png', 'gif'];
+		if (!in_array($ext, $allowed)) {
+			$log->add("Invalid file extension ({$ext}) for wine [wineUID:{$this->uid}]", Log::WARNING);
+			return false;
+		}
+		
+		// Validate file size (max 5MB)
+		if ($upload['size'] > 5_000_000) {
+			$log->add("File too large ({$upload['size']} bytes) for wine [wineUID:{$this->uid}]", Log::WARNING);
+			return false;
+		}
+	
+		// Validate image
+		if (getimagesize($upload['tmp_name']) === false) {
+			$log->add("Uploaded file is not a valid image for wine [wineUID:{$this->uid}]", Log::WARNING);
+			return false;
+		}
+	
+		$uploadDir = __DIR__ . "/../uploads/wines/";
+		if (!is_dir($uploadDir)) {
+			mkdir($uploadDir, 0775, true);
+		}
+	
+		// Remove existing photograph if any
+		if (!empty($this->photograph) && file_exists($uploadDir . $this->photograph)) {
+			unlink($uploadDir . $this->photograph);
+		}
+	
+		// Generate unique filename
+		$newFileName = uniqid("wine_{$this->uid}_", true) . '.' . $ext;
+		$targetFile = $uploadDir . $newFileName;
+	
+		if (!move_uploaded_file($upload['tmp_name'], $targetFile)) {
+			$log->add("Failed to move uploaded file for wine [wineUID:{$this->uid}]", Log::WARNING);
+			return false;
+		}
+	
+		// Update database
+		$db->query("UPDATE " . static::$table . " SET photograph = ? WHERE uid = ?", [$newFileName, $this->uid]);
+		$this->photograph = $newFileName;
+	
+		// Log success
+		$log->add("Photograph updated to {$newFileName} for wine [wineUID:{$this->uid}]", Log::INFO);
+	
+		return true;
 	}
 	
 	public function update(array $postData) {
@@ -423,8 +395,40 @@ class Wine {
 	
 		return $updatedRows;
 	}
+	
+	public function createWine(array $postData) {
+		global $db;
+	
+		// Map normal text/select fields
+		$fields = [
+			'date_updated'      => date('c'),
+			'code'              => ($postData['code'] === '' ? null : 0),
+			'bin_uid'           => $postData['bin_uid'] ?? null,
+			'status'            => $postData['status'] ?? null,
+			'name'              => $postData['name'] ?? null,
+			'supplier'          => $postData['supplier'] ?? null,
+			'supplier_ref'      => $postData['supplier_ref'] ?? null,
+			'category'          => $postData['category'] ?? null,
+			'grape'             => $postData['grape'] ?? null,
+			'country_of_origin' => $postData['country_of_origin'] ?? null,
+			'region_of_origin'  => $postData['region_of_origin'] ?? null,
+			'vintage'			=> ($postData['vintage'] === '' ? null : $postData['vintage']),
+			'price_purchase'    => $postData['price_purchase'] ?? 0,
+			'price_internal'    => $postData['price_internal'] ?? 0,
+			'price_external'    => $postData['price_external'] ?? 0,
+			'tasting'           => $postData['tasting'] ?? null,
+			'notes'             => $postData['notes'] ?? null
+		];
+	
+		// Send to database update
+		$wine = $this->create($fields);
+		
+		toast('Wine Created', 'Wine sucesfully created', 'text-success');
+	
+		return $wine;
+	}
 	  
-	public function create($array) {
+	public function createOLD($array) {
 		global $db, $logsClass;
 		  
 		// Initialize the set part of the query
