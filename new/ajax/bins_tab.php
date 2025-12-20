@@ -30,14 +30,17 @@ $bins = $cellar->bins(['section' => $cellar_section]);
 				$url = "index.php?page=wine_wine&uid=" . $wines[0]->uid;
 				$wineName = htmlspecialchars($wines[0]->name);
 				$wineVintage = htmlspecialchars($wines[0]->vintage());
+				$wineQty = $wines[0]->currentQty();
 			} else {
 				$url = "index.php?page=wine_bin&uid=" . $bin->uid;
 				
 				$wineNames = [];
 				$wineVintage = [];
+				$wineQty = 0;
 				foreach ($wines as $wine) {
 					$wineNames[] = htmlspecialchars($wine->name);
 					$wineVintage[] = htmlspecialchars($wine->vintage());
+					$wineQty += $wine->currentQty();
 				}
 				
 				$wineName = implode(", ", array_unique($wineNames));
@@ -53,7 +56,7 @@ $bins = $cellar->bins(['section' => $cellar_section]);
 			</th>
 			<td><?= $wineName ?></td>
 			<td><?= $wineVintage ?></td>
-			<td><?= htmlspecialchars($bin->uid) ?></td>
+			<td><?= $wineQty ?></td>
 		</tr>
 		<?php endforeach; ?>
 		

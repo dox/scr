@@ -203,11 +203,11 @@ echo $wine->statusBanner();
 								$output  = "<tr>";
 								$output .= "<th scope=\"row\">" . formatDate($transaction->date, 'short') . "</th>";
 								$output .= "<td>" . ($transaction->username) . "</td>";
-								$output .= "<td>" . $transaction->totalBottles() . "</td>";
+								$output .= "<td class=\"" . ($transaction->bottles < 0 ? 'text-danger' : 'text-success') . "\">" . $transaction->bottles . "</td>";
 								$output .= "<td>" . formatMoney($transaction->value()) . "</td>";
 								$output .= "<td><a href=\"" . $url . "\">" . htmlspecialchars($transaction->name) . "</a></td>";
 								$output .= "</tr>";
-								
+
 								echo $output;
 							}
 							?>

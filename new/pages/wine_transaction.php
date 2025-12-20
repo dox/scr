@@ -99,7 +99,7 @@ echo pageTitle(
 							$output .= "</th>";
 							$output .= "<td><div><h5 class=\"text-truncate mb-1\"><a href=\"index.php?page=wine_wine&uid=" . $wine->uid . "\">" . $wine->clean_name() . "</a></h5><p class=\"text-muted mb-0\">" . htmlspecialchars($wine->category) . "</p></div></td>";
 							$output .= "<td>" . formatMoney($row->price_per_bottle) . "</td>";
-							$output .= "<td class=\"" . (($row->bottles < 0) ? 'text-danger' : 'text-success') . "\">" . abs($row->bottles) . "</td>";
+							$output .= "<td class=\"" . (($row->bottles < 0) ? '' : 'text-success') . "\">" . abs($row->bottles) . "</td>";
 							$output .= "<td class=\"text-end\">" . formatMoney($rowTotal) . "</td>";
 							$output .= "</tr>";
 							
