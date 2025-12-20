@@ -60,8 +60,7 @@ $guestDietary     = $booking->guests()[$guestUID]['guest_dietary']      ?? [];
 			<div class="accordion-item">
 				<h2 class="accordion-header">
 					<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDietary">
-						Dietary Information
-						<i>(Maximum: <?= $settings->get('meal_dietary_allowed'); ?>)</i>
+						Dietary Information<i class="ms-1">(Maximum: <?= $settings->get('meal_dietary_allowed'); ?>)</i>
 					</button>
 				</h2>
 				<div id="collapseDietary" class="accordion-collapse collapse">

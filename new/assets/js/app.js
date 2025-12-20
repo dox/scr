@@ -198,7 +198,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	const guestDietaryEls = container.querySelectorAll('input[id="guest_dietary[]"]:checked');
 	const guestDietaryValues = Array.from(guestDietaryEls).map(el => el.value);
-
+	
+	// Guest name validation
+	if (action !== 'guest_delete' && (!guest_nameEl || guest_nameEl.value.trim() === '')) {
+	  alert('Please provide a name for your guest.');
+	  guest_nameEl?.focus();
+	
+	  button.disabled = false;
+	  return;
+	}
+	
 	// Domus validation
 	if (action != 'guest_delete' && chargeToEl?.value === 'Domus' && (!domusReasonEl?.value || domusReasonEl.value.trim() === '')) {
 	  alert('Please provide a reason for Domus.');

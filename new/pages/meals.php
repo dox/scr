@@ -110,15 +110,14 @@ if (strtotime($dateFrom) > strtotime($dateTo)) {
 
 <div class="modal fade" id="menuModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-lg">
-	<div class="modal-content">
-		<div class="modal-body" id="modalBody"></div>
+	<div class="modal-content" id="modalContent">
 	</div>
   </div>
 </div>
 
 <script>
 // Load AJAX menu
-remoteModalLoader('.load-remote-menu', '#menuModal', '#modalBody');
+remoteModalLoader('.load-remote-menu', '#menuModal', '#modalContent');
 </script>
 
 <style>

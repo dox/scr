@@ -45,7 +45,7 @@ echo pageTitle(
 	<div class="col">
 		<ul class="list-inline">
 			<li class="list-inline-item">
-				<a href="#" class="small stats-link" data-url="./ajax/member_stats.php?memberUID=<?= $member->uid ?>&scope=all">All</a>
+				<a href="#" class="small stats-link fw-bold" data-url="./ajax/member_stats.php?memberUID=<?= $member->uid ?>&scope=all">All</a>
 			</li>
 			<li class="list-inline-item">
 				<a href="#" class="small stats-link" data-url="./ajax/member_stats.php?memberUID=<?= $member->uid ?>&scope=ytd">YTD</a>
@@ -195,7 +195,7 @@ echo pageTitle(
 			<div class="accordion mb-3" id="accordionDietary">
 				<div class="accordion-item">
 					<h2 class="accordion-header">
-						<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">Dietary Information <i>(Maximum: <?php echo $settings->get('meal_dietary_allowed'); ?>)</i></button>
+						<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">Dietary Information<i class="ms-1">(Maximum: <?= $settings->get('meal_dietary_allowed'); ?>)</i>
 					</h2>
 					<div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
 						<div class="accordion-body" data-max="<?php echo $settings->get('meal_dietary_allowed'); ?>">
@@ -309,9 +309,8 @@ echo pageTitle(
 		$recentBookings = $member->bookingsBetweenDates(date('Y-m-d', strtotime('-1 year')), date('Y-m-d', strtotime('-1 day')));
 		krsort($recentBookings);
 		?>
-		<h4 class="d-flex justify-content-between align-items-center mb-3">
+		<h4 class="mb-3">
 		  <span>Recent Meals</span>
-		  <span class="badge bg-secondary rounded-pill"><?php echo count($recentBookings); ?></span>
 		</h4>
 		<ul class="list-group mb-3">
 			<?php
@@ -463,4 +462,10 @@ const chart = new Chart(ctx, {
 <script>
 // Initialize stats links
 initAjaxLoader('.stats-link', '#member_stats_container', {event: 'click', cache: true});
+document.querySelectorAll('.stats-link').forEach(link => {
+	link.addEventListener('click', function () {
+		document.querySelectorAll('.stats-link').forEach(l => l.classList.remove('fw-bold'));
+		this.classList.add('fw-bold');
+	});
+});
 </script>

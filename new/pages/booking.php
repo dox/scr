@@ -75,7 +75,7 @@ echo pageTitle(
 		
 			// Person's wine/dessert
 			$wineDessert = [];
-			if ($guestListBooking->wineChoice() != "None") $wineDessert[] = '<i class="bi bi-cup-straw"></i>';
+			if ($user->hasPermission('bookings') && $guestListBooking->wineChoice() != "None") $wineDessert[] = '<i class="bi bi-cup-straw"></i>';
 			if ($guestListBooking->dessertChoice() == "1") $wineDessert[] = '<i class="bi bi-cookie"></i>';
 			if (!empty($wineDessert)) {
 				$output .=  implode(' ', $wineDessert);

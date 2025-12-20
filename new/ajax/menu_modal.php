@@ -26,9 +26,6 @@ $mealObject = new Meal($mealUID);
 	</div>
 	
 	<?php if ($mealObject->domus || $mealObject->allowed_wine || $mealObject->allowed_dessert): ?>
-	<hr>
-	<?php endif; ?>
-	
 	<div class="d-flex justify-content-around align-items-center border-top pt-3 mt-4 small">
 		<div class="text-center <?= ($mealObject->charge_to == "Domus") ? "" : "opacity-0" ?>">
 			<div><i class="bi bi-mortarboard fs-4"></i></div>
@@ -45,6 +42,7 @@ $mealObject = new Meal($mealUID);
 			<div class="text-uppercase fw-semibold">Dessert</div>
 		</div>
 	</div>
+	<?php endif; ?>
 </div>
 <div class="modal-footer">
 	<button type="button" class="btn btn-link text-muted" data-bs-dismiss="modal">Close</button>
