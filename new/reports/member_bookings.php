@@ -29,7 +29,10 @@ $rowHeaders = [
 
 fputcsv($output, $rowHeaders);
 
-foreach ($member->recentBookings() as $booking) {
+$recentBookings = $member->bookingsBetweenDates(date('Y-m-d', strtotime('-10 years')), date('Y-m-d', strtotime('+1 10 years')));
+//krsort($recentBookings);
+
+foreach ($recentBookings as $booking) {
 	$meal = new Meal($booking->meal_uid);
 	
 	$row = [];

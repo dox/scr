@@ -118,7 +118,54 @@ echo pageTitle(
 			</div>
 
 			<hr>
-
+			
+			<div class="row mb-3">
+				<div class="col">
+					<label class="form-label text-truncate">Capacity</label>
+					<input type="number" class="form-control" name="scr_capacity"
+						   value="<?= $meal->scr_capacity ?>" min="0" required>
+				</div>
+			
+				<div class="col">
+					<label class="form-label text-truncate">Dessert Capacity</label>
+					<input type="number" class="form-control" name="scr_dessert_capacity"
+						   value="<?= $meal->scr_dessert_capacity ?>" min="0" required>
+				</div>
+			
+				<div class="col">
+					<label class="form-label text-truncate">Guests</label>
+					<input type="number" class="form-control" name="scr_guests"
+						   value="<?= $meal->scr_guests ?>" min="0" required>
+				</div>
+			</div>
+			
+			<div class="mb-3">
+				<label class="form-label">Default Charge-To</label>
+				<select class="form-select" name="charge_to" required>
+					<?php
+					$options = explode(',', $settings->get('booking_charge-to'));
+					foreach ($options as $opt) {
+						$opt = trim($opt);
+						$selected = ($meal->charge_to === $opt) ? ' selected' : '';
+						echo "<option value=\"{$opt}\"{$selected}>{$opt}</option>";
+					}
+					?>
+				</select>
+				<div class="form-text">* Wine charged via Battels</div>
+			</div>
+			
+			<div class="form-check form-switch">
+				<input type="checkbox" class="form-check-input" name="allowed_wine" value="1"
+					<?= $meal->allowed_wine ? 'checked' : '' ?>>
+				<label class="form-check-label">Wine Available</label>
+			</div>
+			
+			<div class="form-check form-switch mb-4">
+				<input type="checkbox" class="form-check-input" name="allowed_dessert" value="1"
+					<?= $meal->allowed_dessert ? 'checked' : '' ?>>
+				<label class="form-check-label">Dessert Available</label>
+			</div>
+			
 			<!-- Allowed groups accordion -->
 			<div class="accordion" id="accordionAllowed">
 				<div class="accordion-item">
@@ -146,29 +193,7 @@ echo pageTitle(
 					</div>
 				</div>
 			</div>
-
-			<hr>
-
-			<div class="row mb-3">
-				<div class="col">
-					<label class="form-label text-truncate">Capacity</label>
-					<input type="number" class="form-control" name="scr_capacity"
-						   value="<?= $meal->scr_capacity ?>" min="0" required>
-				</div>
-
-				<div class="col">
-					<label class="form-label text-truncate">Dessert Capacity</label>
-					<input type="number" class="form-control" name="scr_dessert_capacity"
-						   value="<?= $meal->scr_dessert_capacity ?>" min="0" required>
-				</div>
-
-				<div class="col">
-					<label class="form-label text-truncate">Guests</label>
-					<input type="number" class="form-control" name="scr_guests"
-						   value="<?= $meal->scr_guests ?>" min="0" required>
-				</div>
-			</div>
-
+			
 			<hr>
 
 			<div class="mb-3">
@@ -216,32 +241,7 @@ echo pageTitle(
 
 			<hr>
 
-			<div class="mb-3">
-				<label class="form-label">Default Charge-To</label>
-				<select class="form-select" name="charge_to" required>
-					<?php
-					$options = explode(',', $settings->get('booking_charge-to'));
-					foreach ($options as $opt) {
-						$opt = trim($opt);
-						$selected = ($meal->charge_to === $opt) ? ' selected' : '';
-						echo "<option value=\"{$opt}\"{$selected}>{$opt}</option>";
-					}
-					?>
-				</select>
-				<div class="form-text">* Wine charged via Battels</div>
-			</div>
-
-			<div class="form-check form-switch">
-				<input type="checkbox" class="form-check-input" name="allowed_wine" value="1"
-					<?= $meal->allowed_wine ? 'checked' : '' ?>>
-				<label class="form-check-label">Wine Available</label>
-			</div>
-
-			<div class="form-check form-switch mb-4">
-				<input type="checkbox" class="form-check-input" name="allowed_dessert" value="1"
-					<?= $meal->allowed_dessert ? 'checked' : '' ?>>
-				<label class="form-check-label">Dessert Available</label>
-			</div>
+			
 
 			<button type="submit" class="btn btn-primary w-100">
 				<?= $isNew ? 'Create Meal' : 'Update Meal' ?>
@@ -302,8 +302,10 @@ echo pageTitle(
 		</div>
 	</form>
 </div>
+<?php endif; ?>
 
-<?php
+<?php if (!$isNew && count($meal->bookings()) > 0):
+
 $points = [];
 $cumulative = 0;
 
@@ -335,8 +337,13 @@ ksort($temp);
 $start = array_key_first($temp);
 $end   = array_key_last($temp);
 
+if ($start === null || $end === null) {
+	$start = $end = date('c');
+}
+
 $current = new DateTime($start);
 $endDate = new DateTime($end);
+
 
 // Build full day-by-day set including missing days
 while ($current <= $endDate) {
