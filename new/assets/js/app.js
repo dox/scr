@@ -440,6 +440,53 @@ function liveSearch(inputId, resultsId, endpoint, extraParams = {}) {
 	});
 }
 
+// listen for meal template apply button
+document.addEventListener('DOMContentLoaded', function () {
+	document.body.addEventListener('click', function (e) {
+
+		const button = e.target.closest('.meal-template-apply-btn');
+		if (!button) return;
+
+		e.preventDefault();
+
+		const form   = document.getElementById('meal-template-form');
+		const result = document.getElementById('template_result');
+		if (!form || !result) return;
+
+		const data = new FormData(form);
+
+		const originalHTML = button.innerHTML;
+
+		// Show spinner
+		button.disabled = true;
+		button.innerHTML =
+			`<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+			 Applying…`;
+
+		// Show progress message
+		result.textContent = 'Applying meal template…';
+		result.classList.remove('d-none');
+
+		fetch('./ajax/meal_template_apply.php', {
+			method: 'POST',
+			body: data
+		})
+		.then(response => response.text())
+		.then(html => {
+			result.innerHTML = html;
+			button.innerHTML = originalHTML;
+			button.disabled = false;
+		})
+		.catch(error => {
+			console.error(error);
+			result.className = 'alert alert-danger';
+			result.textContent = 'Something went wrong. The meal was not applied.';
+			button.innerHTML = originalHTML;
+			button.disabled = false;
+		});
+	});
+});
+
 // auto hide toasts (if any).  Picks up data-bs-autohide and data-bs-delay
 document.addEventListener('DOMContentLoaded', function() {
   const toastElList = document.querySelectorAll('.toast');

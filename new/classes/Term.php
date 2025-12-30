@@ -112,6 +112,11 @@ class Term extends Model {
 		if (!$date instanceof DateTime) {
 			$date = new DateTime($date);
 		}
+		
+		// don't do week numbers in vacation
+		if ($this->name == "Vacation") {
+			return false;
+		}
 	
 		$start = new DateTime($this->date_start);
 		$end = new DateTime($this->date_end);

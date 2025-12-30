@@ -42,6 +42,17 @@ echo pageTitle(
 		],
 		[
 			'permission' => 'meals',
+			'title' => 'Apply Meal As Template',
+			'class' => '',
+			'event' => './ajax/meal_template_modal.php?uid=' . $meal->uid,
+			'icon' => 'copy',
+			'data' => [
+				'bs-toggle' => 'modal',
+				'bs-target' => '#mealTemplateModal'
+			]
+		],
+		[
+			'permission' => 'meals',
 			'title' => 'Delete Meal',
 			'class' => 'text-danger',
 			'event' => '',
@@ -304,6 +315,104 @@ echo pageTitle(
 </div>
 <?php endif; ?>
 
+
+
+<div class="modal fade" id="mealTemplateModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+	  <div class="modal-content">
+		  <div class="modal-header">
+			  <h5 class="modal-title">Apply Meal Using Template</h5>
+			  <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+		  </div>
+		  
+		  <form id="meal-template-form">
+		  <div class="modal-body">
+				  <!-- Hidden source meal -->
+				  <input type="hidden" name="template_meal_uid" value="<?= $meal->uid ?>">
+				  
+				  <!-- Week selection -->
+				  <div class="mb-3">
+					  <label for="date_start" class="form-label">Week commencing</label>
+					  <div class="input-group" id="datetimepicker">
+						  <span class="input-group-text"><i class="bi bi-calendar-date"></i></span>
+						  <input type="text" class="form-control" name="template_week_start" id="template_week_start" placeholder="" value="<?= $terms->currentTerm()->date_start; ?>"" required>
+					  </div>
+					  <small id="date_startHelp" class="form-text text-muted">Choose the Sunday of the week you want to apply this meal to.</small>
+				  </div>
+				  
+				  <div class="mb-3">
+					  <label for="week_count" class="form-label">Apply for how many weeks?</label>
+					  <select class="form-select" id="week_count" name="week_count">
+						  <option value="1">Just this week</option>
+						  <option value="2">2 weeks</option>
+						  <option value="3">3 weeks</option>
+						  <option value="4">4 weeks</option>
+						  <option value="5">5 weeks</option>
+						  <option value="6">6 weeks</option>
+						  <option value="7">7 weeks</option>
+						  <option value="8">8 weeks</option>
+						  <option value="9">9 weeks</option>
+					  </select>
+				  </div>
+				  
+				  
+				  <!-- Day selection -->
+				  <label for="template_days" class="form-label">Days to apply</label>		
+				  <div class="mb-3">
+					  <?php
+					  $days = [
+						  'sunday'    => 'Sunday',
+						  'monday'    => 'Monday',
+						  'tuesday'   => 'Tuesday',
+						  'wednesday' => 'Wednesday',
+						  'thursday'  => 'Thursday',
+						  'friday'    => 'Friday',
+						  'saturday'  => 'Saturday',
+					  ];
+				  
+					  foreach ($days as $value => $label):
+						  $id = substr($value, 0, 3); // sun, mon, tue…
+					  ?>
+						  <div class="form-check">
+							  <input
+								  class="form-check-input"
+								  type="checkbox"
+								  name="template_days[]"
+								  value="<?= $value ?>"
+								  id="<?= $id ?>">
+							  <label class="form-check-label" for="<?= $id ?>">
+								  <?= $label ?>
+							  </label>
+						  </div>
+					  <?php endforeach; ?>
+				  </div>
+				  
+				  
+				  <div class="form-text mb-3">
+					  The meal will be copied onto each selected day (excluding 'Menu').
+				  </div>
+				  
+				  <hr>
+				  
+				  <div id="template_result" class="mb-3 d-none" role="alert"></div>
+		  </div>
+		  
+		  <!-- Footer -->
+		  <div class="modal-footer">
+			  <button type="button" class="btn btn-link text-muted" data-bs-dismiss="modal">Close</button>
+			  <button
+				  type="button"
+				  class="btn btn-primary meal-template-apply-btn"
+				  data-meal_uid="<?= $meal->uid ?>">
+				  Apply Meal to Selected Dates
+			  </button>
+		  </div>
+		  
+		  </form>
+	  </div>
+  </div>
+</div>
+
 <?php if (!$isNew && count($meal->bookings()) > 0):
 
 $points = [];
@@ -394,43 +503,76 @@ new Chart(ctx, {
 <?php endif; ?>
 
 <script>
-const el = document.getElementById('date_meal');
-const el2 = document.getElementById('date_cutoff');
+const icons = {
+	type: 'icons',
+	time: 'bi bi-clock',
+	date: 'bi bi-calendar',
+	up: 'bi bi-arrow-up',
+	down: 'bi bi-arrow-down',
+	previous: 'bi bi-chevron-left',
+	next: 'bi bi-chevron-right',
+	today: 'bi bi-calendar-check',
+	clear: 'bi bi-trash',
+	close: 'bi bi-close'
+};
 
-const options = {
-	defaultDate: '<?php echo $meal->date_meal; ?>',
+const baseDisplay = {
+	icons: icons,
+	components: {
+		calendar: true,
+		date: true,
+		month: true,
+		year: true,
+		decades: true,
+		clock: true,
+		hours: true,
+		minutes: true,
+		seconds: false
+	}
+};
+
+const dateTimeOptions = {
+	defaultDate: '<?= $meal->date_meal ?>',
+	display: baseDisplay,
+	localization: {
+		format: 'yyyy-MM-dd HH:mm'
+	}
+};
+
+const sundayOnlyOptions = {
 	display: {
-		icons: {
-			type: 'icons',
-			time: 'bi bi-clock',
-			date: 'bi bi-calendar',
-			up: 'bi bi-arrow-up',
-			down: 'bi bi-arrow-down',
-			previous: 'bi bi-chevron-left',
-			next: 'bi bi-chevron-right',
-			today: 'bi bi-calendar-check',
-			clear: 'bi bi-trash',
-			close: 'bi bi-close'
-		},
+		icons: icons,
 		components: {
 			calendar: true,
 			date: true,
 			month: true,
 			year: true,
-			decades: true,
-			clock: true,
-			hours: true,
-			minutes: true,
-			seconds: false
+			decades: false,
+			clock: false
 		}
 	},
 	localization: {
-		format: 'yyyy-MM-dd HH:mm',
-	  }
+		format: 'yyyy-MM-dd'
+	},
+	restrictions: {
+		daysOfWeekDisabled: [1,2,3,4,5,6]
+	}
 };
 
-new tempusDominus.TempusDominus(el, options);
-new tempusDominus.TempusDominus(el2, options);
+new tempusDominus.TempusDominus(
+	document.getElementById('date_meal'),
+	dateTimeOptions
+);
+
+new tempusDominus.TempusDominus(
+	document.getElementById('date_cutoff'),
+	dateTimeOptions
+);
+
+new tempusDominus.TempusDominus(
+	document.getElementById('template_week_start'),
+	sundayOnlyOptions
+);
 </script>
 
 <script>
