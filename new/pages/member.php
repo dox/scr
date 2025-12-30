@@ -51,7 +51,10 @@ echo pageTitle(
 				<a href="#" class="small stats-link" data-url="./ajax/member_stats.php?memberUID=<?= $member->uid ?>&scope=ytd">YTD</a>
 			</li>
 			<li class="list-inline-item">
-				<a href="#" class="small stats-link" data-url="./ajax/member_stats.php?memberUID=<?= $member->uid ?>&scope=term">This Term</a>
+				<a href="#" class="small stats-link" data-url="./ajax/member_stats.php?memberUID=<?= $member->uid ?>&scope=term_previous">Last Term (<?php echo $terms->previousTerm()->name; ?>)</a>
+			</li>
+			<li class="list-inline-item">
+				<a href="#" class="small stats-link" data-url="./ajax/member_stats.php?memberUID=<?= $member->uid ?>&scope=term">This Term (<?php echo $terms->currentTerm()->name; ?>)</a>
 			</li>
 		</ul>
 		<div id="member_stats_container">

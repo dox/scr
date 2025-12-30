@@ -420,8 +420,8 @@ class Terms extends Model {
 		}
 	
 		// A quiet stand-in for empty days
-		$previousTerm = $this->nextTerm();
-		$nextTerm = $this->previousTerm();
+		$previousTerm = $this->previousTerm();
+		$nextTerm = $this->nextTerm();
 		
 		$term = new Term(null);
 		$term->uid = 0;

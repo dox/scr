@@ -18,6 +18,7 @@ if (!$user->hasPermission("members") && $member->ldap != $user->getUsername()) {
 
 $terms = new Terms();
 $currentTerm = $terms->currentTerm();
+$previousTerm = $terms->previousTerm();
 
 // Determine days for countBookingsByType
 $scope = $_GET['scope'] ?? 'all';
@@ -25,6 +26,10 @@ switch ($scope) {
 	case 'all':
 		$start = "1970-01-01";
 		$end = date('Y-m-d');
+		break;
+	case 'term_previous':
+		$start = $previousTerm->date_start;
+		$end = $previousTerm->date_end;
 		break;
 	case 'term':
 		$start = $currentTerm->date_start;
@@ -43,7 +48,7 @@ switch ($scope) {
 $totalBookings = $member->countBookingsByTypeBetweenDates($start, $end);
 
 if (empty($totalBookings)) {
-	echo "No statistics to show";
+	echo "No meals booked between " . formatDate($start, 'short') . " and " . formatDate($end, 'short');
 } else {
 	// Keep top 4 bookings, sorted
 	$totalBookings = array_slice($totalBookings, 0, 4, true);
