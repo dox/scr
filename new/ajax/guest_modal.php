@@ -53,6 +53,7 @@ $guestDietary     = $booking->guests()[$guestUID]['guest_dietary']      ?? [];
 				   value="<?= htmlspecialchars($guestName, ENT_QUOTES); ?>"
 				   required>
 			<small class="form-text text-muted">This name will appear on the sign-up list</small>
+			<div class="invalid-feedback">Guest Name is required.</div>
 		</div>
 		
 		<!-- Dietary Options -->
@@ -105,12 +106,15 @@ $guestDietary     = $booking->guests()[$guestUID]['guest_dietary']      ?? [];
 				<?php endforeach; ?>
 			</select>
 			
-			<input class="form-control mt-3 <?= ($guestChargeTo != 'Domus') ? 'd-none' : '' ?>"
-			   type="text"
-			   id="guest_domus_reason"
-			   placeholder="Domus Reason (required)"
-			   aria-label="Domus Reason (required)"
-			   value="<?= $guestDomusReason; ?>">
+			<div id="guest_domus_reason_container" class="<?= ($guestChargeTo != 'Domus') ? 'd-none' : '' ?>">
+				<input class="form-control mt-3"
+				   type="text"
+				   id="guest_domus_reason"
+				   placeholder="Domus Reason (required)"
+				   aria-label="Domus Reason (required)"
+				   value="<?= $guestDomusReason; ?>">
+				<div class="invalid-feedback">Guest Charge-To is required.</div>
+			</div>
 			
 			<!-- Wine -->
 			<?php if ($meal->allowed_wine == 1): ?>

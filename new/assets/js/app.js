@@ -116,8 +116,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	// Domus validation
 	if (chargeToEl?.value === 'Domus' && (!domusReasonEl?.value || domusReasonEl.value.trim() === '')) {
-	  alert('Please provide a reason for Domus.');
 	  domusReasonEl.focus();
+	  domusReasonEl.classList.add('is-invalid');
 	  return;
 	}
 
@@ -201,7 +201,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	
 	// Guest name validation
 	if (action !== 'guest_delete' && (!guest_nameEl || guest_nameEl.value.trim() === '')) {
-	  alert('Please provide a name for your guest.');
+	  guest_nameEl?.classList.add('is-invalid');
 	  guest_nameEl?.focus();
 	
 	  button.disabled = false;
@@ -210,7 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	
 	// Domus validation
 	if (action != 'guest_delete' && chargeToEl?.value === 'Domus' && (!domusReasonEl?.value || domusReasonEl.value.trim() === '')) {
-	  alert('Please provide a reason for Domus.');
+	  domusReasonEl?.classList.add('is-invalid');
 	  domusReasonEl.focus();
 	  
 	  // re-enable the button

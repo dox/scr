@@ -140,14 +140,16 @@ echo pageTitle(
 				}
 				?>
 			</select>
-		
-			<input class="form-control mt-3 <?= ($booking->charge_to != 'Domus') ? 'd-none' : '' ?>"
-				   type="text"
-				   id="domus_reason"
-				   placeholder="Domus Reason (required)"
-				   aria-label="Domus Reason (required)"
-				   value="<?= $booking->domus_reason; ?>">
-			<div class="invalid-feedback">Default Charge-To is required.</div>
+			
+			<div id="domus_reason_container" class="<?= ($booking->charge_to != 'Domus') ? 'd-none' : '' ?>">
+				<input class="form-control mt-3"
+					   type="text"
+					   id="domus_reason"
+					   placeholder="Domus Reason (required)"
+					   aria-label="Domus Reason (required)"
+					   value="<?= $booking->domus_reason; ?>">
+				<div class="invalid-feedback">Default Charge-To is required.</div>
+			</div>
 		</div>
 		
 		<?php if ($meal->allowed_wine == 1): ?>
@@ -325,19 +327,20 @@ guestModalEl.addEventListener('show.bs.modal', function (event) {
 
 	  // --- DOMUS Reason Logic ---
 	  const chargeEl = guestModalEl.querySelector('#guest_charge_to');
+	  const reasonElContainer = guestModalEl.querySelector('#guest_domus_reason_container');
 	  const reasonEl = guestModalEl.querySelector('#guest_domus_reason');
 	  if (chargeEl && reasonEl) {
 		// Initial visibility
-		reasonEl.classList.toggle('d-none', chargeEl.value !== 'Domus');
+		reasonElContainer.classList.toggle('d-none', chargeEl.value !== 'Domus');
 		reasonEl.required = chargeEl.value === 'Domus';
 
 		// Listen for changes
 		chargeEl.addEventListener('change', () => {
 		  if (chargeEl.value === 'Domus') {
-			reasonEl.classList.remove('d-none');
+			reasonElContainer.classList.remove('d-none');
 			reasonEl.required = true;
 		  } else {
-			reasonEl.classList.add('d-none');
+			reasonElContainer.classList.add('d-none');
 			reasonEl.required = false;
 			reasonEl.value = '';
 		  }
@@ -399,25 +402,24 @@ document.addEventListener('click', function(e) {
 
 <script>
   const chargeEl = document.getElementById('charge_to');
+  const reasonElContainer = document.getElementById('domus_reason_container');
   const reasonEl = document.getElementById('domus_reason');
 
   // Initial visibility
   if (chargeEl.value === 'Domus') {
-	reasonEl.classList.remove('d-none');
+	reasonElContainer.classList.remove('d-none');
 	reasonEl.required = true;
   }
 
   // Change listener
   chargeEl.addEventListener('change', () => {
 	if (chargeEl.value === 'Domus') {
-	  reasonEl.classList.remove('d-none');
+	  reasonElContainer.classList.remove('d-none');
 	  reasonEl.required = true;
 	} else {
-	  reasonEl.classList.add('d-none');
+	  reasonElContainer.classList.add('d-none');
 	  reasonEl.required = false;
 	  reasonEl.value = '';
 	}
   });
-  
-
 </script>
