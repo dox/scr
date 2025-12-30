@@ -49,7 +49,7 @@
 					<ul class="dropdown-menu dropdown-menu-end text-small" data-bs-popper="static">
 						<li>
 							<button type="button"
-								class="dropdown-item d-flex justify-content-between align-items-center"
+								class="dropdown-item position-relative"
 								data-bs-theme-value="light" aria-pressed="false">
 								<span><i class="bi bi-sun me-2"></i> Light</span>
 								<i class="bi bi-check2 d-none"></i>
@@ -57,7 +57,7 @@
 						</li>
 						<li>
 							<button type="button"
-								class="dropdown-item d-flex justify-content-between align-items-center"
+								class="dropdown-item position-relative"
 								data-bs-theme-value="dark" aria-pressed="false">
 								<span><i class="bi bi-moon-stars-fill me-2"></i> Dark</span>
 								<i class="bi bi-check2 d-none"></i>
@@ -65,7 +65,7 @@
 						</li>
 						<li>
 							<button type="button"
-								class="dropdown-item d-flex justify-content-between align-items-center active"
+								class="dropdown-item position-relative active"
 								data-bs-theme-value="auto" aria-pressed="true">
 								<span><i class="bi bi-circle-half me-2"></i> Auto</span>
 								<i class="bi bi-check2"></i>
