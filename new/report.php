@@ -1,5 +1,5 @@
 <?php
-include_once "inc/autoload.php";
+require_once "inc/autoload.php";
 
 if (!$user->isLoggedIn() || !$user->hasPermission("reports")) {
 	die("User does not have permission to run reports or is not logged in.");
@@ -27,6 +27,6 @@ $output = fopen('php://output', 'w');
 
 // Make $output available inside included scripts
 // Include the script that writes rows into $output
-include_once __DIR__ . '/' . $allowed[$report];
+require_once __DIR__ . '/' . $allowed[$report];
 
 fclose($output);

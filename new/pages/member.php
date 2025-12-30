@@ -324,7 +324,11 @@ echo pageTitle(
 		</ul>
 		
 		<div class="text-end">
-			<a class="btn btn-sm btn-outline-light" href="report.php?page=member_bookings&uid=<?= $member->uid; ?>" role="button"><i class="bi bi-download"></i> export</a>
+			<button class="btn btn-sm btn-outline-light" 
+					type="button" 
+					onclick="window.location='report.php?page=member_bookings&uid=<?= $member->uid; ?>'">
+				<i class="bi bi-download"></i> export
+			</button>
 		</div>
 		
 		<hr>

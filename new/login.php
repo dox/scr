@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <?php
-include_once "inc/autoload.php";
+require_once "inc/autoload.php";
 
 // lockout if too many errors in logs
 if (countRecentWarnings() > LOCKOUT_COUNT) {
@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 <html lang="en" data-bs-theme="auto">
 <head>
-	<?php include_once "layout/html_head.php"; ?>
+	<?php require_once "layout/html_head.php"; ?>
 </head>
 <body>
 	<?php require_once "layout/header_debug.php"; ?>

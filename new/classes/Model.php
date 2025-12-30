@@ -141,21 +141,27 @@ class Settings extends Model {
 		$query = "SELECT * FROM " . static::$table . " WHERE name = ?";
 		$row = $this->db->fetch($query, [$name]);
 		
-		if ($row) return $row['value'];
+		if ($row) {
+			return $row['value'];
+		}
 	}
 	
 	public function getUID($name) {
 		$query = "SELECT uid FROM " . static::$table . " WHERE name = ?";
 		$row = $this->db->fetch($query, [$name]);
 		
-		if ($row) return $row['uid'];
+		if ($row) {
+			return $row['uid'];
+		}
 	}
 	
 	public function getName($uid) {
 		$query = "SELECT name FROM " . static::$table . " WHERE uid = ?";
 		$row = $this->db->fetch($query, [$uid]);
 		
-		if ($row) return $row['name'];
+		if ($row) {
+			return $row['name'];
+		}
 	}
 	
 	public function update(array $postData, $log = true) {
@@ -461,7 +467,7 @@ class Terms extends Model {
 		$row = $db->fetch($sql, [$date->format('Y-m-d')]);
 	
 		if ($row) {
-			return new Term($row['uid']); // Return the Term object
+			return new Term($row['uid']);
 		}
 	
 		return null; // No term found
@@ -789,187 +795,5 @@ class Wines extends Model {
 		}
 	
 		return $transactions;
-	}
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	public function allWinesSearch($whereFilterArray = null) {
-		global $db;
-	
-		$sql  = "SELECT wine_wines.*, wine_bins.cellar_uid FROM " . self::$table_wines;
-		$sql .= " LEFT JOIN wine_bins ON wine_wines.bin_uid = wine_bins.uid";
-	
-		$conditions = [];
-		
-		// Process the array of where conditions
-		if (!empty($whereFilterArray)) {
-			foreach ($whereFilterArray as $condition) {
-				if (
-					is_array($condition) &&
-					isset($condition['field'], $condition['operator'], $condition['value'])
-				) {
-					// Safely escape the field name
-					$escapedField = addslashes($condition['field']);
-					$operator = strtoupper(trim($condition['operator']));
-					
-					// Handle the 'IN' operator specially
-					if ($operator === 'IN' && is_array($condition['value'])) {
-						$escapedValues = array_map('addslashes', $condition['value']);
-						$inClause = "'" . implode("','", $escapedValues) . "'";
-						$conditions[] = "$escapedField IN ($inClause)";
-					} else {
-						// Safely escape the value
-						$escapedValue = addslashes($condition['value']);
-	
-						// Ensure the operator is valid
-						$allowedOperators = ['=', 'LIKE', '>', '<', '>=', '<=', '<>', '!='];
-						if (in_array($operator, $allowedOperators, true)) {
-							$conditions[] = "$escapedField $operator '$escapedValue'";
-						}
-					}
-				}
-			}
-		}
-	
-		// Append the conditions to the SQL query
-		if (!empty($conditions)) {
-			$sql .= " WHERE " . implode(' AND ', $conditions);
-		}
-	
-		$sql .= " ORDER BY name ASC";
-		
-		echo $sql;
-		
-		// Execute the query and fetch results
-		$wines = $db->query($sql)->fetchAll();
-	
-		return $wines;
-	}
-	
-	
-	
-	
-	public function allLists($whereFilterArray = null) {
-		global $db;
-		
-		$sql  = "SELECT * FROM " . self::$table_lists;
-		
-		$conditions = [];
-		
-		// Process the array of where conditions
-		if (!empty($whereFilterArray)) {
-			foreach ($whereFilterArray as $condition) {
-				if (
-					is_array($condition) &&
-					isset($condition['field'], $condition['operator'], $condition['value'])
-				) {
-					// Safely escape the field name
-					$escapedField = addslashes($condition['field']);
-					$operator = strtoupper(trim($condition['operator']));
-					
-					// Handle the 'IN' operator specially
-					if ($operator === 'IN' && is_array($condition['value'])) {
-						$escapedValues = array_map('addslashes', $condition['value']);
-						$inClause = "'" . implode("','", $escapedValues) . "'";
-						$conditions[] = "$escapedField IN ($inClause)";
-					} else {
-						// Safely escape the value
-						$escapedValue = addslashes($condition['value']);
-	
-						// Ensure the operator is valid
-						$allowedOperators = ['=', 'LIKE', '>', '<', '>=', '<=', '<>', '!='];
-						if (in_array($operator, $allowedOperators, true)) {
-							$conditions[] = "$escapedField $operator '$escapedValue'";
-						}
-					}
-				}
-			}
-		}
-	
-		// Append the conditions to the SQL query
-		if (!empty($conditions)) {
-			$sql .= " WHERE " . implode(' AND ', $conditions);
-		}
-	
-		$sql .= " ORDER BY last_updated DESC, name ASC";
-		
-		// Execute the query and fetch results
-		$lists = $db->query($sql)->fetchAll();
-	
-		return $lists;
-	}
-	
-	public function winesByUIDs($wine_uids_array) {
-		global $db;
-		
-		if (!empty($wine_uids_array)){ 
-		  $sql  = "SELECT * FROM wine_wines";
-		  $sql .= " WHERE uid IN (" . $wine_uids_array . ")";
-		  $sql .= " ORDER BY name ASC";
-		  
-		  $results = $db->query($sql)->fetchAll();
-		} else {
-		  return array();
-		}
-	  
-		return $results;
-	}
-	
-	public function weightedSearch($searchTerm, $cellarUID = null, $closed = false) {
-		global $db;
-		
-		$sql  = "SELECT wine_wines.*, wine_bins.cellar_uid, CASE 
-			WHEN wine_wines.name LIKE \"%" . $searchTerm . "%\" THEN 20
-			WHEN wine_bins.name LIKE \"%" . $searchTerm . "%\" THEN 15
-			WHEN wine_wines.code LIKE \"%" . $searchTerm . "%\" THEN 10
-			WHEN wine_wines.grape LIKE \"%" . $searchTerm . "%\" THEN 5
-			WHEN wine_wines.region_of_origin LIKE \"%" . $searchTerm . "%\" THEN 1
-			ELSE 0
-		END AS weight ";
-		//$sql .= "FROM `wine_wines` ";
-		$sql .= " FROM wine_wines LEFT JOIN wine_bins ON wine_wines.bin_uid = wine_bins.uid ";
-		$sql .= "WHERE (";
-			$sql .= "wine_wines.name LIKE \"%" . $searchTerm . "%\" ";
-			$sql .= "OR wine_bins.name LIKE \"%" . $searchTerm . "%\" ";
-			$sql .= "OR wine_wines.code LIKE \"%" . $searchTerm . "%\" ";
-			$sql .= "OR wine_wines.grape LIKE \"%" . $searchTerm . "%\" ";
-			$sql .= "OR wine_wines.region_of_origin LIKE \"%" . $searchTerm . "%\"";
-		$sql .= ") ";
-		
-		if (isset($cellarUID)) {
-			$sql .= "AND wine_bins.cellar_uid = '" . $cellarUID . "' ";
-		}
-		
-		if ($closed == true) {
-		} else {
-			$sql .= "AND wine_wines.status != 'Closed' ";
-		}
-		
-		$sql .= "ORDER BY weight DESC ";
-		$sql .= "LIMIT 20";
-		
-		//echo $sql;
-		
-		$results = $db->query($sql)->fetchAll();
-		
-		return $results;
-	}
-	
-	public function transactionsTypes() {
-		$array['Transaction'] = "deduct";
-		$array['Import'] = "import";
-		$array['Stock Adjustment (Deduction)'] = "deduct";
-		$array['Stock Adjustment (Addition)'] = "import";
-		$array['Wastage'] = "deduct";
-		
-		return $array;
 	}
 }

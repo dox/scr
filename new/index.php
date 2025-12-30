@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <?php
-include_once "inc/autoload.php";
+require_once "inc/autoload.php";
 
 if (!$user->isLoggedIn()) {
 	header("Location: login.php");

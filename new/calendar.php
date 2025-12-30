@@ -1,8 +1,8 @@
 <?php
 //header('Content-type: text/calendar; charset=utf-8');
 
-include_once "inc/autoload.php";
-require_once("inc/zapcallib.php");
+require_once "inc/autoload.php";
+require_once "inc/zapcallib.php";
 
 if (isset($_GET['hash'])) {
 	$bookingsClass = new bookings();
@@ -75,7 +75,7 @@ if (isset($_GET['hash'])) {
 	}
 	
 	// write iCalendar feed to stdout
-	echo ($icalobj->export());
+	echo $icalobj->export();
 	
 	if ($settings->get('logs_ical-requests') == "true" || APP_DEBUG) {
 		$log->add("iCal feed generated for: {$member->ldap}", Log::INFO);

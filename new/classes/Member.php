@@ -170,8 +170,12 @@ class Member extends Model {
 		global $db;
 	
 		// Normalize to YYYY-MM-DD
-		if ($start instanceof DateTime) $start = $start->format('Y-m-d');
-		if ($end instanceof DateTime) $end = $end->format('Y-m-d');
+		if ($start instanceof DateTime) {
+			$start = $start->format('Y-m-d');
+		}
+		if ($end instanceof DateTime) {
+			$end = $end->format('Y-m-d');
+		}
 	
 		$sql = "
 			SELECT m.type, COUNT(*) AS total
@@ -303,7 +307,9 @@ class Member extends Model {
 	public function delete() {
 		global $db;
 		
-		if (!isset($this->uid)) return false;
+		if (!isset($this->uid)) {
+			return false;
+		}
 		
 		// Send to database to delete bookings
 		$deleteBookings = $db->delete(

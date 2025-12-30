@@ -4,7 +4,7 @@ $booking = Booking::fromUID($bookingUID);
 $meal = new Meal($booking->meal_uid);
 
 if (!isset($booking->uid) || (!$user->hasPermission("meals") && $booking->member_ldap != $user->getUsername())) {
-	include_once('404.php');
+	require_once('404.php');
 	die("Unknown or unavailable booking");
 }
 

@@ -15,7 +15,10 @@ class Booking extends Model {
 	protected $db;
 	protected static string $table = 'bookings';
 	
-	public function __construct() {}
+	public function __construct() {
+		// A booking should never be called without a uid or meal_uid
+		// When calling with meal_uid - it will ALWAYS filter to the current user
+	}
 	
 	public static function fromUID(?string $uid): self {
 		global $db;
@@ -298,7 +301,9 @@ class Booking extends Model {
 	public function delete() {
 		global $db;
 		
-		if (!isset($this->uid)) return false;
+		if (!isset($this->uid)) {
+			return false;
+		}
 		
 		// Send to database to delete bookings
 		$deleteBooking = $db->delete(

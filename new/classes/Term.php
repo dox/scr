@@ -52,7 +52,9 @@ class Term extends Model {
 	
 	public function delete() {
 		global $db;
-		if (!isset($this->uid)) return false;
+		if (!isset($this->uid)) {
+			return false;
+		}
 		
 		$db->delete(
 			static::$table,

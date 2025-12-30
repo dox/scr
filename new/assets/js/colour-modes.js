@@ -15,14 +15,12 @@
   }
 
   const setTheme = theme => {
-	if (theme === 'auto') {
-	  document.documentElement.setAttribute(
-		'data-bs-theme',
-		window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-	  )
-	} else {
-	  document.documentElement.setAttribute('data-bs-theme', theme)
-	}
+	  if (theme === 'auto') {
+		  document.documentElement.dataset.bsTheme = 
+			  window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+	  } else {
+		  document.documentElement.dataset.bsTheme = theme;
+	  }
   }
 
   setTheme(getPreferredTheme())
@@ -71,16 +69,15 @@
 
   // Setup on load
   window.addEventListener('DOMContentLoaded', () => {
-	const currentTheme = getPreferredTheme()
-	showActiveTheme(currentTheme)
-
-	document.querySelectorAll('[data-bs-theme-value]').forEach(toggle => {
-	  toggle.addEventListener('click', () => {
-		const theme = toggle.getAttribute('data-bs-theme-value')
-		setStoredTheme(theme)
-		setTheme(theme)
-		showActiveTheme(theme, true)
+	  const currentTheme = getPreferredTheme()
+	  showActiveTheme(currentTheme)
+	  document.querySelectorAll('[data-bs-theme-value]').forEach(toggle => {
+		  toggle.addEventListener('click', () => {
+			  const theme = toggle.dataset.bsThemeValue
+			  setStoredTheme(theme)
+			  setTheme(theme)
+			  showActiveTheme(theme, true)
+		  })
 	  })
-	})
   })
 })()

@@ -184,13 +184,19 @@ class User {
 
 	// Permissions
 	public function hasPermission(string $permission): bool {
-		if (!isset($_SESSION['user']['permissions'])) return false;
-		if (in_array('global_admin', $_SESSION['user']['permissions'], true)) return true;
+		if (!isset($_SESSION['user']['permissions'])) {
+			return false;
+		}
+		if (in_array('global_admin', $_SESSION['user']['permissions'], true)) {
+			return true;
+		}
 		return in_array($permission, $_SESSION['user']['permissions'], true);
 	}
 
 	public function pageCheck(string $permission): bool {
-		if ($this->hasPermission('global_admin') || $this->hasPermission($permission)) return true;
+		if ($this->hasPermission('global_admin') || $this->hasPermission($permission)) {
+			return true;
+		}
 		
 		error_log("Error: Failed page access attempt from {$_SERVER['REMOTE_ADDR']}");
 		die("You do not have access to this page.");

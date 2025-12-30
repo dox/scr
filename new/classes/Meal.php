@@ -154,7 +154,9 @@ class Meal extends Model {
 	public function totalDessertDiners(): int {
 		$count = 0;
 		
-		if (!$this->allowed_dessert) return $count;
+		if (!$this->allowed_dessert) {
+			return $count;
+		}
 	
 		foreach ($this->bookings() as $booking) {
 			if ($booking->dessert) {
@@ -181,7 +183,9 @@ class Meal extends Model {
 	
 	public function delete() {
 		global $db;
-		if (!isset($this->uid)) return false;
+		if (!isset($this->uid)) {
+			return false;
+		}
 		
 		// Delete bookings
 		$db->delete(
@@ -426,7 +430,9 @@ class Meal extends Model {
 			return true;
 		}
 	
-		if (!$this->allowed_dessert) return false;
+		if (!$this->allowed_dessert) {
+			return false;
+		}
 		
 		$totalIfAdded = $this->totalDessertDiners() + $guests + 1;
 		
@@ -457,7 +463,9 @@ class Meal extends Model {
 	
 		$member = Member::fromLDAP($user->getUsername());
 			
-		if (empty($this->allowedGroups())) return true;
+		if (empty($this->allowedGroups())) {
+			return true;
+		}
 		
 		if (in_array($member->category, $this->allowedGroups())) {
 			return true;
