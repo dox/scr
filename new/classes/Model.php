@@ -384,21 +384,65 @@ class Terms extends Model {
 		return $terms;
 	}
 	
-	public function currentTerm(): object {
+	public function previousTerm(): Term {
 		global $db;
-		
+	
+		$sql = "
+			SELECT uid
+			FROM " . self::$table . "
+			WHERE date_end < CURDATE()
+			ORDER BY date_end DESC
+			LIMIT 1
+		";
+	
+		$row = $db->query($sql)->fetch();
+	
+		if ($row) {
+			return new Term($row['uid']);
+		}
+	}
+	
+	public function currentTerm(): Term {
+		global $db;
+	
 		$sql = "
 			SELECT uid
 			FROM " . self::$table . "
 			WHERE CURDATE() BETWEEN date_start AND date_end
-			   OR date_end = (
-					SELECT MAX(date_end)
-					FROM " . self::$table . "
-					WHERE date_end < CURDATE()
-			   )
 			ORDER BY date_end DESC
-			LIMIT 1";
+			LIMIT 1
+		";
+	
+		$row = $db->query($sql)->fetch();
+	
+		if ($row) {
+			return new Term($row['uid']);
+		}
+	
+		// A quiet stand-in for empty days
+		$previousTerm = $this->nextTerm();
+		$nextTerm = $this->previousTerm();
 		
+		$term = new Term(null);
+		$term->uid = 0;
+		$term->name = 'Vacation';
+		$term->date_start = $previousTerm->date_end;
+		$term->date_end = $nextTerm->date_start;
+	
+		return $term;
+	}
+	
+	public function nextTerm(): Term {
+		global $db;
+	
+		$sql = "
+			SELECT uid
+			FROM " . self::$table . "
+			WHERE date_start > CURDATE()
+			ORDER BY date_start ASC
+			LIMIT 1
+		";
+	
 		$row = $db->query($sql)->fetch();
 		
 		if ($row) {

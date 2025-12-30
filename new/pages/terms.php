@@ -50,6 +50,15 @@ echo pageTitle(
 			$active = ($currentTerm->uid == $term->uid) ? ' class="table-success"' : '';
 			$url = "index.php?page=term&uid=" . $term->uid;
 			
+			if ($currentTerm->uid == 0) {
+				$nextTerm = $terms->previousTerm();
+				if ($term->date_start == $nextTerm->date_start) {
+					echo "<tr>";
+					echo "<td colspan=\"4\" class=\"table-success text-center\">Vacation</td>";
+					echo "</tr>";
+				}
+			}
+			
 			echo "<tr{$active}>";
 			echo "<td><a href=\"{$url}\">{$term->name}</a></td>";
 			echo "<td>" . formatDate($term->date_start) . "</td>";
