@@ -30,8 +30,8 @@ foreach ($wineResults as $wine) {
 }
 ?>
 <?php
-$wineCount   = count($wineResults);
-$bottleCount = $total;
+$wineCount   = number_format(count($wineResults));
+$bottleCount = number_format($total);
 ?>
 
 <h2>

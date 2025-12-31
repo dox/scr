@@ -275,7 +275,7 @@ echo $wine->statusBanner();
 					<button class="btn btn-outline-secondary" type="submit">Upload</button>
 				</div>
 				<div id="emailHelp" class="form-text">
-					Allowed file types: <?= $settings->get('uploads_allowed_filetypes') ?>
+					Allowed file types: <?= implode(', ', explode(',', $settings->get('uploads_allowed_filetypes'))) ?>
 				</div>
 			</form>
 		</div>

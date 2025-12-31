@@ -72,10 +72,9 @@ class Wine extends Model {
 	}
 
 	public function photographURL(): string {
-		$urlPath  = '/new/uploads/wines/';
-		$filePath = $_SERVER['DOCUMENT_ROOT'] . $urlPath;
+		$filePath = UPLOAD_DIR . 'wines/';
 		$filename = trim((string)$this->photograph);
-
+		
 		if ($filename === '') {
 			return './assets/images/blank.png';
 		}
@@ -230,8 +229,8 @@ class Wine extends Model {
 			]);
 			return null;
 		}
-
-		$uploadDir = __DIR__ . '/../uploads/wines/';
+		
+		$uploadDir = UPLOAD_DIR . 'wines/';
 		if (!is_dir($uploadDir)) mkdir($uploadDir, 0775, true);
 
 		$uniqueName = uniqid("wine_{$this->uid}_", true) . '.' . $ext;
@@ -248,7 +247,7 @@ class Wine extends Model {
 	protected function handleFileDelete(string $storedFilename, string $type = 'attachment'): bool {
 		global $log;
 
-		$filePath = __DIR__ . '/../uploads/wines/' . $storedFilename;
+		$filePath = __DIR__ . UPLOAD_DIR . $storedFilename;
 
 		if (file_exists($filePath) && !unlink($filePath)) {
 			$log->add("Failed to physically delete {$type} file {$storedFilename} for [wineUID:{$this->uid}]", Log::INFO);
@@ -405,7 +404,7 @@ class Wine extends Model {
 		$originalWineUID = $this->uid;
 
 		// Delete photograph
-		$target_dir = __DIR__ . '/../uploads/wines/';
+		$target_dir = UPLOAD_DIR . 'wines/';
 		if (!empty($this->photograph) && file_exists($target_dir . $this->photograph)) {
 			unlink($target_dir . $this->photograph);
 			$logsClass->create([
