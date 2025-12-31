@@ -363,6 +363,20 @@ class Meals extends Model {
 	
 		return $fullPaths;
 	}
+	
+	public function oldestMealDate(): DateTimeImmutable {
+		global $db;
+	
+		$sql = "
+			SELECT MIN(date_meal) AS date_meal
+			FROM " . static::$table;
+	
+		$row = $db->fetch($sql);
+	
+		return empty($row['date_meal'])
+			? new DateTimeImmutable('@0')   // the dawn
+			: new DateTimeImmutable($row['date_meal']);
+	}
 }
 
 class Bookings extends Model {

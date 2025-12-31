@@ -12,50 +12,59 @@ if (!$memberUID) {
 
 $member = Member::fromUID($memberUID);
 
-if (!$user->hasPermission("members") && $member->ldap != $user->getUsername()) {
+if (!$user->hasPermission("members") && $member->ldap !== $user->getUsername()) {
 	die("User not permitted to see member stats.");
 }
 
 $terms = new Terms();
+$meals = new Meals();
+$today = new DateTimeImmutable('today');
 $currentTerm = $terms->currentTerm();
 $previousTerm = $terms->previousTerm();
 
-// Determine days for countBookingsByType
+// Determine date range based on scope
 $scope = $_GET['scope'] ?? 'all';
 switch ($scope) {
-	case 'all':
-		$start = "1970-01-01";
-		$end = date('Y-m-d');
-		break;
 	case 'term_previous':
-		$start = $previousTerm->date_start;
-		$end = $previousTerm->date_end;
+		$start = new DateTimeImmutable($previousTerm->date_start);
+		$end   = new DateTimeImmutable($previousTerm->date_end);
 		break;
+
 	case 'term':
-		$start = $currentTerm->date_start;
-		$end = date('Y-m-d');
+		$start = new DateTimeImmutable($currentTerm->date_start);
+		$end   = $today;
 		break;
+
 	case 'ytd':
-		$start = date('Y-m-d', strtotime('1 year ago'));
-		$end = date('Y-m-d');
+		$start = $today->modify('-1 year');
+		$end   = $today;
 		break;
+
+	case 'all':
 	default:
-		$start = "1970-01-01";
-		$end = date('Y-m-d');
+		$start = $meals->oldestMealDate();
+		$end   = $today;
 		break;
 }
 
-$totalBookings = $member->countBookingsByTypeBetweenDates($start, $end);
+// Fetch bookings
+$totalBookings = $member->countBookingsByTypeBetweenDates(
+	$start->format('Y-m-d'),
+	$end->format('Y-m-d')
+);
 
+// Helper: choose Bootstrap column class based on count
+function getColClass(int $count): string {
+	$map = [1 => 'col-12', 2 => 'col-6', 3 => 'col-4', 4 => 'col-6 col-sm-6 col-lg-3'];
+	return $map[$count] ?? 'col-12';
+}
+
+// Output
 if (empty($totalBookings)) {
 	echo "No meals booked between " . formatDate($start, 'short') . " and " . formatDate($end, 'short');
 } else {
-	// Keep top 4 bookings, sorted
 	$totalBookings = array_slice($totalBookings, 0, 4, true);
-
-	// Determine Bootstrap column class
-	$colClasses = [1 => 'col-12', 2 => 'col-6', 3 => 'col-4', 4 => 'col-6 col-sm-6 col-lg-3'];
-	$colClass = $colClasses[count($totalBookings)] ?? 'col-12';
+	$colClass = getColClass(count($totalBookings));
 	?>
 	
 	<div class="row">
@@ -72,4 +81,4 @@ if (empty($totalBookings)) {
 	</div>
 
 <?php
-} // close else
+}

@@ -235,6 +235,27 @@ class Meal extends Model {
 		return $output;
 	}
 	
+	function cleanMenu(): string {
+		// Remove figure blocks (images, captions, etc.)
+		$html = preg_replace('/<figure\b[^>]*>.*?<\/figure>/si', '', $this->menu);
+	
+		// Convert line breaks and paragraphs into real newlines
+		$html = preg_replace('/<(br|\/p|\/div)>/i', "\n", $html);
+	
+		// Strip all remaining tags
+		$text = strip_tags($html);
+	
+		// Decode HTML entities (&nbsp; &amp; etc.)
+		$text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+	
+		// Normalise whitespace
+		$text = preg_replace("/\r\n|\r/", "\n", $text); // Windows/Mac
+		$text = preg_replace("/\n{3,}/", "\n\n", $text); // Max two newlines
+		$text = trim($text);
+	
+		return $text;
+	}
+	
 	public function card() {
 		global $user;
 		
