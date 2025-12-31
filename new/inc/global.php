@@ -63,6 +63,99 @@ function printArray($data): void {
 	echo "</pre></div>";
 }
 
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+function sendEmail($to, $subject = APP_NAME, $body = '') {
+	global $log;
+
+	// Ensure $to is an array
+	$to = is_array($to) ? $to : [$to];
+
+	// If APP_DEBUG is true, skip sending but log the intent
+	if (defined('APP_DEBUG') && APP_DEBUG === true) {
+		$logMessage = sprintf(
+			"Email suppressed (DEBUG MODE) | Subject: %s | To: %s",
+			$subject,
+			implode(', ', $to)
+		);
+
+		// Only include BCC if there are multiple recipients
+		if (count($to) > 1) {
+			$logMessage .= ' | BCC: ' . implode(', ', array_slice($to, 1));
+		}
+
+		$log->add($logMessage, Log::INFO);
+		return true;
+	}
+
+	$mail = new PHPMailer(true);
+
+	try {
+		// Server settings
+		$mail->isSMTP();
+		$mail->Host       = SMTP_SERVER;
+		$mail->SMTPAuth   = SMTP_AUTH;
+		$mail->Username   = SMTP_USERNAME;
+		$mail->Password   = SMTP_PASSWORD;
+		$mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+		$mail->Port       = SMTP_PORT;
+
+		// From
+		$mail->setFrom(SMTP_SENDER_ADDRESS, SMTP_SENDER_NAME);
+
+		// Add recipients
+		$mainTo = array_shift($to);
+		$mail->addAddress($mainTo);
+
+		foreach ($to as $bccRecipient) {
+			$mail->addBCC($bccRecipient);
+		}
+
+		// Content
+		$mail->isHTML(true);
+		$mail->Subject = $subject;
+		$mail->Body    = $body;
+		$mail->AltBody = strip_tags($body);
+
+		$mail->send();
+
+		// Prepare log
+		$allRecipients = $mail->getToAddresses();
+		$logMessage = sprintf(
+			"Email sent | Subject: %s | To: %s",
+			$subject,
+			implode(', ', array_map(fn($a) => $a[0], $allRecipients))
+		);
+
+		$bccRecipients = $mail->getBccAddresses();
+		if (!empty($bccRecipients)) {
+			$logMessage .= ' | BCC: ' . implode(', ', array_map(fn($a) => $a[0], $bccRecipients));
+		}
+
+		$log->add($logMessage, Log::INFO);
+
+		return true;
+	} catch (\PHPMailer\PHPMailer\Exception $e) {
+		$allRecipients = $mail->getToAddresses();
+		$bccRecipients = $mail->getBccAddresses();
+
+		$logMessage = sprintf(
+			"Email FAILED | Subject: %s | To: %s",
+			$subject,
+			implode(', ', array_map(fn($a) => $a[0], $allRecipients))
+		);
+
+		if (!empty($bccRecipients)) {
+			$logMessage .= ' | BCC: ' . implode(', ', array_map(fn($a) => $a[0], $bccRecipients));
+		}
+
+		$logMessage .= ' | Error: ' . $mail->ErrorInfo;
+		$log->add($logMessage, Log::WARNING);
+
+		return false;
+	}
+}
+
 function formatMoney(int|float $amount): string {
 	$currencySymbol = "£";
 	

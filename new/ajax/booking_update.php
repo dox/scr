@@ -82,8 +82,6 @@ try {
 		  'dessert'      => $_POST['dessert']       ?? 0
 		);
 		
-		
-		
 		$bookingUpdate = $booking->update($data);
 		
 		echo json_encode(['success' => true, 'message' => 'Booking updated successfully.']);

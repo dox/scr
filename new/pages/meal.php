@@ -298,6 +298,7 @@ echo pageTitle(
 					<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
 				</div>
 				<div class="modal-body">
+					<p>This will delete any bookings for this meal. It will not notify anyone who may have booked.</p>
 					<p><strong class="text-danger">This action cannot be undone.</strong></p>
 					<input type="text" class="form-control mb-3"
 						placeholder="Type 'DELETE' to confirm"

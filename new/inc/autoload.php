@@ -3,7 +3,7 @@
 session_start();
 
 // Load configuration
-$config = require_once __DIR__ . '/../config/config.php';
+require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/../inc/global.php';
 
 // Set debugging
@@ -36,7 +36,7 @@ if (APP_DEBUG) {
 }
 
 // Register autoloader
-require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../../vendor/autoload.php';
 
 // Load classes
 require_once __DIR__ . '/../classes/Database.php';
