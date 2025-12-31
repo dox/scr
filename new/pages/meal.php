@@ -43,7 +43,7 @@ echo pageTitle(
 		[
 			'permission' => 'meals',
 			'title' => 'Clone',
-			'class' => 'meal-template-apply-btn',
+			'class' => '',
 			'event' => './ajax/meal_template_modal.php?uid=' . $meal->uid,
 			'icon' => 'copy',
 			'data' => [
@@ -209,7 +209,7 @@ echo pageTitle(
 
 			<div class="mb-3">
 				<label for="menu" class="form-label">Menu</label>
-				<textarea class="form-control" rows="4" name="menu" id="menu"><?= htmlspecialchars($meal->menu) ?></textarea>
+				<textarea class="form-control" rows="4" name="menu" id="menu"><?= htmlspecialchars($meal->menu ?? '') ?></textarea>
 			</div>
 
 			<div class="mb-3">
@@ -335,7 +335,7 @@ echo pageTitle(
 					  <label for="date_start" class="form-label">Week commencing</label>
 					  <div class="input-group" id="datetimepicker">
 						  <span class="input-group-text"><i class="bi bi-calendar-date"></i></span>
-						  <input type="text" class="form-control" name="template_week_start" id="template_week_start" placeholder="" value="<?= $terms->currentTerm()->date_start; ?>"" required>
+						  <input type="text" class="form-control" name="template_week_start" id="template_week_start" placeholder="" value="<?= $terms->firstDayOfWeek(); ?>" required>
 					  </div>
 					  <small id="date_startHelp" class="form-text text-muted">Choose the Sunday of the week you want to apply this meal to.</small>
 				  </div>
@@ -532,7 +532,7 @@ const baseDisplay = {
 };
 
 const dateTimeOptions = {
-	defaultDate: new Date('<?= date('c', strtotime($meal->date_meal)) ?>'),
+	defaultDate: new Date('<?= date('c') ?>'),
 	display: baseDisplay,
 	localization: {
 		format: 'yyyy-MM-dd HH:mm'

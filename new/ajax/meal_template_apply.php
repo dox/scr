@@ -8,6 +8,7 @@ try {
 	$weekStartRaw     = filter_input(INPUT_POST, 'template_week_start', FILTER_DEFAULT);
 	$weekCount        = filter_input(INPUT_POST, 'week_count', FILTER_VALIDATE_INT);
 	$templateDays     = $_POST['template_days'] ?? [];
+	$newMeals = array();
 	
 	if (!$templateMealUID) {
 		throw new RuntimeException('No template meal specified.');
@@ -83,15 +84,18 @@ try {
 				'photo'                 => $templateMeal->photo,
 			];
 	
-			$meals->create($mealData);
+			$newMeals[] = $meals->create($mealData);
 			$datesCreated[] = $newMealDate->format('Y-m-d H:i');
 		}
 	}
 	
 	// --- 5. Output success ---
 	if (!empty($datesCreated)) {
-		echo "<div class=\"alert alert-success\">Meal template applied successfully for the following dates:</div>";
-		echo implode('<br>', $datesCreated);
+		echo "<div class=\"alert alert-success\">" . count($newMeals) . autoPluralise(" new meal", " new meals", count($newMeals)) . " created successfully:</div>";
+		foreach ($newMeals as $meal) {
+			$meal = new Meal($meal);
+			echo "<a href=\"index.php?page=meal&uid=" . $meal->uid . "\">" . formatDate($meal->date_meal, 'short') . " - " . $meal->name() . "</a><br>";
+		}
 	} else {
 		echo "No meals were created.";
 	}
@@ -100,5 +104,3 @@ try {
 	http_response_code(400);
 	echo "Error: " . $e->getMessage();
 }
-
-?>
