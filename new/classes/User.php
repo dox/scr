@@ -33,8 +33,7 @@ class User {
 			'base_dn'  => LDAP_BASE_DN,
 			'username' => LDAP_BIND_USER,
 			'password' => LDAP_BIND_PASS,
-			'use_ssl'  => false,
-			'use_tls'  => false,
+			'use_tls'  => LDAP_USE_TLS,
 		]);
 
 		Container::addConnection($connection);

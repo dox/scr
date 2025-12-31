@@ -7,6 +7,21 @@ $wine = new Wine($cleanUID);
 $bin = new Bin($wine->bin_uid);
 $cellar = new Cellar($bin->cellar_uid);
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+	// Upload attachment
+	if (isset($_FILES['attachment']) && $_FILES['attachment']['error'] === UPLOAD_ERR_OK) {
+		$wine->updateAttachment($_FILES['attachment']);
+	}
+
+	// Delete attachment
+	if (isset($_POST['delete_attachment'])) {
+		$filename = $_POST['delete_attachment'];
+		$wine->removeAttachment($filename);
+	}
+}
+
+
+
 $fields = ['grape', 'region_of_origin', 'category'];
 $subtitleArray = [];
 
@@ -252,38 +267,46 @@ echo $wine->statusBanner();
   </div>
   
   <div class="tab-pane fade" id="attachments-tab-pane" role="tabpanel" aria-labelledby="attachments-tab" tabindex="0">
-	  <p>Coming soon...</p>
-	  <ul class="list-group mb-3">
-	  <?php
-	  foreach ($wine->attachments() AS $attachment) {
-		  $fileURL = "uploads/" . $attachment['stored'];
-		  
-		  $output  = "<form method=\"POST\" style=\"margin:0;\">";
-		  $output .= "<input type=\"hidden\" name=\"delete_attachment\" value=\"" . $attachment['stored'] . "\" />";
-		  $output .= "<li class=\"list-group-item d-flex justify-content-between align-items-center\">";
-		  $output .= "<a href=\"" . $fileURL . "\" target=\"_blank\">" . $attachment['original']  . "</a>";
-		  $output .= "<button type=\"submit\" class=\"btn btn-sm btn-danger\" onclick=\"return confirm('Are you sure you want to delete this file?  This action cannot be undone!')\"><svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#trash\"/></svg> Delete</button>";
-		  $output .= "</form>";
-		  $output .= "</li>";
-		  
-		  echo $output;
-	  }
-	  ?>
-	  </ul>
-
+	  
 	  <div class="mb-3">
-		  <form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'] . '?' . $_SERVER['QUERY_STRING']); ?>" enctype="multipart/form-data">
-		   <div class="input-group mb-3">
-			 <input class="form-control" required type="file" name="attachment" id="formFile">
-			 <button class="btn btn-outline-secondary" type="submit" id="button-addon1">Upload</button>
-		   </div>
-		   <div id="emailHelp" class="form-text">
-			 Allowed file types: <?php echo $settings->get('uploads_allowed_filetypes'); ?>
-		   </div>
-		 </form>
-
-	  </div>
-  </div>
+			<form method="POST" action="<?= htmlspecialchars($_SERVER['REQUEST_URI']) ?>" enctype="multipart/form-data">
+				<div class="input-group mb-3">
+					<input class="form-control" required type="file" name="attachment" id="formFile">
+					<button class="btn btn-outline-secondary" type="submit">Upload</button>
+				</div>
+				<div id="emailHelp" class="form-text">
+					Allowed file types: <?= $settings->get('uploads_allowed_filetypes') ?>
+				</div>
+			</form>
+		</div>
+		
+		<hr>
+		
+		<ul class="list-group">
+			<?php foreach ($wine->attachments() as $att): ?>
+				<li class="list-group-item d-flex justify-content-between align-items-center">
+					<div>
+						<strong><a target="_blank" rel="noopener noreferrer" href="uploads/wines/<?= htmlspecialchars($att['stored']) ?>"><?= htmlspecialchars($att['original']) ?></a></strong><br>
+						<small class="text-muted">
+							Uploaded by <?= htmlspecialchars($att['username']) ?>
+							on <?= htmlspecialchars($att['uploaded_at']) ?>
+						</small>
+					</div>
+					
+					<form method="POST" class="ms-3">
+						<input type="hidden"
+						name="delete_attachment"
+						value="<?= htmlspecialchars($att['stored']) ?>">
+						<button type="submit"
+						class="btn btn-sm btn-outline-danger"
+						onclick="return confirm('Delete this attachment?');">
+						Delete
+						</button>
+					</form>
+				</li>
+			<?php endforeach; ?>
+		</ul>
+	</div>
 	
   <div class="tab-pane fade" id="logs-tab-pane" role="tabpanel" aria-labelledby="logs-tab" tabindex="0">
 	  <?php

@@ -1,7 +1,7 @@
 <?php
 class Wine extends Model {
 	protected static string $table = 'wine_wines';
-	
+
 	public $uid;
 	public $date_created;
 	public $date_updated;
@@ -22,347 +22,328 @@ class Wine extends Model {
 	public $tasting;
 	public $notes;
 	public $photograph;
-	public $attachments;
-	
+	private $attachments;
+
 	protected $db;
-	
+
 	public function __construct($uid = null) {
 		$this->db = Database::getInstance();
-	
+
 		if ($uid !== null) {
 			$this->getOne($uid);
 		}
 	}
-	
+
 	public function getOne($uid) {
 		$query = "SELECT * FROM " . static::$table . " WHERE uid = ?";
 		$row = $this->db->fetch($query, [$uid]);
-	
+
 		if ($row) {
 			foreach ($row as $key => $value) {
 				$this->$key = $value;
 			}
 		}
 	}
-	
+
 	public function clean_name($full = false) {
 		$output  = $this->name;
-		
-		if ($full == true) {
-			$bin = new bin($this->bin_uid);
-			$cellar = new cellar($bin->cellar_uid);
-			
+
+		if ($full) {
+			$bin = new Bin($this->bin_uid);
+			$cellar = new Cellar($bin->cellar_uid);
+
 			$output = $cellar->name . " > " . $bin->name . " > " . $this->name;
-			
+
 			if (!empty($this->vintage)) {
 				$output .= " (" . $this->vintage() . ")";
 			}
-		} else {
-			$output  = $this->name;
 		}
-		
+
 		return $output;
 	}
-	
-	public function binName(){
+
+	public function binName() {
 		$bin = new Bin($this->bin_uid);
-		
 		return $bin->name;
 	}
-	
-	public function code(): string{
-		// If $this->code is null, empty, or only whitespace, return 0
-		if (!isset($this->code) || trim((string)$this->code) === '') {
-			return 0;
-		}
-		
-		return (string) $this->code;
+
+	public function code(): string {
+		return isset($this->code) && trim((string)$this->code) !== '' ? (string)$this->code : '0';
 	}
-	
+
 	public function photographURL(): string {
 		$urlPath  = '/new/uploads/wines/';
 		$filePath = $_SERVER['DOCUMENT_ROOT'] . $urlPath;
-	
-		// Choose the candidate filename (null or empty means default)
-		$filename = trim((string) $this->photograph);
-	
-		// If no filename at all, skip straight to default
+		$filename = trim((string)$this->photograph);
+
 		if ($filename === '') {
 			return './assets/images/blank.png';
 		}
-	
-		// If file exists, return its public path; otherwise, fall to default
+
 		return file_exists($filePath . $filename)
 			? './uploads/wines/' . $filename
 			: './assets/images/blank.png';
 	}
-	
+
 	public function pricePerBottle($target = "Internal") {
-		if ($target == "Internal") {
-		  $value = $this->price_internal;
-		} elseif ($target == "External") {
-		  if (isset($this->price_external)) {
-			$value = $this->price_external;
-		  } else {
-			$value = $this->price_internal;
-		  }
-		} elseif ($target == "Purchase") {
-		  $value = $this->price_purchase;
-		} else {
-		  $value = 999;
-		}
-	  
-		return $value;
+		return match($target) {
+			'Internal' => $this->price_internal,
+			'External' => $this->price_external ?? $this->price_internal,
+			'Purchase' => $this->price_purchase,
+			default => 999
+		};
 	}
-	
+
 	public function stockValue($filterDate = null) {
-		return ($this->currentQty($filterDate) * $this->price_purchase);
+		return $this->currentQty($filterDate) * $this->price_purchase;
 	}
-	
+
 	public function transactions() {
 		$wineClass = new wineClass();
-		
-		$transactions = $wineClass->allTransactions(array('wine_uid' => $this->uid));
-		
-		return $transactions;
+		return $wineClass->allTransactions(['wine_uid' => $this->uid]);
 	}
-	
+
 	public function logs() {
 		global $db;
-		
-		$sql  = "SELECT uid, INET_NTOA(ip) AS ip, username, date, result, category, description  FROM logs";
+
+		$sql  = "SELECT uid, INET_NTOA(ip) AS ip, username, date, result, category, description FROM logs";
 		$sql .= " WHERE category = 'wine'";
 		$sql .= " AND description LIKE '%[wineUID:" . $this->uid . "]%'";
 		$sql .= " ORDER BY date DESC";
-		
-		$results = $db->query($sql)->fetchAll();
-		
-		return $results;
+
+		return $db->query($sql)->fetchAll();
 	}
-	
+
 	public function card() {
-		$bin = new bin($this->bin_uid);
-		$cellar = new cellar($bin->cellar_uid);
-		
+		$bin = new Bin($this->bin_uid);
+		$cellar = new Cellar($bin->cellar_uid);
+
 		$url = "index.php?page=wine_wine&uid=" . $this->uid;
 		$title = "<a href=\"" . $url . "\">" . $this->name . "</a>";
-		
-		if ($this->status == "Closed") {
-		  $cardClass = " border-danger ";
-		} elseif ($this->status <> "In Use") {
-		  $cardClass = " border-warning ";
-		} else {
-		  $cardClass = "";
-		}
-		
+
+		$cardClass = match($this->status) {
+			'Closed' => ' border-danger ',
+			default => ($this->status != 'In Use' ? ' border-warning ' : '')
+		};
+
 		$output  = "<div class=\"col\">";
-		$output .= "<div class=\"card " . $cardClass . " mb-3\">";
+		$output .= "<div class=\"card {$cardClass} mb-3\">";
 		$output .= "<div class=\"card-body\">";
-		$output .= "<h5 class=\"card-title text-truncate\">" . $title . "</h5>";
-		$output .= "<p class=\"card-text text-truncate\">" . $cellar->name . " / " . $bin->name . "</p>";
+		$output .= "<h5 class=\"card-title text-truncate\">{$title}</h5>";
+		$output .= "<p class=\"card-text text-truncate\">{$cellar->name} / {$bin->name}</p>";
 		$output .= "<div class=\"d-flex justify-content-between align-items-center\">";
 		$output .= "<div class=\"btn-group\">";
-		
-		$url =
-		   'index.php?page=wine_filter'
-		   . '&conditions[0][field]=wine_wines.price_purchase'
-		   . '&conditions[0][operator]=='
-		   . '&conditions[0][value]=' . rawurlencode($this->price_purchase)
-		   . '&conditions[1][field]=wine_wines.status'
-		   . '&conditions[1][operator]=!='
-		   . '&conditions[1][value]=Closed';
-		$output .= "<a href=\"" . htmlspecialchars($url) . "\" type=\"button\" class=\"btn btn-sm btn-outline-secondary\">" . formatMoney($this->price_purchase) . "</a>";
-		
-		$url =
-		   'index.php?page=wine_filter'
-		   . '&conditions[0][field]=wine_wines.code'
-		   . '&conditions[0][operator]=='
-		   . '&conditions[0][value]=' . rawurlencode($this->code())
-		   . '&conditions[1][field]=wine_wines.status'
-		   . '&conditions[1][operator]=!='
-		   . '&conditions[1][value]=Closed';
-		$output .= "<a href=\"" . htmlspecialchars($url) . "\" type=\"button\" class=\"btn btn-sm btn-outline-secondary\">" . $this->code . "</a>";
-		
-		$url =
-		   'index.php?page=wine_filter'
-		   . '&conditions[0][field]=wine_wines.vintage'
-		   . '&conditions[0][operator]=='
-		   . '&conditions[0][value]=' . rawurlencode($this->vintage(true))
-		   . '&conditions[1][field]=wine_wines.status'
-		   . '&conditions[1][operator]=!='
-		   . '&conditions[1][value]=Closed';
-		$output .= "<a href=\"" . htmlspecialchars($url) . "\" type=\"button\" class=\"btn btn-sm btn-outline-secondary\">" . $this->vintage() . "</a>";
+
+		$output .= "<a href=\"#\" class=\"btn btn-sm btn-outline-secondary\">" . formatMoney($this->price_purchase) . "</a>";
+		$output .= "<a href=\"#\" class=\"btn btn-sm btn-outline-secondary\">" . $this->code() . "</a>";
+		$output .= "<a href=\"#\" class=\"btn btn-sm btn-outline-secondary\">" . $this->vintage() . "</a>";
+
 		$output .= "</div>";
 		$output .= $this->statusBadge();
 		$output .= "<small class=\"text-body-secondary\">" . $this->currentQty() . autoPluralise(" bottle", " bottles", $this->currentQty()) . " </small>";
-		$output .= "</div>";
-		$output .= "</div>";
-		$output .= "</div>";
-		$output .= "</div>";
-		
+		$output .= "</div></div></div></div>";
+
 		return $output;
 	}
-	
+
 	public function statusBadge() {
-		if ($this->status == "Closed") {
-		  $output = "<span class=\"badge rounded-pill text-bg-danger\">" . strtoupper($this->status) . "</span>";
-		} elseif ($this->status <> "In Use") {
-		  $output = "<span class=\"badge rounded-pill text-bg-warning\">" . strtoupper($this->status) . "</span>";
-		} else {
-		  $output = "";
-		}
-		
-		return $output;
+		return match($this->status) {
+			'Closed' => "<span class=\"badge rounded-pill text-bg-danger\">{$this->status}</span>",
+			default => ($this->status != 'In Use' ? "<span class=\"badge rounded-pill text-bg-warning\">{$this->status}</span>" : '')
+		};
 	}
-	
+
 	public function vintage(bool $int = false) {
-		// Normalize empty or null vintages
 		if (empty($this->vintage) || !preg_match('/^\d{4}$/', $this->vintage)) {
 			return $int ? '' : 'NV';
 		}
-	
-		// Return as integer or string based on $int
-		return $int ? (int) $this->vintage : $this->vintage;
+
+		return $int ? (int)$this->vintage : $this->vintage;
 	}
-	
+
 	public function statusBanner() {
-		if ($this->status == "Closed") {
-		  $output = "<div class=\"alert alert-danger text-center\" role=\"alert\">STATUS: <strong>" . strtoupper($this->status) . "</strong></div>";
-		} elseif ($this->status <> "In Use") {
-		  $output = "<div class=\"alert alert-warning text-center\" role=\"alert\">STATUS: <strong>" . strtoupper($this->status) . "</strong></div>";
-		} else {
-		  $output = "";
-		}
-		
-		return $output;
+		return match($this->status) {
+			'Closed' => "<div class=\"alert alert-danger text-center\" role=\"alert\">STATUS: <strong>{$this->status}</strong></div>",
+			default => ($this->status != 'In Use' ? "<div class=\"alert alert-warning text-center\" role=\"alert\">STATUS: <strong>{$this->status}</strong></div>" : '')
+		};
 	}
-	
+
 	public function favButton() {
-		$output  = "<button type=\"button\" class=\"btn text-danger btn-link\" data-bs-toggle=\"modal\" data-bs-target=\"#listModal\">";
-		$output .= "<svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#heart-full\"/></svg>";
-		$output .= "</button>";
-		
-		return $output;
+		return "<button type=\"button\" class=\"btn text-danger btn-link\" data-bs-toggle=\"modal\" data-bs-target=\"#listModal\"><svg width=\"1em\" height=\"1em\"><use xlink:href=\"img/icons.svg#heart-full\"/></svg></button>";
 	}
-	
+
 	public function currentQty($filterDate = null) {
 		global $db;
-		
-		$sql  = "SELECT SUM(bottles) AS total FROM wine_transactions";
-		$sql .= " WHERE wine_uid = '" . $this->uid . "'";
-		
-		if (isset($filterDate)) {
+
+		$sql  = "SELECT SUM(bottles) AS total FROM wine_transactions WHERE wine_uid = '" . $this->uid . "'";
+		if ($filterDate) {
 			$sql .= " AND date_posted <= '" . $filterDate . "'";
 		}
-		
+
 		$results = $db->query($sql)->fetch();
-		
-		// don't allow null
-		if (!isset($results['total'])) {
-			$results['total'] = 0;
-		}
-		
-		// don't allow negatives
-		if ($results['total'] < 0) {
-			$results['total'] = 0;
-		}
-		
-		return $results['total'];
+		$total = $results['total'] ?? 0;
+
+		return max(0, $total);
 	}
-	
+
 	public function transactionsInFuture() {
 		global $db;
-		
-		$sql  = "SELECT * FROM wine_transactions ";
-		$sql .= " WHERE wine_uid = '" . $this->uid . "'";
-		$sql .= " ORDER BY date_posted DESC";
-		$sql .= " AND date_posted > '" . date('Y-m-d') . "'";
-		
-		$results = $db->query($sql)->fetchAll();
-		
-		return $results;
+
+		$sql  = "SELECT * FROM wine_transactions WHERE wine_uid = '{$this->uid}' AND date_posted > '" . date('Y-m-d') . "' ORDER BY date_posted DESC";
+		return $db->query($sql)->fetchAll();
 	}
-	
+
 	public function transactionsToDate($filterDate = null) {
 		global $db;
-		
-		$sql  = "SELECT * FROM wine_transactions ";
-		$sql .= " WHERE wine_uid = '" . $this->uid . "'";
-		if ($filterDate != null) {
-			$sql .= " AND date_posted <= '" . date('Y-m-d', strtotime($filterDate)) . "'";
-		} else {
-			$sql .= " AND date_posted <= '" . date('Y-m-d') . "'";
-		}
-		$sql .= " ORDER BY date_posted DESC";
-		
-		$results = $db->query($sql)->fetchAll();
-		
-		return $results;
+
+		$dateLimit = $filterDate ? date('Y-m-d', strtotime($filterDate)) : date('Y-m-d');
+		$sql = "SELECT * FROM wine_transactions WHERE wine_uid = '{$this->uid}' AND date_posted <= '{$dateLimit}' ORDER BY date_posted DESC";
+
+		return $db->query($sql)->fetchAll();
 	}
-	
-	public function updatePhotograph(array $file): bool {
-		global $db, $log;
-		
-		if (!isset($file) || $file['error'] !== UPLOAD_ERR_OK) {
-			return false; // No file uploaded or error
-		}
-	
-		$upload = $file;
-		$originalName = basename($upload['name']);
+
+	// -----------------------
+	// Generic file handling
+	// -----------------------
+	protected function handleFileUpload(array $file, string $type = 'attachment', array $allowedExtensions = [], int $maxSize = 5000000): ?array {
+		global $db, $log, $user;
+
+		if (!isset($file) || $file['error'] !== UPLOAD_ERR_OK) return null;
+
+		$originalName = basename($file['name']);
 		$ext = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
-		
-		// Validate file type
-		$allowed = ['jpg', 'jpeg', 'png', 'gif'];
-		if (!in_array($ext, $allowed)) {
-			$log->add("Invalid file extension ({$ext}) for wine [wineUID:{$this->uid}]", Log::WARNING);
+
+		if ($allowedExtensions && !in_array($ext, $allowedExtensions)) {
+			$logsClass->create([
+				'category' => 'wine',
+				'result' => 'warning',
+				'description' => "Invalid file extension ({$ext}) for {$type} upload on wine [wineUID:{$this->uid}]"
+			]);
+			return null;
+		}
+
+		if ($file['size'] > $maxSize) {
+			$logsClass->create([
+				'category' => 'wine',
+				'result' => 'warning',
+				'description' => "File too large ({$file['size']} bytes) for {$type} upload on wine [wineUID:{$this->uid}]"
+			]);
+			return null;
+		}
+
+		$uploadDir = __DIR__ . '/../uploads/wines/';
+		if (!is_dir($uploadDir)) mkdir($uploadDir, 0775, true);
+
+		$uniqueName = uniqid("wine_{$this->uid}_", true) . '.' . $ext;
+		$targetFile = $uploadDir . $uniqueName;
+
+		if (!move_uploaded_file($file['tmp_name'], $targetFile)) {
+			$log->add("Failed to move uploaded file for {$type} on wine [wineUID:{$this->uid}]", Log::INFO);
+			return null;
+		}
+
+		return ['original' => $originalName, 'stored' => $uniqueName];
+	}
+
+	protected function handleFileDelete(string $storedFilename, string $type = 'attachment'): bool {
+		global $log;
+
+		$filePath = __DIR__ . '/../uploads/wines/' . $storedFilename;
+
+		if (file_exists($filePath) && !unlink($filePath)) {
+			$log->add("Failed to physically delete {$type} file {$storedFilename} for [wineUID:{$this->uid}]", Log::INFO);
 			return false;
 		}
-		
-		// Validate file size (max 5MB)
-		if ($upload['size'] > 5_000_000) {
-			$log->add("File too large ({$upload['size']} bytes) for wine [wineUID:{$this->uid}]", Log::WARNING);
-			return false;
-		}
-	
-		// Validate image
-		if (getimagesize($upload['tmp_name']) === false) {
-			$log->add("Uploaded file is not a valid image for wine [wineUID:{$this->uid}]", Log::WARNING);
-			return false;
-		}
-	
-		$uploadDir = __DIR__ . "/../uploads/wines/";
-		if (!is_dir($uploadDir)) {
-			mkdir($uploadDir, 0775, true);
-		}
-	
-		// Remove existing photograph if any
-		if (!empty($this->photograph) && file_exists($uploadDir . $this->photograph)) {
-			unlink($uploadDir . $this->photograph);
-		}
-	
-		// Generate unique filename
-		$newFileName = uniqid("wine_{$this->uid}_", true) . '.' . $ext;
-		$targetFile = $uploadDir . $newFileName;
-	
-		if (!move_uploaded_file($upload['tmp_name'], $targetFile)) {
-			$log->add("Failed to move uploaded file for wine [wineUID:{$this->uid}]", Log::WARNING);
-			return false;
-		}
-	
-		// Update database
-		$db->query("UPDATE " . static::$table . " SET photograph = ? WHERE uid = ?", [$newFileName, $this->uid]);
-		$this->photograph = $newFileName;
-	
-		// Log success
-		$log->add("Photograph updated to {$newFileName} for wine [wineUID:{$this->uid}]", Log::INFO);
-	
+
 		return true;
 	}
+
+	public function updatePhotograph(array $file): bool {
+		global $db, $log, $settings;
+
+		$allowed = array_map('trim', explode(',', $settings->get('uploads_allowed_filetypes')));
+		
+		if (!empty($this->photograph)) {
+			$this->handleFileDelete($this->photograph, 'photograph');
+		}
+
+		$upload = $this->handleFileUpload($file, 'photograph', $allowed, 5000000);
+		if (!$upload) return false;
+
+		$db->query("UPDATE " . static::$table . " SET photograph = ? WHERE uid = ?", [$upload['stored'], $this->uid]);
+		$this->photograph = $upload['stored'];
+		
+		$log->add("Photograph updated to {$upload['stored']} for wine [wineUID:{$this->uid}]", Log::INFO);
+
+		return true;
+	}
+
+	public function updateAttachment(array $file): ?array {
+		global $db, $log, $settings, $user;
+
+		$allowed = array_map('trim', explode(',', $settings->get('uploads_allowed_filetypes')));
+		$upload = $this->handleFileUpload($file, 'attachment', $allowed, 5000000);
+		if (!$upload) return null;
+
+		$attachments = $this->attachments() ?? [];
+		$attachments[] = [
+			'original' => $upload['original'],
+			'stored' => $upload['stored'],
+			'uploaded_at' => date('Y-m-d H:i:s'),
+			'username' => $user->getUsername()
+		];
+
+		$db->query("UPDATE " . static::$table . " SET attachments = ? WHERE uid = ?", [json_encode($attachments), $this->uid]);
+		$this->attachments = json_encode($attachments);
+		
+		$log->add("Uploaded attachment {$upload['stored']} (original: {$upload['original']}) for wine [wineUID:{$this->uid}]", Log::INFO);
+			
+		toast('File Uploaded', 'File sucesfully uploaded', 'text-success');
+
+		return $upload;
+	}
+
+	public function removeAttachment(string $storedFilename): bool {
+		global $db, $log;
+
+		if (!$this->handleFileDelete($storedFilename, 'attachment')) return false;
+
+		$attachments = $this->attachments() ?? [];
+		$attachments = array_filter($attachments, fn($a) => $a['stored'] !== $storedFilename);
+		$attachments = array_values($attachments);
+
+		$db->query("UPDATE " . static::$table . " SET attachments = ? WHERE uid = ?", [json_encode($attachments), $this->uid]);
+		$this->attachments = json_encode($attachments);
+		
+		$log->add("Deleted attachment {$storedFilename} for wine [wineUID:{$this->uid}]", Log::INFO);
+		toast('File Deleted', 'File sucesfully deleted', 'text-success');
+		
+		return true;
+	}
+
+	// -----------------------
+	// Attachment helper
+	// -----------------------
+	public function attachments(): array {
+		if (empty($this->attachments)) {
+			return [];
+		}
 	
+		$attachments = json_decode($this->attachments, true);
+	
+		if (!is_array($attachments)) {
+			return [];
+		}
+		
+		return $attachments;
+	}
+	
+	// -----------------------
+	// Other CRUD functions
+	// -----------------------
 	public function update(array $postData) {
 		global $db;
-	
-		// Map normal text/select fields
+
 		$fields = [
 			'date_updated'      => date('c'),
 			'code'              => $postData['code'] ?? '0',
@@ -375,31 +356,23 @@ class Wine extends Model {
 			'grape'             => $postData['grape'] ?? null,
 			'country_of_origin' => $postData['country_of_origin'] ?? null,
 			'region_of_origin'  => $postData['region_of_origin'] ?? null,
-			'vintage'			=> ($postData['vintage'] === '' ? null : $postData['vintage']),
+			'vintage'           => ($postData['vintage'] === '' ? null : $postData['vintage']),
 			'price_purchase'    => $postData['price_purchase'] ?? null,
 			'price_internal'    => $postData['price_internal'] ?? null,
 			'price_external'    => $postData['price_external'] ?? null,
 			'tasting'           => $postData['tasting'] ?? null,
 			'notes'             => $postData['notes'] ?? null
 		];
-	
-		// Send to database update
-		$updatedRows = $db->update(
-			static::$table,
-			$fields,
-			['uid' => $this->uid],
-			'logs'
-		);
-		
-		toast('Wine Updated', 'Wine sucesfully updated', 'text-success');
-	
+
+		$updatedRows = $db->update(static::$table, $fields, ['uid' => $this->uid], 'logs');
+		toast('Wine Updated', 'Wine successfully updated', 'text-success');
+
 		return $updatedRows;
 	}
-	
+
 	public function createWine(array $postData) {
 		global $db;
-	
-		// Map normal text/select fields
+
 		$fields = [
 			'date_updated'      => date('c'),
 			'code'              => ($postData['code'] === '' ? null : 0),
@@ -412,260 +385,45 @@ class Wine extends Model {
 			'grape'             => $postData['grape'] ?? null,
 			'country_of_origin' => $postData['country_of_origin'] ?? null,
 			'region_of_origin'  => $postData['region_of_origin'] ?? null,
-			'vintage'			=> ($postData['vintage'] === '' ? null : $postData['vintage']),
+			'vintage'           => ($postData['vintage'] === '' ? null : $postData['vintage']),
 			'price_purchase'    => $postData['price_purchase'] ?? 0,
 			'price_internal'    => $postData['price_internal'] ?? 0,
 			'price_external'    => $postData['price_external'] ?? 0,
 			'tasting'           => $postData['tasting'] ?? null,
 			'notes'             => $postData['notes'] ?? null
 		];
-	
-		// Send to database update
+
 		$wine = $this->create($fields);
-		
-		toast('Wine Created', 'Wine sucesfully created', 'text-success');
-	
+		toast('Wine Created', 'Wine successfully created', 'text-success');
+
 		return $wine;
 	}
-	  
-	public function createOLD($array) {
-		global $db, $logsClass;
-		  
-		// Initialize the set part of the query
-		$setParts = [];
-		
-		// null missing vintage
-		if (empty($array['vintage'])) {
-			$array['vintage'] = null;
-		}
-		
-		// Loop through the new values array
-		foreach ($array as $field => $newValue) {
-			if (is_array($newValue)) {
-				$newValue = implode(",", $newValue);
-			}
-			
-			if (is_null($newValue)) {
-				$setParts[$field] = "`$field` = NULL";
-			} else {
-				// Sanitize the field and value to prevent SQL injection
-				$field = htmlspecialchars($field);
-				$newValue = trim(htmlspecialchars($newValue));
-				// Add to the set part
-				$setParts[$field] = "`$field` = '$newValue'";
-			}
-			
-		}
-		
-		// If there are no changes, return null
-		if (empty($setParts)) {
-			return null;
-		}
-		
-		// we don't want the qty for the wine record (only for the transaction)
-		unset($setParts['qty']);
-		unset($setParts['posting_date']);
-		
-		// Combine the set parts into a single string
-		$setString = implode(", ", $setParts);
-		
-		// Construct the final UPDATE query
-		$sql = "INSERT INTO wine_wines SET " . $setString;
-		$insert = $db->query($sql);
-		$this->uid = $db->lastInsertID();
-		
-		$logArray['category'] = "wine";
-		$logArray['result'] = "success";
-		$logArray['description'] = "Created [wineUID:" . $this->uid . "] with fields " . $setString;
-		$logsClass->create($logArray);
-		
-		//upload photo (if empty no worries)
-		$this->updatePhotograph($_FILES);
-		
-		//log a transaction
-		$data['wine_uid'] = $this->uid;
-		$data['type'] = "Import";
-		if (isset($array['posting_date'])) {
-			$data['date_posted'] = $array['posting_date'];
-		} else {
-			$data['date_posted'] = date('Y-m-d');
-		}
-		$data['bottles'] = $array['qty'];
-		$data['price_per_bottle'] = $array['price_purchase'];
-		$data['name'] = "Original import into system";
-		
-		$transaction = new transaction();
-		$transaction->create($data);
-		
-		return true;
-	}
-	
-	public function attachments() {
-		if (empty($this->attachments)) {
-			return [];
-		}
-	
-		$attachments = json_decode($this->attachments, true);
-	
-		if (json_last_error() !== JSON_ERROR_NONE || !is_array($attachments)) {
-			return [];
-		}
-	
-		return $attachments;
-	}
-	
+
 	public function delete() {
 		global $db, $logsClass;
-		
+
 		$originalWineUID = $this->uid;
-		
-		//delete photo (if empty no worries)
-		$target_dir = "../img/wines/";
-		if (file_exists($target_dir . $this->photograph)) {
+
+		// Delete photograph
+		$target_dir = __DIR__ . '/../uploads/wines/';
+		if (!empty($this->photograph) && file_exists($target_dir . $this->photograph)) {
 			unlink($target_dir . $this->photograph);
-			
-			$logArray['category'] = "wine";
-			$logArray['result'] = "warning";
-			$logArray['description'] = "Deleted file:" . $this->photograph;
-			$logsClass->create($logArray);
-		} 
-		
-		// Construct the final UPDATE query
-		$sql = "DELETE FROM wine_wines WHERE uid = '" . $this->uid . "'";
-		$sql .= " LIMIT 1";
-		
-		$delete = $db->query($sql);
-		
-		$logArray['category'] = "wine";
-		$logArray['result'] = "warning";
-		$logArray['description'] = "Deleted [wineUID:" . $originalWineUID . "]";
-		$logsClass->create($logArray);
-		
+			$logsClass->create([
+				'category' => "wine",
+				'result' => "warning",
+				'description' => "Deleted file: " . $this->photograph
+			]);
+		}
+
+		$sql = "DELETE FROM wine_wines WHERE uid = '{$this->uid}' LIMIT 1";
+		$db->query($sql);
+
+		$logsClass->create([
+			'category' => "wine",
+			'result' => "warning",
+			'description' => "Deleted [wineUID:{$originalWineUID}]"
+		]);
+
 		return true;
 	}
-	
-	public function uploadAttachment($fileField = 'attachment') {
-		global $db, $settingsClass, $logsClass;
-	
-		// Check for uploaded file
-		if (!isset($_FILES[$fileField]) || $_FILES[$fileField]['error'] !== UPLOAD_ERR_OK) {
-			return null; // No file or failed upload
-		}
-	
-		$upload = $_FILES[$fileField];
-		$originalName = basename($upload['name']);
-		$ext = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
-	
-		// Validate extension
-		$allowed = array_map('trim', explode(',', $settingsClass->value('uploads_allowed_filetypes')));
-		if (!in_array($ext, $allowed)) {
-			$logArray['category'] = "wine";
-			$logArray['result'] = "warning";
-			$logArray['description'] = "Invalid file extension (" . $ext . ") for attachment upload on wine [wineUID:{$this->uid}]";
-			$logsClass->create($logArray);
-			return null;
-		}
-	
-		// Create unique filename
-		$uniqueName = uniqid("wine_" . $this->uid . "-", true) . '.' . $ext;
-		$uploadDir = "uploads/";
-	
-		if (!is_dir($uploadDir)) {
-			mkdir($uploadDir, 0775, true);
-		}
-	
-		$target = $uploadDir . $uniqueName;
-		
-		if (move_uploaded_file($upload['tmp_name'], $target)) {
-			// Construct the final UPDATE query
-			$sql = "UPDATE wine_wines
-			SET attachments = 
-			JSON_ARRAY_APPEND(
-				IFNULL(attachments, JSON_ARRAY()),
-				'$',
-				JSON_OBJECT('original' , '" . $originalName . "', 'stored', '" . $uniqueName . "')
-			)
-			WHERE uid = " . $this->uid;
-			$db->query($sql);
-			
-			$logArray['category'] = "wine";
-			$logArray['result'] = "success";
-			$logArray['description'] = "Uploaded attachment {$uniqueName} (original: {$originalName}) for [wineUID:{$this->uid}]";
-			$logsClass->create($logArray);
-	
-			return [
-				'original' => $originalName,
-				'stored' => $uniqueName
-			];
-		} else {
-			$logArray['category'] = "wine";
-			$logArray['result'] = "warning";
-			$logArray['description'] = "Failed to move uploaded attachment to " . $target . " for [wineUID:{$this->uid}]";
-			$logsClass->create($logArray);
-			return null;
-		}
-	}
-	
-	public function deleteAttachment($storedFilename) {
-		global $db, $logsClass;
-		
-		$uploadDir = "uploads/";
-		$filePath = $uploadDir . $storedFilename;
-		
-		// 1. Delete the file from disk if it exists
-		if (file_exists($filePath)) {
-			if (!unlink($filePath)) {
-				// Failed to delete file physically
-				$logArray = [
-					'category' => "wine",
-					'result' => "warning",
-					'description' => "Failed to physically delete attachment file {$storedFilename} for [wineUID:{$this->uid}]"
-				];
-				$logsClass->create($logArray);
-				return false;
-			}
-		} else {
-			// File doesn't exist, but maybe it was already removed; log as warning
-			$logArray = [
-				'category' => "wine",
-				'result' => "warning",
-				'description' => "Attachment file {$storedFilename} does not exist for [wineUID:{$this->uid}]"
-			];
-			$logsClass->create($logArray);
-		}
-		
-		// 2. Remove the attachment JSON object from the attachments field
-		$attachments = $this->attachments();
-		
-		if (is_array($attachments)) {
-			// Filter out the attachment with this stored filename
-			$newAttachments = array_filter($attachments, function($item) use ($storedFilename) {
-				return !isset($item['stored']) || $item['stored'] !== $storedFilename;
-			});
-			$newAttachments = array_values($newAttachments); // Reindex array
-			
-			// Update DB
-			$newAttachmentsJson = json_encode($newAttachments);
-			$db->query("UPDATE wine_wines SET attachments = ? WHERE uid = ?", $newAttachmentsJson, $this->uid);
-			
-			$logArray = [
-				'category' => "wine",
-				'result' => "success",
-				'description' => "Deleted attachment {$storedFilename} for [wineUID:{$this->uid}]"
-			];
-			$logsClass->create($logArray);
-			
-			return true;
-		} else {
-			// attachments field empty or malformed
-			$logArray = [
-				'category' => "wine",
-				'result' => "warning",
-				'description' => "Malformed or empty attachments field when deleting {$storedFilename} for [wineUID:{$this->uid}]"
-			];
-			$logsClass->create($logArray);
-			return false;
-		}
-	}
 }
-?>
