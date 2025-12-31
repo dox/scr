@@ -71,7 +71,7 @@ if (strtotime($dateFrom) > strtotime($dateTo)) {
 		echo '<th scope="col">Date</th>';
 		echo '<th scope="col">Meal Name</th>';
 		echo '<th scope="col">Location</th>';
-		echo '<th scope="col">Guests</th>';
+		echo '<th scope="col">Diners</th>';
 		echo '</tr>';
 		echo '</thead>';
 		echo '<tbody>';
@@ -132,7 +132,7 @@ const el = document.getElementById('dateFrom');
 const el2 = document.getElementById('dateTo');
 
 const options = {
-	defaultDate: '<?php echo $meal->date_meal; ?>',
+	defaultDate: new Date('<?= date('c', strtotime($meal->date_meal)) ?>'),
 	display: {
 		icons: {
 			type: 'icons',

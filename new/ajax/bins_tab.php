@@ -11,7 +11,6 @@ $cellar = new Cellar($cellar_uid);
 $bins = $cellar->bins(['section' => $cellar_section]);
 ?>
 
-
 <table class="table table-striped">
 	<thead>
 		<tr>

@@ -42,8 +42,8 @@ echo pageTitle(
 		],
 		[
 			'permission' => 'meals',
-			'title' => 'Apply Meal As Template',
-			'class' => '',
+			'title' => 'Clone',
+			'class' => 'meal-template-apply-btn',
 			'event' => './ajax/meal_template_modal.php?uid=' . $meal->uid,
 			'icon' => 'copy',
 			'data' => [
@@ -321,7 +321,7 @@ echo pageTitle(
   <div class="modal-dialog">
 	  <div class="modal-content">
 		  <div class="modal-header">
-			  <h5 class="modal-title">Apply Meal Using Template</h5>
+			  <h5 class="modal-title">Clone Meal</h5>
 			  <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
 		  </div>
 		  
@@ -404,7 +404,7 @@ echo pageTitle(
 				  type="button"
 				  class="btn btn-primary meal-template-apply-btn"
 				  data-meal_uid="<?= $meal->uid ?>">
-				  Apply Meal to Selected Dates
+				  Clone Meal to Selected Dates
 			  </button>
 		  </div>
 		  
@@ -532,7 +532,7 @@ const baseDisplay = {
 };
 
 const dateTimeOptions = {
-	defaultDate: '<?= $meal->date_meal ?>',
+	defaultDate: new Date('<?= date('c', strtotime($meal->date_meal)) ?>'),
 	display: baseDisplay,
 	localization: {
 		format: 'yyyy-MM-dd HH:mm'
@@ -576,8 +576,7 @@ new tempusDominus.TempusDominus(
 </script>
 
 <script>
-let editor;
-editor = SUNEDITOR.create(document.getElementById('menu'), {
+let editor = SUNEDITOR.create(document.getElementById('menu'), {
 	height: 100,
 	buttonList: [
 		['undo', 'redo'],
@@ -586,11 +585,28 @@ editor = SUNEDITOR.create(document.getElementById('menu'), {
 		['fontColor', 'hiliteColor', 'align', 'list'],
 		['table', 'link', 'image'],
 		['fullScreen', 'codeView']
-	]
+	],
+	callbacks: {
+		onFocus: function () {
+			if (this.getText().trim() === '') {
+				this.setContents('');
+			}
+		}
+	}
 });
 
 // Sync content back to textarea on submit
-document.getElementById('mealEditForm').addEventListener('submit', function(e) {
-	document.getElementById('menu').value = editor.getContents();
+document.getElementById('mealEditForm').addEventListener('submit', function () {
+	let contents = editor.getContents(true).trim();
+
+	if (
+		contents === '' ||
+		contents === '<p><br></p>' ||
+		contents === '<p>&nbsp;</p>'
+	) {
+		contents = '';
+	}
+
+	document.getElementById('menu').value = contents;
 });
 </script>

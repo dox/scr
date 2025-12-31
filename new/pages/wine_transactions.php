@@ -102,7 +102,7 @@ const el = document.getElementById('dateFrom');
 const el2 = document.getElementById('dateTo');
 
 const options = {
-	defaultDate: '<?php echo $currentTerm->date_start; ?>',
+	defaultDate: new Date('<?= date('c', strtotime($currentTerm->date_start)) ?>'),
 	display: {
 		icons: {
 			type: 'icons',

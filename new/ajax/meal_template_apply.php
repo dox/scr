@@ -84,13 +84,13 @@ try {
 			];
 	
 			$meals->create($mealData);
-			$datesCreated[] = $newMealDate->format('Y-m-d H:i:s');
+			$datesCreated[] = $newMealDate->format('Y-m-d H:i');
 		}
 	}
 	
 	// --- 5. Output success ---
 	if (!empty($datesCreated)) {
-		echo "Meal template applied successfully for the following dates:<br>";
+		echo "<div class=\"alert alert-success\">Meal template applied successfully for the following dates:</div>";
 		echo implode('<br>', $datesCreated);
 	} else {
 		echo "No meals were created.";

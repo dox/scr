@@ -75,7 +75,13 @@ echo pageTitle(
 		  
 		  $output .= "<td>";
 			if ($booking->wineChoice() != "None") {
-				$output .= "<h2><i class=\"bi bi-cup-straw\"></i></h2>";
+				$output .= "<h2><i
+					class=\"bi bi-cup-straw\"
+					data-bs-toggle=\"popover\"
+					data-bs-title=\"Wine Choice\"
+					data-bs-trigger=\"hover focus\"
+					data-bs-content=\"" . htmlspecialchars($booking->wineChoice()) . "\"></i>
+				</h2>";
 			}
 		  $output .= "</td>";
 		  $output .= "<td>";
@@ -85,7 +91,13 @@ echo pageTitle(
 		  $output .= "</td>";
 		  $output .= "<td>";
 			if ($booking->charge_to != "Dining Entitlement") {
-				$output .= "<h2><i class=\"bi bi-mortarboard\"></i></h2>";
+				$output .= "<h2><i
+					class=\"bi bi-mortarboard\"
+					data-bs-toggle=\"popover\"
+					data-bs-title=\"" . htmlspecialchars($booking->charge_to) . "\"
+					data-bs-trigger=\"hover focus\"
+					data-bs-content=\"" . htmlspecialchars($booking->domus_reason) . "\"></i>
+				</h2>";
 			}
 		  $output .= "</td>";
 		  $output .= "</tr>";
@@ -104,18 +116,30 @@ echo pageTitle(
 			  $output .= "<td>";
 			  	if ($booking->wineChoice() != "None") {
 					  if (!empty($guest['guest_wine_choice']) && $guest['guest_wine_choice'] !== 'None') {
-						  $output .= '<h2><i class="bi bi-cup-straw"></i></h2>';
+						  $output .= "<h2><i
+							  class=\"bi bi-cup-straw\"
+							  data-bs-toggle=\"popover\"
+							  data-bs-title=\"Guest Wine Choice\"
+							  data-bs-trigger=\"hover focus\"
+							  data-bs-content=\"" . htmlspecialchars($guest['guest_wine_choice']) . "\"></i>
+						  </h2>";
 					  }
 				}
 			  $output .= "</td>";
 			  $output .= "<td>";
 				if ($booking->dessert == "1") {
-				$output .= "<h2><i class=\"bi bi-cookie\"></i></h2>";
+					$output .= "<h2><i class=\"bi bi-cookie\"></i></h2>";
 				}
 			  $output .= "</td>";
 			  $output .= "<td>";
 				if ($guest['guest_charge_to'] == "Domus") {
-				$output .= "<h2><i class=\"bi bi-mortarboard\"></i></h2>";
+					$output .= "<h2><i
+						class=\"bi bi-mortarboard\"
+						data-bs-toggle=\"popover\"
+						data-bs-title=\"" . htmlspecialchars($guest['guest_charge_to']) . "\"
+						data-bs-trigger=\"hover focus\"
+						data-bs-content=\"" . htmlspecialchars($guest['domus_reason']) . "\"></i>
+					</h2>";
 				}
 			  $output .= "</td>";
 			  
@@ -132,3 +156,8 @@ echo pageTitle(
 </table>
 
 <p><em>Guest List generated on <?= formatDate(date('c')) . " " . formatTime(date('c')); ?> by <?= $user->getUsername(); ?></em></p>
+
+<script>
+const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
+const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
+</script>
