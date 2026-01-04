@@ -188,7 +188,7 @@ echo $wine->statusBanner();
 			  
 			  <div class="card mb-3">
 					<div class="card-body">
-						<h5 class="card-title">Private Notes</h5>
+						<h5 class="card-title">Notes</h5>
 						<?php echo $wine->notes; ?>
 					</div>
 			</div>

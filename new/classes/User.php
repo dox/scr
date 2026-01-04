@@ -68,7 +68,7 @@ class User {
 		}
 	
 		$suffix = $viaCookie ? ' (with cookie)' : '';
-		$log->add("User authenticated: {$member->ldap}{$suffix}", Log::INFO, $member->ldap);
+		$log->add("User authenticated: {$member->ldap}{$suffix}", 'auth', Log::SUCCESS);
 	
 		if ($viaCookie) {
 			toast('Login Successful', 'Login successful via stored cookie', 'text-success');
@@ -112,7 +112,7 @@ class User {
 		try {
 			$user = AdUser::whereEquals('samaccountname', $username)->firstOrFail();
 		} catch (\Exception $e) {
-			$log->add("LDAP user not found: {$username}", Log::WARNING);
+			$log->add("LDAP user not found: {$username}", 'auth', Log::WARNING);
 			error_log("Error: Failed login attempt from {$_SERVER['REMOTE_ADDR']}");
 			$this->logout();
 			return false;
@@ -121,7 +121,7 @@ class User {
 		$connection = $user->getConnection();
 	
 		if (!$connection->auth()->attempt($user->getDn(), $password)) {
-			$log->add("Invalid credentials for: {$username}", Log::WARNING);
+			$log->add("Invalid credentials for: {$username}", 'auth', Log::WARNING);
 			error_log("Error: Failed login attempt from {$_SERVER['REMOTE_ADDR']}");
 			$this->logout();
 			return false;
@@ -129,7 +129,7 @@ class User {
 	
 		$member = Member::fromLDAP($user->samaccountname[0]);
 		if (!$member) {
-			$log->add("Member DB record missing: {$username}", Log::WARNING);
+			$log->add("Member DB record missing: {$username}", 'auth', Log::WARNING);
 			error_log("Error: Failed login attempt from {$_SERVER['REMOTE_ADDR']}");
 			$this->logout();
 			return false;

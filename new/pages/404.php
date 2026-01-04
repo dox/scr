@@ -1,7 +1,7 @@
 <?php
 $cleanPageName = htmlspecialchars($_SERVER['REQUEST_URI']);
 
-$log->add("404 error: {$cleanPageName}", Log::ERROR);
+$log->add("404 error: {$cleanPageName}", 'auth', Log::ERROR);
 ?>
 
 <div class="d-flex align-items-center justify-content-center min-vh-100 px-2">

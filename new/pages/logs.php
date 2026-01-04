@@ -65,20 +65,22 @@ echo pageTitle(
 		$chartData = [];
 		
 		foreach ($logResults as $row) {
-			if ($row['category'] == "INFO") {
-				$typeBadgeClass = "text-bg-info";
-			} elseif ($row['category'] == "WARNING") {
-				$typeBadgeClass = "text-bg-warning";
-			} elseif ($row['category'] == "ERROR") {
-				$typeBadgeClass = "text-bg-danger";
-			} elseif ($row['category'] == "DEBUG") {
-				$typeBadgeClass = "text-bg-primary";
+			if ($row['result'] == "INFO") {
+				$typeBadgeClass = "table-info";
+			} elseif ($row['result'] == "WARNING") {
+				$typeBadgeClass = "table-warning";
+			} elseif ($row['result'] == "ERROR") {
+				$typeBadgeClass = "table-danger";
+			} elseif ($row['result'] == "DEBUG") {
+				$typeBadgeClass = "table-primary";
+			} elseif ($row['result'] == "SUCCESS") {
+				$typeBadgeClass = "table-success";
 			} else {
-				$typeBadgeClass = "text-bg-secondary";
+				$typeBadgeClass = "";
 			}
 			
-			$typeBadge = "<span class=\"badge rounded-pill " . $typeBadgeClass . "\">" . strtoupper($row['category']) . "</span>";
-			$output  = "<tr>";
+			$typeBadge = "<span class=\"badge rounded-pill text-bg-info\">" . strtoupper($row['category']) . "</span>";
+			$output  = "<tr class=\"{$typeBadgeClass}\">";
 			$output .= "<td>" . $row['date'] . "</td>";
 			$output .= "<td>" . $typeBadge . "</td>";
 			$output .= "<td>" . $row['username'] . "</td>";

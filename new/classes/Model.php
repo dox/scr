@@ -57,6 +57,13 @@ abstract class Model {
 		if ($log && $insertId !== false && static::$table !== 'new_logs') {
 			$this->logInsert($insertId, $data);
 		}
+		
+		$logTemp = new Log();
+		$logTemp->add("DEFUNCT CREATE IN Model Class", Log::ERROR);
+		if ($log) {
+			
+			$logTemp->add("DEFUNCT CREATE LOGGING USED FOR CREATE", Log::ERROR);
+		}
 	
 		return $insertId;
 	}
@@ -80,6 +87,7 @@ class Log extends Model {
 	protected static string $table = 'logs';
 	
 	// Define standard log levels
+	public const SUCCESS = 'SUCCESS';
 	public const INFO    = 'INFO';
 	public const WARNING = 'WARNING';
 	public const ERROR   = 'ERROR';
@@ -87,25 +95,21 @@ class Log extends Model {
 	
 	public function add(
 		string $description,
-		string $category = self::INFO,
-		?string $username = null
+		string $category = null,
+		?string $result = self::INFO
 	): bool {
 		global $user;
-	
-		// Prefer explicitly provided username, then logged-in user, else null
-		$resolvedUsername = $username
-			?? ($user?->getUsername() ?? null);
 	
 		$sql = "INSERT INTO " . static::$table . " 
 				(username, ip, description, category, result, date)
 				VALUES (:username, :ip, :description, :category, :result, NOW())";
 	
 		$params = [
-			':username'    => $resolvedUsername,
+			':username'    => $user?->getUsername() ?? null,
 			':ip'          => ip2long($this->detectIp()),
 			':description' => $description,
 			':category'    => strtoupper($category),
-			':result'      => 'result',
+			':result'      => strtoupper($result),
 		];
 	
 		$stmt = $this->db->query($sql, $params);
@@ -241,7 +245,7 @@ class Members extends Model {
 			$sql .= " WHERE " . implode(' AND ', $conditions);
 		}
 	
-		$sql .= " ORDER BY precedence ASC, lastname ASC, firstname ASC";
+		$sql .= " ORDER BY enabled DESC, precedence ASC, lastname ASC, firstname ASC";
 	
 		$rows = $db->query($sql)->fetchAll();
 	

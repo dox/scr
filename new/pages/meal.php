@@ -213,7 +213,7 @@ echo pageTitle(
 			</div>
 
 			<div class="mb-3">
-				<label for="notes" class="form-label">Notes (Private)</label>
+				<label for="notes" class="form-label">Notes <span class="badge rounded-pill text-bg-warning">Private</span></label>
 				<textarea class="form-control" rows="4" name="notes"><?= htmlspecialchars($meal->notes) ?></textarea>
 			</div>
 

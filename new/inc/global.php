@@ -84,7 +84,7 @@ function sendEmail($to, $subject = APP_NAME, $body = '') {
 			$logMessage .= ' | BCC: ' . implode(', ', array_slice($to, 1));
 		}
 
-		$log->add($logMessage, Log::INFO);
+		$log->add($logMessage, 'email', Log::INFO);
 		return true;
 	}
 
@@ -132,7 +132,7 @@ function sendEmail($to, $subject = APP_NAME, $body = '') {
 			$logMessage .= ' | BCC: ' . implode(', ', array_map(fn($a) => $a[0], $bccRecipients));
 		}
 
-		$log->add($logMessage, Log::INFO);
+		$log->add($logMessage, 'email', Log::INFO);
 
 		return true;
 	} catch (\PHPMailer\PHPMailer\Exception $e) {
@@ -150,7 +150,7 @@ function sendEmail($to, $subject = APP_NAME, $body = '') {
 		}
 
 		$logMessage .= ' | Error: ' . $mail->ErrorInfo;
-		$log->add($logMessage, Log::WARNING);
+		$log->add($logMessage, 'email', Log::WARNING);
 
 		return false;
 	}

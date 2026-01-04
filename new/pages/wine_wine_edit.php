@@ -281,7 +281,7 @@ echo pageTitle(
 			<textarea class="form-control" name="tasting" rows="4"><?= htmlspecialchars($wine->tasting ?? '', ENT_QUOTES, 'UTF-8') ?></textarea>
 		</div>
 		<div class="mb-3">
-			<label for="notes" class="form-label text-truncate">Private Note</label>
+			<label for="notes" class="form-label text-truncate">Notes <span class="badge rounded-pill text-bg-warning">Private</span></label>
 			<textarea class="form-control" name="notes" rows="4"><?= htmlspecialchars($wine->notes ?? '', ENT_QUOTES, 'UTF-8') ?></textarea>
 		</div>
 	</div>

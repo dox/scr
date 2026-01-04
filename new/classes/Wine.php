@@ -237,7 +237,7 @@ class Wine extends Model {
 		$targetFile = $uploadDir . $uniqueName;
 
 		if (!move_uploaded_file($file['tmp_name'], $targetFile)) {
-			$log->add("Failed to move uploaded file for {$type} on wine [wineUID:{$this->uid}]", Log::INFO);
+			$log->add("Failed to move uploaded file for {$type} on wine [wineUID:{$this->uid}]", 'file', Log::WARNING);
 			return null;
 		}
 
@@ -250,7 +250,7 @@ class Wine extends Model {
 		$filePath = __DIR__ . UPLOAD_DIR . $storedFilename;
 
 		if (file_exists($filePath) && !unlink($filePath)) {
-			$log->add("Failed to physically delete {$type} file {$storedFilename} for [wineUID:{$this->uid}]", Log::INFO);
+			$log->add("Failed to physically delete {$type} file {$storedFilename} for [wineUID:{$this->uid}]", 'file', Log::WARNING);
 			return false;
 		}
 
@@ -272,7 +272,7 @@ class Wine extends Model {
 		$db->query("UPDATE " . static::$table . " SET photograph = ? WHERE uid = ?", [$upload['stored'], $this->uid]);
 		$this->photograph = $upload['stored'];
 		
-		$log->add("Photograph updated to {$upload['stored']} for wine [wineUID:{$this->uid}]", Log::INFO);
+		$log->add("Photograph updated to {$upload['stored']} for wine [wineUID:{$this->uid}]", 'file', Log::SUCCESS);
 
 		return true;
 	}
@@ -295,7 +295,7 @@ class Wine extends Model {
 		$db->query("UPDATE " . static::$table . " SET attachments = ? WHERE uid = ?", [json_encode($attachments), $this->uid]);
 		$this->attachments = json_encode($attachments);
 		
-		$log->add("Uploaded attachment {$upload['stored']} (original: {$upload['original']}) for wine [wineUID:{$this->uid}]", Log::INFO);
+		$log->add("Uploaded attachment {$upload['stored']} (original: {$upload['original']}) for wine [wineUID:{$this->uid}]", 'file', Log::SUCCESS);
 			
 		toast('File Uploaded', 'File sucesfully uploaded', 'text-success');
 
@@ -314,7 +314,7 @@ class Wine extends Model {
 		$db->query("UPDATE " . static::$table . " SET attachments = ? WHERE uid = ?", [json_encode($attachments), $this->uid]);
 		$this->attachments = json_encode($attachments);
 		
-		$log->add("Deleted attachment {$storedFilename} for wine [wineUID:{$this->uid}]", Log::INFO);
+		$log->add("Deleted attachment {$storedFilename} for wine [wineUID:{$this->uid}]", 'file', Log::SUCCESS);
 		toast('File Deleted', 'File sucesfully deleted', 'text-success');
 		
 		return true;

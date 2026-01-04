@@ -20,7 +20,7 @@ if (isset($_GET['hash'])) {
 	
 	$member = Member::fromHash($hash);
 	if (!isset($member->uid)) {
-		$log->add("iCal feed failed for hash: {$hash}", Log::WARNING);
+		$log->add("iCal feed failed for hash: {$hash}", 'ical', Log::WARNING);
 		die("Invalid calendar hash.");
 	}
 	
@@ -78,7 +78,7 @@ if (isset($_GET['hash'])) {
 	echo $icalobj->export();
 	
 	if ($settings->get('logs_ical-requests') == "true" || APP_DEBUG) {
-		$log->add("iCal feed generated for: {$member->ldap}", Log::INFO);
+		$log->add("iCal feed generated for: {$member->ldap}", 'ical', Log::INFO);
 	}
 }
 ?>
