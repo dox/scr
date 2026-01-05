@@ -56,12 +56,8 @@ echo pageTitle(
 			'permission' => 'wine',
 			'title' => 'Add Transaction',
 			'class' => '',
-			'event' => '',
-			'icon' => 'receipt',
-			'data' => [
-				'bs-toggle' => 'modal',
-				'bs-target' => '#deleteTermModal'
-			]
+			'event' => 'index.php?page=wine_transaction_add&wine_uid=' . $wine->uid,
+			'icon' => 'receipt'
 		],
 		[
 			'permission' => 'wine',
@@ -166,12 +162,12 @@ echo $wine->statusBanner();
 						   'index.php?page=wine_filter'
 						   . '&conditions[0][field]=wine_wines.code'
 						   . '&conditions[0][operator]=='
-						   . '&conditions[0][value]=' . rawurlencode($wine->code)
+						   . '&conditions[0][value]=' . rawurlencode($wine->code())
 						   . '&conditions[1][field]=wine_wines.status'
 						   . '&conditions[1][operator]=!='
 						   . '&conditions[1][value]=Closed';
 					   ?>
-					  <div class="h1 text-truncate"><a href="<?= htmlspecialchars($url) ?>"><?php echo htmlspecialchars($wine->code); ?></a></div>
+					  <div class="h1 text-truncate"><a href="<?= htmlspecialchars($url) ?>"><?php echo htmlspecialchars($wine->code()); ?></a></div>
 				  </div>
 			  </div>
 		  </div>

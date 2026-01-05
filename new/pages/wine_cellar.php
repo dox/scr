@@ -56,12 +56,8 @@ echo pageTitle(
 			'permission' => 'wine',
 			'title' => 'Add Transaction',
 			'class' => '',
-			'event' => '',
-			'icon' => 'receipt',
-			'data' => [
-				'bs-toggle' => 'modal',
-				'bs-target' => '#deleteTermModal'
-			]
+			'event' => 'index.php?page=wine_transaction_add',
+			'icon' => 'receipt'
 		]
 	]
 );

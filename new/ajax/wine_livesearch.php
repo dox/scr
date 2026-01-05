@@ -47,9 +47,16 @@ $wineSearchResults = [];
 foreach ($rows as $row) {
 	$wine = new Wine($row['uid']);
 	
+	$qty = $wine->currentQty();
+	
 	$wineSearchResults[] = [
 		'uid' => $wine->uid,
-		'name' => $wine->clean_name(true) . " (Qty. " . $wine->currentQty() . ")"
+		'name' => $wine->clean_name(true) . " (Qty. " . $qty . ")",
+		'qty' => $qty,
+		'price_purchase' => $wine->price_purchase,
+		'price_internal' => $wine->price_internal,
+		'price_external' => $wine->price_external
+		
 	];
 }
 

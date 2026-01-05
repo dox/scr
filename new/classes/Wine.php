@@ -370,7 +370,7 @@ class Wine extends Model {
 	}
 
 	public function createWine(array $postData) {
-		global $db;
+		global $db, $user;
 
 		$fields = [
 			'date_updated'      => date('c'),
@@ -393,6 +393,20 @@ class Wine extends Model {
 		];
 
 		$wine = $this->create($fields);
+		
+		$transaction_fields = [
+			'date'				=> date('c'),
+			'date_posted'		=> ($postData['date_posted'] === '' ? null : date('c')),
+			'username'			=> $user->getUsername(),
+			'type'				=> 'Import',
+			'wine_uid'			=> $wine,
+			'bottles'			=> $postData['qty'] ?? null,
+			'price_per_bottle'	=> $postData['price_purchase'] ?? '0',
+			'name'				=> 'Original Import'
+		];
+		$transaction = new Transaction;
+		$transaction->create($transaction_fields);
+		
 		toast('Wine Created', 'Wine successfully created', 'text-success');
 
 		return $wine;

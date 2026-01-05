@@ -392,51 +392,107 @@ function enableOnExactMatch(inputId, buttonId, triggerText) {
 	button.disabled = (field.value !== triggerText);
 }
 
-// live search for wines
-function liveSearch(inputId, resultsId, endpoint, extraParams = {}) {
+/**
+ * live search for wines
+ * @param {string} inputId - ID of the search input
+ * @param {string} resultsId - ID of the container UL for results
+ * @param {string} endpoint - URL for AJAX search
+ * @param {Object} options - Optional parameters:
+ *   - extraParams: additional GET parameters
+ *   - onClick: function(item) called when a result is clicked
+ */
+function liveSearch(inputId, resultsId, endpoint, options = {}) {
 	const input = document.getElementById(inputId);
 	const results = document.getElementById(resultsId);
+	if (!input || !results) return;
 
 	input.addEventListener('keyup', function () {
 		const query = this.value.trim();
-		if (query === '') {
-			results.innerHTML = '';
-			return;
-		}
+		results.innerHTML = '';
 
-		// Build query string
-		let params = new URLSearchParams({ q: query, ...extraParams });
+		if (!query) return;
 
-		let xhr = new XMLHttpRequest();
-		xhr.open('GET', `${endpoint}?${params.toString()}`, true);
+		const params = new URLSearchParams({ q: query, ...(options.extraParams || {}) });
 
-		xhr.onload = function () {
-			results.innerHTML = '';
+		fetch(`${endpoint}?${params.toString()}`)
+			.then(res => res.json())
+			.then(response => {
+				if (!response?.data?.length) {
+					const li = document.createElement('li');
+					li.className = 'list-group-item';
+					li.textContent = 'No results found';
+					results.appendChild(li);
+					return;
+				}
 
-			if (xhr.status !== 200) return;
+				response.data.forEach(item => {
+					const li = document.createElement('li');
+					li.className = 'list-group-item list-group-item-action';
+					li.style.cursor = 'pointer';
+					li.textContent = item.name;
 
-			let response = JSON.parse(xhr.responseText);
+					li.addEventListener('click', () => {
+						if (typeof options.onClick === 'function') {
+							options.onClick(item); // e.g., addWineToInvoice(item)
+						} else {
+							// Default: navigate to wine page
+							window.location.href = `index.php?page=wine_wine&uid=${item.uid}`;
+						}
+						// Clear search input & results
+						input.value = '';
+						results.innerHTML = '';
+					});
 
-			if (!response.data || response.data.length === 0) {
-				let li = document.createElement('li');
-				li.className = "list-group-item";
-				li.textContent = 'No results found';
-				results.appendChild(li);
-				return;
-			}
+					results.appendChild(li);
+				});
+			})
+			.catch(err => console.error(err));
+	});
+}
 
-			response.data.forEach(item => {
-				let li = document.createElement('li');
-				li.className = "list-group-item";
-				let link = document.createElement('a');
-				link.href = `index.php?page=wine_wine&uid=${item.uid}`;
-				link.textContent = item.name;
-				li.appendChild(link);
-				results.appendChild(li);
-			});
-		};
+function liveSearchTransaction(inputId, resultsId, endpoint) {
+	const input = document.getElementById(inputId);
+	const results = document.getElementById(resultsId);
 
-		xhr.send();
+	if (!input || !results) return;
+
+	input.addEventListener('keyup', function() {
+		const query = this.value.trim();
+		results.innerHTML = '';
+
+		if (!query) return;
+
+		const params = new URLSearchParams({ q: query });
+
+		fetch(`${endpoint}?${params.toString()}`)
+			.then(res => res.json())
+			.then(data => {
+				if (!data?.data?.length) {
+					const li = document.createElement('li');
+					li.className = 'list-group-item';
+					li.textContent = 'No results found';
+					results.appendChild(li);
+					return;
+				}
+
+				data.data.forEach(wine => {
+					const li = document.createElement('li');
+					li.className = 'list-group-item list-group-item-action';
+					li.style.cursor = 'pointer';
+					li.textContent = wine.name;
+
+					// When clicked, add wine to invoice
+					li.addEventListener('click', () => {
+						addWineToInvoice(wine);
+						// Clear the search input and results
+						input.value = '';
+						results.innerHTML = '';
+					});
+
+					results.appendChild(li);
+				});
+			})
+			.catch(err => console.error(err));
 	});
 }
 

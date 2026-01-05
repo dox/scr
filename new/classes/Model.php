@@ -131,6 +131,12 @@ class Log extends Model {
 	 * @return string
 	 */
 	private function detectIp(): string {
+		// Running from CLI
+		if (PHP_SAPI === 'cli') {
+			return '127.0.0.1';
+		}
+	
+		// Running via web request
 		return $_SERVER['REMOTE_ADDR'] 
 			?? $_SERVER['HTTP_CLIENT_IP'] 
 			?? $_SERVER['HTTP_X_FORWARDED_FOR'] 

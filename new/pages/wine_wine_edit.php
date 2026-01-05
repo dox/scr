@@ -216,6 +216,17 @@ echo pageTitle(
 	</div>
 </div>
 
+<?php
+if ($isNew) {?>
+	<div class="row">
+		<div class="col mb-3">
+			<label for="date_posted" class="form-label text-truncate">Import Date</label>
+			<input type="text" class="form-control" name="date_posted" id="date_posted"
+			   value="<?= date('Y-m-d') ?>" required>
+		</div>
+	</div>
+<?php } ?>
+
 <div class="row">
 	<div class="col">
 		<div class="card mb-3">
@@ -311,21 +322,22 @@ if ($isNew) {
 const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
 const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
 
-const el = document.getElementById('vintage');
-const options = {
+const icons = {
+	type: 'icons',
+	time: 'bi bi-clock',
+	date: 'bi bi-calendar',
+	up: 'bi bi-arrow-up',
+	down: 'bi bi-arrow-down',
+	previous: 'bi bi-chevron-left',
+	next: 'bi bi-chevron-right',
+	today: 'bi bi-calendar-check',
+	clear: 'bi bi-trash',
+	close: 'bi bi-close'
+};
+
+const vintage_options = {
 	display: {
-		icons: {
-			type: 'icons',
-			time: 'bi bi-clock',
-			date: 'bi bi-calendar',
-			up: 'bi bi-arrow-up',
-			down: 'bi bi-arrow-down',
-			previous: 'bi bi-chevron-left',
-			next: 'bi bi-chevron-right',
-			today: 'bi bi-calendar-check',
-			clear: 'bi bi-trash',
-			close: 'bi bi-close'
-		},
+		icons: icons,
 		components: {
 			calendar: true,
 			date: false,
@@ -340,5 +352,30 @@ const options = {
 	  }
 };
 
-new tempusDominus.TempusDominus(el, options);
+const posted_options = {
+	display: {
+		icons: icons,
+		components: {
+			calendar: true,
+			date: true,
+			month: true,
+			year: true,
+			decades: true,
+			clock: false
+		}
+	},
+	localization: {
+		format: 'yyyy-MM-dd',
+	}
+};
+
+const vintageEl = document.getElementById('vintage');
+if (vintageEl) {
+	new tempusDominus.TempusDominus(vintageEl, vintage_options);
+}
+
+const postedEl = document.getElementById('date_posted');
+if (postedEl) {
+	new tempusDominus.TempusDominus(postedEl, posted_options);
+}
 </script>

@@ -9,14 +9,10 @@ echo pageTitle(
 	[
 		[
 			'permission' => 'wine',
-			'title' => 'Edit Transaction',
+			'title' => 'Add Transaction',
 			'class' => '',
-			'event' => '',
-			'icon' => 'pencil',
-			'data' => [
-				'bs-toggle' => 'modal',
-				'bs-target' => '#addCellarModal'
-			]
+			'event' => 'index.php?page=wine_transaction_add',
+			'icon' => 'receipt'
 		]
 	]
 );
