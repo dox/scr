@@ -50,6 +50,7 @@ require_once __DIR__ . '/../classes/Wine.php';
 require_once __DIR__ . '/../classes/Cellar.php';
 require_once __DIR__ . '/../classes/Bin.php';
 require_once __DIR__ . '/../classes/Transaction.php';
+require_once __DIR__ . '/../classes/WineList.php';
 
 // Initialise shared database instance
 try {

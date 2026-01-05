@@ -496,6 +496,45 @@ function liveSearchTransaction(inputId, resultsId, endpoint) {
 	});
 }
 
+document.addEventListener('click', function(e) {
+	const heart = e.target.closest('.wine-heart');
+	if (!heart) return;
+
+	e.preventDefault();
+	e.stopPropagation();
+
+	const wineUid = heart.dataset.wineUid;
+	const listUid = heart.dataset.listUid;
+
+	fetch('./ajax/wine_toggle_fav.php', {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({ wine_uid: wineUid, list_uid: listUid })
+	})
+	.then(r => {
+		if (!r.ok) throw new Error('Network response was not ok');
+		return r.json();   // <-- this parses JSON from PHP
+	})
+	.then(data => {
+		if (!data.success) {
+			alert('Error: ' + (data.message || 'Unknown error'));
+			return;
+		}
+
+		// Toggle heart icon
+		heart.querySelector('i').classList.toggle('bi-heart');
+		heart.querySelector('i').classList.toggle('bi-heart-fill');
+
+		// Update wine count badge if you want
+		const countBadge = heart.closest('.list-group-item').querySelector('.badge.bg-secondary');
+		if (countBadge) countBadge.textContent = `${data.wine_count} wine${data.wine_count !== 1 ? 's' : ''}`;
+	})
+	.catch(err => {
+		console.error('Fetch error:', err);
+		alert('Failed to toggle favorite. See console.');
+	});
+});
+
 // listen for meal template apply button
 document.addEventListener('DOMContentLoaded', function () {
 	document.body.addEventListener('click', function (e) {

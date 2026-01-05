@@ -43,6 +43,7 @@ $fieldSources = [
 
 $fields = [
 	['value'=>'wine_bins.name', 'label'=>'Bin Name', 'type'=>'text', 'operators'=>['=','!=','LIKE']],
+	['value'=>'wine_wines.uid', 'label'=>'Wine UID', 'type'=>'text', 'operators'=>['=','!=','LIKE','IN']],
 	['value'=>'wine_bins.cellar_uid', 'label'=>'Cellar UID', 'type'=>'text', 'operators'=>['=','!=']],
 	['value'=>'wine_wines.name', 'label'=>'Name', 'type'=>'text', 'operators'=>['=','!=','LIKE']],
 	['value'=>'wine_wines.code', 'label'=>'Code', 'type'=>'text', 'operators'=>['=','!=','LIKE']],

@@ -221,7 +221,7 @@ function pageTitle(string $title, string $subtitle = '', array $actions = [], bo
 		$html .= '<div class="d-inline-flex align-items-center gap-2">';
 		
 		if ($wineFavIcon) {
-			$html .= '<button type="button" class="btn btn-link load-remote-winefav" data-url="./ajax/wine_favourite_modal.php?mealUID=9873" data-bs-toggle="modal" data-bs-target="#wineFavouriteModal"><i class="bi bi-heart text-danger"></i></button>';
+			$html .= '<button type="button" class="btn btn-link load-remote-winefav" data-url="./ajax/wine_favourite_modal.php?wine_uid=' . $_GET['uid'] . '" data-bs-toggle="modal" data-bs-target="#wineFavouriteModal"><i class="bi bi-heart text-danger"></i></button>';
 		}
 		
 		$html .= '<div class="dropdown">';

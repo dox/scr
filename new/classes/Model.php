@@ -669,7 +669,11 @@ class Wines extends Model {
 				}
 			
 				// Existing handling
-				if (strtoupper($operator) === 'IN' && is_array($value)) {
+				if (strtoupper($operator) === 'IN') {
+					// Ensure $value is an array
+					if (!is_array($value)) {
+						$value = array_map('trim', explode(',', $value));
+					}
 					$value = array_map(fn($v) => "'" . addslashes($v) . "'", $value);
 					$conditions[] = "$key IN (" . implode(',', $value) . ")";
 				} elseif ($operator === 'LIKE') {
@@ -696,31 +700,6 @@ class Wines extends Model {
 		}
 	
 		return $wines;
-	}
-	
-	
-	public function transactionsGrouped2(array $whereFilterArray = []) : array {
-		global $db;
-		
-		$sql = "SELECT group_head.uid
-		FROM (
-			SELECT 
-				COALESCE(linked, uid) AS group_key,
-				MIN(uid) AS uid,
-				MAX(date) AS max_date
-			FROM wine_transactions
-			GROUP BY group_key
-		) AS group_head
-		ORDER BY group_head.max_date DESC";
-		
-		$rows = $db->query($sql)->fetchAll();
-	
-		$transactions = [];
-		foreach ($rows as $row) {
-			$transactions[] = new Transaction($row['uid']);
-		}
-	
-		return $transactions;
 	}
 	
 	public function transactionsGrouped(array $whereFilterArray = []) : array {
@@ -819,5 +798,51 @@ class Wines extends Model {
 		}
 	
 		return $transactions;
+	}
+	
+	public function lists(array $whereFilterArray = []) : array {
+		global $db;
+	
+		$sql = "SELECT *
+				FROM " . self::$table_lists . " ";
+	
+		$conditions = [];
+	
+		foreach ($whereFilterArray as $key => $rule) {
+			$key = addslashes($key);
+	
+			// Allow [operator, value] style input
+			if (is_array($rule)) {
+				[$operator, $value] = $rule;
+	
+				if (strtoupper($operator) === 'IN' && is_array($value)) {
+					$value = array_map(fn($v) => "'" . addslashes($v) . "'", $value);
+					$conditions[] = "$key IN (" . implode(',', $value) . ")";
+				} else {
+					$value = addslashes($value);
+					$conditions[] = "$key $operator '$value'";
+				}
+	
+			} else {
+				// Fallback to simple equals
+				$value = addslashes($rule);
+				$conditions[] = "$key = '$value'";
+			}
+		}
+	
+		if ($conditions) {
+			$sql .= " WHERE " . implode(' AND ', $conditions);
+		}
+	
+		$sql .= " ORDER BY name ASC";
+	
+		$rows = $db->query($sql)->fetchAll();
+	
+		$lists = [];
+		foreach ($rows as $row) {
+			$lists[] = new WineList($row['uid']);
+		}
+	
+		return $lists;
 	}
 }
