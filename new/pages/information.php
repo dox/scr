@@ -3,7 +3,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	$settingUID = filter_input(INPUT_POST, 'uid', FILTER_SANITIZE_NUMBER_INT);
 	$settingName = $settings->getName($settingUID);
 	$settings->update($_POST, false); // don't log here
-	$log->add("Setting " . $settingUID . " (" . $settingName . ") updated", , 'setting', Log::SUCCESS);
+	$log->add(
+		"Setting {$settingUID} ({$settingName}) updated",
+		null,
+		'setting',
+		Log::SUCCESS
+	);
 }
 
 // Allow only these paths
