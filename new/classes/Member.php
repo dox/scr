@@ -303,6 +303,20 @@ class Member extends Model {
 	
 		return $returnArray;
 	}
+	
+	public function bookingsCount(): int {
+		global $db;
+	
+		$sql = "
+			SELECT COUNT(*) AS total
+			FROM bookings
+			WHERE member_ldap = :member_ldap
+		";
+	
+		$row = $db->fetch($sql, ['member_ldap' => $this->ldap]);
+	
+		return (int)($row['total'] ?? 0);
+	}
 
 	public function delete() {
 		global $db;

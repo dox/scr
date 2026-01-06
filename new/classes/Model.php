@@ -757,30 +757,40 @@ class Wines extends Model {
 	public function transactions(array $whereFilterArray = []) : array {
 		global $db;
 	
-		$sql = "SELECT *
-				FROM " . self::$table_transactions . " ";
+		$sql = "SELECT * FROM " . self::$table_transactions;
 	
 		$conditions = [];
 	
 		foreach ($whereFilterArray as $key => $rule) {
 			$key = addslashes($key);
 	
-			// Allow [operator, value] style input
-			if (is_array($rule)) {
-				[$operator, $value] = $rule;
+			// Normalize rule(s) into an array of [operator, value]
+			$ruleSet = (isset($rule[0]) && is_array($rule[0])) ? $rule : [$rule];
 	
-				if (strtoupper($operator) === 'IN' && is_array($value)) {
+			foreach ($ruleSet as $r) {
+				[$operator, $value] = $r;
+	
+				// Handle NULL specially
+				if ($value === null || $value === '') {
+					if (strtoupper($operator) === '=') {
+						$conditions[] = "$key IS NULL";
+					} elseif (strtoupper($operator) === '!=') {
+						$conditions[] = "$key IS NOT NULL";
+					}
+					continue;
+				}
+	
+				if (strtoupper($operator) === 'IN') {
+					if (!is_array($value)) $value = array_map('trim', explode(',', $value));
 					$value = array_map(fn($v) => "'" . addslashes($v) . "'", $value);
 					$conditions[] = "$key IN (" . implode(',', $value) . ")";
+				} elseif (strtoupper($operator) === 'LIKE') {
+					$value = '%' . addslashes($value) . '%';
+					$conditions[] = "$key LIKE '$value'";
 				} else {
 					$value = addslashes($value);
 					$conditions[] = "$key $operator '$value'";
 				}
-	
-			} else {
-				// Fallback to simple equals
-				$value = addslashes($rule);
-				$conditions[] = "$key = '$value'";
 			}
 		}
 	
@@ -788,7 +798,7 @@ class Wines extends Model {
 			$sql .= " WHERE " . implode(' AND ', $conditions);
 		}
 	
-		$sql .= " ORDER BY date DESC";
+		$sql .= " ORDER BY date_posted ASC";
 	
 		$rows = $db->query($sql)->fetchAll();
 	
@@ -798,6 +808,62 @@ class Wines extends Model {
 		}
 	
 		return $transactions;
+	}
+	
+	public function bins(array $whereFilterArray = []) : array {
+		global $db;
+	
+		$sql = "SELECT * FROM " . self::$table_bins;
+	
+		$conditions = [];
+	
+		foreach ($whereFilterArray as $key => $rule) {
+			$key = addslashes($key);
+	
+			// Normalize rule(s) into an array of [operator, value]
+			$ruleSet = (isset($rule[0]) && is_array($rule[0])) ? $rule : [$rule];
+	
+			foreach ($ruleSet as $r) {
+				[$operator, $value] = $r;
+	
+				// Handle NULL specially
+				if ($value === null || $value === '') {
+					if (strtoupper($operator) === '=') {
+						$conditions[] = "$key IS NULL";
+					} elseif (strtoupper($operator) === '!=') {
+						$conditions[] = "$key IS NOT NULL";
+					}
+					continue;
+				}
+	
+				if (strtoupper($operator) === 'IN') {
+					if (!is_array($value)) $value = array_map('trim', explode(',', $value));
+					$value = array_map(fn($v) => "'" . addslashes($v) . "'", $value);
+					$conditions[] = "$key IN (" . implode(',', $value) . ")";
+				} elseif (strtoupper($operator) === 'LIKE') {
+					$value = '%' . addslashes($value) . '%';
+					$conditions[] = "$key LIKE '$value'";
+				} else {
+					$value = addslashes($value);
+					$conditions[] = "$key $operator '$value'";
+				}
+			}
+		}
+	
+		if ($conditions) {
+			$sql .= " WHERE " . implode(' AND ', $conditions);
+		}
+	
+		$sql .= " ORDER BY cellar_uid ASC, name ASC";
+	
+		$rows = $db->query($sql)->fetchAll();
+	
+		$bins = [];
+		foreach ($rows as $row) {
+			$bins[] = new Bin($row['uid']);
+		}
+	
+		return $bins;
 	}
 	
 	public function lists(array $whereFilterArray = []) : array {
@@ -810,23 +876,34 @@ class Wines extends Model {
 	
 		foreach ($whereFilterArray as $key => $rule) {
 			$key = addslashes($key);
-	
-			// Allow [operator, value] style input
-			if (is_array($rule)) {
-				[$operator, $value] = $rule;
-	
-				if (strtoupper($operator) === 'IN' && is_array($value)) {
+		
+			// Support multiple operator/value rules per field
+			$ruleSet = is_array($rule[0] ?? null) ? $rule : [$rule];
+		
+			foreach ($ruleSet as $r) {
+				[$operator, $value] = $r;
+		
+				// Handle NULL specially
+				if ($value === null || $value === '') {
+					if (strtoupper($operator) === '=') {
+						$conditions[] = "$key IS NULL";
+					} elseif (strtoupper($operator) === '!=') {
+						$conditions[] = "$key IS NOT NULL";
+					}
+					continue;
+				}
+		
+				if (strtoupper($operator) === 'IN') {
+					if (!is_array($value)) $value = array_map('trim', explode(',', $value));
 					$value = array_map(fn($v) => "'" . addslashes($v) . "'", $value);
 					$conditions[] = "$key IN (" . implode(',', $value) . ")";
+				} elseif ($operator === 'LIKE') {
+					$value = '%' . addslashes($value) . '%';
+					$conditions[] = "$key LIKE '$value'";
 				} else {
 					$value = addslashes($value);
 					$conditions[] = "$key $operator '$value'";
 				}
-	
-			} else {
-				// Fallback to simple equals
-				$value = addslashes($rule);
-				$conditions[] = "$key = '$value'";
 			}
 		}
 	

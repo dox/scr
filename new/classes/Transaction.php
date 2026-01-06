@@ -42,15 +42,11 @@ class Transaction extends Model {
 	
 	public function linkedTransactions(): array {
 		if ($this->isLinked()) {
-			global $wines;
-			
+			$wines = $GLOBALS['wines'] ?? new Wines();
 			$conditionArray['linked'] = ['=', $this->linked];
-			$linkedTransactions = $wines->transactions($conditionArray);
-			
-			return $linkedTransactions;
-		} else {
-			return array();
+			return $wines->transactions($conditionArray);
 		}
+		return [];
 	}
 	
 	public function totalBottles(): int {

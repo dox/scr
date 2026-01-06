@@ -132,6 +132,30 @@ class Meal extends Model {
 		return $bookings;
 	}
 	
+	public function late_bookings() {
+		global $db;
+		
+		$bookings = [];
+		
+		$sql = "
+			SELECT bookings.uid AS uid
+			FROM bookings
+			INNER JOIN meals ON bookings.meal_uid = meals.uid
+			LEFT JOIN members ON bookings.member_ldap = members.ldap
+			WHERE meals.uid = :uid
+			  AND bookings.date > meals.date_cutoff
+			ORDER BY members.precedence ASC
+		";
+		
+		$rows = $db->fetchAll($sql, ['uid' => $this->uid]);
+		
+		foreach ($rows as $row) {
+			$bookings[] = Booking::fromUID($row['uid']);
+		}
+		
+		return $bookings;
+	}
+	
 	public function totalDiners(): int {
 		$count = 0;
 	
