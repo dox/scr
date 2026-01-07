@@ -71,7 +71,7 @@ echo pageTitle(
 			]
 		]
 	],
-	true
+	$wine->uid
 );
 ?>
 
