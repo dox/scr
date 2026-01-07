@@ -259,7 +259,7 @@ class Meal extends Model {
 		return $output;
 	}
 	
-	function cleanMenu(): string {
+	public function cleanMenu(): string {
 		// Remove figure blocks (images, captions, etc.)
 		$html = preg_replace('/<figure\b[^>]*>.*?<\/figure>/si', '', $this->menu);
 	

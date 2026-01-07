@@ -213,20 +213,12 @@ class Wine extends Model {
 		$ext = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
 
 		if ($allowedExtensions && !in_array($ext, $allowedExtensions)) {
-			$logsClass->create([
-				'category' => 'wine',
-				'result' => 'warning',
-				'description' => "Invalid file extension ({$ext}) for {$type} upload on wine [wineUID:{$this->uid}]"
-			]);
+			$log->add("Invalid file extension ({$ext}) for {$type} upload on wine [wineUID:{$this->uid}]", 'file', Log::WARNING);
 			return null;
 		}
 
 		if ($file['size'] > $maxSize) {
-			$logsClass->create([
-				'category' => 'wine',
-				'result' => 'warning',
-				'description' => "File too large ({$file['size']} bytes) for {$type} upload on wine [wineUID:{$this->uid}]"
-			]);
+			$log->add("File too large ({$file['size']} bytes) for {$type} upload on wine [wineUID:{$this->uid}]", 'file', Log::WARNING);
 			return null;
 		}
 		
@@ -322,10 +314,7 @@ class Wine extends Model {
 		
 		return true;
 	}
-
-	// -----------------------
-	// Attachment helper
-	// -----------------------
+	
 	public function attachments(): array {
 		if (empty($this->attachments)) {
 			return [];
@@ -338,108 +327,5 @@ class Wine extends Model {
 		}
 		
 		return $attachments;
-	}
-	
-	// -----------------------
-	// Other CRUD functions
-	// -----------------------
-	public function update(array $postData) {
-		global $db;
-
-		$fields = [
-			'date_updated'      => date('c'),
-			'code'              => $postData['code'] ?? '0',
-			'bin_uid'           => $postData['bin_uid'] ?? null,
-			'status'            => $postData['status'] ?? null,
-			'name'              => $postData['name'] ?? null,
-			'supplier'          => $postData['supplier'] ?? null,
-			'supplier_ref'      => $postData['supplier_ref'] ?? null,
-			'category'          => $postData['category'] ?? null,
-			'grape'             => $postData['grape'] ?? null,
-			'country_of_origin' => $postData['country_of_origin'] ?? null,
-			'region_of_origin'  => $postData['region_of_origin'] ?? null,
-			'vintage'           => ($postData['vintage'] === '' ? null : $postData['vintage']),
-			'price_purchase'    => $postData['price_purchase'] ?? null,
-			'price_internal'    => $postData['price_internal'] ?? null,
-			'price_external'    => $postData['price_external'] ?? null,
-			'tasting'           => $postData['tasting'] ?? null,
-			'notes'             => $postData['notes'] ?? null
-		];
-
-		$updatedRows = $db->update(static::$table, $fields, ['uid' => $this->uid], 'logs');
-		toast('Wine Updated', 'Wine successfully updated', 'text-success');
-
-		return $updatedRows;
-	}
-
-	public function createWine(array $postData) {
-		global $db, $user;
-
-		$fields = [
-			'date_updated'      => date('c'),
-			'code'              => ($postData['code'] === '' ? null : 0),
-			'bin_uid'           => $postData['bin_uid'] ?? null,
-			'status'            => $postData['status'] ?? null,
-			'name'              => $postData['name'] ?? null,
-			'supplier'          => $postData['supplier'] ?? null,
-			'supplier_ref'      => $postData['supplier_ref'] ?? null,
-			'category'          => $postData['category'] ?? null,
-			'grape'             => $postData['grape'] ?? null,
-			'country_of_origin' => $postData['country_of_origin'] ?? null,
-			'region_of_origin'  => $postData['region_of_origin'] ?? null,
-			'vintage'           => ($postData['vintage'] === '' ? null : $postData['vintage']),
-			'price_purchase'    => $postData['price_purchase'] ?? 0,
-			'price_internal'    => $postData['price_internal'] ?? 0,
-			'price_external'    => $postData['price_external'] ?? 0,
-			'tasting'           => $postData['tasting'] ?? null,
-			'notes'             => $postData['notes'] ?? null
-		];
-
-		$wine = $this->create($fields);
-		
-		$transaction_fields = [
-			'date'				=> date('c'),
-			'date_posted'		=> ($postData['date_posted'] === '' ? null : date('c')),
-			'username'			=> $user->getUsername(),
-			'type'				=> 'Import',
-			'wine_uid'			=> $wine,
-			'bottles'			=> $postData['qty'] ?? null,
-			'price_per_bottle'	=> $postData['price_purchase'] ?? '0',
-			'name'				=> 'Original Import'
-		];
-		$transaction = new Transaction;
-		$transaction->create($transaction_fields);
-		
-		toast('Wine Created', 'Wine successfully created', 'text-success');
-
-		return $wine;
-	}
-
-	public function delete() {
-		global $db, $logsClass;
-
-		$originalWineUID = $this->uid;
-
-		// Delete photograph
-		$target_dir = UPLOAD_DIR . 'wines/';
-		if (!empty($this->photograph) && file_exists($target_dir . $this->photograph)) {
-			unlink($target_dir . $this->photograph);
-			$logsClass->create([
-				'category' => "wine",
-				'result' => "warning",
-				'description' => "Deleted file: " . $this->photograph
-			]);
-		}
-
-		$sql = "DELETE FROM wine_wines WHERE uid = '{$this->uid}' LIMIT 1";
-		$db->query($sql);
-
-		$logsClass->create([
-			'category' => "wine",
-			'result' => "warning",
-			'description' => "Deleted [wineUID:{$originalWineUID}]"
-		]);
-
-		return true;
 	}
 }
