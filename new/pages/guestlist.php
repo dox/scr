@@ -46,7 +46,7 @@ echo pageTitle(
 			<th scope="col" width="5%">#</th>
 			<th scope="col">Name</th>
 			<th scope="col" width="3%">
-				<h2><i class="bi bi-cup-straw text-muted"></i></h2>
+				<h2><svg class="bi text-muted" width="1em" height="1em" aria-hidden="true"><use xlink:href="assets/images/icons.svg#wine-glass"></use></svg></h2>
 			</th>
 			<th scope="col" width="3%">
 				<h2><i class="bi bi-cookie text-muted"></i></h2>
@@ -75,12 +75,13 @@ echo pageTitle(
 		  
 		  $output .= "<td>";
 			if ($booking->wineChoice() != "None") {
-				$output .= "<h2><i
-					class=\"bi bi-cup-straw\"
-					data-bs-toggle=\"popover\"
-					data-bs-title=\"Wine Choice\"
-					data-bs-trigger=\"hover focus\"
-					data-bs-content=\"" . htmlspecialchars($booking->wineChoice()) . "\"></i>
+				$output .= "<h2>
+				<svg class=\"bi\" width=\"1em\" height=\"1em\" aria-hidden=\"true\"
+				data-bs-toggle=\"popover\"
+				data-bs-title=\"Wine Choice\"
+				data-bs-trigger=\"hover focus\"
+				data-bs-content=\"" . htmlspecialchars($booking->wineChoice()) . "\"
+				><use xlink:href=\"assets/images/icons.svg#wine-glass\"></use></svg>
 				</h2>";
 			}
 		  $output .= "</td>";
@@ -116,12 +117,13 @@ echo pageTitle(
 			  $output .= "<td>";
 			  	if ($booking->wineChoice() != "None") {
 					  if (!empty($guest['guest_wine_choice']) && $guest['guest_wine_choice'] !== 'None') {
-						  $output .= "<h2><i
-							  class=\"bi bi-cup-straw\"
-							  data-bs-toggle=\"popover\"
-							  data-bs-title=\"Guest Wine Choice\"
-							  data-bs-trigger=\"hover focus\"
-							  data-bs-content=\"" . htmlspecialchars($guest['guest_wine_choice']) . "\"></i>
+						  $output .= "<h2>
+						  <svg class=\"bi\" width=\"1em\" height=\"1em\" aria-hidden=\"true\"
+						  data-bs-toggle=\"popover\"
+						  data-bs-title=\"Guest Wine Choice\"
+						  data-bs-trigger=\"hover focus\"
+						  data-bs-content=\"" . htmlspecialchars($guest['guest_wine_choice']) . "\"
+						  ><use xlink:href=\"assets/images/icons.svg#wine-glass\"></use></svg>
 						  </h2>";
 					  }
 				}

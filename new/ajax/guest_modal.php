@@ -65,29 +65,36 @@ $guestDietary     = $booking->guests()[$guestUID]['guest_dietary']      ?? [];
 					</button>
 				</h2>
 				<div id="collapseDietary" class="accordion-collapse collapse">
-					<div class="accordion-body" data-max="<?= $settings->get('meal_dietary_allowed'); ?>">
+					<div class="accordion-body" data-max="<?php echo $settings->get('meal_dietary_allowed'); ?>">
 						<?php
-						$dietaryOptions = array_map('trim', explode(',', $settings->get('meal_dietary')));
-						foreach ($dietaryOptions as $i => $option):
-							$safe    = htmlspecialchars($option, ENT_QUOTES, 'UTF-8');
-							$checked = (is_array($guestDietary) && in_array($option, $guestDietary)) ? ' checked' : '';
-							$id      = "dietary_{$i}";
-						?>
-						<div class="form-check">
-							<input class="form-check-input dietaryOptionsMax"
-								type="checkbox"
-								id="guest_dietary[]"
-								id="<?= $id; ?>"
-								value="<?= $safe; ?>"<?= $checked; ?>>
-								<label class="form-check-label" for="<?= $id; ?>">
-									<?= $safe; ?>
-								</label>
-							</div>
-						<?php endforeach; ?>
+						$dietaryOptions    = array_map('trim', explode(',', $settings->get('meal_dietary')));
+						$memberDietary     = array_map('trim', explode(',', $member->dietary ?? ''));
+						$memberDietary = $guestDietary;
+						$output = '';
 						
-						<small class="form-text text-muted">
-							<?= $settings->get('meal_dietary_message'); ?>
-						</small>
+						foreach ($dietaryOptions as $index => $dietaryOption) {
+							$checked    = in_array($dietaryOption, $memberDietary, true) ? ' checked' : '';
+							$safeValue  = htmlspecialchars($dietaryOption, ENT_QUOTES);
+							$checkboxId = "guest_dietary_{$index}";
+						
+							$output .= '<div class="form-check">';
+							$output .= '<input class="form-check-input dietaryOptionsMax" '
+									 . 'type="checkbox" '
+									 . 'name="guest_dietary[]" '
+									 . 'id="' . $checkboxId . '" '
+									 . 'value="' . $safeValue . '"' 
+									 . $checked 
+									 . '>';
+							$output .= '<label class="form-check-label" for="' . $checkboxId . '">' 
+									 . $safeValue 
+									 . '</label>';
+							$output .= '</div>';
+						}
+						
+						echo $output;
+						?>
+						
+						<small id="nameHelp" class="form-text text-muted"><?php echo $settings->get('meal_dietary_message'); ?></small>
 					</div>
 				</div>
 			</div>

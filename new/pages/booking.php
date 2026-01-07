@@ -75,7 +75,7 @@ echo pageTitle(
 		
 			// Person's wine/dessert
 			$wineDessert = [];
-			if ($user->hasPermission('bookings') && $guestListBooking->wineChoice() != "None") $wineDessert[] = '<i class="bi bi-cup-straw"></i>';
+			if ($user->hasPermission('bookings') && $guestListBooking->wineChoice() != "None") $wineDessert[] = '<svg class="bi" width="1em" height="1em" aria-hidden="true"><use xlink:href="assets/images/icons.svg#wine-glass"></use></svg>';
 			if ($guestListBooking->dessertChoice() == "1") $wineDessert[] = '<i class="bi bi-cookie"></i>';
 			if (!empty($wineDessert)) {
 				$output .=  implode(' ', $wineDessert);
@@ -95,7 +95,7 @@ echo pageTitle(
 					
 					// Guest wine/dessert
 					$guestWineDessert = [];
-					if ($guestListBooking->wineChoice() != "None" && !empty($guest['guest_wine'])) $guestWineDessert[] = '<i class="bi bi-cup-straw"></i>';
+					if ($guestListBooking->wineChoice() != "None" && !empty($guest['guest_wine'])) $guestWineDessert[] = '<svg class="bi" width="1em" height="1em" aria-hidden="true"><use xlink:href="assets/images/icons.svg#wine-glass"></use></svg>';
 					if ($guestListBooking->dessertChoice() == "1") $guestWineDessert[] = '<i class="bi bi-cookie"></i>';
 					if (!empty($guestWineDessert)) {
 						$output .= implode(' ', $guestWineDessert);
@@ -238,7 +238,7 @@ echo pageTitle(
 				$wineDessert[] = '<span><i class="bi bi-mortarboard me-2"></i>' . htmlspecialchars($guest['guest_domus_reason'] ?? '') . '</span>';
 			}
 			if (!empty($guest['guest_wine_choice'])) {
-				$wineDessert[] = '<span><i class="bi bi-cup-straw me-2"></i>' . $guest['guest_wine_choice'] . '</span>';
+				$wineDessert[] = '<span><svg class="bi me-2" width="1em" height="1em" aria-hidden="true"><use xlink:href="assets/images/icons.svg#wine-glass"></use></svg>' . $guest['guest_wine_choice'] . '</span>';
 			}
 			if (!empty($booking->dessert)) {
 				$wineDessert[] = '<span><i class="bi bi-cookie me-2"></i>Dessert</span>';
@@ -347,24 +347,11 @@ guestModalEl.addEventListener('show.bs.modal', function (event) {
 		});
 	  }
 
-	  // --- Dietary Options Max Logic (optional, if you have limits) ---
-	  const dietaryContainer = guestModalEl.querySelector('.accordion-body[data-max]');
-	  if (dietaryContainer) {
-		const max = parseInt(dietaryContainer.dataset.max, 10) || 0;
-		const checkboxes = dietaryContainer.querySelectorAll('input[type="checkbox"]');
-		checkboxes.forEach(cb => {
-		  cb.addEventListener('change', () => {
-			const checkedCount = Array.from(checkboxes).filter(i => i.checked).length;
-			checkboxes.forEach(i => {
-			  if (!i.checked) i.disabled = checkedCount >= max;
-			  else i.disabled = false;
-			});
-		  });
-		});
-	  }
+	  // --- Dietary Options Max Logic ---
+	  // Simply call your reusable function for the modal content
+	  enforceDietaryLimits(guestModalEl);
 
-	  // --- Wine Choice Logic (optional) ---
-	  // Example: enforce a default if none selected
+	  // --- Wine Choice Logic ---
 	  const wineRadios = guestModalEl.querySelectorAll('input[name="guest_wine_choice"]');
 	  if (wineRadios.length) {
 		const hasChecked = Array.from(wineRadios).some(r => r.checked);

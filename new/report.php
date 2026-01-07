@@ -1,5 +1,6 @@
 <?php
 require_once "inc/autoload.php";
+require_once "inc/reports.php";
 
 if (!$user->isLoggedIn() || !$user->hasPermission("reports")) {
 	die("User does not have permission to run reports or is not logged in.");

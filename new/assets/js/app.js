@@ -196,8 +196,10 @@ document.addEventListener('DOMContentLoaded', () => {
 	const guest_uidEl  = container.querySelector('#guest_uid');
 	const guest_nameEl = container.querySelector('#guest_name');
 
-	const guestDietaryEls = container.querySelectorAll('input[id="guest_dietary[]"]:checked');
+	const guestDietaryEls = container.querySelectorAll('input.dietaryOptionsMax[name="guest_dietary[]"]:checked');
 	const guestDietaryValues = Array.from(guestDietaryEls).map(el => el.value);
+	
+	
 	
 	// Guest name validation
 	if (action !== 'guest_delete' && (!guest_nameEl || guest_nameEl.value.trim() === '')) {
@@ -331,28 +333,48 @@ function filterList(inputSelector, listSelector) {
   });
 }
 
-// limit dietary options to a maximum value
-document.addEventListener('DOMContentLoaded', function () {
-	const containers = document.querySelectorAll('.accordion-body[data-max]');
+// Enforce max dietary checkbox selections
+function enforceDietaryLimits(root = document) {
+  const containers = root.querySelectorAll('.accordion-body[data-max]');
 
-	containers.forEach(container => {
-		const max = parseInt(container.dataset.max, 10);
-		const checkboxes = container.querySelectorAll('.dietaryOptionsMax');
+  containers.forEach(container => {
+	const max = parseInt(container.dataset.max, 10);
+	const checkboxes = container.querySelectorAll('.dietaryOptionsMax');
 
-		function checkMaxCheckboxes() {
-			const checkedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
-			checkboxes.forEach(cb => {
-				cb.disabled = !cb.checked && checkedCount >= max;
-			});
-		}
+	if (!checkboxes.length || isNaN(max)) return;
 
-		// bind change events
-		checkboxes.forEach(cb => cb.addEventListener('change', checkMaxCheckboxes));
+	function checkMaxCheckboxes() {
+	  const checkedCount = Array.from(checkboxes)
+		.filter(cb => cb.checked).length;
 
-		// enforce the rule immediately
-		checkMaxCheckboxes();
+	  checkboxes.forEach(cb => {
+		cb.disabled = !cb.checked && checkedCount >= max;
+	  });
+	}
+
+	// Prevent duplicate listeners if called multiple times
+	checkboxes.forEach(cb => {
+	  cb.removeEventListener('change', checkMaxCheckboxes);
+	  cb.addEventListener('change', checkMaxCheckboxes);
 	});
+
+	// Enforce immediately (page load / modal open)
+	checkMaxCheckboxes();
+  });
+}
+
+// Run on initial page load
+document.addEventListener('DOMContentLoaded', () => {
+  enforceDietaryLimits();
 });
+
+// Run when the guest modal is opened
+document
+  .getElementById('addEditGuestModal')
+  ?.addEventListener('shown.bs.modal', e => {
+	enforceDietaryLimits(e.target);
+  });
+
 
 // load remote content into a div
 function remoteModalLoader(triggerSelector, modalSelector, bodySelector) {

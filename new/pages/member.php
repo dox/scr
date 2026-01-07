@@ -204,7 +204,6 @@ echo pageTitle(
 						<div class="accordion-body" data-max="<?php echo $settings->get('meal_dietary_allowed'); ?>">
 							<?php
 							$dietaryOptions    = array_map('trim', explode(',', $settings->get('meal_dietary')));
-							$dietaryOptionsMax = (int) $settings->get('meal_dietary_allowed');
 							$memberDietary     = array_map('trim', explode(',', $member->dietary ?? ''));
 							
 							$output = '';

@@ -212,7 +212,7 @@ echo $wine->statusBanner();
 								$url = "index.php?page=wine_transaction&uid=" . $transaction->uid;
 								
 								$output  = "<tr>";
-								$output .= "<th scope=\"row\">" . formatDate($transaction->date, 'short') . "</th>";
+								$output .= "<th scope=\"row\">" . formatDate($transaction->date_posted, 'short') . "</th>";
 								$output .= "<td>" . ($transaction->username) . "</td>";
 								$output .= "<td class=\"" . ($transaction->bottles < 0 ? 'text-danger' : 'text-success') . "\">" . $transaction->bottles . "</td>";
 								$output .= "<td>" . formatMoney($transaction->value()) . "</td>";

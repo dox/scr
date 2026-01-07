@@ -136,14 +136,16 @@ echo pageTitle(
 			  <?php
 			  $daysToInclude = $settings->get('logs_display');
 			  $transactions = $wines->transactionsGrouped([
-				  'DATE(date)' => ['>', date('Y-m-d', strtotime('- ' . $daysToInclude . ' days '))]
+				  'date_posted' => [
+					  ['>', date('Y-m-d', strtotime('- ' . $daysToInclude . ' days '))]
+				  ]
 			  ]);
 			  
 			  foreach ($transactions as $transaction) {
 				  $url = "index.php?page=wine_transaction&uid=" . $transaction->uid;
 				  
 				  $output  = "<tr>";
-				  $output .= "<th scope=\"row\">" . formatDate($transaction->date, 'short') . "</th>";
+				  $output .= "<th scope=\"row\">" . formatDate($transaction->date_posted, 'short') . "</th>";
 				  $output .= "<td>" . ($transaction->username) . "</td>";
 				  $output .= "<td>" . $transaction->totalBottles() . "</td>";
 				  $output .= "<td>" . formatMoney($transaction->totalValue()) . "</td>";
@@ -215,7 +217,12 @@ for ($i = 0; $i < $daysToInclude; $i++) {
 }
 
 foreach ($dateArray as $date => $value) {
-	$transactions = $wines->transactions(array('DATE(date)' => $date));
+	$transactions = $wines->transactions([
+		'date_posted' => [
+			['=', $date]
+		]
+	]);
+	//$transactions = $wines->transactions(array('DATE(date)' => $date));
 	
 	$bottlesTotal = 0;
 	foreach ($transactions as $transaction) {

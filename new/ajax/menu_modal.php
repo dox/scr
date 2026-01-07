@@ -33,7 +33,7 @@ $mealObject = new Meal($mealUID);
 		</div>
 	
 		<div class="text-center <?= ($mealObject->allowed_wine == 1) ? "" : "opacity-0" ?>">
-			<div><i class="bi bi-cup-straw fs-4"></i></div>
+			<div><svg class="bi fs-4" width="1em" height="1em" aria-hidden="true"><use xlink:href="assets/images/icons.svg#wine-glass"></use></svg></div>
 			<div class="text-uppercase fw-semibold">Wine</div>
 		</div>
 	

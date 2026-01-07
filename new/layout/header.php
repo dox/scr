@@ -16,7 +16,7 @@
 					<a href="index.php?page=member" class="nav-link"><i class="bi bi-person me-2"></i>Profile</a>
 				</li>
 				<li>
-					<a href="index.php?page=information&subpage=scr_information" class="nav-link"><i class="bi  bi-info-circle me-2"></i>SCR Information</a>
+					<a href="index.php?page=information&subpage=scr_information" class="nav-link"><i class="bi bi-info-circle me-2"></i>SCR Information</a>
 				</li>
 				<li>
 					<a href="index.php?page=information&subpage=dining_arrangements" class="nav-link"><i class="bi bi-journal-text me-2"></i>Dining Arrangements</a>
@@ -91,16 +91,16 @@
 						}
 						
 						if($user->hasPermission("wine")) {
-							echo "<li><a class=\"dropdown-item\" href=\"index.php?page=wine_index\"><i class=\"bi me-2 bi-cup-straw\" aria-hidden=\"true\"></i>Wine</a></li>";
+							echo '<li><a class="dropdown-item" href="index.php?page=wine_index"><svg class="bi me-2" width="1em" height="1em" aria-hidden="true"><use xlink:href="assets/images/icons.svg#wine-glass"></use></svg>Wine</a></li>';
 						}
 						
 						if($user->hasPermission("terms")) {
 							echo "<li><a class=\"dropdown-item\" href=\"index.php?page=terms\"><i class=\"bi me-2 bi-calendar4-range\" aria-hidden=\"true\"></i>Terms</a></li>";
 						}
 						
-						if($user->hasPermission("notifications")) {
-							//echo "<li><a class=\"dropdown-item\" href=\"index.php?page=notifications\"><i class=\"bi me-2 bi-bell\" aria-hidden=\"true\"></i>Notifications</a></li>";
-						}
+						/*if($user->hasPermission("notifications")) {
+							echo "<li><a class=\"dropdown-item\" href=\"index.php?page=notifications\"><i class=\"bi me-2 bi-bell\" aria-hidden=\"true\"></i>Notifications</a></li>";
+						}*/
 						
 						if($user->hasPermission("reports")) {
 							echo "<li><a class=\"dropdown-item\" href=\"index.php?page=reports\"><i class=\"bi me-2 bi-graph-up-arrow\" aria-hidden=\"true\"></i>Reports</a></li>";

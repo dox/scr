@@ -277,7 +277,7 @@ echo pageTitle(
 
 		<div class="text-end">
 			<a class="btn btn-sm btn-outline-light" href="report.php?page=meal_bookings&uid=<?= $meal->uid; ?>">
-				<i class="bi bi-download"></i> export
+				<i class="ph ph-download"></i> export
 			</a>
 		</div>
 

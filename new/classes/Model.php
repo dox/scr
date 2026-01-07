@@ -710,25 +710,37 @@ class Wines extends Model {
 			SELECT 
 				COALESCE(linked, uid) AS group_key,
 				MIN(uid) AS uid,
-				MAX(date) AS max_date
+				MAX(date_posted) AS max_date
 			FROM wine_transactions ";
 	
 		$conditions = [];
 	
-		foreach ($whereFilterArray as $key => $rules) {
+		foreach ($whereFilterArray as $key => $rule) {
 			$key = addslashes($key);
 		
-			if (!is_array($rules[0])) {
-				// single rule
-				$rules = [$rules];
-			}
+			// Normalize rule(s) into an array of [operator, value]
+			$ruleSet = (isset($rule[0]) && is_array($rule[0])) ? $rule : [$rule];
 		
-			foreach ($rules as $rule) {
-				[$operator, $value] = $rule;
+			foreach ($ruleSet as $r) {
+				[$operator, $value] = $r;
 		
-				if (strtoupper($operator) === 'IN' && is_array($value)) {
+				// Handle NULL specially
+				if ($value === null || $value === '') {
+					if (strtoupper($operator) === '=') {
+						$conditions[] = "$key IS NULL";
+					} elseif (strtoupper($operator) === '!=') {
+						$conditions[] = "$key IS NOT NULL";
+					}
+					continue;
+				}
+		
+				if (strtoupper($operator) === 'IN') {
+					if (!is_array($value)) $value = array_map('trim', explode(',', $value));
 					$value = array_map(fn($v) => "'" . addslashes($v) . "'", $value);
 					$conditions[] = "$key IN (" . implode(',', $value) . ")";
+				} elseif (strtoupper($operator) === 'LIKE') {
+					$value = '%' . addslashes($value) . '%';
+					$conditions[] = "$key LIKE '$value'";
 				} else {
 					$value = addslashes($value);
 					$conditions[] = "$key $operator '$value'";
@@ -798,7 +810,7 @@ class Wines extends Model {
 			$sql .= " WHERE " . implode(' AND ', $conditions);
 		}
 	
-		$sql .= " ORDER BY date_posted ASC";
+		$sql .= " ORDER BY date_posted DESC";
 	
 		$rows = $db->query($sql)->fetchAll();
 	

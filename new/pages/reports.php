@@ -1,22 +1,11 @@
 <?php
+require_once "inc/reports.php";
+
 $user->pageCheck('reports');
 
 echo pageTitle(
 	"Reports",
-	"Export data for members, meals, wine, etc.",
-	[
-		[
-			'permission' => 'everyone',
-			'title' => 'Add new',
-			'class' => '',
-			'event' => '',
-			'icon' => 'plus-circle',
-			'data' => [
-				'bs-toggle' => 'modal',
-				'bs-target' => '#addTermModal'
-			]
-		]
-	]
+	"Export data for members, meals, wine, etc."
 );
 ?>
 
@@ -28,7 +17,8 @@ echo pageTitle(
 			$report['description'],
 			$report['format'],
 			'report.php?page=' . $slug,
-			$report['requiresDateRange']
+			$report['requiresDateRange'],
+			$report['hidden'] ?? false
 		);
 	}
 	?>
@@ -38,15 +28,19 @@ echo pageTitle(
 function renderReportItem(
 	string $title,
 	string $description,
-	string $format,              // 'html' or 'csv'
-	string $url,                 // report endpoint
-	bool $requiresDateRange = false
+	string $format,
+	string $url,
+	bool $requiresDateRange = false,
+	bool $hidden = false
 ): string {
-	
+	if ($hidden) {
+		return false;
+	}
+
 	$terms = new Terms();
 	$previousTerm = $terms->previousTerm();
 	$start = $previousTerm->date_start;
-	$end = $previousTerm->date_end;
+	$end   = $previousTerm->date_end;
 
 	$format = strtolower($format);
 
@@ -62,24 +56,24 @@ function renderReportItem(
 	$badgeLabel = strtoupper($format);
 
 	$output  = '<div class="list-group-item">';
-	$output .= $requiresDateRange
-		? '<form method="post" action="' . $url . '">'
-		: '';
+	$output .= $requiresDateRange ? '<form method="post" action="' . $url . '">' : '';
 
 	$output .= '
-		<div class="row align-items-center gy-2">
+	<div class="row gy-3 align-items-start align-items-md-center">
 
-			<div class="col-md-5">
-				<h5 class="mb-1">' . $title . '</h5>
-				<small class="text-muted">' . $description . '</small>
-			</div>
+		<!-- Title / description -->
+		<div class="col-12 col-md-5">
+			<h5 class="mb-1">' . $title . '</h5>
+			<small class="text-muted">' . $description . '</small>
+		</div>
 
-			<div class="col-md-3">';
+		<!-- Date range -->
+		<div class="col-12 col-md-3">';
 
 	if ($requiresDateRange) {
 		$output .= '
 			<div class="row g-2">
-				<div class="col">
+				<div class="col-12 col-sm-6">
 					<input
 						type="date"
 						class="form-control form-control-sm"
@@ -89,7 +83,7 @@ function renderReportItem(
 						aria-label="From date"
 					>
 				</div>
-				<div class="col">
+				<div class="col-12 col-sm-6">
 					<input
 						type="date"
 						class="form-control form-control-sm"
@@ -103,30 +97,32 @@ function renderReportItem(
 	}
 
 	$output .= '
-			</div>
+		</div>
 
-			<div class="col-md-2">
-				<span class="badge ' . $badgeClass . '">' . $badgeLabel . '</span>
-			</div>
+		<!-- Badge -->
+		<div class="col-6 col-md-2 d-flex align-items-center">
+			<span class="badge ' . $badgeClass . '">' . $badgeLabel . '</span>
+		</div>
 
-			<div class="col-md-2 text-md-end">';
+		<!-- Action -->
+		<div class="col-6 col-md-2 text-end">';
 
 	if ($requiresDateRange) {
 		$output .= '
-				<button type="submit" class="btn btn-sm btn-primary">
-					Run
-				</button>';
+			<button type="submit" class="btn btn-sm btn-primary w-100 w-md-auto">
+				Run
+			</button>';
 	} else {
 		$output .= '
-				<a href="' . $url . '" class="btn btn-sm btn-primary">
-					Run
-				</a>';
+			<a href="' . $url . '" class="btn btn-sm btn-primary w-100 w-md-auto">
+				Run
+			</a>';
 	}
 
 	$output .= '
-			</div>
+		</div>
 
-		</div>';
+	</div>';
 
 	$output .= $requiresDateRange ? '</form>' : '';
 	$output .= '</div>';

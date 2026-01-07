@@ -79,7 +79,7 @@ $transactions = $wines->transactionsGrouped([
 		  $url = "index.php?page=wine_transaction&uid=" . $transaction->uid;
 		  
 		  $output  = "<tr>";
-		  $output .= "<th scope=\"row\">" . formatDate($transaction->date, 'short') . "</th>";
+		  $output .= "<th scope=\"row\">" . formatDate($transaction->date_posted, 'short') . "</th>";
 		  $output .= "<td>" . ($transaction->username) . "</td>";
 		  $output .= "<td>" . $transaction->totalBottles() . "</td>";
 		  $output .= "<td>" . formatMoney($transaction->totalValue()) . "</td>";
