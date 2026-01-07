@@ -1,177 +1,176 @@
 <?php
-$wineClass = new wineClass();
+// Get date end from POST
+$end = filter_input(INPUT_POST, 'date_to', FILTER_DEFAULT);
 
-$allCellars= $wineClass->allCellars();
-$allBins = $wineClass->allBins();
-$allWines = $wineClass->allWines(null, true);
-
-if (isset($_POST['filter_date'])) {
-	
-} else {
-	$_POST['filter_date'] = date('Y-m-d');
-}
-foreach ($allWines AS $wine) {
-	$wine = new wine($wine['uid']);
-	
-	$qty = $wine->currentQty($_POST['filter_date']);
-	$stockValue = $wine->stockValue($_POST['filter_date']);
-	
-	$totalBottles += $qty;
-	$totalPurchaseValue += $stockValue;
-	
-	$winesByBin[$wine->bin_uid]['qty'] += $qty;
-	$winesByBin[$wine->bin_uid]['totalPurchaseValue'] += $stockValue;
-}
-?>
-
-<h1>Wine Valuation Report <small class="text-body-secondary">Generated: <?php echo dateDisplay(date('c'), true); ?></small></h1>
-
-<form method="post" id="bin_new" action="<?php echo $_SERVER['REQUEST_URI']; ?>">
-<div class="row">
-	<div class="col">
-		<div class="mb-3">
-		  <label for="transaction_date_posted" class="form-label">'Up To' Date (transactions after this date will be excluded from report)</label>
-		  <div class="input-group">
-				<span class="input-group-text" id="filter_date-addon"><svg width="1em" height="1em" class="text-muted"><use xlink:href="img/icons.svg#calendar-plus"/></svg></span>
-				<input type="date" class="form-control" name="filter_date" id="filter_date" value="<?php echo $_POST['filter_date']; ?>">
-				<button class="btn btn-outline-secondary" type="submit">Submit</button>
-			</div>
-		</div>
-	</div>
-</div>
-</form>
-
-<div class="row">
-	<div class="col">
-		<div class="card mb-3">
-			<div class="card-body">
-				<h5 class="card-title countup"><?php echo count($allCellars); ?></h5>
-				<h6 class="card-subtitle mb-2 text-body-secondary">Cellars</h6>
-			</div>
-		</div>
-	</div>
-	<div class="col">
-		<div class="card mb-3">
-			<div class="card-body">
-				<h5 class="card-title countup"><?php echo count($allBins); ?></h5>
-				<h6 class="card-subtitle mb-2 text-body-secondary">Bins</h6>
-			</div>
-		</div>
-	</div>
-	<div class="col">
-		<div class="card mb-3">
-			<div class="card-body">
-				<h5 class="card-title countup"><?php echo $totalBottles; ?></h5>
-				<h6 class="card-subtitle mb-2 text-body-secondary">Bottles</h6>
-			</div>
-		</div>
-	</div>
-	<div class="col">
-		<div class="card mb-3">
-			<div class="card-body">
-				<h5 class="card-title countup"><?php echo currencyDisplay($totalPurchaseValue); ?></h5>
-				<h6 class="card-subtitle mb-2 text-body-secondary">Total Value</h6>
-			</div>
-		</div>
-	</div>
-</div>
-
-<?php
-foreach ($allCellars AS $cellar) {
-	$cellar = new cellar($cellar['uid']);
-	$cellarTotal = 0;
-	$totalBottlesByCellar = 0;
-	
-	echo "<h2>" . $cellar->name . "</h2>";
-	
-	echo "<table class=\"table\">";
-	echo "<thead>";
-	echo "<tr>";
-	echo "<th scope=\"col\" style=\"width: 40%;\">Category</th>";
-	echo "<th scope=\"col\">Bottles</th>";
-	echo "<th scope=\"col\">Total Value</th>";
-	echo "</tr>";
-	echo "</thead>";
-	echo "<tbody>";
-	
-	foreach (explode(",", $settingsClass->value('wine_category')) AS $wine_category) {
-		$filter = array(
-			"cellar_uid" => $cellar->uid,
-			"wine_wines.category" => $wine_category
-		);
-		$wines = $wineClass->allWines($filter, true);
-		
-		$totalBottlesByCategory = 0;
-		$totalPurchaseValue = 0;
-		
-		foreach ($wines AS $wine) {
-			$wine = new wine($wine['uid']);
-			
-			$qty = $wine->currentQty($_POST['filter_date']);
-			$totalBottlesByCategory += $qty;
-			$totalPurchaseValue += $wine->stockValue($_POST['filter_date']);
-			
-			$totalBottlesByCellar += $qty;
-		}
-		
-		
-		echo "<tr>";
-		echo "<td scope=\"row\">" . $wine_category . "</td>";
-		echo "<td>" . $totalBottlesByCategory . "</td>";
-		echo "<td>" . currencyDisplay($totalPurchaseValue) . "</td>";
-		echo "</tr>";
-		
-		$cellarTotal = $cellarTotal + $totalPurchaseValue;
-	}
-	
-	echo "<tr>";
-	echo "<td></td>";
-	echo "<td><strong>" . $totalBottlesByCellar . "</strong></td>";
-	echo "<td><strong>" . currencyDisplay($cellarTotal) . "</strong></td>";
-	echo "</tr>";
-	
-	echo "</tbody>";
-	echo "</table>";
+// If not provided or invalid, default to today
+if (!$end || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $end)) {
+	$end = date('Y-m-d'); // defaults to today
 }
 
-// By Bin
-echo "<table class=\"table\">";
-echo "<thead>";
-echo "<tr>";
-echo "<th scope=\"col\" style=\"width: 40%;\">Wine</th>";
-echo "<th scope=\"col\">Bin</th>";
-echo "<th scope=\"col\">Bottles</th>";
-echo "<th scope=\"col\">Total Value</th>";
-echo "</tr>";
-echo "</thead>";
-echo "<tbody>";
+echo pageTitle(
+	'Wine Valuation',
+	'Summary of wine valuation up to ' . formatDate($end) . '.'
+);
 
-foreach ($allWines AS $wine) {
-	$wine = new wine($wine['uid']);
-	$bin = new bin($wine->bin_uid);
-	$cellar = new cellar($bin->cellar_uid);
-	
-	$qty = $wine->currentQty($_POST['filter_date']);
-	$stockValue = $wine->stockValue($_POST['filter_date']);
+$wines = new Wines();
+
+// count bottles and value
+$totalBottles = 0;
+$totalValue = 0;
+$winesTotal = 0;
+
+$winesToDate = $wines->wines();
+
+foreach ($winesToDate as $wine) {
+	$qty = $wine->currentQty($end);
 	
 	if ($qty > 0) {
-		echo "<tr>";
-		echo "<td scope=\"row\">" . $wine->clean_name(true) . "</td>";
-		echo "<td>" . $bin->name . "</td>";
-		echo "<td>" . $qty . "</td>";
-		echo "<td>" . currencyDisplay($stockValue) . "</td>";
-		echo "</tr>";
+		$winesTotal ++;
+		$totalBottles += $qty;
+		$totalValue += ($qty * $wine->price_purchase);
 	}
 }
-
-echo "</tbody>";
-echo "</table>";
-
 ?>
+
+<form method="post" id="mealsBetweenDates" action="<?= htmlspecialchars($_SERVER['REQUEST_URI']) ?>">
+	<div class="row align-items-end">
+		<div class="col">
+			<label for="dateTo" class="form-label">Date To</label>
+			<input type="text" class="form-control" id="dateTo" name="date_to" value="<?= $end ?>" required="">
+		</div>
+		<div class="col">
+			<button type="submit" class="btn btn-primary mt-3 w-100">Submit</button>
+		</div>
+	</div>
+</form>
+
+<hr>
+
+<div class="row">
+	<div class="col">
+		<div class="card mb-3">
+			<div class="card-body">
+				<div class="subheader text-nowrap text-truncate">Cellars</div>
+				<div class="h1 text-truncate"><?= number_format(count($wines->cellars())) ?></div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="col">
+		<div class="card mb-3">
+			<div class="card-body">
+				<div class="subheader text-nowrap text-truncate">Bins</div>
+				<div class="h1 text-truncate"><?= number_format(count($wines->cellars())) ?></div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="col">
+		<div class="card mb-3">
+			<div class="card-body">
+				<div class="subheader text-nowrap text-truncate">Wines</div>
+				<div class="h1 text-truncate"><?= number_format($winesTotal) ?></div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="col">
+		<div class="card mb-3">
+			<div class="card-body">
+				<div class="subheader text-nowrap text-truncate">Bottles</div>
+				<div class="h1 text-truncate"><?= number_format($totalBottles) ?></div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="col">
+		<div class="card mb-3">
+			<div class="card-body">
+				<div class="subheader text-nowrap text-truncate">Total Value</div>
+				<div class="h1 text-truncate"><?= formatMoney($totalValue) ?></div>
+			</div>
+		</div>
+	</div>
+</div>
 
 <?php
-$logArray['category'] = "report";
-$logArray['result'] = "success";
-$logArray['description'] = "[reportUID:" . $report['uid'] . "] run";
-$logsClass->create($logArray);
+foreach ($wines->cellars() as $cellar) {
+	echo "<h2>" . $cellar->name . "</h2>";
+	
+	echo '<table class="table"><thead><tr><th scope="col" style="width: 40%;">Section</th><th scope="col">Wines</th><th scope="col">Bottles</th><th scope="col">Total Value</th></tr></thead><tbody>';
+	
+	foreach ($cellar->sections() as $section) {
+		$sectionWines = $wines->wines([
+			'wine_bins.cellar_uid' => ['=', $cellar->uid],
+			'wine_bins.section'   => ['=', $section]
+		]);
+		
+		// count bottles and value
+		$sectionTotalBottles = 0;
+		$sectionTotalValue = 0;
+		$sectionWinesTotal = 0;
+		foreach ($sectionWines as $wine) {
+			$qty = $wine->currentQty($end);
+			
+			if ($qty > 0) {
+				$sectionWinesTotal ++;
+				$sectionTotalBottles += $qty;
+				$sectionTotalValue += ($qty * $wine->price_purchase);
+			}
+		}
+		
+		$output  = "<tr>";
+		$output .= "<td scope=\"row\">" . $section . "</td>";
+		$output .= "<td>" . number_format($sectionWinesTotal) . "</td>";
+		$output .= "<td>" . number_format($sectionTotalBottles) . "</td>";
+		$output .= "<td>" . formatMoney($sectionTotalValue) . "</td>";
+		$output .= "</tr>";
+		
+		echo $output;
+	}
+	echo '</tbody></table>';
+}
 ?>
+
+<style>
+.load-remote-menu {
+	float: right;
+	margin-left: 0.5rem;
+	/* spacing between text and icon */
+}
+</style>
+
+<script>
+const el1 = document.getElementById('dateTo');
+
+const options = {
+	defaultDate: new Date('<?= date('c') ?>'),
+	display: {
+		icons: {
+			type: 'icons',
+			time: 'bi bi-clock',
+			date: 'bi bi-calendar',
+			up: 'bi bi-arrow-up',
+			down: 'bi bi-arrow-down',
+			previous: 'bi bi-chevron-left',
+			next: 'bi bi-chevron-right',
+			today: 'bi bi-calendar-check',
+			clear: 'bi bi-trash',
+			close: 'bi bi-close'
+		},
+		components: {
+			calendar: true,
+			date: true,
+			month: true,
+			year: true,
+			decades: true,
+			clock: false
+		}
+	},
+	localization: {
+		format: 'yyyy-MM-dd',
+	}
+};
+
+new tempusDominus.TempusDominus(el1, options);
+</script>

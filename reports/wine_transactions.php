@@ -1,82 +1,67 @@
 <?php
-$wineClass = new wineClass();
+// Get date range from POST
+$start = filter_input(INPUT_POST, 'from_date', FILTER_DEFAULT);
+$end   = filter_input(INPUT_POST, 'to_date', FILTER_DEFAULT);
 
-// CSV columns to include
-$columns = array(
-  "transaction_uid",
-  "transaction_date_created",
-  "transaction_date_posted",
-  "username",
-  "transaction_type",
-  "cellar",
-  "wine_uid",
-  "wine_name",
-  "transaction_qty",
-  "transaction_price_per_bottle",
-  "transaction_total",
-  "transaction_name",
-  "transaction_description"
-);
-
-
-$allTransactions = $wineClass->allTransactions();
-
-foreach ($allTransactions AS $transaction) {
-  $row = null;
-  
-  $transaction = new transaction($transaction['uid']);
-  $wineSnapshot = json_decode($transaction->snapshot);
-  
-  $wine = new wine($transaction->wine_uid);
-  $bin = new bin($wine->bin_uid);
-  $cellar = new cellar($bin->cellar_uid);
-
-  $row['transaction_uid'] = $transaction->uid;
-  $row['transaction_date_created'] = $transaction->date;
-  $row['transaction_date_posted'] = $transaction->date_posted;
-  $row['username'] = $transaction->username;
-  $row['transaction_type'] = $transaction->type;
-  $row['cellar'] = $cellar->name;
-  $row['wine_uid'] = $wineSnapshot->uid;
-  $row['wine_name'] = $wineSnapshot->name;
-  $row['transaction_qty'] = $transaction->bottles;
-  $row['transaction_price_per_bottle'] = $transaction->price_per_bottle;
-  $row['transaction_total'] = (abs($transaction->bottles) * $transaction->price_per_bottle);
-  $row['transaction_name'] = $transaction->name;
-  $row['transaction_description'] = $transaction->description;
-
-  $rowArray[] = $row;
+if (!$start || !$end) {
+	die('Invalid or missing date range.');
 }
 
-// Build the CSV from the bookingsArray...
-foreach ($rowArray AS $CSVrow) {
-  $rowOutput = null;
+// Optional: enforce YYYY-MM-DD format
+if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $start) ||
+	!preg_match('/^\d{4}-\d{2}-\d{2}$/', $end)) {
+	die('Invalid date format.');
+}
 
-  foreach ($columns AS $column) {
-	if (!empty($CSVrow[$column])) {
-	  $rowOutput[] = $CSVrow[$column];
-	} else {
-	  $rowOutput[] = '';
+// Get transactions in date range
+$winesClass = new Wines();
+$transactions = $winesClass->transactions([
+	'date_posted' => [
+		['>=', $start],
+		['<=', $end],
+	]
+]);
+
+// CSV header row (matching Transaction class vars)
+$rowHeaders = [
+	'uid',
+	'date',
+	'date_posted',
+	'username',
+	'type',
+	'cellar_uid',
+	'wine_uid',
+	'bottles',
+	'price_per_bottle',
+	'name',
+	'description',
+	'linked',
+	'total_bottles',
+	'total_value',
+];
+fputcsv($output, $rowHeaders);
+
+// Iterate transactions and output each as a CSV row
+if (!empty($transactions) && is_iterable($transactions)) {
+	foreach ($transactions as $transaction) {
+
+		$row = [
+			'uid'              => $transaction->uid ?? '',
+			'date'             => $transaction->date ?? '',
+			'date_posted'      => $transaction->date_posted ?? '',
+			'username'         => $transaction->username ?? '',
+			'type'             => $transaction->type ?? '',
+			'cellar_uid'       => $transaction->cellar_uid ?? '',
+			'wine_uid'         => $transaction->wine_uid ?? '',
+			'bottles'          => $transaction->bottles ?? 0,
+			'price_per_bottle' => number_format($transaction->price_per_bottle ?? 0, 2),
+			'name'             => $transaction->name ?? '',
+			'description'      => $transaction->description ?? '',
+			'linked'           => $transaction->linked ?? '',
+			'total_bottles'    => $transaction->totalBottles(),
+			'total_value'      => number_format($transaction->totalValue(), 2),
+		];
+
+		fputcsv($output, $row);
 	}
-
-  }
-
-  $csvOUTPUT[] = $rowOutput;
-
 }
-
-// output the column headings
-fputcsv($output, $columns);
-
-// loop over the rows, outputting them
-foreach ($csvOUTPUT AS $row) {
-  fputcsv($output, $row);
-  //printArray($report);
-
-}
-
-$logArray['category'] = "report";
-$logArray['result'] = "success";
-$logArray['description'] = "[reportUID:" . $report['uid'] . "] run";
-$logsClass->create($logArray);
-?>

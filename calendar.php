@@ -1,39 +1,41 @@
 <?php
 //header('Content-type: text/calendar; charset=utf-8');
 
+require_once "inc/autoload.php";
+require_once "inc/zapcallib.php";
+
 if (isset($_GET['hash'])) {
-	include_once("inc/autoload.php");
-	require_once("inc/zapcallib.php");
-	
 	$bookingsClass = new bookings();
 	
-	$sql  = "SELECT * FROM members WHERE calendar_hash = '" . filter_var($_GET['hash'], FILTER_SANITIZE_STRING) . "'";
-	$sql .= " LIMIT 1";
-	$member = $db->query($sql)->fetchAll();
+	$hash = filter_input(
+		INPUT_GET,
+		'hash',
+		FILTER_VALIDATE_REGEXP,
+		[
+			'options' => [
+				'regexp' => '/^[a-zA-Z0-9]+$/'
+			]
+		]
+	);
 	
-	$sql  = "SELECT bookings.uid AS uid FROM bookings";
-	$sql .= " LEFT JOIN meals ON bookings.meal_uid = meals.uid";
-	$sql .= " WHERE bookings.member_ldap = '" . $member[0]['ldap'] . "'";
-	$sql .= " ORDER BY meals.date_meal DESC";
-	$sql .= " LIMIT 1000";
-	
-	$bookings = $db->query($sql)->fetchAll();
-	
-	foreach ($bookings AS $booking) {
-	  $bookingUIDS[] = $booking['uid'];
+	$member = Member::fromHash($hash);
+	if (!isset($member->uid)) {
+		$log->add("iCal feed failed for hash: {$hash}", 'ical', Log::WARNING);
+		die("Invalid calendar hash.");
 	}
+	
+	$bookings = $member->bookingsBetweenDates(date('Y-m-d', strtotime('-1 year')), date('Y-m-d', strtotime('+1 year')));
 	
 	$icalobj = new ZCiCal();
 	$tzid = "Europe/London";
 	
-	foreach ($bookingUIDS AS $bookingUID) {
-		$bookingObject = new booking($bookingUID);
-		$mealObject = new meal($bookingObject->meal_uid);
+	foreach ($bookings AS $booking) {
+		$meal = new Meal($booking->meal_uid);
 		
-		$title = $mealObject->name;
+		$title = $meal->name;
 		
-		$event_start = date('c', strtotime($mealObject->date_meal));
-		$event_end = date('c', strtotime("+1 hour" . $mealObject->date_meal));
+		$event_start = date('c', strtotime($meal->date_meal));
+		$event_end = date('c', strtotime("+1 hour" . $meal->date_meal));
 		
 		// create the event within the ical object
 		$eventobj = new ZCiCalNode("VEVENT", $icalobj->curnode);
@@ -46,7 +48,7 @@ if (isset($_GET['hash'])) {
 		$eventobj->addNode(new ZCiCalDataNode("SUMMARY:" . $title));
 		
 		// add location
-		$eventobj->addNode(new ZCiCalDataNode("LOCATION:" . $mealObject->location));
+		$eventobj->addNode(new ZCiCalDataNode("LOCATION:" . $meal->location));
 		
 		// add start/end date
 		$eventobj->addNode(new ZCiCalDataNode("DTSTART:" . ZCiCal::fromSqlDateTime($event_start)));
@@ -54,17 +56,16 @@ if (isset($_GET['hash'])) {
 		
 		// UID is a required item in VEVENT, create unique string for this event
 		$uid = date('Y-m-d-H-i-s') . "@scr2.seh.ox.ac.uk";
-		$eventobj->addNode(new ZCiCalDataNode("UID:" . $bookingObject->uid));
+		$eventobj->addNode(new ZCiCalDataNode("UID:" . $booking->uid));
 		
 		// DTSTAMP is a required item in VEVENT
 		$eventobj->addNode(new ZCiCalDataNode("DTSTAMP:" . ZCiCal::fromSqlDateTime()));
 		
 		// Add description if there are guests
 		$guestArray = array();
-		if (count($bookingObject->guestsArray()) > 0) {
-			foreach ($bookingObject->guestsArray() AS $guest) {
-				$guest = json_decode($guest);
-				$guestArray[] = $guest->guest_name;
+		if (count($booking->guests()) > 0) {
+			foreach ($booking->guests() AS $guest) {
+				$guestArray[] = $guest['guest_name'];
 			}
 			$eventobj->addNode(new ZCiCalDataNode("DESCRIPTION:" . ZCiCal::formatContent(
 				"Guest(s): " . implode(", ", $guestArray)
@@ -74,13 +75,10 @@ if (isset($_GET['hash'])) {
 	}
 	
 	// write iCalendar feed to stdout
-	echo ($icalobj->export());
+	echo $icalobj->export();
 	
-	if ($settingsClass->value('logs_ical-requests') == "true" || debug) {
-		$logArray['category'] = "calendar";
-		$logArray['result'] = "success";
-		$logArray['description'] = "iCal feed generated for " . $member[0]['ldap'];
-		$logsClass->create($logArray);
+	if ($settings->get('logs_ical-requests') == "true" || APP_DEBUG) {
+		$log->add("iCal feed generated for: {$member->ldap}", 'ical', Log::INFO);
 	}
 }
 ?>

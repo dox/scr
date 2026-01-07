@@ -1,73 +1,53 @@
 <?php
-$wineClass = new wineClass();
+// Get all wines (excluding closed)
+$winesClass = new Wines();
+$wines = $winesClass->wines([
+	'wine_wines.status' => ['<>', 'Closed']
+]);
 
-// CSV columns to include
-$columns = array(
-  "supplier",
-  "total_wines",
-  "total_bottles",
-  "total_value",
-);
+// CSV header row
+$rowHeaders = [
+	'supplier',
+	'total_current_wines',
+	'total_current_bottles',
+	'total_current_value',
+];
+fputcsv($output, $rowHeaders);
 
+// Tally counts and values by supplier
+$suppliers = [];
 
-$allSuppliers = $db->query("SELECT DISTINCT supplier FROM wine_wines ORDER BY supplier ASC")->fetchAll();
+foreach ($wines as $wine) {
+	$supplier = $wine->supplier ?? 'Unknown';
 
-foreach ($allSuppliers AS $supplier) {
-  $row = null;
-  
-  $wines = 	$wineClass->allWines(array('supplier' => $supplier['supplier']));  
-  
-  $total_wines = 0;
-  $total_bottles = 0;
-  $total_value = 0;
-  
-  foreach ($wines AS $wine) {
-	  $wine = new wine($wine['uid']);
-	  
-	  $total_wines ++;
-	  $total_bottles += $wine->currentQty();
-	  $total_value += $wine->stockValue();
-	  
-  }
-  $row['supplier'] = $supplier['supplier'];
-  $row['total_wines'] = $total_wines;
-  $row['total_bottles'] = $total_bottles;
-  $row['total_value'] = $total_value;
-
-  $rowArray[] = $row;
-}
-
-
-
-// Build the CSV from the bookingsArray...
-foreach ($rowArray AS $CSVrow) {
-  $rowOutput = null;
-
-  foreach ($columns AS $column) {
-	if (!empty($CSVrow[$column])) {
-	  $rowOutput[] = $CSVrow[$column];
-	} else {
-	  $rowOutput[] = '';
+	if (!isset($suppliers[$supplier])) {
+		$suppliers[$supplier] = [
+			'total_current_wines'   => 0,
+			'total_current_bottles' => 0,
+			'total_current_value'   => 0.0,
+		];
 	}
 
-  }
+	$suppliers[$supplier]['total_current_wines']++;
 
-  $csvOUTPUT[] = $rowOutput;
+	// If you have a 'bottles' property, replace '1' with $wine->bottles
+	$bottles = $wine->currentQty();
+	$suppliers[$supplier]['total_current_bottles'] += $bottles;
 
+	// Multiply 'price_internal' by bottles for total value
+	$price = floatval($wine->price_internal ?? 0);
+	$suppliers[$supplier]['total_current_value'] += $price * $bottles;
 }
 
-// output the column headings
-fputcsv($output, $columns);
+// Sort suppliers by total value descending
+uasort($suppliers, fn($a, $b) => $b['total_current_value'] <=> $a['total_current_value']);
 
-// loop over the rows, outputting them
-foreach ($csvOUTPUT AS $row) {
-  fputcsv($output, $row);
-  //printArray($report);
-
+// Output CSV rows
+foreach ($suppliers as $supplierName => $totals) {
+	fputcsv($output, [
+		'supplier'              => $supplierName,
+		'total_current_wines'   => $totals['total_current_wines'],
+		'total_current_bottles' => $totals['total_current_bottles'],
+		'total_current_value'   => number_format($totals['total_current_value'], 2),
+	]);
 }
-
-$logArray['category'] = "report";
-$logArray['result'] = "success";
-$logArray['description'] = "[reportUID:" . $report['uid'] . "] run";
-$logsClass->create($logArray);
-?>

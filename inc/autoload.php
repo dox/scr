@@ -1,72 +1,110 @@
 <?php
+// Start session
 session_start();
 
-$root = $_SERVER['DOCUMENT_ROOT'];
+// Load configuration
+require_once __DIR__ . '/../config/config.php';
+require_once __DIR__ . '/../inc/global.php';
 
-require_once($root . '/config.php');
+// Set debugging
+if (APP_DEBUG) {
+	ini_set('display_errors', '1');
+	ini_set('display_startup_errors', '1');
+	error_reporting(E_ALL);
 
-if (debug) {
-	ini_set('display_errors', 1);
-	ini_set('display_startup_errors', 1);
-	error_reporting(1);
+	set_error_handler(function ($errno, $errstr, $errfile, $errline) {
+		echo "<div class=\"alert alert-danger\" role=\"alert\">";
+		echo "<strong>PHP ERROR:</strong> [$errno] $errstr<br>";
+		echo "In <strong>$errfile</strong> on line <strong>$errline</strong>";
+		echo "</div>";
+		return false;
+	});
+
+	set_exception_handler(function ($e) {
+		echo "<div class=\"alert alert-warning\" role=\"alert\">";
+		echo "<strong>UNCAUGHT EXCEPTION:</strong> " . get_class($e) . "<br>";
+		echo $e->getMessage() . "<br><br>" . $e->getTraceAsString();
+		echo "</div>";
+	});
 } else {
-	ini_set('display_errors', 0);
-	ini_set('display_startup_errors', 0);
+	ini_set('display_errors', '0');
+	ini_set('display_startup_errors', '0');
 	error_reporting(0);
+
+	ini_set('log_errors', '1');
+	ini_set('error_log', __DIR__ . '/php-error.log');
 }
 
-require $root . '/vendor/autoload.php';
+// Register autoloader
+require_once __DIR__ . '/../vendor/autoload.php';
 
-use LdapRecord\Connection;
+// Load classes
+require_once __DIR__ . '/../classes/Database.php';
+require_once __DIR__ . '/../classes/Model.php';
+require_once __DIR__ . '/../classes/Term.php';
+require_once __DIR__ . '/../classes/User.php';
+require_once __DIR__ . '/../classes/Member.php';
+require_once __DIR__ . '/../classes/Meal.php';
+require_once __DIR__ . '/../classes/Booking.php';
+require_once __DIR__ . '/../classes/Wine.php';
+require_once __DIR__ . '/../classes/Cellar.php';
+require_once __DIR__ . '/../classes/Bin.php';
+require_once __DIR__ . '/../classes/Transaction.php';
+require_once __DIR__ . '/../classes/WineList.php';
 
-// Create a new connection:
-$ldap_connection = new Connection([
-	'hosts' => LDAP_SERVER,
-	'port' => LDAP_PORT,
-	'base_dn' => LDAP_BASE_DN,
-	'username' => LDAP_BIND_DN,
-		'password' => LDAP_BIND_PASSWORD,
-		'use_tls' => LDAP_STARTTLS,
-]);
+// Initialise shared database instance
 try {
-	$ldap_connection->connect();
-} catch (\LdapRecord\Auth\BindException $e) {
-	$error = $e->getDetailedError();
-
-	echo $error->getErrorCode();
-	echo $error->getErrorMessage();
-	echo $error->getDiagnosticMessage();
+	global $db;
+	$db = Database::getInstance();
+} catch (Throwable $e) {
+	error_log("Database connection failed: " . $e->getMessage());
+	die('<h1>Database connection error: ' . htmlspecialchars($e->getMessage()) . '</h1>');
 }
 
-require_once($root . '/inc/globalFunctions.php');
-require_once($root . '/inc/database.php');
-require_once($root . '/inc/class_settings.php');
-require_once($root . '/inc/class_logs.php');
-require_once($root . '/inc/class_notifications.php');
-require_once($root . '/inc/class_term.php');
-require_once($root . '/inc/class_terms.php');
-require_once($root . '/inc/class_member.php');
-require_once($root . '/inc/class_members.php');
-require_once($root . '/inc/class_meal.php');
-require_once($root . '/inc/class_meals.php');
-require_once($root . '/inc/class_booking.php');
-require_once($root . '/inc/class_bookings.php');
-require_once($root . '/inc/class_wines.php');
-require_once($root . '/inc/class_wine.php');
-require_once($root . '/inc/class_wineCellar.php');
-require_once($root . '/inc/class_wineBin.php');
-require_once($root . '/inc/class_wineTransaction.php');
-require_once($root . '/inc/class_wineList.php');
-require_once($root . '/inc/class_reports.php');
-require_once($root . '/inc/PHPMailer/Exception.php');
-require_once($root . '/inc/PHPMailer/PHPMailer.php');
-require_once($root . '/inc/PHPMailer/SMTP.php');
+// Create shared objects
+$log      = new Log();
+$terms    = new Terms();
+$meals    = new Meals();
+$user     = new User();
+$settings = new Settings();
 
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\SMTP;
-use PHPMailer\PHPMailer\Exception;
+// Handle impersonation
+if (isset($_POST['impersonate'])) {
+	$targetId = $_POST['impersonate'] ?? null;
+	
+	if ($targetId) {
+		$member = Member::fromUID($targetId);
+		
+		$log->add("{$user->getUsername()} impersonating {$member->ldap} ({$member->public_displayName()})", 'member', Log::INFO);
+		
+		$_SESSION['impersonation_backup'] = $_SESSION['user'];
+		$existingPermissions = $_SESSION['user']['permissions'];
 
-$mail = new PHPMailer(true);
+		$_SESSION['impersonating'] = true;
+		$_SESSION['user']['uid']              = $member->uid;
+		$_SESSION['user']['samaccountname']   = $member->ldap;
+		$_SESSION['user']['type']   = $member->type;
+		$_SESSION['user']['category']   = $member->category;
+		$_SESSION['user']['name']   = $member->name();
+		$_SESSION['user']['email']   = $member->email;
+		$_SESSION['user']['permissions']      = $member->permissions();
 
-$db = new db(db_host, db_username, db_password, db_name);
-?>
+		if (isset($_POST['maintainAdminAccess'])) {
+			$_SESSION['user']['permissions'] = $existingPermissions;
+		}
+		
+		$user = new User();
+	}
+}
+
+// Restore impersonation
+if (isset($_POST['restore_impersonation']) && isset($_SESSION['impersonation_backup'])) {
+	$impersonatingUser = $user->getUsername();
+	
+	unset($_SESSION['impersonating']);
+	$_SESSION['user'] = $_SESSION['impersonation_backup'];
+	unset($_SESSION['impersonation_backup']);
+	
+	$user = new User();
+	$log->add("{$user->getUsername()} no longer impersonating {$impersonatingUser}", 'member', Log::INFO);
+}

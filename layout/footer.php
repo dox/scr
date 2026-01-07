@@ -29,3 +29,15 @@
 	}
 	?>
 </div>
+
+<script src="https://help.seh.ox.ac.uk/assets/chat/chat-no-jquery.min.js"></script>
+<script>
+(function() {
+	new ZammadChat({
+		title: 'Need IT Support?',
+		background: '#6b7889',
+		fontSize: '12px',
+		chatId: 1
+	});
+})();
+</script>

@@ -20,7 +20,7 @@ echo pageTitle(
 				$totalBookings = count($meal->bookings());
 				$guests = $totalDiners - $totalBookings;
 				?>
-				<div class="card-title"><h2>SCR Diners</h2></div>
+				<div class="card-title">SCR Diners</div>
 				<div class="card-text <?= ($meal->totalDiners() > $meal->scr_capacity) ? 'text-danger' : 'text-muted"'; ?>"><h4><?= $totalDiners . " (" . $totalBookings . " +" . $guests . " guests)" ?></h4></div>
 			</div>
 		</div>
@@ -31,7 +31,7 @@ echo pageTitle(
 				<?php
 				$totalDessertDiners = $meal->totalDessertDiners();
 				?>
-				<div class="card-title"><h2>SCR Dessert</h2></div>
+				<div class="card-title">SCR Dessert</div>
 				<div class="card-text <?= ($meal->totalDessertDiners() > $meal->scr_dessert_capacity) ? 'text-danger' : 'text-muted"'; ?>"><h4><?= $totalDessertDiners ?></h4></div>
 			</div>
 		</div>
@@ -46,13 +46,13 @@ echo pageTitle(
 			<th scope="col" width="5%">#</th>
 			<th scope="col">Name</th>
 			<th scope="col" width="3%">
-				<h2><svg class="bi text-muted" width="1em" height="1em" aria-hidden="true"><use xlink:href="assets/images/icons.svg#wine-glass"></use></svg></h2>
+				<svg class="bi text-muted" width="1em" height="1em" aria-hidden="true"><use xlink:href="assets/images/icons.svg#wine-glass"></use></svg>
 			</th>
 			<th scope="col" width="3%">
-				<h2><i class="bi bi-cookie text-muted"></i></h2>
+				<i class="bi bi-cookie text-muted"></i>
 			</th>
 			<th scope="col" width="3%">
-				<h2><i class="bi bi-mortarboard text-muted"></i></h2>
+				<i class="bi bi-mortarboard text-muted"></i>
 			</th>
 		</tr>
 	</thead>
@@ -63,9 +63,9 @@ echo pageTitle(
 		  $member = Member::fromLDAP($booking->member_ldap);
 		  
 		  $output  = "<tr>";
-		  $output .= "<th scope=\"row\" rowspan=\"" . count($booking->guests()) + 1 . "\"><h5>" . $i . "</h5></th>";
+		  $output .= "<th scope=\"row\" rowspan=\"" . count($booking->guests()) + 1 . "\">" . $i . "</th>";
 		  $output .= "<td>";
-			$output .= "<h4>" . $member->name() . "</h4>";
+			$output .= $member->name();
 			if (!empty($member->dietary)) {
 			  $dietaryArray = explode(",", $member->dietary);
 			  
@@ -75,30 +75,30 @@ echo pageTitle(
 		  
 		  $output .= "<td>";
 			if ($booking->wineChoice() != "None") {
-				$output .= "<h2>
+				$output .= "
 				<svg class=\"bi\" width=\"1em\" height=\"1em\" aria-hidden=\"true\"
 				data-bs-toggle=\"popover\"
 				data-bs-title=\"Wine Choice\"
 				data-bs-trigger=\"hover focus\"
 				data-bs-content=\"" . htmlspecialchars($booking->wineChoice()) . "\"
 				><use xlink:href=\"assets/images/icons.svg#wine-glass\"></use></svg>
-				</h2>";
+				";
 			}
 		  $output .= "</td>";
 		  $output .= "<td>";
 			if ($booking->dessertChoice() == "1") {
-				$output .= "<h2><i class=\"bi bi-cookie\"></i></h2>";
+				$output .= "<i class=\"bi bi-cookie\"></i>";
 			}
 		  $output .= "</td>";
 		  $output .= "<td>";
 			if ($booking->charge_to != "Dining Entitlement") {
-				$output .= "<h2><i
+				$output .= "<i
 					class=\"bi bi-mortarboard\"
 					data-bs-toggle=\"popover\"
 					data-bs-title=\"" . htmlspecialchars($booking->charge_to) . "\"
 					data-bs-trigger=\"hover focus\"
 					data-bs-content=\"" . htmlspecialchars($booking->domus_reason) . "\"></i>
-				</h2>";
+				";
 			}
 		  $output .= "</td>";
 		  $output .= "</tr>";
@@ -109,7 +109,7 @@ echo pageTitle(
 			  $output .= "<tr>";
 			  
 			  $output .= "<td>";
-				$output .= "<h5> + " . $guest['guest_name'] . "</h5>";
+				$output .= " + " . $guest['guest_name'];
 				if (!empty($guest['guest_dietary'])) {
 				  $output .= implode(", ", $guest['guest_dietary']);
 				}
@@ -117,31 +117,31 @@ echo pageTitle(
 			  $output .= "<td>";
 			  	if ($booking->wineChoice() != "None") {
 					  if (!empty($guest['guest_wine_choice']) && $guest['guest_wine_choice'] !== 'None') {
-						  $output .= "<h2>
+						  $output .= "
 						  <svg class=\"bi\" width=\"1em\" height=\"1em\" aria-hidden=\"true\"
 						  data-bs-toggle=\"popover\"
 						  data-bs-title=\"Guest Wine Choice\"
 						  data-bs-trigger=\"hover focus\"
 						  data-bs-content=\"" . htmlspecialchars($guest['guest_wine_choice']) . "\"
 						  ><use xlink:href=\"assets/images/icons.svg#wine-glass\"></use></svg>
-						  </h2>";
+						  ";
 					  }
 				}
 			  $output .= "</td>";
 			  $output .= "<td>";
 				if ($booking->dessert == "1") {
-					$output .= "<h2><i class=\"bi bi-cookie\"></i></h2>";
+					$output .= "<i class=\"bi bi-cookie\"></i>";
 				}
 			  $output .= "</td>";
 			  $output .= "<td>";
 				if ($guest['guest_charge_to'] == "Domus") {
-					$output .= "<h2><i
+					$output .= "<i
 						class=\"bi bi-mortarboard\"
 						data-bs-toggle=\"popover\"
 						data-bs-title=\"" . htmlspecialchars($guest['guest_charge_to']) . "\"
 						data-bs-trigger=\"hover focus\"
 						data-bs-content=\"" . htmlspecialchars($guest['domus_reason']) . "\"></i>
-					</h2>";
+					";
 				}
 			  $output .= "</td>";
 			  
@@ -163,3 +163,10 @@ echo pageTitle(
 const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
 const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
 </script>
+
+<style>
+	h2 .bi {
+		font-size: 2rem; /* Or whatever size you want */
+		vertical-align: middle; /* Keeps them aligned */
+	}
+</style>
