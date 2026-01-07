@@ -312,7 +312,7 @@ guestModalEl.addEventListener('show.bs.modal', function (event) {
   }
 
   // Build URL
-  const url = new URL('new/ajax/guest_modal.php', window.location.origin);
+  const url = new URL('./ajax/guest_modal.php', window.location.origin);
   url.search = new URLSearchParams({
 	action: action,
 	guest_uid: guestUID,
