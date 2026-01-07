@@ -246,8 +246,11 @@ class Wine extends Model {
 
 	protected function handleFileDelete(string $storedFilename, string $type = 'attachment'): bool {
 		global $log;
-
-		$filePath = __DIR__ . UPLOAD_DIR . $storedFilename;
+		
+		$fileName = $storedFilename;
+		$targetDirectory = UPLOAD_DIR;
+		
+		$filePath = realpath($targetDirectory . $fileName);
 
 		if (file_exists($filePath) && !unlink($filePath)) {
 			$log->add("Failed to physically delete {$type} file {$storedFilename} for [wineUID:{$this->uid}]", 'file', Log::WARNING);
