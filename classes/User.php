@@ -68,7 +68,7 @@ class User {
 		}
 	
 		$suffix = $viaCookie ? ' (with cookie)' : '';
-		$log->add("User authenticated: {$member->ldap}{$suffix}", 'auth', Log::SUCCESS);
+		$log->add("{$member->ldap} ({$member->name()}) authenticated{$suffix}", 'auth', Log::SUCCESS);
 	
 		if ($viaCookie) {
 			toast('Login Successful', 'Login successful via stored cookie', 'text-success');

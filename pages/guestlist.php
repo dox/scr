@@ -65,11 +65,11 @@ echo pageTitle(
 		  $output  = "<tr>";
 		  $output .= "<th scope=\"row\" rowspan=\"" . count($booking->guests()) + 1 . "\">" . $i . "</th>";
 		  $output .= "<td>";
-			$output .= $member->name();
+			$output .= "<strong>" . $member->name() . "</strong>";
 			if (!empty($member->dietary)) {
 			  $dietaryArray = explode(",", $member->dietary);
 			  
-			  $output .= implode(", ", $dietaryArray);
+			  $output .= "<br>" . implode(", ", $dietaryArray);
 			}
 		  $output .= "</td>";
 		  
@@ -109,9 +109,9 @@ echo pageTitle(
 			  $output .= "<tr>";
 			  
 			  $output .= "<td>";
-				$output .= " + " . $guest['guest_name'];
+				$output .= " + <strong>" . $guest['guest_name'] . "</strong>";
 				if (!empty($guest['guest_dietary'])) {
-				  $output .= implode(", ", $guest['guest_dietary']);
+				  $output .= "<br>" . implode(", ", $guest['guest_dietary']);
 				}
 			  $output .= "</td>";
 			  $output .= "<td>";
