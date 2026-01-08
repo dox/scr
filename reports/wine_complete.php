@@ -9,7 +9,10 @@ $rowHeaders = [
 	'date_created',
 	'date_updated',
 	'code',
+	'cellar_uid',
+	'cellar_name',
 	'bin_uid',
+	'bin_name',
 	'status',
 	'name',
 	'supplier',
@@ -33,6 +36,9 @@ fputcsv($output, $rowHeaders);
 // Iterate wines and output each as a CSV row
 if (!empty($wines) && is_iterable($wines)) {
 	foreach ($wines as $wine) {
+		$bin = new Bin($wine->bin_uid);
+		$cellar = new Cellar($bin->cellar_uid);
+		
 		$qty = $wine->currentQty() ?? 0;
 		$stockValue = number_format($qty * ($wine->price_purchase ?? 0), 2);
 		
@@ -41,7 +47,10 @@ if (!empty($wines) && is_iterable($wines)) {
 			'date_created'      => $wine->date_created ?? '',
 			'date_updated'      => $wine->date_updated ?? '',
 			'code'              => $wine->code ?? '',
-			'bin_uid'           => $wine->bin_uid ?? '',
+			'bin_uid'           => $bin->uid,
+			'bin_name'          => $bin->name,
+			'cellar_uid'        => $cellar->uid,
+			'cellar_name'       => $cellar->name,
 			'status'            => $wine->status ?? '',
 			'name'              => $wine->name ?? '',
 			'supplier'          => $wine->supplier ?? '',

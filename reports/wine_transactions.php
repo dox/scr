@@ -37,29 +37,32 @@ $rowHeaders = [
 	'description',
 	'linked',
 	'total_bottles',
-	'total_value',
+	'transaction_total',
 ];
 fputcsv($output, $rowHeaders);
 
 // Iterate transactions and output each as a CSV row
 if (!empty($transactions) && is_iterable($transactions)) {
 	foreach ($transactions as $transaction) {
+		$wine = new Wine($transaction->wine_uid);
+		$qty = $transaction->bottles ?? 0;
+		$transaction_total = abs($qty * ($transaction->price_per_bottle ?? 0));
 
 		$row = [
-			'uid'              => $transaction->uid ?? '',
-			'date'             => $transaction->date ?? '',
-			'date_posted'      => $transaction->date_posted ?? '',
-			'username'         => $transaction->username ?? '',
-			'type'             => $transaction->type ?? '',
-			'cellar_uid'       => $transaction->cellar_uid ?? '',
-			'wine_uid'         => $transaction->wine_uid ?? '',
-			'bottles'          => $transaction->bottles ?? 0,
-			'price_per_bottle' => number_format($transaction->price_per_bottle ?? 0, 2),
-			'name'             => $transaction->name ?? '',
-			'description'      => $transaction->description ?? '',
-			'linked'           => $transaction->linked ?? '',
-			'total_bottles'    => $transaction->totalBottles(),
-			'total_value'      => number_format($transaction->totalValue(), 2),
+			'uid'               => $transaction->uid ?? '',
+			'date'              => $transaction->date ?? '',
+			'date_posted'       => $transaction->date_posted ?? '',
+			'username'          => $transaction->username ?? '',
+			'type'              => $transaction->type ?? '',
+			'cellar_uid'        => $transaction->cellar_uid ?? '',
+			'wine_uid'          => $wine->uid,
+			'bottles'           => $qty,
+			'price_per_bottle'  => number_format($transaction->price_per_bottle ?? 0, 2),
+			'name'              => $transaction->name ?? '',
+			'description'       => $transaction->description ?? '',
+			'linked'            => $transaction->linked ?? '',
+			'total_bottles'     => $transaction->totalBottles(),
+			'transaction_total' => number_format($transaction_total, 2),
 		];
 
 		fputcsv($output, $row);
