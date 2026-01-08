@@ -1,0 +1,7 @@
+# Silence the directories
+Options -Indexes
+
+# If the server tries to be clever, stop it
+<IfModule mod_autoindex.c>
+	IndexIgnore *
+</IfModule>

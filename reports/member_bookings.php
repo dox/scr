@@ -23,6 +23,8 @@ $rowHeaders = [
 	'wine_choice',
 	'dessert',
 	'meal_uid',
+	'meal_name',
+	'meal_type',
 	'meal_date',
 	'meal_menu'
 ];
@@ -49,6 +51,8 @@ foreach ($recentBookings as $booking) {
 	$row['dessert'] = $booking->dessert;
 	
 	$row['meal_uid'] = $meal->uid;
+	$row['meal_name'] = $meal->name();
+	$row['meal_type'] = $meal->type;
 	$row['meal_date'] = $meal->date_meal;
 	$row['meal_menu'] = $meal->cleanMenu();
 	
@@ -70,6 +74,8 @@ foreach ($recentBookings as $booking) {
 		$row['dessert']       = $booking->dessert              ?? '';
 	
 		$row['meal_uid']      = $meal->uid          ?? '';
+		$row['meal_name']     = $meal->name();
+		$row['meal_type']     = $meal->type;
 		$row['meal_date']     = $meal->date_meal    ?? '';
 		$row['meal_menu']     = $meal->cleanMenu()         ?? '';
 	

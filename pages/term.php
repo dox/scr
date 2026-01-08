@@ -15,9 +15,16 @@ echo pageTitle(
 	"Term dates from <a href=\"https://www.ox.ac.uk/about/facts-and-figures/dates-of-term\">Oxford's website</a>",
 	[
 		[
+			'permission' => 'meals',
+			'title' => 'Add Meal',
+			'class' => '',
+			'event' => 'index.php?page=meal',
+			'icon' => 'plus-circle'
+		],
+		[
 			'permission' => 'everyone',
 			'title' => 'Delete',
-			'class' => '',
+			'class' => 'text-danger',
 			'event' => '',
 			'icon' => 'trash3',
 			'data' => [

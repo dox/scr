@@ -31,6 +31,7 @@ $reports = [
 		'format' => 'csv',
 		'file' => 'meal_bookings.php',
 		'requiresDateRange' => false,
+		'hidden' => true,
 	],
 	
 	// Members
