@@ -1,6 +1,6 @@
 <?php
 header('Content-Type: application/json');
-sleep(10);
+
 require_once '../inc/autoload.php';
 
 // Basic check: only allow POST
