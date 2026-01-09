@@ -326,8 +326,8 @@ class Meal extends Model {
 	
 	public function progressBar(): string {
 		$booked     = $this->totalDiners();
-		$capacity   = (int)$this->scr_capacity;
-		$percentage = $capacity > 0 ? ($booked / $capacity) * 100 : 0;
+		$capacity   = (int) $this->scr_capacity;
+		$percentage = $capacity > 0 ? round(($booked / $capacity) * 100) : 0;
 	
 		if ($percentage >= 100) {
 			$class = "bg-danger";
@@ -337,15 +337,21 @@ class Meal extends Model {
 			$class = "bg-info";
 		}
 	
-		$output  = "<div class=\"d-flex align-items-center justify-content-between\">";
-		$output .= "<span>Bookings</span>";
-		$output .= "<span>{$booked} of {$capacity}</span>";
-		$output .= "</div>";
+		$output  = '<div class="d-flex align-items-center justify-content-between">';
+		$output .= '<span>Bookings</span>';
+		$output .= '<span class="booking-count" data-capacity="' . $capacity . '">';
+		$output .= $booked . ' of ' . $capacity;
+		$output .= '</span>';
+		$output .= '</div>';
 	
-		$output .= "<div class=\"progress mb-3\" style=\"height: 6px;\" role=\"progressbar\" ";
-		$output .= "aria-valuenow=\"{$booked}\" aria-valuemin=\"0\" aria-valuemax=\"{$capacity}\">";
-		$output .= "<div class=\"progress-bar {$class}\" style=\"width: {$percentage}%\"></div>";
-		$output .= "</div>";
+		$output .= '<div class="progress mb-3" style="height: 6px;" role="progressbar" ';
+		$output .= 'data-capacity="' . $capacity . '" ';
+		$output .= 'aria-valuenow="' . $booked . '" ';
+		$output .= 'aria-valuemin="0" ';
+		$output .= 'aria-valuemax="' . $capacity . '">';
+	
+		$output .= '<div class="progress-bar ' . $class . '" style="width: ' . $percentage . '%"></div>';
+		$output .= '</div>';
 	
 		return $output;
 	}

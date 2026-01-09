@@ -52,51 +52,88 @@ function initAjaxLoader(triggerSelector, targetSelector, options = {}) {
  }
 
 document.addEventListener('DOMContentLoaded', function () {
-	document.body.addEventListener('click', function(e) {
-		const button = e.target.closest('.meal-book-btn');
-		if (!button) return;
-		
-		const mealUid = button.dataset.meal_uid;
-		
-		// If already booked, just let it act as a normal link
-		if (button.dataset.booked === '1') {
-			return; // allow default click to navigate
-		}
-		
-		e.preventDefault(); // prevent link while booking
-		const originalText = button.textContent;
-		
-		// Show spinner
-		button.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Booking...`;
-		
-		fetch('./ajax/booking_create.php', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-			body: 'meal_uid=' + encodeURIComponent(mealUid)
-		})
-		.then(response => response.json())
-		.then(data => {
-			if (data.success && data.booking_uid) {
-				// Booking confirmed: turn into normal link
-				button.classList.remove('btn-primary');
-				button.classList.add('btn-success');
-				button.textContent = 'Manage Booking';
-				
-				// Use the returned booking_uid for the link
-				button.href = `index.php?page=booking&uid=${data.booking_uid}`;
-				button.dataset.booked = '1'; // mark as booked
-			} else {
-				button.textContent = originalText;
-				alert(data.message || 'Booking failed.');
-			}
-		})
-		.catch(error => {
-			console.error('Error:', error);
-			button.textContent = originalText;
-			alert('Booking failed due to a network error.');
-		});
-	});
-});
+	 document.body.addEventListener('click', function (e) {
+		 const button = e.target.closest('.meal-book-btn');
+		 if (!button) return;
+ 
+		 const mealUid = button.dataset.meal_uid;
+ 
+		 // If already booked, allow normal navigation
+		 if (button.dataset.booked === '1') {
+			 return;
+		 }
+ 
+		 e.preventDefault();
+ 
+		 const originalText = button.textContent;
+		 const card = button.closest('.card');
+		 if (!card) return;
+ 
+		 // Show spinner
+		 button.innerHTML = `
+			 <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+			 Booking...
+		 `;
+ 
+		 fetch('./ajax/booking_create.php', {
+			 method: 'POST',
+			 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+			 body: 'meal_uid=' + encodeURIComponent(mealUid)
+		 })
+		 .then(response => response.json())
+		 .then(data => {
+			 if (data.success && data.booking_uid) {
+ 
+				 // ---- Update button ----
+				 button.classList.remove('btn-primary');
+				 button.classList.add('btn-success');
+				 button.textContent = 'Manage Booking';
+				 button.href = `index.php?page=booking&uid=${data.booking_uid}`;
+				 button.dataset.booked = '1';
+ 
+				 // ---- Update booking count ----
+				 const countEl = card.querySelector('.booking-count');
+				 const progress = card.querySelector('.progress');
+				 const bar = progress?.querySelector('.progress-bar');
+ 
+				 if (countEl && progress && bar) {
+					 const capacity = parseInt(countEl.dataset.capacity, 10);
+ 
+					 // Extract current booked number ("18 of 60")
+					 let booked = parseInt(countEl.textContent, 10);
+					 booked = Math.min(booked + 1, capacity);
+ 
+					 // Update text
+					 countEl.textContent = `${booked} of ${capacity}`;
+ 
+					 // Update progress bar
+					 const percent = Math.round((booked / capacity) * 100);
+					 progress.setAttribute('aria-valuenow', booked);
+					 bar.style.width = `${percent}%`;
+ 
+					 // Update colour to match PHP logic
+					 bar.classList.remove('bg-info', 'bg-warning', 'bg-danger');
+					 if (percent >= 100) {
+						 bar.classList.add('bg-danger');
+					 } else if (percent >= 80) {
+						 bar.classList.add('bg-warning');
+					 } else {
+						 bar.classList.add('bg-info');
+					 }
+				 }
+ 
+			 } else {
+				 button.textContent = originalText;
+				 alert(data.message || 'Booking failed.');
+			 }
+		 })
+		 .catch(error => {
+			 console.error('Error:', error);
+			 button.textContent = originalText;
+			 alert('Booking failed due to a network error.');
+		 });
+	 });
+ });
 
 document.addEventListener('DOMContentLoaded', () => {
 
