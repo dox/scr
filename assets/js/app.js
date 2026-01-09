@@ -83,7 +83,6 @@ document.addEventListener('DOMContentLoaded', function () {
 		 .then(response => response.json())
 		 .then(data => {
 			 if (data.success && data.booking_uid) {
- 
 				 // ---- Update button ----
 				 button.classList.remove('btn-primary');
 				 button.classList.add('btn-success');
@@ -101,7 +100,9 @@ document.addEventListener('DOMContentLoaded', function () {
  
 					 // Extract current booked number ("18 of 60")
 					 let booked = parseInt(countEl.textContent, 10);
-					 booked = Math.min(booked + 1, capacity);
+					 //booked = Math.min(booked + 1, capacity);
+					 booked =  data.booking_count;
+					
  
 					 // Update text
 					 countEl.textContent = `${booked} of ${capacity}`;

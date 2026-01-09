@@ -18,14 +18,26 @@ if (!$meal_uid) {
 
 $meal = new Meal($meal_uid);
 if (!$meal->canBook()) {
-	echo json_encode(['success' => false, 'message' => 'Meal is not bookable.']);
+	if ($meal->isCutoffValid()) {
+		echo json_encode(['success' => false, 'message' => 'Booking failed.  Meal cut-off has passed.']);
+	} elseif ($meal->hasCapacity()) {
+		echo json_encode(['success' => false, 'message' => 'Booking failed.  Meal capacity has been reached.']);
+	} else {
+		echo json_encode(['success' => false, 'message' => 'Booking failed.  Meal not bookable.']);
+	}
 	exit;
 }
 
 $booking = Booking::fromMealUID($meal->uid);
 if ($booking->exists()) {
 	// Don't permit double bookings, instead, return the existing booking UID (without error)
-	echo json_encode(['success' => true, 'booking_uid' => $booking->uid]);
+	echo json_encode(
+		[
+			'success' => true,
+			'booking_uid' => $booking->uid,
+			'booking_count' => $meal->totalDiners()
+		]
+	);
 	exit;
 }
 
@@ -73,7 +85,13 @@ try {
 			);
 		}
 		
-		echo json_encode(['success' => true, 'booking_uid' => $bookingSuccessUID]);
+		echo json_encode(
+			[
+				'success' => true,
+				'booking_uid' => $bookingSuccessUID,
+				'booking_count' => $meal->totalDiners()
+			]
+		);
 	} else {
 		echo json_encode(['success' => false, 'message' => 'Could not book this meal.']);
 	}
