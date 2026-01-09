@@ -69,11 +69,13 @@ document.addEventListener('DOMContentLoaded', function () {
 		 const card = button.closest('.card');
 		 if (!card) return;
  
-		 // Show spinner
+		 // Show spinner and prevent double-clicks
 		 button.innerHTML = `
 			 <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
 			 Booking...
 		 `;
+		 button.classList.add('disabled');
+		 button.setAttribute('aria-disabled', 'true');
  
 		 fetch('./ajax/booking_create.php', {
 			 method: 'POST',
@@ -83,26 +85,24 @@ document.addEventListener('DOMContentLoaded', function () {
 		 .then(response => response.json())
 		 .then(data => {
 			 if (data.success && data.booking_uid) {
+ 
 				 // ---- Update button ----
 				 button.classList.remove('btn-primary');
 				 button.classList.add('btn-success');
 				 button.textContent = 'Manage Booking';
 				 button.href = `index.php?page=booking&uid=${data.booking_uid}`;
 				 button.dataset.booked = '1';
+				 button.classList.remove('disabled');
+				 button.setAttribute('aria-disabled', 'false');
  
 				 // ---- Update booking count ----
-				 const countEl = card.querySelector('.booking-count');
+				 const countEl  = card.querySelector('.booking-count');
 				 const progress = card.querySelector('.progress');
-				 const bar = progress?.querySelector('.progress-bar');
+				 const bar      = progress?.querySelector('.progress-bar');
  
 				 if (countEl && progress && bar) {
 					 const capacity = parseInt(countEl.dataset.capacity, 10);
- 
-					 // Extract current booked number ("18 of 60")
-					 let booked = parseInt(countEl.textContent, 10);
-					 //booked = Math.min(booked + 1, capacity);
-					 booked =  data.booking_count;
-					
+					 const booked   = Math.min(data.booking_count, capacity);
  
 					 // Update text
 					 countEl.textContent = `${booked} of ${capacity}`;

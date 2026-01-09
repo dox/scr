@@ -1,6 +1,6 @@
 <?php
 header('Content-Type: application/json');
-
+sleep(10);
 require_once '../inc/autoload.php';
 
 // Basic check: only allow POST
@@ -18,9 +18,9 @@ if (!$meal_uid) {
 
 $meal = new Meal($meal_uid);
 if (!$meal->canBook()) {
-	if ($meal->isCutoffValid()) {
+	if (!$meal->isCutoffValid()) {
 		echo json_encode(['success' => false, 'message' => 'Booking failed.  Meal cut-off has passed.']);
-	} elseif ($meal->hasCapacity()) {
+	} elseif (!$meal->hasCapacity()) {
 		echo json_encode(['success' => false, 'message' => 'Booking failed.  Meal capacity has been reached.']);
 	} else {
 		echo json_encode(['success' => false, 'message' => 'Booking failed.  Meal not bookable.']);
