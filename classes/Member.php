@@ -194,7 +194,7 @@ class Member extends Model {
 	}
 	
 	public function update(array $postData) {
-		global $db, $user;
+		global $db, $user, $log;
 	
 		// Map normal text/select fields
 		$fields = [
@@ -238,6 +238,9 @@ class Member extends Model {
 			['uid' => $this->uid],
 			'logs'
 		);
+		
+		// write the log
+		$log->add('Profile updated for ' . $this->name(), Log::SUCCESS);
 		
 		toast('Member Updated', 'Member sucesfully updated', 'text-success');
 		

@@ -57,13 +57,6 @@ abstract class Model {
 		if ($log && $insertId !== false && static::$table !== 'new_logs') {
 			$this->logInsert($insertId, $data);
 		}
-		
-		$logTemp = new Log();
-		$logTemp->add("DEFUNCT CREATE IN Model Class", Log::ERROR);
-		if ($log) {
-			
-			$logTemp->add("DEFUNCT CREATE LOGGING USED FOR CREATE", Log::ERROR);
-		}
 	
 		return $insertId;
 	}
@@ -391,6 +384,31 @@ class Meals extends Model {
 
 class Bookings extends Model {
 	protected static string $table = 'bookings';
+	
+	public function add(array $fields) {
+		global $log;
+	
+		// Send to database create
+		$newBooking = $this->create($fields, false);
+	
+		if (!$newBooking) {
+			return false;
+		}
+	
+		$member = Member::fromLDAP($fields['member_ldap'] ?? null);
+	
+		$memberName = $member ? $member->name() : 'Unknown member';
+	
+		$log->add(
+			'Booking UID: ' . $newBooking .
+			' created for ' . $memberName .
+			' (Meal UID: ' . ($fields['meal_uid'] ?? 'unknown') . ')',
+			'Booking',
+			Log::SUCCESS
+		);
+	
+		return $newBooking;
+	}
 	
 }
 

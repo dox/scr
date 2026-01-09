@@ -84,7 +84,7 @@ class Booking extends Model {
 	}
 	
 	public function update(array $postData) {
-		global $db;
+		global $db, $log;
 	
 		// Map normal text/select fields
 		$fields = [
@@ -101,12 +101,17 @@ class Booking extends Model {
 			['uid' => $this->uid],
 			'logs'
 		);
-	
+		
+		// write the log
+		$member = Member::fromLDAP($this->member_ldap);
+		$log->add('Booking UID: ' . $this->uid . ' for ' . $member->name() . ' updated. (Meal UID: ' . $this->uid . ')' . $this->meal_uid, 'Booking', Log::SUCCESS);
+
+
 		return $updatedRows;
 	}
 	
 	public function addGuest(array $postData): bool|array {
-		global $db;
+		global $db, $log;
 	
 		// generate guest uid
 		$guestUid = 'x' . bin2hex(random_bytes(5));
@@ -132,21 +137,15 @@ class Booking extends Model {
 		$db->query($sql, [':uid' => $this->uid]);
 	
 		// write the log
-		/*$logsClass->create([
-			'category'    => 'booking',
-			'result'      => 'success',
-			'description' =>
-				"Guest '{$guest['guest_name']}' of {$member->displayName()} added to ".
-				"[bookingUID:{$this->uid}] for [mealUID:{$this->meal_uid}]. ".
-				"Dessert: {$this->dessert} Wine: {$guest['guest_wine_choice']}"
-		]);*/
-	
+		$member = Member::fromLDAP($this->member_ldap);
+		$log->add('Added guest (' . $guest['guest_name'] . ') to booking UID: ' . $this->uid . ' for ' . $member->name() . ' updated. (Meal UID: ' . $this->uid . ')' . $this->meal_uid, 'Booking', Log::SUCCESS);
+		
 		// return updated structure
 		return true;
 	}
 	
 	public function editGuest(array $postData): bool|array {
-		global $db;
+		global $db, $log;
 	
 		// existing guest UID must be present
 		if (empty($postData['guest_uid'])) {
@@ -174,12 +173,16 @@ class Booking extends Model {
 		";
 	
 		$db->query($sql, [':uid' => $this->uid]);
+		
+		// write the log
+		$member = Member::fromLDAP($this->member_ldap);
+		$log->add('Updated guest (' . $guest['guest_name'] . ') for booking UID: ' . $this->uid . ' for ' . $member->name() . '. (Meal UID: ' . $this->uid . ')' . $this->meal_uid, 'Booking', Log::SUCCESS);
 	
 		return true;
 	}
 	
 	public function deleteGuest(string $guestUid): bool {
-		global $db;
+		global $db, $log;
 	
 		// Remove the guest key entirely from the JSON structure
 		$sql = "
@@ -192,6 +195,10 @@ class Booking extends Model {
 		$db->query($sql, [
 			':uid' => $this->uid
 		]);
+		
+		// write the log
+		$member = Member::fromLDAP($this->member_ldap);
+		$log->add('Deleted guest (' . $guest['guest_name'] . ') to booking UID: ' . $this->uid . ' for ' . $member->name() . '. (Meal UID: ' . $this->uid . ')' . $this->meal_uid, 'Booking', Log::SUCCESS);
 	
 		return true;
 	}
@@ -299,7 +306,7 @@ class Booking extends Model {
 	}
 	
 	public function delete() {
-		global $db;
+		global $db, $log;
 		
 		if (!isset($this->uid)) {
 			return false;
@@ -309,8 +316,12 @@ class Booking extends Model {
 		$deleteBooking = $db->delete(
 			'bookings',
 			['uid' => $this->uid],
-			'logs'
+			false
 		);
+		
+		// write the log
+		$member = Member::fromLDAP($this->member_ldap);
+		$log->add('Booking UID: ' . $this->uid . ' for ' . $member->name() . ' deleted. (Meal UID: ' . $this->uid . ')' . $this->meal_uid, 'Booking', Log::WARNING);
 		
 		return true;
 	}

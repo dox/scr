@@ -71,7 +71,7 @@ class Meal extends Model {
 	}
 	
 	public function update(array $postData) {
-		global $db;
+		global $db, $log;
 	
 		// Map normal text/select fields
 		$fields = [
@@ -103,6 +103,9 @@ class Meal extends Model {
 			['uid' => $this->uid],
 			'logs'
 		);
+		
+		// write the log
+		$log->add('Meal updated for ' . $this->name, Log::SUCCESS);
 		
 		toast('Meal Updated', 'Meal sucesfully updated', 'text-success');
 		
@@ -206,24 +209,28 @@ class Meal extends Model {
 	}
 	
 	public function delete() {
-		global $db;
+		global $db, $log;
+		
 		if (!isset($this->uid)) {
 			return false;
 		}
 		
+		$bookings = $this->bookings();
+		
 		// Delete bookings
-		$db->delete(
-			"bookings",
-			['meal_uid' => $this->uid],
-			'logs'
-		);
+		foreach ($bookings as $booking) {
+			$booking->delete();
+		}
 		
 		// Delete meal
 		$db->delete(
 			static::$table,
 			['uid' => $this->uid],
-			'logs'
+			false
 		);
+		
+		// write the log
+		$log->add('Meal UID: ' . $this->uid . ' and ' . count($bookings) . '  booking(s) deleted', 'MEALS', Log::WARNING);
 	}
 	
 	public function photographURL(): string {
