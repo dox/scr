@@ -24,22 +24,23 @@ try {
 	$firstTransactionUID = null;
 	
 	foreach ($wineUIDs as $wineUID) {
-		$wineUID = (int)$wineUID;
+		$wine = new Wine($wineUID);
 	
-		$qty = isset($_POST['bottles'][$wineUID]) ? -(int)abs($_POST['bottles'][$wineUID]) : 0;
-		$price = isset($_POST['price_per_bottle'][$wineUID]) ? (float)$_POST['price_per_bottle'][$wineUID] : 0.0;
+		$qty = isset($_POST['bottles'][$wine->uid]) ? -(int)abs($_POST['bottles'][$wine->uid]) : 0;
+		$price = isset($_POST['price_per_bottle'][$wine->uid]) ? (float)$_POST['price_per_bottle'][$wine->uid] : 0.0;
 	
 		$transaction_fields = [
 			'date'              => date('c'),
 			'date_posted'       => empty($_POST['date_posted']) ? null : date('c', strtotime($_POST['date_posted'])),
 			'username'          => $user->getUsername(),
 			'type'              => 'Transaction',
-			'wine_uid'          => $wineUID,
+			'wine_uid'          => $wine->uid,
 			'bottles'           => $qty,
 			'price_per_bottle'  => $price,
 			'name'              => $_POST['name'] ?? null,
 			'description'       => $_POST['description'] ?? null,
-			'linked'            => $linkedID
+			'linked'            => $linkedID,
+			'snapshot'			=> json_encode($wine)
 		];
 	
 		$transaction = new Transaction();
@@ -49,7 +50,7 @@ try {
 			$firstTransactionUID = $uid; // capture the first created UID
 		}
 	
-		$created[] = $wineUID;
+		$created[] = $wine->uid;
 	}
 	
 	if (!empty($created)) {

@@ -21,17 +21,6 @@ echo pageTitle(
 	[
 		[
 			'permission' => 'wine',
-			'title' => 'Edit Transaction',
-			'class' => '',
-			'event' => '',
-			'icon' => 'pencil',
-			'data' => [
-				'bs-toggle' => 'modal',
-				'bs-target' => '#addCellarModal'
-			]
-		],
-		[
-			'permission' => 'wine',
 			'title' => 'Delete Transaction',
 			'class' => 'text-danger',
 			'event' => '',
