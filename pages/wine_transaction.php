@@ -29,6 +29,17 @@ echo pageTitle(
 				'bs-toggle' => 'modal',
 				'bs-target' => '#addCellarModal'
 			]
+		],
+		[
+			'permission' => 'wine',
+			'title' => 'Delete Transaction',
+			'class' => 'text-danger',
+			'event' => '',
+			'icon' => 'trash3',
+			'data' => [
+				'bs-toggle' => 'modal',
+				'bs-target' => '#deleteTransactionModal'
+			]
 		]
 	]
 );
@@ -115,6 +126,31 @@ echo pageTitle(
 						</tr>
 					</tbody>
 				</table>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Delete Transaction Modal -->
+<div class="modal fade" tabindex="-1" id="deleteTransactionModal" data-backdrop="static" data-keyboard="false" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Delete Transaction</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<p><span class="text-danger"><strong>WARNING!</strong></span> Are you sure you want to delete this transaction?</p>
+				<p>Each wine’s stock level will be recalculated to remove the effect of this transaction.</p>
+				<p><strong class="text-danger">This action cannot be undone.</strong></p>
+				<input type="text" class="form-control mb-3"
+				placeholder="Type 'DELETE' to confirm"
+				id="delete_confirm"
+				oninput="enableOnExactMatch('delete_confirm', 'delete_button', 'DELETE')">
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-link text-muted" data-bs-dismiss="modal">Close</button>
+				<button type="submit" class="btn btn-danger transaction-delete-btn" id="delete_button" data-transaction_uid="<?= $transaction->uid; ?>" disabled>Delete Transaction</button>
 			</div>
 		</div>
 	</div>

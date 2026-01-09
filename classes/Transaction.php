@@ -80,5 +80,21 @@ class Transaction extends Model {
 		
 		return round(abs((float) $total), 2);
 	}
-
+	
+	public function delete() {
+		global $db;
+		
+		if (!isset($this->uid)) {
+			return false;
+		}
+		
+		// Send to database to delete bookings
+		$deleteBooking = $db->delete(
+			'wine_transactions',
+			['uid' => $this->uid],
+			'logs'
+		);
+		
+		return true;
+	}
 }

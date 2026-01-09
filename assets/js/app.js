@@ -282,9 +282,6 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-
-
-
 document.addEventListener('DOMContentLoaded', function () {
 	 document.body.addEventListener('click', function(e) {
 		 const button = e.target.closest('.booking-delete-btn');
@@ -318,6 +315,43 @@ document.addEventListener('DOMContentLoaded', function () {
 			 console.error('Error:', error);
 			 button.textContent = originalText;
 			 alert('Deleting booking failed due to a network error.');
+		 });
+	 });
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+	 document.body.addEventListener('click', function(e) {
+		 const button = e.target.closest('.transaction-delete-btn');
+		 if (!button) return;
+ 
+		 const transaction_uid = button.dataset.transaction_uid;
+		 
+		 e.preventDefault(); // prevent link while booking
+ 
+		 const originalText = button.textContent;
+ 
+		 // Show spinner
+		 button.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Deleting...`;
+ 
+		 fetch('./ajax/wine_transaction_delete.php', {
+			 method: 'POST',
+			 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+			 body: 'uid=' + encodeURIComponent(transaction_uid)
+		 })
+		 .then(response => response.json())
+		 .then(data => {
+			 if (data.success) {
+				 // Deletion confirmed
+				 window.location.href = "index.php?page=wine_transactions"
+			 } else {
+				 button.textContent = originalText;
+				 alert(data.message || 'Deleting transaction failed.');
+			 }
+		 })
+		 .catch(error => {
+			 console.error('Error:', error);
+			 button.textContent = originalText;
+			 alert('Deleting transaction failed due to a network error.');
 		 });
 	 });
 });
