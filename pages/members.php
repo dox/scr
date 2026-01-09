@@ -149,151 +149,143 @@ endforeach;
 <!-- Add Member Modal -->
 <div class="modal fade" tabindex="-1" id="addMemberModal" data-backdrop="static" data-keyboard="false" aria-hidden="true">
 	<div class="modal-dialog">
-		<form method="post" action="<?= htmlspecialchars($_SERVER['REQUEST_URI']) ?>">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title">Add New Member</h5>
-				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-			</div>
-			<div class="modal-body">
-				<div class="mb-3">
-					<label for="title" class="form-label">Title</label>
-					<select class="form-select" name="title" id="title" required>
-						<?php
-						$memberTitles = explode(',', $settings->get('member_titles'));
-						
-						foreach ($memberTitles as $title) {
-							$title = trim($title);
-							echo "<option value=\"{$title}\">{$title}</option>";
-						}
-						?>
-					</select>
-					<div class="invalid-feedback">
-						Title is required.
-					</div>
+		<form id="createUserForm" method="POST" action="<?= htmlspecialchars($_SERVER['REQUEST_URI']) ?>" class="modal-content needs-validation" novalidate>
+
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Add New Member</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
-				
-				<div class="mb-3">
-					<label for="firstname" class="form-label">First name</label>
-					<input type="text" class="form-control" name="firstname" id="firstname" placeholder="First Name" required>
-					<div class="invalid-feedback">
-						Valid first name is required.
-					</div>
-				</div>
-				
-				<div class="mb-3">
-					<label for="firstname" class="form-label">Last name</label>
-					<input type="text" class="form-control" name="lastname" id="lastname" placeholder="Last Name"  required>
-					<div class="invalid-feedback">
-						Valid last name is required.
-					</div>
-				</div>
-				
-				<div class="mb-3">
-					<label for="ldap" class="form-label">LDAP Username</label>
-					<div class="input-group">
-						<span class="input-group-text">@</span>
-						<input
-							type="text"
-							class="form-control"
-							name="ldap"
-							id="ldap"
-							placeholder="LDAP Username"
-							required
-						>
+
+				<div class="modal-body">
+					<!-- Title -->
+					<div class="mb-3">
+						<label for="title" class="form-label">Title</label>
+						<select class="form-select" name="title" id="title" required>
+							<?php
+							$memberTitles = explode(',', $settings->get('member_titles'));
+							foreach ($memberTitles as $title) {
+								$title = trim($title);
+								echo "<option value=\"{$title}\">{$title}</option>";
+							}
+							?>
+						</select>
 						<div class="invalid-feedback">
-							Valid LDAP username is required.
+							Title is required.
 						</div>
 					</div>
-				</div>
-				
-				<div class="mb-3">
-					<label for="title" class="form-label">Member Category</label>
-					<select class="form-select" name="category" id="category" <?= $user->hasPermission('members') ? '' : 'disabled' ?> required>
-						<?php
-						$memberCategories = explode(',', $settings->get('member_categories'));
-						
-						foreach ($memberCategories as $category) {
-							$category = trim($category);
-							echo "<option value=\"{$category}\">{$category}</option>";
-						}
-						?>
-					</select>
-					<div class="invalid-feedback">
-						Valid category is required.
+
+					<!-- First name -->
+					<div class="mb-3">
+						<label for="firstname" class="form-label">First name</label>
+						<input type="text" class="form-control" name="firstname" id="firstname" placeholder="First Name" required>
+						<div class="invalid-feedback">
+							Valid first name is required.
+						</div>
 					</div>
-				</div>
-				
-				<div class="accordion mb-3" id="accordionDietary">
-					<div class="accordion-item">
-						<h2 class="accordion-header">
-							<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne"> Dietary Information&nbsp;<i>(Maximum: <?php echo $settings->get('meal_dietary_allowed'); ?>)</i></button>
-						</h2>
-						<div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
-							<div class="accordion-body">
-								<?php
-								$dietaryOptions    = array_map('trim', explode(',', $settings->get('meal_dietary')));
-								$dietaryOptionsMax = (int) $settings->get('meal_dietary_allowed');
-								
-								$output = '';
-								
-								foreach ($dietaryOptions as $index => $dietaryOption) {
-									$safeValue  = htmlspecialchars($dietaryOption, ENT_QUOTES);
-									$checkboxId = "dietary_{$index}";
-								
-									$output .= '<div class="form-check">';
-									$output .= '<input class="form-check-input dietaryOptionsMax" '
-											 . 'type="checkbox" '
-											 . 'onclick="checkMaxCheckboxes(' . $dietaryOptionsMax . ')" '
-											 . 'name="dietary[]" '
-											 . 'id="' . $checkboxId . '" '
-											 . 'value="' . $safeValue . '"' 
-											 . '>';
-									$output .= '<label class="form-check-label" for="' . $checkboxId . '">' 
-											 . $safeValue 
-											 . '</label>';
-									$output .= '</div>';
-								}
-								
-								echo $output;
-								?>
-								
-								<small id="nameHelp" class="form-text text-muted"><?php echo $settings->get('meal_dietary_message'); ?></small>
+
+					<!-- Last name -->
+					<div class="mb-3">
+						<label for="lastname" class="form-label">Last name</label>
+						<input type="text" class="form-control" name="lastname" id="lastname" placeholder="Last Name" required>
+						<div class="invalid-feedback">
+							Valid last name is required.
+						</div>
+					</div>
+
+					<!-- LDAP Username -->
+					<div class="mb-3">
+						<label for="ldap" class="form-label">LDAP Username</label>
+						<div class="input-group">
+							<span class="input-group-text">@</span>
+							<input type="text" class="form-control" name="ldap" id="ldap" placeholder="LDAP Username" required>
+							<div class="valid-feedback">
+								Username is available.
+							</div>
+							<div class="invalid-feedback">
+								Username is required or already exists.
 							</div>
 						</div>
 					</div>
-				</div>
-				
-				<div class="mb-3">
-					<label for="email" class="form-label">Email <span class="text-muted">(Optional)</span></label>
-					<input type="email" class="form-control" name="email" id="email" placeholder="Email address">
-				</div>
-				
-				<div class="mb-3">
-					<label for="type" class="form-label">Member Type</label>
-					<select class="form-select" name="type" id="type" <?= $user->hasPermission('members') ? '' : 'disabled' ?> required>
-						<?php
-						$memberTypes = explode(',', $settings->get('member_types'));
-						
-						foreach ($memberTypes as $type) {
-							$type = trim($type);
-							echo "<option value=\"{$type}\">{$type}</option>";
-						}
-						?>
-					</select>
-					<div class="invalid-feedback">
-						Valid member type is required.
+
+					<!-- Member Category -->
+					<div class="mb-3">
+						<label for="category" class="form-label">Member Category</label>
+						<select class="form-select" name="category" id="category" <?= $user->hasPermission('members') ? '' : 'disabled' ?> required>
+							<?php
+							$memberCategories = explode(',', $settings->get('member_categories'));
+							foreach ($memberCategories as $category) {
+								$category = trim($category);
+								echo "<option value=\"{$category}\">{$category}</option>";
+							}
+							?>
+						</select>
+						<div class="invalid-feedback">
+							Valid category is required.
+						</div>
+					</div>
+
+					<!-- Dietary info (optional) -->
+					<div class="accordion mb-3" id="accordionDietary">
+						<div class="accordion-item">
+							<h2 class="accordion-header">
+								<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+									Dietary Information&nbsp;<i>(Maximum: <?= $settings->get('meal_dietary_allowed'); ?>)</i>
+								</button>
+							</h2>
+							<div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionDietary">
+								<div class="accordion-body">
+									<?php
+									$dietaryOptions = array_map('trim', explode(',', $settings->get('meal_dietary')));
+									$dietaryOptionsMax = (int)$settings->get('meal_dietary_allowed');
+
+									foreach ($dietaryOptions as $index => $dietaryOption) {
+										$safeValue = htmlspecialchars($dietaryOption, ENT_QUOTES);
+										$checkboxId = "dietary_{$index}";
+										echo '<div class="form-check">';
+										echo '<input class="form-check-input dietaryOptionsMax" type="checkbox" onclick="checkMaxCheckboxes(' . $dietaryOptionsMax . ')" name="dietary[]" id="' . $checkboxId . '" value="' . $safeValue . '">';
+										echo '<label class="form-check-label" for="' . $checkboxId . '">' . $safeValue . '</label>';
+										echo '</div>';
+									}
+									?>
+									<small class="form-text text-muted"><?= $settings->get('meal_dietary_message'); ?></small>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<!-- Email -->
+					<div class="mb-3">
+						<label for="email" class="form-label">Email <span class="text-muted">(Optional)</span></label>
+						<input type="email" class="form-control" name="email" id="email" placeholder="Email address">
+					</div>
+
+					<!-- Member Type -->
+					<div class="mb-3">
+						<label for="type" class="form-label">Member Type</label>
+						<select class="form-select" name="type" id="type" <?= $user->hasPermission('members') ? '' : 'disabled' ?> required>
+							<?php
+							$memberTypes = explode(',', $settings->get('member_types'));
+							foreach ($memberTypes as $type) {
+								$type = trim($type);
+								echo "<option value=\"{$type}\">{$type}</option>";
+							}
+							?>
+						</select>
+						<div class="invalid-feedback">
+							Valid member type is required.
+						</div>
 					</div>
 				</div>
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-link text-muted" data-bs-dismiss="modal">Close</button>
+					<button type="submit" class="btn btn-primary">Add Member</button>
+					<input type="hidden" name="precedence" value="999">
+					<input type="hidden" name="opt_in" value="1">
+					<input type="hidden" name="calendar_hash" value="<?= bin2hex(random_bytes(8)) ?>">
+				</div>
 			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-link text-muted" data-bs-dismiss="modal">Close</button>
-				<button type="submit" class="btn btn-primary">Add Member</button>
-				<input type="hidden" name="precedence" value="999">
-				<input type="hidden" name="opt_in" value="1">
-				<input type="hidden" name="calendar_hash" value="<?= bin2hex(random_bytes(8)) ?>">
-			</div>
-		</div>
 		</form>
 	</div>
 </div>
@@ -345,4 +337,88 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
 });
+
+
+
+
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.getElementById('createUserForm');
+  const ldapInput = form.querySelector('input[name="ldap"]');
+  const validFeedback = ldapInput.parentElement.querySelector('.valid-feedback');
+  const invalidFeedback = ldapInput.parentElement.querySelector('.invalid-feedback');
+  let debounceTimer = null;
+  let lastCheckValid = false;
+  let ajaxPending = false;
+
+  // Async username validation
+  async function checkUsername() {
+	const value = ldapInput.value.trim();
+
+	// Empty input
+	if (!value) {
+	  ldapInput.classList.remove('is-valid', 'is-invalid');
+	  lastCheckValid = false;
+	  if (invalidFeedback) invalidFeedback.textContent = 'Username is required';
+	  if (validFeedback) validFeedback.textContent = '';
+	  return false;
+	}
+
+	ajaxPending = true;
+
+	try {
+	  const res = await fetch(`./ajax/member_check_username.php?ldap=${encodeURIComponent(value)}`);
+	  const data = await res.json();
+
+	  if (data.valid) {
+		ldapInput.classList.add('is-valid');
+		ldapInput.classList.remove('is-invalid');
+		lastCheckValid = true;
+		if (validFeedback && data.message) validFeedback.textContent = data.message;
+		if (invalidFeedback) invalidFeedback.textContent = '';
+	  } else {
+		ldapInput.classList.add('is-invalid');
+		ldapInput.classList.remove('is-valid');
+		lastCheckValid = false;
+		if (invalidFeedback && data.message) invalidFeedback.textContent = data.message;
+		if (validFeedback) validFeedback.textContent = '';
+	  }
+
+	  return lastCheckValid;
+
+	} catch {
+	  ldapInput.classList.remove('is-valid', 'is-invalid');
+	  lastCheckValid = false;
+	  if (validFeedback) validFeedback.textContent = '';
+	  if (invalidFeedback) invalidFeedback.textContent = 'Validation failed';
+	  return false;
+	} finally {
+	  ajaxPending = false;
+	}
+  }
+
+  // Debounce input
+  ldapInput.addEventListener('input', () => {
+	clearTimeout(debounceTimer);
+	debounceTimer = setTimeout(checkUsername, 300);
+  });
+
+  // Form submission
+  form.addEventListener('submit', async (e) => {
+	e.preventDefault();
+	e.stopPropagation();
+
+	// Ensure username check runs before submit
+	if (!ldapInput.classList.contains('is-valid') && !ldapInput.classList.contains('is-invalid')) {
+	  await checkUsername();
+	}
+
+	if (!form.checkValidity() || !lastCheckValid || ajaxPending) {
+	  form.classList.add('was-validated');
+	  return;
+	}
+
+	form.submit(); // all valid, submit
+  });
+});
+
 </script>

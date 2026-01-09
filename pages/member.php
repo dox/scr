@@ -123,7 +123,7 @@ echo pageTitle(
 						id="ldap"
 						placeholder="LDAP Username"
 						value="<?= htmlspecialchars($member->ldap ?? '', ENT_QUOTES) ?>"
-						<?= $user->hasPermission('members') ? '' : 'disabled' ?>
+						<?= $user->hasPermission('global_admin') ? '' : 'disabled' ?>
 						required
 					>
 					<div class="invalid-feedback">
