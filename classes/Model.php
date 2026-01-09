@@ -402,7 +402,7 @@ class Bookings extends Model {
 		$log->add(
 			'Booking UID: ' . $newBooking .
 			' created for ' . $memberName .
-			' (Meal UID: ' . ($fields['meal_uid'] ?? 'unknown') . ')',
+			'. (Meal UID: ' . ($fields['meal_uid'] ?? 'unknown') . ')',
 			'Booking',
 			Log::SUCCESS
 		);
