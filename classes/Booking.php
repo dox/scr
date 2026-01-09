@@ -104,7 +104,7 @@ class Booking extends Model {
 		
 		// write the log
 		$member = Member::fromLDAP($this->member_ldap);
-		$log->add('Booking UID: ' . $this->uid . ' for ' . $member->name() . ' updated. (Meal UID: ' . $this->uid . ')' . $this->meal_uid, 'Booking', Log::SUCCESS);
+		$log->add('Booking UID: ' . $this->uid . ' for ' . $member->name() . ' updated. (Meal UID: ' . $this->uid . ')', 'Booking', Log::SUCCESS);
 
 
 		return $updatedRows;
@@ -138,7 +138,7 @@ class Booking extends Model {
 	
 		// write the log
 		$member = Member::fromLDAP($this->member_ldap);
-		$log->add('Added guest (' . $guest['guest_name'] . ') to booking UID: ' . $this->uid . ' for ' . $member->name() . ' updated. (Meal UID: ' . $this->uid . ')' . $this->meal_uid, 'Booking', Log::SUCCESS);
+		$log->add('Added guest (' . $guest['guest_name'] . ') to booking UID: ' . $this->uid . ' for ' . $member->name() . ' updated. (Meal UID: ' . $this->uid . ')', 'Booking', Log::SUCCESS);
 		
 		// return updated structure
 		return true;
@@ -176,7 +176,7 @@ class Booking extends Model {
 		
 		// write the log
 		$member = Member::fromLDAP($this->member_ldap);
-		$log->add('Updated guest (' . $guest['guest_name'] . ') for booking UID: ' . $this->uid . ' for ' . $member->name() . '. (Meal UID: ' . $this->uid . ')' . $this->meal_uid, 'Booking', Log::SUCCESS);
+		$log->add('Updated guest (' . $guest['guest_name'] . ') for booking UID: ' . $this->uid . ' for ' . $member->name() . '. (Meal UID: ' . $this->uid . ')', 'Booking', Log::SUCCESS);
 	
 		return true;
 	}
@@ -198,7 +198,7 @@ class Booking extends Model {
 		
 		// write the log
 		$member = Member::fromLDAP($this->member_ldap);
-		$log->add('Deleted guest (' . $guest['guest_name'] . ') to booking UID: ' . $this->uid . ' for ' . $member->name() . '. (Meal UID: ' . $this->uid . ')' . $this->meal_uid, 'Booking', Log::SUCCESS);
+		$log->add('Deleted guest (' . $guest['guest_name'] . ') to booking UID: ' . $this->uid . ' for ' . $member->name() . '. (Meal UID: ' . $this->uid . ')', 'Booking', Log::SUCCESS);
 	
 		return true;
 	}

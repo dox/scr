@@ -288,7 +288,7 @@ echo pageTitle(
 			  }
 			  ?>
 			  
-			  <button type="submit" class="btn btn-primary w-100">Update Profile</button>
+			  <button type="submit" class="btn btn-primary w-100 mb-3">Update Profile</button>
 		</form>
 	</div>
 	<div class="col-md-5 col-lg-4">
@@ -333,7 +333,7 @@ echo pageTitle(
 		<hr>
 		
 		<h4 class="mb-3">Bookings by Day</h4>
-		<div>
+		<div class="mb-3">
 			<canvas id="chart_bookingsByDay"></canvas>
 		</div>
 	</div>

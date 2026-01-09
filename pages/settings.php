@@ -31,7 +31,7 @@ echo pageTitle(
 
 <div class="alert alert-danger text-center"><strong>Warning!</strong> Making changes to these settings can disrupt the running of this site.  Proceed with caution.</div>
 
-<div class="accordion" id="accordionExample">
+<div class="accordion mb-3" id="accordionExample">
 	<?php foreach ($settings->getAll() as $setting):
 		$uid   = (int) $setting['uid'];
 		$name  = htmlspecialchars($setting['name'], ENT_QUOTES, 'UTF-8');

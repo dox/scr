@@ -78,7 +78,7 @@ echo pageTitle(
 	  type="text"
 	  class="form-control form-control-lg"
 	  id="wine_search"
-	  placeholder="Quick search all cellars"
+	  placeholder="Quick search <?= $cellar->name; ?>"
 	  autocomplete="off"
 	  spellcheck="false"
 	>
