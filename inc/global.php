@@ -1,4 +1,17 @@
 <?php
+// Helper function to set session user from a Member object
+function setUserSessionFromMember(Member $member, array $overridePermissions = null): void {
+	$_SESSION['user'] = [
+		'uid'             => $member->uid,
+		'samaccountname'  => $member->ldap,
+		'type'            => $member->type ?? null,
+		'category'        => $member->category ?? null,
+		'name'            => $member->name() ?? null,
+		'email'           => $member->email ?? null,
+		'permissions'     => $overridePermissions ?? explode(',', $member->permissions ?? ''),
+	];
+}
+
 function timeAgoFromSeconds($seconds) {
 	if ($seconds <= 0) {
 		return 'just now';

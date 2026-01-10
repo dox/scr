@@ -28,6 +28,7 @@ echo pageTitle(
 				type="submit"
 				id="restore_impersonation"
 				name="restore_impersonation"
+				value="1"
 				class="btn btn-info w-100 mb-3"
 			>
 				Stop Impersonating

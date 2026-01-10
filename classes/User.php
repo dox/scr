@@ -50,18 +50,11 @@ class User {
 			false
 		);
 	
-		$this->userData = [
-			'samaccountname' => $member->ldap,
-			'type'          => $member->type ?? null,
-			'category'      => $member->category ?? null,
-			'name'          => $member->name() ?? null,
-			'email'         => $member->email ?? null,
-			'permissions'  => explode(',', $member->permissions ?? ''),
-			'uid'           => $member->uid
-		];
+		// Set session via helper
+		setUserSessionFromMember($member);
 	
-		$_SESSION['user'] = $this->userData;
-		$this->loggedIn   = true;
+		$this->userData = $_SESSION['user'];
+		$this->loggedIn = true;
 	
 		if ($remember) {
 			$this->setToken($member->uid);
@@ -176,6 +169,7 @@ class User {
 		}
 
 		unset($_SESSION['user']);
+		unset($_SESSION['impersonating']);
 		unset($_SESSION['impersonation_backup']);
 		$this->loggedIn = false;
 		$this->userData = [];

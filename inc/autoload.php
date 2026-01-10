@@ -69,42 +69,37 @@ $user     = new User();
 $settings = new Settings();
 
 // Handle impersonation
-if (isset($_POST['impersonate'])) {
-	$targetId = $_POST['impersonate'] ?? null;
-	
-	if ($targetId) {
+if (!empty($_POST['impersonate'])) {
+	$targetId = $_POST['impersonate'];
+
+	// Ensure targetId is valid
+	if ($targetId && is_numeric($targetId)) {
+		$originalMember = Member::fromUID($_SESSION['user']['uid']);
 		$member = Member::fromUID($targetId);
-		
-		$log->add("{$user->getUsername()} impersonating {$member->ldap} ({$member->public_displayName()})", 'member', Log::INFO);
-		
+
+		$log->add("{$originalMember->name()} impersonating {$member->ldap} ({$member->name()})", 'member', Log::INFO);
+
+		// Backup original session
 		$_SESSION['impersonation_backup'] = $_SESSION['user'];
 		$existingPermissions = $_SESSION['user']['permissions'];
 
+		// Set impersonated session
 		$_SESSION['impersonating'] = true;
-		$_SESSION['user']['uid']              = $member->uid;
-		$_SESSION['user']['samaccountname']   = $member->ldap;
-		$_SESSION['user']['type']   = $member->type;
-		$_SESSION['user']['category']   = $member->category;
-		$_SESSION['user']['name']   = $member->name();
-		$_SESSION['user']['email']   = $member->email;
-		$_SESSION['user']['permissions']      = $member->permissions();
+		setUserSessionFromMember($member, $_POST['maintainAdminAccess'] ? $existingPermissions : null);
 
-		if (isset($_POST['maintainAdminAccess'])) {
-			$_SESSION['user']['permissions'] = $existingPermissions;
-		}
-		
+		// Refresh User object
 		$user = new User();
 	}
 }
 
 // Restore impersonation
-if (isset($_POST['restore_impersonation']) && isset($_SESSION['impersonation_backup'])) {
-	$impersonatingUser = $user->getUsername();
-	
-	unset($_SESSION['impersonating']);
+if (!empty($_POST['restore_impersonation']) && !empty($_SESSION['impersonation_backup'])) {
+	$impersonatedUsername = $_SESSION['user']['samaccountname'];
+
+	// Restore original session
 	$_SESSION['user'] = $_SESSION['impersonation_backup'];
-	unset($_SESSION['impersonation_backup']);
-	
+	unset($_SESSION['impersonation_backup'], $_SESSION['impersonating']);
+
 	$user = new User();
-	$log->add("{$user->getUsername()} no longer impersonating {$impersonatingUser}", 'member', Log::INFO);
+	$log->add("{$_SESSION['user']['name']} no longer impersonating {$impersonatedUsername}", 'member', Log::INFO);
 }
