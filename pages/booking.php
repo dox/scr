@@ -227,9 +227,16 @@ echo pageTitle(
 			$output .= '</div>';
 		
 			// Dietary info (if any)
-			if (!empty(array_filter($guest['guest_dietary'] ?? []))) {
-				$output .= '<small class="text-muted d-block mb-1">Dietary: ' . 
-						   htmlspecialchars(implode(', ', array_filter($guest['guest_dietary']))) . '</small>';
+			$guestDietary = $guest['guest_dietary'] ?? '';
+			
+			if (is_string($guestDietary)) {
+				$guestDietary = array_map('trim', explode(',', $guestDietary));
+			}
+			
+			if (is_array($guestDietary) && !empty(array_filter($guestDietary))) {
+				$output .= '<small class="text-muted d-block mb-1">Dietary: ' .
+					htmlspecialchars(implode(', ', array_filter($guestDietary))) .
+				'</small>';
 			}
 		
 			// Wine/Dessert

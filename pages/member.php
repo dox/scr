@@ -423,6 +423,9 @@ echo pageTitle(
 					</div>
 				</div>
 			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-link text-muted" data-bs-dismiss="modal">Close</button>
+			</div>
 		</div>
 	</div>
 </div>

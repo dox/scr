@@ -184,6 +184,12 @@ class Booking extends Model {
 	public function deleteGuest(string $guestUid): bool {
 		global $db, $log;
 	
+		// Decode current guests_array
+		$guests = $this->guests();
+	
+		// Get the guest info BEFORE deleting
+		$guestName = $guests[$guestUid]['guest_name'] ?? 'Unknown';
+	
 		// Remove the guest key entirely from the JSON structure
 		$sql = "
 			UPDATE " . self::$table . "
@@ -195,10 +201,15 @@ class Booking extends Model {
 		$db->query($sql, [
 			':uid' => $this->uid
 		]);
-		
+	
 		// write the log
 		$member = Member::fromLDAP($this->member_ldap);
-		$log->add('Deleted guest (' . $guest['guest_name'] . ') to booking UID: ' . $this->uid . ' for ' . $member->name() . '. (Meal UID: ' . $this->uid . ')', 'Booking', Log::SUCCESS);
+		$log->add(
+			'Deleted guest (' . $guestName . ') from booking UID: ' . $this->uid .
+			' for ' . $member->name() . '. (Meal UID: ' . $this->meal_uid . ')',
+			'Booking',
+			Log::SUCCESS
+		);
 	
 		return true;
 	}

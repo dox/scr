@@ -96,7 +96,13 @@ class Log extends Model {
 		$sql = "INSERT INTO " . static::$table . " 
 				(username, ip, description, category, result, date)
 				VALUES (:username, :ip, :description, :category, :result, NOW())";
-	
+		
+		// Log impersonations
+		$original_username = ($_SESSION['impersonation_backup']['samaccountname'] ?? 'Unknown');
+		if (isset($_SESSION['impersonating'])) {
+			$description = $description . " [Impersonated By: " . $original_username . "]";
+		}
+		
 		$params = [
 			':username'    => $user?->getUsername() ?? null,
 			':ip'          => ip2long($this->detectIp()),

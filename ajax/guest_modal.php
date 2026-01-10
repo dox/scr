@@ -34,7 +34,7 @@ $guestDietary     = $booking->guests()[$guestUID]['guest_dietary']      ?? [];
 </div>
 
 <div class="modal-body">
-	<?php if (!$meal->hasDessertCapacity(true) && $booking->dessert == "1"): ?>
+	<?php if ($meal->allowed_dessert == "1" && $booking->dessert == "1" && !$meal->hasDessertCapacity()): ?>
 		<p>Dessert capacity has been reached. Please remove yourself from dessert if you wish to add a guest.</p>
 	<?php elseif ($action === 'add' && !$meal->hasCapacity(true)): ?>
 		<p>Meal capacity has been reached.</p>
@@ -73,6 +73,10 @@ $guestDietary     = $booking->guests()[$guestUID]['guest_dietary']      ?? [];
 						$output = '';
 						
 						foreach ($dietaryOptions as $index => $dietaryOption) {
+							$memberDietary = $memberDietary ?? [];
+							$memberDietary = is_array($memberDietary)
+								? $memberDietary
+								: array_map('trim', explode(',', (string) $memberDietary));
 							$checked    = in_array($dietaryOption, $memberDietary, true) ? ' checked' : '';
 							$safeValue  = htmlspecialchars($dietaryOption, ENT_QUOTES);
 							$checkboxId = "guest_dietary_{$index}";

@@ -51,22 +51,41 @@ try {
 		echo json_encode(['success' => true, 'message' => 'Guest added successfully']);
 		exit;
 	} elseif ($_POST['action'] == 'guest_update') {
-		// Safely pull the raw string
+		// Safely pull the raw guest dietary array
 		$guestDietaryArray = $_POST['guest_dietary'] ?? [];
-		$guestDietaryArray = array_map('trim', $guestDietaryArray);
+		$guestDietaryArray = is_array($guestDietaryArray)
+			? array_map('trim', $guestDietaryArray)
+			: [];
 		
-		$data = array(
-		  'guest_uid'			=> $_POST['guest_uid']   ?? null,
-		  'guest_name'			=> $_POST['guest_name']     ?? null,
-		  'guest_charge_to'		=> $_POST['charge_to']     ?? null,
-		  'guest_domus_reason'	=> $_POST['domus_reason']  ?? null,
-		  'guest_wine_choice'	=> $_POST['wine_choice']   ?? null,
-		  'guest_dietary'		=> $guestDietaryArray
-		);
+		// Handle checkboxes / arrays (dietary)
+		$maxChoices = (int) $settings->get('meal_dietary_allowed');
+		
+		$fields['dietary'] = (
+			!empty($postData['dietary']) && is_array($postData['dietary'])
+		)
+			? implode(',', array_slice(array_filter($postData['dietary']), 0, $maxChoices))
+			: '';
+		
+		// Apply the same limit to guest dietary
+		$guestDietary = !empty($guestDietaryArray)
+			? implode(',', array_slice(array_filter($guestDietaryArray), 0, $maxChoices))
+			: '';
+		
+		$data = [
+			'guest_uid'          => $_POST['guest_uid']        ?? null,
+			'guest_name'         => $_POST['guest_name']       ?? null,
+			'guest_charge_to'    => $_POST['charge_to']        ?? null,
+			'guest_domus_reason' => $_POST['domus_reason']     ?? null,
+			'guest_wine_choice'  => $_POST['wine_choice']      ?? null,
+			'guest_dietary'      => $guestDietary,
+		];
 		
 		$booking->editGuest($data);
 		
-		echo json_encode(['success' => true, 'message' => 'Guest update successfully.']);
+		echo json_encode([
+			'success' => true,
+			'message' => 'Guest updated successfully.',
+		]);
 		exit;
 	} elseif ($_POST['action'] == 'guest_delete') {
 		$booking->deleteGuest($_POST['guest_uid']);

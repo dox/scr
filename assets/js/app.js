@@ -238,7 +238,6 @@ document.addEventListener('DOMContentLoaded', () => {
 	const guestDietaryValues = Array.from(guestDietaryEls).map(el => el.value);
 	
 	
-	
 	// Guest name validation
 	if (action !== 'guest_delete' && (!guest_nameEl || guest_nameEl.value.trim() === '')) {
 	  guest_nameEl?.classList.add('is-invalid');
@@ -266,19 +265,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	const data = new URLSearchParams({
 	  action: action,
-	  booking_uid: bookingUid,
-	  guest_name: guest_nameEl?.value || '',
-	  guest_uid: guest_uidEl?.value || '',
-	  charge_to: chargeToEl?.value || '',
-	  domus_reason: domusReasonEl?.value || '',
-	  wine_choice: wineEl?.value || '',
-	  dessert: dessertEl?.checked ? 1 : 0
+	  booking_uid: bookingUid
 	});
-
-	guestDietaryValues.forEach(val => {
-	  data.append('guest_dietary[]', val);
-	});
-
+	
+	// DELETE = minimal payload
+	if (action === 'guest_delete') {
+	  data.append('guest_uid', guest_uidEl?.value || '');
+	} else {
+	  // ADD / UPDATE payload
+	  data.append('guest_uid', guest_uidEl?.value || '');
+	  data.append('guest_name', guest_nameEl?.value || '');
+	  data.append('charge_to', chargeToEl?.value || '');
+	  data.append('domus_reason', domusReasonEl?.value || '');
+	  data.append('wine_choice', wineEl?.value || '');
+	  data.append('dessert', dessertEl?.checked ? 1 : 0);
+	
+	  guestDietaryValues.forEach(val => {
+		data.append('guest_dietary[]', val);
+	  });
+	}
+	
 	try {
 	  const res = await fetch('./ajax/booking_update.php', {
 		method: 'POST',

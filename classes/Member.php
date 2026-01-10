@@ -194,43 +194,50 @@ class Member extends Model {
 	}
 	
 	public function update(array $postData) {
-		global $db, $user, $log;
+		global $db, $user, $log, $settings;
+	
+		// Capture original LDAP before any changes
+		$originalLdap = $this->ldap;
 	
 		// Map normal text/select fields
 		$fields = [
-			'title'      => $postData['title'] ?? null,
-			'firstname'  => $postData['firstname'] ?? null,
-			'lastname'   => $postData['lastname'] ?? null,
-			'email'      => $postData['email'] ?? null,
+			'title'     => $postData['title'] ?? null,
+			'firstname' => $postData['firstname'] ?? null,
+			'lastname'  => $postData['lastname'] ?? null,
+			'email'     => $postData['email'] ?? null,
 		];
 		
-		// Handle checkboxes / arrays (dietary, permissions)
-		$fields['dietary'] = isset($postData['dietary']) 
-			? implode(',', array_filter($postData['dietary'])) 
-			: '';
 		
+		// Handle checkboxes / arrays (dietary)
+		$maxChoices = $settings->get('meal_dietary_allowed');
+		$fields['dietary'] = isset($postData['dietary'])
+			? implode(',', array_slice(array_filter($postData['dietary']), 0, $maxChoices))
+			: '';
+	
 		// Handle switches (checkboxes that may not be submitted)
-		$fields['opt_in']         = isset($postData['opt_in']) ? 1 : 0;
+		$fields['opt_in']          = isset($postData['opt_in']) ? 1 : 0;
 		$fields['email_reminders'] = isset($postData['email_reminders']) ? 1 : 0;
 		$fields['default_dessert'] = isset($postData['default_dessert']) ? 1 : 0;
-		
+	
 		// Handle radio buttons
 		$fields['default_wine_choice'] = $postData['default_wine_choice'] ?? 'None';
-		
+	
 		// Map privileged text/select fields
 		if ($user->hasPermission("member")) {
 			$fields = array_merge($fields, [
-				'ldap'       => $postData['ldap'] ?? null,
-				'category'   => $postData['category'] ?? null,
-				'type'       => $postData['type'] ?? null,
-				'enabled'    => isset($postData['enabled']) ? (int)$postData['enabled'] : 0,
+				'ldap'     => $postData['ldap'] ?? null,
+				'category' => $postData['category'] ?? null,
+				'type'     => $postData['type'] ?? null,
+				'enabled'  => isset($postData['enabled']) ? (int) $postData['enabled'] : 0,
 			]);
-			
+	
 			if ($user->hasPermission("global_admin")) {
-				$fields['permissions'] = isset($postData['permissions']) ? implode(',', array_filter($postData['permissions'])) : '';
+				$fields['permissions'] = isset($postData['permissions'])
+					? implode(',', array_filter($postData['permissions']))
+					: '';
 			}
 		}
-		
+	
 		// Send to database update
 		$updatedRows = $db->update(
 			static::$table,
@@ -238,12 +245,39 @@ class Member extends Model {
 			['uid' => $this->uid],
 			'logs'
 		);
+	
+		// If LDAP changed, run extra SQL
+		if (
+			$user->hasPermission("member") &&
+			array_key_exists('ldap', $fields) &&
+			$fields['ldap'] !== $originalLdap
+		) {
+			// Update any bookings for this member to the new username
+			$sql = "
+				UPDATE bookings
+				SET member_ldap = :new_ldap
+				WHERE member_ldap = :old_ldap
+			";
 		
+			$params = [
+				'new_ldap' => $fields['ldap'],
+				'old_ldap' => $originalLdap,
+			];
+		
+			$db->query($sql, $params);
+		
+			$log->add(
+				'LDAP updated for ' . $this->name() .
+				' (' . $originalLdap . ' → ' . $fields['ldap'] . ')',
+				Log::WARNING
+			);
+		}
+	
 		// write the log
 		$log->add('Profile updated for ' . $this->name(), Log::SUCCESS);
-		
-		toast('Member Updated', 'Member sucesfully updated', 'text-success');
-		
+	
+		toast('Member Updated', 'Member successfully updated', 'text-success');
+	
 		return $updatedRows;
 	}
 	
