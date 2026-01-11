@@ -36,6 +36,11 @@ switch ($scope) {
 		break;
 
 	case 'ytd':
+		$start = new DateTimeImmutable($today->format('Y-01-01'));
+		$end   = $today;
+		break;
+		
+	case '12m':
 		$start = $today->modify('-1 year');
 		$end   = $today;
 		break;

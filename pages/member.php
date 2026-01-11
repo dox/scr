@@ -43,25 +43,69 @@ echo pageTitle(
 
 <div class="row mb-3">
 	<div class="col">
-		<ul class="list-inline">
-			<li class="list-inline-item">
-				<a href="#" class="small stats-link fw-bold" data-url="./ajax/member_stats.php?memberUID=<?= $member->uid ?>&scope=all">All</a>
-			</li>
-			<li class="list-inline-item">
-				<a href="#" class="small stats-link" data-url="./ajax/member_stats.php?memberUID=<?= $member->uid ?>&scope=ytd">YTD</a>
-			</li>
-			<li class="list-inline-item">
-				<a href="#" class="small stats-link" data-url="./ajax/member_stats.php?memberUID=<?= $member->uid ?>&scope=term_previous">Last Term (<?php echo $terms->previousTerm()->name; ?>)</a>
-			</li>
-			<li class="list-inline-item">
-				<a href="#" class="small stats-link" data-url="./ajax/member_stats.php?memberUID=<?= $member->uid ?>&scope=term">This Term (<?php echo $terms->currentTerm()->name; ?>)</a>
-			</li>
-		</ul>
+
+		<div class="dropdown mb-2">
+			<button
+				class="btn btn-sm btn-outline-secondary dropdown-toggle"
+				type="button"
+				id="statsScopeDropdown"
+				data-bs-toggle="dropdown"
+				aria-expanded="false"
+			>
+				All
+			</button>
+
+			<ul class="dropdown-menu" aria-labelledby="statsScopeDropdown">
+				<li>
+					<a class="dropdown-item stats-link fw-bold"
+					   href="#"
+					   data-label="All"
+					   data-url="./ajax/member_stats.php?memberUID=<?= $member->uid ?>&scope=all">
+						All
+					</a>
+				</li>
+				<li>
+					<a class="dropdown-item stats-link"
+					   href="#"
+					   data-label="Last 12 Months"
+					   data-url="./ajax/member_stats.php?memberUID=<?= $member->uid ?>&scope=12m">
+						Last 12 Months
+					</a>
+				</li>
+				<li>
+					<a class="dropdown-item stats-link"
+					   href="#"
+					   data-label="YTD"
+					   data-url="./ajax/member_stats.php?memberUID=<?= $member->uid ?>&scope=ytd">
+						Year To Date
+					</a>
+				</li>
+				<li><hr class="dropdown-divider"></li>
+				<li>
+					<a class="dropdown-item stats-link"
+					   href="#"
+					   data-label="Last Term (<?= $terms->previousTerm()->name ?>)"
+					   data-url="./ajax/member_stats.php?memberUID=<?= $member->uid ?>&scope=term_previous">
+						Last Term (<?= $terms->previousTerm()->name ?>)
+					</a>
+				</li>
+				<li>
+					<a class="dropdown-item stats-link"
+					   href="#"
+					   data-label="This Term (<?= $terms->currentTerm()->name ?>)"
+					   data-url="./ajax/member_stats.php?memberUID=<?= $member->uid ?>&scope=term">
+						This Term (<?= $terms->currentTerm()->name ?>)
+					</a>
+				</li>
+			</ul>
+		</div>
+
 		<div id="member_stats_container">
 			<div class="spinner-border" role="status">
 				<span class="visually-hidden">Loading...</span>
 			</div>
 		</div>
+
 	</div>
 </div>
 
@@ -469,12 +513,26 @@ const chart = new Chart(ctx, {
 </script>
 
 <script>
-// Initialize stats links
-initAjaxLoader('.stats-link', '#member_stats_container', {event: 'click', cache: true});
-document.querySelectorAll('.stats-link').forEach(link => {
-	link.addEventListener('click', function () {
-		document.querySelectorAll('.stats-link').forEach(l => l.classList.remove('fw-bold'));
-		this.classList.add('fw-bold');
-	});
+// Initialize stats links (unchanged)
+initAjaxLoader('.stats-link', '#member_stats_container', { event: 'click', cache: true });
+
+// Handle active state + dropdown label
+document.addEventListener('click', function (e) {
+	const link = e.target.closest('.stats-link');
+	if (!link) return;
+
+	e.preventDefault();
+
+	// Clear active state
+	document.querySelectorAll('.stats-link').forEach(l => l.classList.remove('fw-bold'));
+	link.classList.add('fw-bold');
+
+	// Update dropdown button label (if present)
+	const dropdownButton = document.getElementById('statsScopeDropdown');
+	const label = link.dataset.label;
+
+	if (dropdownButton && label) {
+		dropdownButton.textContent = label;
+	}
 });
 </script>
