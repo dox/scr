@@ -472,7 +472,9 @@ class Meal extends Model {
 	public function hasDessertCapacity(bool $factorInAdmin = true): bool {
 		global $user;
 		
-		if (!$this->allowed_dessert) return false;
+		if (!$this->allowed_dessert) {
+			return false;
+		}
 		
 		if ($factorInAdmin && $user->hasPermission("bookings")) {
 			return true;

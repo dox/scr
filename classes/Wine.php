@@ -200,6 +200,35 @@ class Wine extends Model {
 
 		return $db->query($sql)->fetchAll();
 	}
+	
+	public function update(array $postData) {
+		global $db;
+	
+		$fields = [
+			'date_updated'      => date('c'),
+			'code'              => $postData['code'] ?? '0',
+			'bin_uid'           => $postData['bin_uid'] ?? null,
+			'status'            => $postData['status'] ?? null,
+			'name'              => $postData['name'] ?? null,
+			'supplier'          => $postData['supplier'] ?? null,
+			'supplier_ref'      => $postData['supplier_ref'] ?? null,
+			'category'          => $postData['category'] ?? null,
+			'grape'             => $postData['grape'] ?? null,
+			'country_of_origin' => $postData['country_of_origin'] ?? null,
+			'region_of_origin'  => $postData['region_of_origin'] ?? null,
+			'vintage'           => ($postData['vintage'] === '' ? null : $postData['vintage']),
+			'price_purchase'    => $postData['price_purchase'] ?? null,
+			'price_internal'    => $postData['price_internal'] ?? null,
+			'price_external'    => $postData['price_external'] ?? null,
+			'tasting'           => $postData['tasting'] ?? null,
+			'notes'             => $postData['notes'] ?? null
+		];
+	
+		$updatedRows = $db->update(static::$table, $fields, ['uid' => $this->uid], 'logs');
+		toast('Wine Updated', 'Wine successfully updated', 'text-success');
+	
+		return $updatedRows;
+	}
 
 	// -----------------------
 	// Generic file handling
@@ -207,7 +236,9 @@ class Wine extends Model {
 	protected function handleFileUpload(array $file, string $type = 'attachment', array $allowedExtensions = [], int $maxSize = 5000000): ?array {
 		global $db, $log, $user;
 
-		if (!isset($file) || $file['error'] !== UPLOAD_ERR_OK) return null;
+		if (!isset($file) || $file['error'] !== UPLOAD_ERR_OK) {
+			return null;
+		}
 
 		$originalName = basename($file['name']);
 		$ext = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
@@ -223,7 +254,9 @@ class Wine extends Model {
 		}
 		
 		$uploadDir = UPLOAD_DIR . 'wines/';
-		if (!is_dir($uploadDir)) mkdir($uploadDir, 0775, true);
+		if (!is_dir($uploadDir)) {
+			mkdir($uploadDir, 0775, true);
+		}
 
 		$uniqueName = uniqid("wine_{$this->uid}_", true) . '.' . $ext;
 		$targetFile = $uploadDir . $uniqueName;
@@ -262,7 +295,9 @@ class Wine extends Model {
 		}
 
 		$upload = $this->handleFileUpload($file, 'photograph', $allowed, 5000000);
-		if (!$upload) return false;
+		if (!$upload) {
+			return false;
+		}
 
 		$db->query("UPDATE " . static::$table . " SET photograph = ? WHERE uid = ?", [$upload['stored'], $this->uid]);
 		$this->photograph = $upload['stored'];
@@ -277,7 +312,9 @@ class Wine extends Model {
 
 		$allowed = array_map('trim', explode(',', $settings->get('uploads_allowed_filetypes')));
 		$upload = $this->handleFileUpload($file, 'attachment', $allowed, 5000000);
-		if (!$upload) return null;
+		if (!$upload) {
+			return null;
+		}
 
 		$attachments = $this->attachments() ?? [];
 		$attachments[] = [
@@ -300,7 +337,9 @@ class Wine extends Model {
 	public function removeAttachment(string $storedFilename): bool {
 		global $db, $log;
 
-		if (!$this->handleFileDelete($storedFilename, 'attachment')) return false;
+		if (!$this->handleFileDelete($storedFilename, 'attachment')) {
+			return false;
+		}
 
 		$attachments = $this->attachments() ?? [];
 		$attachments = array_filter($attachments, fn($a) => $a['stored'] !== $storedFilename);

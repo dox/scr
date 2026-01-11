@@ -4,7 +4,7 @@ $booking = Booking::fromUID($bookingUID);
 $meal = new Meal($booking->meal_uid);
 
 if (!isset($booking->uid) || (!$user->hasPermission("meals") && $booking->member_ldap != $user->getUsername())) {
-	require_once('404.php');
+	require_once "404.php";
 	die("Unknown or unavailable booking");
 }
 
@@ -75,8 +75,12 @@ echo pageTitle(
 		
 			// Person's wine/dessert
 			$wineDessert = [];
-			if ($user->hasPermission('bookings') && $guestListBooking->wineChoice() != "None") $wineDessert[] = '<svg class="bi" width="1em" height="1em" aria-hidden="true"><use xlink:href="assets/images/icons.svg#wine-glass"></use></svg>';
-			if ($guestListBooking->dessertChoice() == "1") $wineDessert[] = '<i class="bi bi-cookie"></i>';
+			if ($user->hasPermission('bookings') && $guestListBooking->wineChoice() != "None") {
+				$wineDessert[] = '<svg class="bi" width="1em" height="1em" aria-hidden="true"><use xlink:href="assets/images/icons.svg#wine-glass"></use></svg>';
+			}
+			if ($guestListBooking->dessertChoice() == "1") {
+				$wineDessert[] = '<i class="bi bi-cookie"></i>';
+			}
 			if (!empty($wineDessert)) {
 				$output .=  implode(' ', $wineDessert);
 			}

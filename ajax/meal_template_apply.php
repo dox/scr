@@ -44,8 +44,10 @@ try {
 		$currentWeekStart->modify("+{$weekOffset} weeks");
 	
 		foreach ($templateDays as $dayName) {
-			if (!isset($dayMap[$dayName])) continue;
-	
+			if (!isset($dayMap[$dayName])) {
+				continue;
+			}
+			
 			$dayOffset = $dayMap[$dayName];
 	
 			// --- New meal date with template time ---

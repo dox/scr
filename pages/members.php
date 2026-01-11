@@ -87,7 +87,7 @@ endforeach; ?>
 <?php
 $first = true; // reset for tab content
 foreach ($members as $type => $contents):
-?>
+	?>
 	<div class="tab-pane fade <?= $first ? 'show active' : '' ?>" 
 		 id="<?= htmlspecialchars($type) ?>" 
 		 role="tabpanel" 

@@ -1,6 +1,7 @@
 <?php
 $cleanPageName = htmlspecialchars($_SERVER['REQUEST_URI']);
 
+error_log("SECURITY ALERT: 404 from IP " . $_SERVER['REMOTE_ADDR']);
 $log->add("404 error: {$cleanPageName}", 'auth', Log::ERROR);
 ?>
 

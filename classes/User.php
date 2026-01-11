@@ -91,7 +91,7 @@ class User {
 	
 		$member = Member::fromUID($record['member_uid']);
 		if (!$member) {
-			error_log("Error: Failed login attempt for member UID: {$record['member_uid']} from {$_SERVER['REMOTE_ADDR']}");
+			error_log("SECURITY ALERT: Failed login attempt for member UID: {$record['member_uid']} from {$_SERVER['REMOTE_ADDR']}");
 			return false;
 		}
 	
@@ -106,7 +106,7 @@ class User {
 			$user = AdUser::whereEquals('samaccountname', $username)->firstOrFail();
 		} catch (\Exception $e) {
 			$log->add("LDAP user not found: {$username}", 'auth', Log::WARNING);
-			error_log("Error: Failed login attempt from {$_SERVER['REMOTE_ADDR']}");
+			error_log("SECURITY ALERT: Failed login attempt from {$_SERVER['REMOTE_ADDR']}");
 			$this->logout();
 			return false;
 		}
@@ -115,7 +115,7 @@ class User {
 	
 		if (!$connection->auth()->attempt($user->getDn(), $password)) {
 			$log->add("Invalid credentials for: {$username}", 'auth', Log::WARNING);
-			error_log("Error: Failed login attempt from {$_SERVER['REMOTE_ADDR']}");
+			error_log("SECURITY ALERT: Failed login attempt from {$_SERVER['REMOTE_ADDR']}");
 			$this->logout();
 			return false;
 		}
@@ -123,7 +123,7 @@ class User {
 		$member = Member::fromLDAP($user->samaccountname[0]);
 		if (!$member) {
 			$log->add("Member DB record missing: {$username}", 'auth', Log::WARNING);
-			error_log("Error: Failed login attempt from {$_SERVER['REMOTE_ADDR']}");
+			error_log("SECURITY ALERT: Failed login attempt from {$_SERVER['REMOTE_ADDR']}");
 			$this->logout();
 			return false;
 		}
@@ -191,7 +191,7 @@ class User {
 			return true;
 		}
 		
-		error_log("Error: Failed page access attempt from {$_SERVER['REMOTE_ADDR']}");
+		error_log("SECURITY ALERT: Failed page access attempt from {$_SERVER['REMOTE_ADDR']}");
 		die("You do not have access to this page.");
 	}
 

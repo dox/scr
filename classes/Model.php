@@ -11,7 +11,9 @@ abstract class Model {
 		$query = "SELECT * FROM " . static::$table . " WHERE id = ?";
 		$row = $this->db->fetch($query, [$id]);
 		
-		if ($row) return $row;
+		if ($row) {
+			return $row;
+		}
 	}
 	
 	public function getAll() {
@@ -580,7 +582,7 @@ class Terms extends Model {
 		$start = new DateTime($this->firstDayOfWeek()); 
 		$end   = (clone $start)->modify('+6 days 23:59:59'); // Saturday end
 	
-		return ($given >= $start && $given <= $end);
+		return $given >= $start && $given <= $end;
 	}
 }
 
@@ -759,7 +761,10 @@ class Wines extends Model {
 				}
 		
 				if (strtoupper($operator) === 'IN') {
-					if (!is_array($value)) $value = array_map('trim', explode(',', $value));
+					if (!is_array($value)) {
+						$value = array_map('trim', explode(',', $value));
+					}
+					
 					$value = array_map(fn($v) => "'" . addslashes($v) . "'", $value);
 					$conditions[] = "$key IN (" . implode(',', $value) . ")";
 				} elseif (strtoupper($operator) === 'LIKE') {
@@ -817,7 +822,10 @@ class Wines extends Model {
 				}
 	
 				if (strtoupper($operator) === 'IN') {
-					if (!is_array($value)) $value = array_map('trim', explode(',', $value));
+					if (!is_array($value)) {
+						$value = array_map('trim', explode(',', $value));
+					}
+					
 					$value = array_map(fn($v) => "'" . addslashes($v) . "'", $value);
 					$conditions[] = "$key IN (" . implode(',', $value) . ")";
 				} elseif (strtoupper($operator) === 'LIKE') {
@@ -873,7 +881,10 @@ class Wines extends Model {
 				}
 	
 				if (strtoupper($operator) === 'IN') {
-					if (!is_array($value)) $value = array_map('trim', explode(',', $value));
+					if (!is_array($value)) {
+						$value = array_map('trim', explode(',', $value));
+					}
+					
 					$value = array_map(fn($v) => "'" . addslashes($v) . "'", $value);
 					$conditions[] = "$key IN (" . implode(',', $value) . ")";
 				} elseif (strtoupper($operator) === 'LIKE') {
@@ -930,7 +941,10 @@ class Wines extends Model {
 				}
 		
 				if (strtoupper($operator) === 'IN') {
-					if (!is_array($value)) $value = array_map('trim', explode(',', $value));
+					if (!is_array($value)) {
+						$value = array_map('trim', explode(',', $value));
+					}
+					
 					$value = array_map(fn($v) => "'" . addslashes($v) . "'", $value);
 					$conditions[] = "$key IN (" . implode(',', $value) . ")";
 				} elseif ($operator === 'LIKE') {

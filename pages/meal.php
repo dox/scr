@@ -101,7 +101,11 @@ echo pageTitle(
 					value="<?= htmlspecialchars($meal->location) ?>" required>
 
 				<datalist id="locations">
-				  <?php foreach ($meals->locations() as $location) echo "<option value=\"{$location}\">"; ?>
+				  <?php
+				  foreach ($meals->locations() as $location){
+					  echo "<option value=\"{$location}\">";
+				  }
+				  ?>
 				</datalist>
 				<div class="invalid-feedback">Valid meal location is required.</div>
 			</div>
@@ -272,7 +276,11 @@ echo pageTitle(
 		</h4>
 
 		<ul class="list-group mb-3">
-			<?php foreach ($Bookings as $booking) echo $booking->displayMealListGroupItem(); ?>
+			<?php
+			foreach ($Bookings as $booking) {
+				echo $booking->displayMealListGroupItem();
+			}
+			?>
 		</ul>
 
 		<div class="text-end">
