@@ -1,7 +1,24 @@
 # Silence the directories
 Options -Indexes
 
-# If the server tries to be clever, stop it
 <IfModule mod_autoindex.c>
 	IndexIgnore *
+</IfModule>
+
+# Custom 404 page
+ErrorDocument 404 /index.php?page=404
+
+# Block sensitive files
+<FilesMatch "\.(env|ini|log|sql|bak|old|swp|yml|yaml|json|phps)$">
+	Require all denied
+</FilesMatch>
+
+# Charset
+AddDefaultCharset UTF-8
+
+# Security headers
+<IfModule mod_headers.c>
+	Header always set X-Content-Type-Options "nosniff"
+	Header always set X-Frame-Options "SAMEORIGIN"
+	Header always set Referrer-Policy "strict-origin-when-cross-origin"
 </IfModule>
