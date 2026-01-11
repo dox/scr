@@ -596,9 +596,14 @@ function liveSearchTransaction(inputId, resultsId, endpoint) {
 	});
 }
 
-document.addEventListener('click', function(e) {
+document.addEventListener('click', function (e) {
 	const heart = e.target.closest('.wine-heart');
 	if (!heart) return;
+
+	// If no wine UID, do nothing
+	if (!heart.dataset.wineUid) {
+		return;
+	}
 
 	e.preventDefault();
 	e.stopPropagation();
@@ -609,11 +614,14 @@ document.addEventListener('click', function(e) {
 	fetch('./ajax/wine_toggle_fav.php', {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify({ wine_uid: wineUid, list_uid: listUid })
+		body: JSON.stringify({
+			wine_uid: wineUid,
+			list_uid: listUid
+		})
 	})
 	.then(r => {
 		if (!r.ok) throw new Error('Network response was not ok');
-		return r.json();   // <-- this parses JSON from PHP
+		return r.json();
 	})
 	.then(data => {
 		if (!data.success) {
@@ -622,18 +630,25 @@ document.addEventListener('click', function(e) {
 		}
 
 		// Toggle heart icon
-		heart.querySelector('i').classList.toggle('bi-heart');
-		heart.querySelector('i').classList.toggle('bi-heart-fill');
+		const icon = heart.querySelector('i');
+		icon.classList.toggle('bi-heart');
+		icon.classList.toggle('bi-heart-fill');
 
-		// Update wine count badge if you want
-		const countBadge = heart.closest('.list-group-item').querySelector('.badge.bg-secondary');
-		if (countBadge) countBadge.textContent = `${data.wine_count} wine${data.wine_count !== 1 ? 's' : ''}`;
+		// Update wine count badge
+		const countBadge = heart.closest('.list-group-item')
+			?.querySelector('.badge.bg-secondary');
+
+		if (countBadge) {
+			countBadge.textContent =
+				`${data.wine_count} wine${data.wine_count !== 1 ? 's' : ''}`;
+		}
 	})
 	.catch(err => {
 		console.error('Fetch error:', err);
 		alert('Failed to toggle favorite. See console.');
 	});
 });
+
 
 // listen for meal template apply button
 document.addEventListener('DOMContentLoaded', function () {

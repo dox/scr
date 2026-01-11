@@ -32,14 +32,10 @@ echo pageTitle(
 		],
 		[
 			'permission' => 'wine',
-			'title' => 'Manage Lists',
+			'title' => 'Favourites/Lists',
 			'class' => '',
-			'event' => '',
-			'icon' => 'plus-circle',
-			'data' => [
-				'bs-toggle' => 'modal',
-				'bs-target' => '#deleteTermModal'
-			]
+			'event' => 'index.php?page=wine_lists',
+			'icon' => 'heart'
 		],
 		[
 			'permission' => 'wine',
@@ -48,17 +44,6 @@ echo pageTitle(
 			'event' => 'index.php?page=wine_transaction_add',
 			'icon' => 'receipt'
 		],
-		[
-			'permission' => 'wine',
-			'title' => 'Bulk Edit Wine',
-			'class' => '',
-			'event' => '',
-			'icon' => 'plus-circle',
-			'data' => [
-				'bs-toggle' => 'modal',
-				'bs-target' => '#deleteTermModal'
-			]
-		]
 	]
 );
 ?>

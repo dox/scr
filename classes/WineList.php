@@ -49,13 +49,20 @@ class WineList extends Model {
 		return $wines;
 	}
 	
-	public function listItem($currentWineUid = null): string {
-		// Determine if the current wine is in this list
-		$isInCurrentWine = $currentWineUid && in_array($currentWineUid, $this->wineUIDs());
-	
-		// Heart icon (empty or full) with data attributes
+	public function listItem(?int $currentWineUid = null): string {
+		$wineUIDs = array_map('intval', $this->wineUIDs());
+		
+		$isInCurrentWine = $currentWineUid !== null
+			&& in_array($currentWineUid, $wineUIDs, true);
+		
 		$heartClass = $isInCurrentWine ? 'bi-heart-fill' : 'bi-heart';
-		$heartHtml = '<span class="wine-heart" data-wine-uid="' . htmlspecialchars($currentWineUid) . '" data-list-uid="' . htmlspecialchars($this->uid) . '" style="cursor:pointer;">';
+		
+		$wineUidAttr = $currentWineUid !== null
+			? ' data-wine-uid="' . $currentWineUid . '"'
+			: '';
+		
+		$heartHtml  = '<span class="wine-heart"' . $wineUidAttr;
+		$heartHtml .= ' data-list-uid="' . (int)$this->uid . '" style="cursor:pointer;">';
 		$heartHtml .= '<i class="bi ' . $heartClass . ' text-danger me-2"></i>';
 		$heartHtml .= '</span>';
 	
@@ -68,26 +75,37 @@ class WineList extends Model {
 		}
 	
 		// Wine count badge
-		$wineCount = count($this->wineUIDs());
-		$countBadge = '<span class="badge bg-secondary ms-2">' . $wineCount . ' wine' . ($wineCount !== 1 ? 's' : '') . '</span>';
+		$wineUIDs   = $this->wineUIDs();
+		$wineCount = count($wineUIDs);
+		$countBadge = '<span class="badge bg-secondary ms-2">'
+			. $wineCount . ' wine' . ($wineCount !== 1 ? 's' : '')
+			. '</span>';
 	
 		// Last updated
-		$updatedText = $this->last_updated 
-			? '<small class="text-muted d-block">Last updated: ' . formatDate($this->last_updated, 'short') . ' ' . formatTime($this->last_updated) . '</small>' 
+		$updatedText = $this->last_updated
+			? '<small class="text-muted d-block">Last updated: '
+				. formatDate($this->last_updated, 'short') . ' '
+				. formatTime($this->last_updated)
+				. '</small>'
 			: '';
 	
-		// Build filter URL
-		$url = "index.php?page=wine_filter&conditions[0][field]=wine_wines.uid&conditions[0][operator]=IN&conditions[0][value]=" . implode(',', $this->wineUIDs());
+		// Build filter URL (guard against empty list)
+		$url = $wineUIDs
+			? 'index.php?page=wine_filter'
+				. '&conditions[0][field]=wine_wines.uid'
+				. '&conditions[0][operator]=IN'
+				. '&conditions[0][value]=' . implode(',', $wineUIDs)
+			: '#';
 	
 		// Render as <a> with Bootstrap classes
-		$html = '<a href="' . $url . '" class="list-group-item list-group-item-action d-flex justify-content-between align-items-start">';
+		$html  = '<a href="' . $url . '" class="list-group-item list-group-item-action d-flex justify-content-between align-items-start">';
 		$html .= '<div class="d-flex align-items-center">';
 		$html .= $heartHtml;
 		$html .= '<div>';
-		$html .= '<div class="fw-bold">' . htmlspecialchars($this->name) . '</div>';
+		$html .= '<div class="fw-bold">' . htmlspecialchars($this->name, ENT_QUOTES, 'UTF-8') . '</div>';
 		$html .= $updatedText;
 		$html .= '</div>';
-		$html .= '</div>'; // end left content
+		$html .= '</div>'; // left content
 		$html .= '<div class="text-end">';
 		$html .= $typeBadge . $countBadge;
 		$html .= '</div>';

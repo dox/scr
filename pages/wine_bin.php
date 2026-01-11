@@ -13,40 +13,52 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	}
 }
 
+$icons = [
+	[
+		'permission' => 'wine',
+		'title' => 'Edit Bin',
+		'class' => '',
+		'event' => '',
+		'icon' => 'pencil',
+		'data' => [
+			'bs-toggle' => 'modal',
+			'bs-target' => '#editBinModal'
+		]
+	],
+	[
+		'permission' => 'wine',
+		'title' => 'Favourites/Lists',
+		'class' => '',
+		'event' => 'index.php?page=wine_lists',
+		'icon' => 'heart'
+	],
+	[
+		'permission' => 'wine',
+		'title' => 'Add Wine',
+		'class' => '',
+		'event' => 'index.php?page=wine_wine_edit&cellar_uid=' . $cellar->uid . '&bin_uid=' . $bin->uid,
+		'icon' => 'plus-circle'
+	],
+	
+];
+
+if (count($bin->wines()) == 0) {
+	$icons[] = [
+		'permission' => 'wine',
+		'title' => 'Delete Bin',
+		'class' => 'text-danger',
+		'event' => '',
+		'icon' => 'trash3',
+		'data' => [
+			'bs-toggle' => 'modal',
+			'bs-target' => '#deleteBinModal'
+		]
+	];
+}
 echo pageTitle(
 	$bin->name,
 	$bin->section,
-	[
-		[
-			'permission' => 'wine',
-			'title' => 'Edit Bin',
-			'class' => '',
-			'event' => '',
-			'icon' => 'pencil',
-			'data' => [
-				'bs-toggle' => 'modal',
-				'bs-target' => '#editBinModal'
-			]
-		],
-		[
-			'permission' => 'wine',
-			'title' => 'Add Wine',
-			'class' => '',
-			'event' => 'index.php?page=wine_wine_edit&cellar_uid=' . $cellar->uid . '&bin_uid=' . $bin->uid,
-			'icon' => 'plus-circle'
-		],
-		[
-			'permission' => 'wine',
-			'title' => 'Delete Bin',
-			'class' => 'text-danger',
-			'event' => '',
-			'icon' => 'trash3',
-			'data' => [
-				'bs-toggle' => 'modal',
-				'bs-target' => '#deleteBinModal'
-			]
-		]
-	]
+	$icons
 );
 ?>
 
@@ -152,6 +164,7 @@ if (!empty($closedWines)) {
 					<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
 				</div>
 				<div class="modal-body">
+					<p>This will <strong>not</strong> delete any wine(s).</p>
 					<p><strong class="text-danger">This action cannot be undone.</strong></p>
 					<input type="text" class="form-control mb-3"
 						placeholder="Type 'DELETE' to confirm"

@@ -36,6 +36,13 @@ echo pageTitle(
 		],
 		[
 			'permission' => 'wine',
+			'title' => 'Favourites/Lists',
+			'class' => '',
+			'event' => 'index.php?page=wine_lists',
+			'icon' => 'heart'
+		],
+		[
+			'permission' => 'wine',
 			'title' => 'Add Bin',
 			'class' => '',
 			'event' => '',
