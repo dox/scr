@@ -69,6 +69,9 @@ $guestDietary     = $booking->guests()[$guestUID]['guest_dietary']      ?? [];
 						<?php
 						$dietaryOptions    = array_map('trim', explode(',', $settings->get('meal_dietary')));
 						$memberDietary     = array_map('trim', explode(',', $member->dietary ?? ''));
+						
+						asort($dietaryOptions);
+						
 						$memberDietary = $guestDietary;
 						$output = '';
 						

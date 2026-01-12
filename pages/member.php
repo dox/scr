@@ -253,6 +253,8 @@ echo pageTitle(
 							$dietaryOptions    = array_map('trim', explode(',', $settings->get('meal_dietary')));
 							$memberDietary     = array_map('trim', explode(',', $member->dietary ?? ''));
 							
+							asort($dietaryOptions);
+							
 							$output = '';
 							
 							foreach ($dietaryOptions as $index => $dietaryOption) {
