@@ -22,6 +22,9 @@ echo pageTitle(
 			'icon' => 'plus-circle'
 		],
 		[
+			'divider' => true
+		],
+		[
 			'permission' => 'everyone',
 			'title' => 'Delete',
 			'class' => 'text-danger',

@@ -242,6 +242,12 @@ function pageTitle(string $title, string $subtitle = '', array $actions = [], in
 		$html .= '<ul class="dropdown-menu">';
 
 		foreach ($actions as $action) {
+			// Dropdown divider
+			if (!empty($action['divider'])) {
+				$html .= '<li><hr class="dropdown-divider"></li>';
+				continue;
+			}
+			
 			if ($action['permission'] == "everyone" || $user->hasPermission($action['permission'])) {
 		
 				$titleAttr = htmlspecialchars($action['title']);

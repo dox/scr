@@ -44,6 +44,9 @@ $icons = [
 
 if (count($bin->wines()) == 0) {
 	$icons[] = [
+		'divider' => true
+	];
+	$icons[] = [
 		'permission' => 'wine',
 		'title' => 'Delete Bin',
 		'class' => 'text-danger',

@@ -52,6 +52,9 @@ echo pageTitle(
 			]
 		],
 		[
+			'divider' => true
+		],
+		[
 			'permission' => 'meals',
 			'title' => 'Delete Meal',
 			'class' => 'text-danger',

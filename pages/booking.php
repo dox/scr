@@ -40,6 +40,9 @@ if ($meal->canBook(true)) {
 		]
 	];
 	$icons[] = [
+		'divider' => true
+	];
+	$icons[] = [
 		'permission' => 'everyone',
 		'title' => 'Delete Booking',
 		'class' => 'text-danger',

@@ -60,6 +60,9 @@ echo pageTitle(
 			'icon' => 'receipt'
 		],
 		[
+			'divider' => true
+		],
+		[
 			'permission' => 'wine',
 			'title' => 'Delete Wine',
 			'class' => 'text-danger',
