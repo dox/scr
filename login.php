@@ -2,11 +2,6 @@
 <?php
 require_once "inc/autoload.php";
 
-// lockout if too many errors in logs
-if (countRecentWarnings() > LOCKOUT_COUNT) {
-	die("Too many failed attempts.  Temporary lockout in place.");
-}
-
 if ($user->isLoggedIn()) {
 	header("Location: index.php");
 }

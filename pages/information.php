@@ -5,7 +5,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	$settings->update($_POST, false); // don't log here
 	$log->add(
 		"Setting {$settingUID} ({$settingName}) updated",
-		null,
 		'setting',
 		Log::SUCCESS
 	);
