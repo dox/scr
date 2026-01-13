@@ -17,7 +17,7 @@ if (!$user->isLoggedIn()) {
 	<div class="container">
 		<?php
 		// Determine which page to show
-		$allowed = ['404','booking','guestlist','impersonate','index','information','logs','meal','meals','member','members','settings','term','terms','test','reports','wine_index','wine_cellar','wine_bin','wine_wine','wine_filter','wine_wine_edit','wine_transactions','wine_transaction','wine_transaction_add','wine_lists'];
+		$allowed = ['404','booking','guestlist','impersonate','index','information','logs','meal','meals','member','members','settings','term','terms','test','reports','wine_index','wine_cellar','wine_bin','wine_wine','wine_filter','wine_wine_edit','wine_transactions','wine_transaction','wine_transaction_add','wine_lists','wine_list_edit'];
 		
 		$page = $_GET['page'] ?? 'index';
 		

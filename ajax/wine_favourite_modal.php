@@ -18,7 +18,7 @@ $publicLists = $wines->lists([
 ?>
 
 <div class="modal-body">
-	<h2>My Lists</h2>
+	<h2><a href="index.php?page=wine_lists">My Lists</a></h2>
 	<?php
 	echo '<ul class="list-group mb-4">';
 	foreach ($memberLists as $list) {
@@ -27,7 +27,7 @@ $publicLists = $wines->lists([
 	echo '</ul>';
 	?>
 	
-	<h2>Public Lists</h2>
+	<h2><a href="index.php?page=wine_lists">Public Lists</a></h2>
 	<?php
 	echo '<ul class="list-group">';
 	foreach ($publicLists as $list) {

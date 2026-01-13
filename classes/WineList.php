@@ -1,12 +1,12 @@
 <?php
 class WineList extends Model {
 	public $uid;
-	private $name;
-	private $type;
-	private $member_ldap;
-	private $wine_uids;
-	private $notes;
-	private $last_updated;
+	public $name;
+	public $type;
+	public $member_ldap;
+	public $wine_uids;
+	public $notes;
+	public $last_updated;
 	
 	protected $db;
 	protected static string $table = 'wine_lists';
@@ -51,43 +51,31 @@ class WineList extends Model {
 	
 	public function listItem(?int $currentWineUid = null): string {
 		$wineUIDs = array_map('intval', $this->wineUIDs());
-		
+	
 		$isInCurrentWine = $currentWineUid !== null
 			&& in_array($currentWineUid, $wineUIDs, true);
-		
+	
 		$heartClass = $isInCurrentWine ? 'bi-heart-fill' : 'bi-heart';
-		
+	
 		$wineUidAttr = $currentWineUid !== null
 			? ' data-wine-uid="' . $currentWineUid . '"'
 			: '';
-		
+	
 		$heartHtml  = '<span class="wine-heart"' . $wineUidAttr;
 		$heartHtml .= ' data-list-uid="' . (int)$this->uid . '" style="cursor:pointer;">';
 		$heartHtml .= '<i class="bi ' . $heartClass . ' text-danger me-2"></i>';
 		$heartHtml .= '</span>';
 	
-		// Badge for list type
+		// List type badge
 		$typeBadge = '';
 		if ($this->type === 'public') {
 			$typeBadge = '<span class="badge bg-success ms-2">Public</span>';
-		} elseif ($this->type === 'mine') {
-			$typeBadge = '<span class="badge bg-primary ms-2">Mine</span>';
+		} elseif ($this->type === 'private') {
+			$typeBadge = '<span class="badge bg-primary ms-2">Private</span>';
 		}
 	
-		// Wine count badge
-		$wineUIDs   = $this->wineUIDs();
+		// Wine count
 		$wineCount = count($wineUIDs);
-		$countBadge = '<span class="badge bg-secondary ms-2">'
-			. $wineCount . ' wine' . ($wineCount !== 1 ? 's' : '')
-			. '</span>';
-	
-		// Last updated
-		$updatedText = $this->last_updated
-			? '<small class="text-muted d-block">Last updated: '
-				. formatDate($this->last_updated, 'short') . ' '
-				. formatTime($this->last_updated)
-				. '</small>'
-			: '';
 	
 		// Build filter URL (guard against empty list)
 		$url = $wineUIDs
@@ -97,21 +85,129 @@ class WineList extends Model {
 				. '&conditions[0][value]=' . implode(',', $wineUIDs)
 			: '#';
 	
-		// Render as <a> with Bootstrap classes
-		$html  = '<a href="' . $url . '" class="list-group-item list-group-item-action d-flex justify-content-between align-items-start">';
+		// Count badge AS LINK
+		$countBadge = $wineCount
+			? '<a href="' . $url . '" class="badge bg-secondary ms-2 text-decoration-none">'
+				. $wineCount . ' wine' . ($wineCount !== 1 ? 's' : '')
+				. '</a>'
+			: '<span class="badge bg-secondary ms-2">0 wines</span>';
+	
+		// Last updated
+		$updatedText = $this->last_updated
+			? '<small class="text-muted d-block">Last updated: '
+				. formatDate($this->last_updated, 'short') . ' '
+				. formatTime($this->last_updated)
+				. '</small>'
+			: '';
+	
+		// Render list item
+		$html  = '<div class="list-group-item d-flex justify-content-between align-items-start">';
 		$html .= '<div class="d-flex align-items-center">';
 		$html .= $heartHtml;
 		$html .= '<div>';
-		$html .= '<div class="fw-bold">' . htmlspecialchars($this->name, ENT_QUOTES, 'UTF-8') . '</div>';
+		$html .= '<div class="fw-bold">'
+			   . htmlspecialchars($this->name, ENT_QUOTES, 'UTF-8')
+			   . '</div>';
 		$html .= $updatedText;
 		$html .= '</div>';
-		$html .= '</div>'; // left content
+		$html .= '</div>'; // left
 		$html .= '<div class="text-end">';
 		$html .= $typeBadge . $countBadge;
 		$html .= '</div>';
-		$html .= '</a>';
+		$html .= '</div>';
 	
 		return $html;
+	}
+	
+	public function listItemEdit(): string {
+		$uid = (int) $this->uid;
+		$name = htmlspecialchars($this->name, ENT_QUOTES, 'UTF-8');
+	
+		// URLs
+		$filterUrl = 'index.php?page=wine_filter'
+				   . '&conditions[0][field]=wine_wines.uid'
+				   . '&conditions[0][operator]=IN'
+				   . '&conditions[0][value]=' . implode(',', $this->wineUIDs());
+		$editUrl = 'index.php?page=wine_list_edit&uid=' . $uid;
+	
+		// Wine count
+		$wineCount = count($this->wines());
+		$wineLabel = $wineCount === 1 ? 'wine' : 'wines';
+	
+		// Count badge as link
+		$countBadge = $wineCount
+			? '<a href="' . $filterUrl . '" class="badge bg-secondary ms-2 text-decoration-none">'
+				. $wineCount . ' ' . $wineLabel
+				. '</a>'
+			: '<span class="badge bg-secondary ms-2">0 wines</span>';
+	
+		// Last updated
+		$updatedText = $this->last_updated
+			? '<small class="text-muted d-block">Last updated: '
+				. formatDate($this->last_updated, 'short') . ' '
+				. formatTime($this->last_updated)
+				. '</small>'
+			: '';
+	
+		// Render output
+		$output = '';
+		$output .= '<div class="list-group-item d-flex justify-content-between align-items-start">';
+		$output .= '<div>';
+		$output .= '<div class="fw-bold">' . $name . '</div>';
+		$output .= $updatedText;
+		$output .= '</div>'; // left content
+	
+		$output .= '<div class="d-flex align-items-center gap-2">';
+		$output .= $countBadge;
+		$output .= '<a href="' . $editUrl . '" class="btn btn-sm btn-link" title="Edit wine list">';
+		$output .= '<i class="bi bi-pencil"></i>';
+		$output .= '</a>';
+		$output .= '<button type="button" class="btn btn-sm btn-link text-danger js-delete-wine-list" data-list-uid="' . $uid . '" title="Delete wine list">';
+		$output .= '<i class="bi bi-trash"></i>';
+		$output .= '</button>';
+		$output .= '</div>'; // right content
+	
+		$output .= '</div>'; // list-group-item
+	
+		return $output;
+	}
+	
+	public function update(array $postData) {
+		global $db;
+	
+		// Map normal text/select fields
+		$fields = [
+			'name'      => $postData['name'] ?? null,
+			'type'  => $postData['type'] ?? null,
+			'notes'   => $postData['notes'] ?? null
+		];
+	
+		// Send to database update
+		$updatedRows = $db->update(
+			static::$table,
+			$fields,
+			['uid' => $this->uid],
+			'logs'
+		);
+		
+		toast('List Updated', 'List sucesfully updated', 'text-success');
+	
+		return $updatedRows;
+	}
+	
+	public function delete() {
+		global $db;
+		if (!isset($this->uid)) {
+			return false;
+		}
+		
+		$db->delete(
+			static::$table,
+			['uid' => $this->uid],
+			'logs'
+		);
+		
+		toast('List Deleted', 'List sucesfully deleted', 'text-success');
 	}
 	
 	/**
