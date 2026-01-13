@@ -4,6 +4,15 @@ $user->pageCheck('wine');
 $listUID = filter_input(INPUT_GET, 'uid', FILTER_SANITIZE_NUMBER_INT);
 $list = new WineList($listUID);
 
+if (!$user->hasPermission('global_admin')) {
+	// Not a global_admin → check private list ownership
+	if ($list->type === 'private' && $list->member_ldap !== $user->getUsername()) {
+		// Block access
+		require_once "404.php";
+		die("Unknown or unavailable wine list");
+	}
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	$list->update($_POST);
 	$list = new WineList($listUID);

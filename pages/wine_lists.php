@@ -27,7 +27,7 @@ $publicLists = $wines->lists([
 
 echo pageTitle(
 	'Wine Favourites/Lists',
-	'Functionality coming soon...',
+	'Add/Edit/Delete wine lists.',
 	[
 		[
 			'permission' => 'wine',

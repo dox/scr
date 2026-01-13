@@ -71,6 +71,7 @@ $settings = new Settings();
 // Handle impersonation
 if (!empty($_POST['impersonate'])) {
 	$targetId = $_POST['impersonate'];
+	$maintainAdminAccess = $_POST['maintainAdminAccess'] ?? 0;
 
 	// Ensure targetId is valid
 	if ($targetId && is_numeric($targetId)) {
@@ -85,7 +86,7 @@ if (!empty($_POST['impersonate'])) {
 
 		// Set impersonated session
 		$_SESSION['impersonating'] = true;
-		setUserSessionFromMember($member, $_POST['maintainAdminAccess'] ? $existingPermissions : null);
+		setUserSessionFromMember($member, $maintainAdminAccess ? $existingPermissions : null);
 
 		// Refresh User object
 		$user = new User();

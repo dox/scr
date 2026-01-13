@@ -153,7 +153,7 @@ class WineList extends Model {
 		$output = '';
 		$output .= '<div class="list-group-item d-flex justify-content-between align-items-start">';
 		$output .= '<div>';
-		$output .= '<div class="fw-bold">' . $name . '</div>';
+		$output .= '<div class="fw-bold"><a href="' . $editUrl . '">' . $name . '</a></div>';
 		$output .= $updatedText;
 		$output .= '</div>'; // left content
 	
@@ -162,9 +162,9 @@ class WineList extends Model {
 		$output .= '<a href="' . $editUrl . '" class="btn btn-sm btn-link" title="Edit wine list">';
 		$output .= '<i class="bi bi-pencil"></i>';
 		$output .= '</a>';
-		$output .= '<button type="button" class="btn btn-sm btn-link text-danger js-delete-wine-list" data-list-uid="' . $uid . '" title="Delete wine list">';
-		$output .= '<i class="bi bi-trash"></i>';
-		$output .= '</button>';
+		//$output .= '<button type="button" class="btn btn-sm btn-link text-danger js-delete-wine-list" data-list-uid="' . $uid . '" title="Delete wine list">';
+		//$output .= '<i class="bi bi-trash"></i>';
+		//$output .= '</button>';
 		$output .= '</div>'; // right content
 	
 		$output .= '</div>'; // list-group-item
