@@ -40,7 +40,7 @@ function logSecurity404(string $path, string $reason = 'not-found'): void {
 	$cleanPageName = htmlspecialchars($path);
 	
 	error_log(sprintf(
-		'SECURITY ALERT: APP404 path=%s reason=%s',
+		'SECURITY ALERT: 404 path=%s reason=%s',
 		$path,
 		$reason
 	));
