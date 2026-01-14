@@ -338,7 +338,7 @@ class Meal extends Model {
 		}
 	
 		$output  = '<div class="d-flex align-items-center justify-content-between">';
-		$output .= '<span>Bookings</span>';
+		$output .= '<span>Diners</span>';
 		$output .= '<span class="booking-count" data-capacity="' . $capacity . '">';
 		$output .= $booked . ' of ' . $capacity;
 		$output .= '</span>';

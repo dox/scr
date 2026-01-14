@@ -301,6 +301,7 @@ echo pageTitle(
 			</div>
 			<div class="modal-body">
 				<p><span class="text-danger"><strong>WARNING!</strong></span> Are you sure you want to delete this booking?</p>
+				<p>This will also delete any guests you have booked for this meal.</p>
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-link text-muted" data-bs-dismiss="modal">Close</button>

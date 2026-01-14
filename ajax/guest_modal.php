@@ -111,7 +111,7 @@ $guestDietary     = $booking->guests()[$guestUID]['guest_dietary']      ?? [];
 		<div class="mb-3">
 			<label class="form-label">Guest Charge-To</label>
 			<select class="form-select" id="guest_charge_to" required>
-				<?php foreach (explode(',', $settings->get('booking_charge-to')) as $charge_to):
+				<?php foreach (explode(',', $settings->get('booking_guest_charge-to')) as $charge_to):
 					$charge_to = trim($charge_to); ?>
 					<option value="<?= htmlspecialchars($charge_to); ?>"
 						<?= $charge_to === $guestChargeTo ? 'selected' : ''; ?>>
