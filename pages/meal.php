@@ -38,7 +38,7 @@ echo pageTitle(
 			'title' => 'Guest List',
 			'class' => '',
 			'event' => 'index.php?page=guestlist&uid=' . $meal->uid,
-			'icon' => 'calendar2-week'
+			'icon' => 'card-list'
 		],
 		[
 			'permission' => 'meals',
@@ -272,7 +272,7 @@ echo pageTitle(
 	<div class="col-md-5 col-lg-4">
 		<?php $Bookings = $meal->bookings(); ?>
 		<h4 class="d-flex justify-content-between align-items-center mb-3">
-		  <span>Bookings</span>
+		  <span>Diners</span>
 		  <span class="badge <?= ($meal->totalDiners() > $meal->scr_capacity) ? 'bg-danger' : 'bg-secondary'; ?> rounded-pill">
 			<?= $meal->totalDiners(); ?>
 		  </span>

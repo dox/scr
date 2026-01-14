@@ -20,8 +20,8 @@ echo pageTitle(
 				$totalBookings = count($meal->bookings());
 				$guests = $totalDiners - $totalBookings;
 				?>
-				<div class="card-title">SCR Diners</div>
-				<div class="card-text <?= ($meal->totalDiners() > $meal->scr_capacity) ? 'text-danger' : 'text-muted"'; ?>"><h4><?= $totalDiners . " (" . $totalBookings . " +" . $guests . " guests)" ?></h4></div>
+				<div class="card-title">Diners</div>
+				<div class="card-text <?= ($meal->totalDiners() > $meal->scr_capacity) ? 'text-danger' : 'text-muted"'; ?>"><h4><?= $totalDiners . " (" . $totalBookings . " +" . $guests . autoPluralise(" guest)", " guests)", $guests) ?></h4></div>
 			</div>
 		</div>
 	</div>
@@ -31,7 +31,7 @@ echo pageTitle(
 				<?php
 				$totalDessertDiners = $meal->totalDessertDiners();
 				?>
-				<div class="card-title">SCR Dessert</div>
+				<div class="card-title">Dessert</div>
 				<div class="card-text <?= ($meal->totalDessertDiners() > $meal->scr_dessert_capacity) ? 'text-danger' : 'text-muted"'; ?>"><h4><?= $totalDessertDiners ?></h4></div>
 			</div>
 		</div>
