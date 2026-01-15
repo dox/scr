@@ -5,6 +5,10 @@ Options -Indexes
 	IndexIgnore *
 </IfModule>
 
+# Apple touch icon redirects
+Redirect 301 /apple-touch-icon.png /assets/favicon/apple-touch-icon.png
+Redirect 301 /apple-touch-icon-precomposed.png /assets/favicon/apple-touch-icon.png
+
 # Custom 404 page
 ErrorDocument 404 /index.php?page=404
 
