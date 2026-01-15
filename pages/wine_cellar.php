@@ -249,7 +249,7 @@ endforeach; ?>
 								<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
 										data-bs-target="#photoSelect">Photograph</button>
 							</h2>
-							<div class="accordion-collapse collapse">
+							<div id="photoSelect" class="accordion-collapse collapse">
 								<div class="accordion-body">
 									<div class="row">
 										<?php foreach ($meals->cardImages() as $cardImage): ?>
