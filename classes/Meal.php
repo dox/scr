@@ -234,7 +234,7 @@ class Meal extends Model {
 	}
 	
 	public function photographURL(): string {
-		$urlPath  = '/new/uploads/meal_cards/';
+		$urlPath  = '/uploads/meal_cards/';
 		$filePath = $_SERVER['DOCUMENT_ROOT'] . $urlPath;
 	
 		// Choose the candidate filename (null or empty means default)
