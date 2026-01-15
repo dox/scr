@@ -94,21 +94,36 @@ $meal = new Meal($mealUID);
 		</div>
 	</div>
 	
-	<?php if ($meal->domus || $meal->allowed_wine || $meal->allowed_dessert): ?>
-	<div class="d-flex justify-content-around align-items-center border-top pt-3 mt-4 small">
-		<div class="text-center <?= ($meal->charge_to == "Domus") ? "" : "opacity-0" ?>">
-			<div><i class="bi bi-mortarboard fs-4"></i></div>
-			<div class="text-uppercase fw-semibold">Domus</div>
-		</div>
+	<?php
+	// Prepare icons
+	$icons = [
+		'Domus' => [
+			'show' => $meal->charge_to == "Domus",
+			'icon' => '<i class="bi bi-mortarboard icon-size"></i>'
+		],
+		'Wine' => [
+			'show' => $meal->allowed_wine == 1,
+			'icon' => '<svg class="icon-size" aria-hidden="true"><use xlink:href="assets/images/icons.svg#wine-glass"></use></svg>'
+		],
+		'Dessert' => [
+			'show' => $meal->allowed_dessert == 1,
+			'icon' => '<i class="bi bi-cookie icon-size"></i>'
+		]
+	];
 	
-		<div class="text-center <?= ($meal->allowed_wine == 1) ? "" : "opacity-0" ?>">
-			<div><svg class="bi fs-4" width="1em" height="1em" aria-hidden="true"><use xlink:href="assets/images/icons.svg#wine-glass"></use></svg></div>
-			<div class="text-uppercase fw-semibold">Wine</div>
-		</div>
+	// Filter only visible icons
+	$visibleIcons = array_filter($icons, fn($i) => $i['show']);
+	?>
 	
-		<div class="text-center <?= ($meal->allowed_dessert == 1) ? "" : "opacity-0" ?>">
-			<div><i class="bi bi-cookie fs-4"></i></div>
-			<div class="text-uppercase fw-semibold">Dessert</div>
+	<?php if ($visibleIcons): ?>
+	<div class="border-top pt-3 mt-4 small">
+		<div class="row text-center justify-content-center gx-4">
+			<?php foreach ($visibleIcons as $label => $data): ?>
+				<div class="col-auto">
+					<div><?= $data['icon'] ?></div>
+					<div class="text-uppercase fw-semibold mt-1"><?= $label ?></div>
+				</div>
+			<?php endforeach; ?>
 		</div>
 	</div>
 	<?php endif; ?>
@@ -117,3 +132,15 @@ $meal = new Meal($mealUID);
 <div class="modal-footer">
 	<button type="button" class="btn btn-link text-muted" data-bs-dismiss="modal">Close</button>
 </div>
+<style>
+/* Make all icons exactly the same size */
+.icon-size {
+	font-size: 1.5rem;  /* same as fs-4 */
+	width: 1.5em;
+	height: 1.5em;
+	display: inline-block;
+}
+svg.icon-size {
+	vertical-align: middle; /* align with <i> */
+}
+</style>
