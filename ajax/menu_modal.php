@@ -133,14 +133,15 @@ $meal = new Meal($mealUID);
 	<button type="button" class="btn btn-link text-muted" data-bs-dismiss="modal">Close</button>
 </div>
 <style>
-/* Make all icons exactly the same size */
+/* Ensure all icons are the same size and align nicely */
 .icon-size {
-	font-size: 1.5rem;  /* same as fs-4 */
+	font-size: 1.5rem; /* same as fs-4 */
 	width: 1.5em;
 	height: 1.5em;
 	display: inline-block;
+	vertical-align: middle;
 }
 svg.icon-size {
-	vertical-align: middle; /* align with <i> */
+	fill: currentColor; /* matches text color */
 }
 </style>
