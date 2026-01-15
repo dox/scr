@@ -1,6 +1,7 @@
 
 .remote-sync.json
-config.php
+config/config.php
+uploads/
 .DS_Store
 .nova/
 .nova/Publishing/HYDROGEN2.json
