@@ -37,93 +37,77 @@ $meal = new Meal($mealUID);
 		
 		<div class="tab-pane fade" id="diners-tab-pane" role="tabpanel" aria-labelledby="diners-tab" tabindex="0">
 			<?php
-			$output = '<ul class="my-3">';
+			echo '<ul class="my-3">';
 			
 			foreach ($meal->bookings() as $guestListBooking) {
 				$member = Member::fromLDAP($guestListBooking->member_ldap);
 			
-				$output .= '<li>';
-				
-				// Person's name
-				$output .= $member->public_displayName() . ' ';
+				echo '<li>';
+				echo $member->public_displayName() . ' ';
 			
-				// Person's wine/dessert
-				$wineDessert = [];
-				if ($user->hasPermission('bookings') && $guestListBooking->wineChoice() != "None") {
-					$wineDessert[] = '<svg class="bi" width="1em" height="1em" aria-hidden="true"><use xlink:href="assets/images/icons.svg#wine-glass"></use></svg>';
-				}
-				if ($guestListBooking->dessertChoice() == "1") {
-					$wineDessert[] = '<i class="bi bi-cookie"></i>';
-				}
-				if (!empty($wineDessert)) {
-					$output .=  implode(' ', $wineDessert);
+				// Member wine/dessert
+				if ($user->hasPermission('bookings')) {
+					echo renderWineDessertIcons($guestListBooking->wineChoice(), $guestListBooking->dessertChoice());
 				}
 			
 				// Guests
 				$guests = $guestListBooking->guests();
 				if (!empty($guests)) {
-					$output .= '<ul>';
+					echo '<ul>';
 					foreach ($guests as $guest) {
+						$guestName = htmlspecialchars($guest['guest_name'] ?? '');
+						
 						if (!$user->hasPermission("members") && $member->opt_in != 1) {
-							$guest['guest_name'] = 'Hidden';
-						}
-						
-						$output .= '<li>';
-						$output .= htmlspecialchars($guest['guest_name'] ?? '') . ' ';
-						
-						// Guest wine/dessert
-						$guestWineDessert = [];
-						if ($guestListBooking->wineChoice() != "None" && !empty($guest['guest_wine'])) $guestWineDessert[] = '<svg class="bi" width="1em" height="1em" aria-hidden="true"><use xlink:href="assets/images/icons.svg#wine-glass"></use></svg>';
-						if ($guestListBooking->dessertChoice() == "1") $guestWineDessert[] = '<i class="bi bi-cookie"></i>';
-						if (!empty($guestWineDessert)) {
-							$output .= implode(' ', $guestWineDessert);
+							$guestName = 'Hidden';
 						}
 			
-						$output .= '</li>';
+						echo '<li>';
+						echo $guestName . ' ';
+			
+						// Guest wine/dessert
+						echo renderWineDessertIcons(
+							$guest['guest_wine_choice'] ?? null,
+							$guestListBooking->dessertChoice(),
+							$meal->allowed_wine == "1"
+						);
+			
+						echo '</li>';
 					}
-					$output .= '</ul>';
+					echo '</ul>';
 				}
 			
-				$output .= '</li>';
+				echo '</li>';
 			}
 			
-			$output .= '</ul>';
+			echo '</ul>';
 			
-			echo $output;
 			?>
 		</div>
 	</div>
 	
 	<?php
-	// Prepare icons
-	$icons = [
-		'Domus' => [
-			'show' => $meal->charge_to == "Domus",
-			'icon' => '<i class="bi bi-mortarboard icon-size"></i>'
-		],
-		'Wine' => [
-			'show' => $meal->allowed_wine == 1,
-			'icon' => '<svg class="icon-size" aria-hidden="true"><use xlink:href="assets/images/icons.svg#wine-glass"></use></svg>'
-		],
-		'Dessert' => [
-			'show' => $meal->allowed_dessert == 1,
-			'icon' => '<i class="bi bi-cookie icon-size"></i>'
-		]
-	];
+	$features = [];
 	
-	// Filter only visible icons
-	$visibleIcons = array_filter($icons, fn($i) => $i['show']);
+	// Prepare visible features
+	if ($meal->charge_to == "Domus") {
+		$features[] = 'Domus';
+	}
+	if ($meal->allowed_wine == 1) {
+		$features[] = 'Wine';
+	}
+	if ($meal->allowed_dessert == 1) {
+		$features[] = 'Dessert';
+	}
 	?>
 	
-	<?php if ($visibleIcons): ?>
+	<?php if (!empty($features)): ?>
 	<div class="border-top pt-3 mt-4 small">
-		<div class="row text-center justify-content-center gx-4">
-			<?php foreach ($visibleIcons as $label => $data): ?>
-				<div class="col-auto">
-					<div><?= $data['icon'] ?></div>
-					<div class="text-uppercase fw-semibold mt-1"><?= $label ?></div>
-				</div>
+		<div class="d-flex flex-wrap justify-content-center gap-2">
+			<h3>
+			<?php foreach ($features as $feature): ?>
+				<span class="badge badge-lg bg-secondary text-uppercase fw-semibold"><i class="bi bi-check2-circle me-2"></i> <?= $feature ?></span>
 			<?php endforeach; ?>
+			</h3>
 		</div>
 	</div>
 	<?php endif; ?>
@@ -132,16 +116,3 @@ $meal = new Meal($mealUID);
 <div class="modal-footer">
 	<button type="button" class="btn btn-link text-muted" data-bs-dismiss="modal">Close</button>
 </div>
-<style>
-/* Ensure all icons are the same size and align nicely */
-.icon-size {
-	font-size: 1.5rem; /* same as fs-4 */
-	width: 1.5em;
-	height: 1.5em;
-	display: inline-block;
-	vertical-align: middle;
-}
-svg.icon-size {
-	fill: currentColor; /* matches text color */
-}
-</style>

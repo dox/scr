@@ -66,59 +66,49 @@ echo pageTitle(
 	<div class="col-md-7 col-lg-8 order-2 order-md-1">
 		<h4>Diners</h4>
 		<?php
-		$output = '<ul>';
+		echo '<ul>';
 		
 		foreach ($meal->bookings() as $guestListBooking) {
 			$member = Member::fromLDAP($guestListBooking->member_ldap);
 		
-			$output .= '<li>';
-			
-			// Person's name
-			$output .= $member->public_displayName() . ' ';
+			echo '<li>';
+			echo $member->public_displayName() . ' ';
 		
-			// Person's wine/dessert
-			$wineDessert = [];
-			if ($user->hasPermission('bookings') && $guestListBooking->wineChoice() != "None") {
-				$wineDessert[] = '<svg class="bi" width="1em" height="1em" aria-hidden="true"><use xlink:href="assets/images/icons.svg#wine-glass"></use></svg>';
-			}
-			if ($guestListBooking->dessertChoice() == "1") {
-				$wineDessert[] = '<i class="bi bi-cookie"></i>';
-			}
-			if (!empty($wineDessert)) {
-				$output .=  implode(' ', $wineDessert);
+			// Member wine/dessert
+			if ($user->hasPermission('bookings')) {
+				echo renderWineDessertIcons($guestListBooking->wineChoice(), $guestListBooking->dessertChoice());
 			}
 		
 			// Guests
 			$guests = $guestListBooking->guests();
 			if (!empty($guests)) {
-				$output .= '<ul>';
+				echo '<ul>';
 				foreach ($guests as $guest) {
+					$guestName = htmlspecialchars($guest['guest_name'] ?? '');
+					
 					if (!$user->hasPermission("members") && $member->opt_in != 1) {
-						$guest['guest_name'] = 'Hidden';
-					}
-					
-					$output .= '<li>';
-					$output .= htmlspecialchars($guest['guest_name'] ?? '') . ' ';
-					
-					// Guest wine/dessert
-					$guestWineDessert = [];
-					if ($guestListBooking->wineChoice() != "None" && !empty($guest['guest_wine'])) $guestWineDessert[] = '<svg class="bi" width="1em" height="1em" aria-hidden="true"><use xlink:href="assets/images/icons.svg#wine-glass"></use></svg>';
-					if ($guestListBooking->dessertChoice() == "1") $guestWineDessert[] = '<i class="bi bi-cookie"></i>';
-					if (!empty($guestWineDessert)) {
-						$output .= implode(' ', $guestWineDessert);
+						$guestName = 'Hidden';
 					}
 		
-					$output .= '</li>';
+					echo '<li>';
+					echo $guestName . ' ';
+		
+					// Guest wine/dessert
+					echo renderWineDessertIcons(
+						$guest['guest_wine_choice'] ?? null,
+						$guestListBooking->dessertChoice(),
+						$meal->allowed_wine == "1"
+					);
+		
+					echo '</li>';
 				}
-				$output .= '</ul>';
+				echo '</ul>';
 			}
 		
-			$output .= '</li>';
+			echo '</li>';
 		}
 		
-		$output .= '</ul>';
-		
-		echo $output;
+		echo '</ul>';
 		?>
 		
 		<div class="card mb-3">

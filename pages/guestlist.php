@@ -115,7 +115,7 @@ echo pageTitle(
 				}
 			  $output .= "</td>";
 			  $output .= "<td>";
-			  	if ($booking->wineChoice() != "None") {
+			  	if ($meal->allowed_wine == "1") {
 					  if (!empty($guest['guest_wine_choice']) && $guest['guest_wine_choice'] !== 'None') {
 						  $output .= "
 						  <svg class=\"bi\" width=\"1em\" height=\"1em\" aria-hidden=\"true\"
