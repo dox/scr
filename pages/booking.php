@@ -64,7 +64,7 @@ echo pageTitle(
 
 <div class="row">
 	<div class="col-md-7 col-lg-8 order-2 order-md-1">
-		<h4>Guest List</h4>
+		<h4>Diners</h4>
 		<?php
 		$output = '<ul>';
 		

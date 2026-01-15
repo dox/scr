@@ -252,16 +252,12 @@ class Meal extends Model {
 	}
 	
 	public function menuTooltip() {
-		$output = "";
-		
-		if (!empty($this->menu)) {
-			$output  = "<a href=\"javascript:void(0)\" class=\"load-remote-menu\"
-			data-url=\"./ajax/menu_modal.php?mealUID=" . $this->uid . "\"
-			data-bs-toggle=\"modal\"
-			data-bs-target=\"#menuModal\">";
-			$output .= "<i class=\"bi bi-info-circle\"></i>";
-			$output .= "</a>";
-		}
+		$output  = "<a href=\"javascript:void(0)\" class=\"load-remote-menu\"
+		data-url=\"./ajax/menu_modal.php?mealUID=" . $this->uid . "\"
+		data-bs-toggle=\"modal\"
+		data-bs-target=\"#menuModal\">";
+		$output .= "<i class=\"bi bi-info-circle\"></i>";
+		$output .= "</a>";
 		
 		return $output;
 	}
