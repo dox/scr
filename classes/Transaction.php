@@ -66,7 +66,7 @@ class Transaction extends Model {
 		if ($this->isLinked()) {
 			$total = 0;
 			foreach ($this->linkedTransactions() as $transaction) {
-				$total += $this->value();
+				$total += $transaction->value();
 			}
 		} else {
 			$total = $this->value();
