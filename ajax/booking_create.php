@@ -69,7 +69,7 @@ try {
 			$message .= "</ul>";
 		
 			$message .= "<p><em>Please note: Changes to this booking can be made no later than "
-					  . formatDate($meal->date_cutoff) . " at " . formatTime($meal->date_meal)
+					  . formatDate($meal->date_cutoff) . " at " . formatTime($meal->date_cutoff)
 					  . ".</em></p>";
 		
 			if (!empty($meal->menu)) {
