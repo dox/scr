@@ -4,7 +4,7 @@
 require_once "inc/autoload.php";
 require_once "inc/zapcallib.php";
 
-if (isset($_GET['hash'])) {
+if (!empty($_GET['hash'])) {
 	$bookingsClass = new bookings();
 	
 	$hash = filter_input(
