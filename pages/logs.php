@@ -15,7 +15,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['logs_search'])) {
 		FROM logs
 		WHERE description LIKE ?
 		   OR username    LIKE ?
-		ORDER BY date DESC";
+		ORDER BY date DESC
+		LIMIT 500";
 
 	$like = '%' . $searchTerm . '%';
 
