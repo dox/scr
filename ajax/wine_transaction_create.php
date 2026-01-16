@@ -38,6 +38,7 @@ try {
 			: -abs($adjustment);
 
 		$wine = new Wine($wineUID);
+		$bin = new Bin($wine->bin_uid);
 
 		$transaction_fields = [
 			'date'              => date('c'),
@@ -46,6 +47,7 @@ try {
 			'type'              => 'Stock Adjustment',
 			'name'              => 'Stock Adjustment',
 			'wine_uid'          => $wine->uid,
+			'cellar_uid'        => $bin->cellar_uid,
 			'bottles'           => $qty,
 			'price_per_bottle'  => 0,
 			'description'       => $_POST['notes'] ?? null,
@@ -83,6 +85,7 @@ try {
 	foreach ($wineUIDs as $wineUID) {
 
 		$wine = new Wine($wineUID);
+		$bin = new Bin($wine->bin_uid);
 
 		$qty = isset($_POST['bottles'][$wine->uid])
 			? -(int)abs($_POST['bottles'][$wine->uid])
@@ -100,6 +103,7 @@ try {
 			'username'          => $user->getUsername(),
 			'type'              => 'Transaction',
 			'wine_uid'          => $wine->uid,
+			'cellar_uid'        => $bin->cellar_uid,
 			'bottles'           => $qty,
 			'price_per_bottle'  => $price,
 			'name'              => $_POST['name'] ?? null,
