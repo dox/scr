@@ -54,6 +54,17 @@ echo pageTitle(
 		],
 		[
 			'permission' => 'wine',
+			'title' => 'Stock Adjustment',
+			'class' => '',
+			'event' => '',
+			'icon' => 'arrow-down-up',
+			'data' => [
+				'bs-toggle' => 'modal',
+				'bs-target' => '#stockAdjustmentModal'
+			]
+		],
+		[
+			'permission' => 'wine',
 			'title' => 'Add Transaction',
 			'class' => '',
 			'event' => 'index.php?page=wine_transaction_add&wine_uid=' . $wine->uid,
@@ -315,8 +326,56 @@ echo $wine->statusBanner();
   </div>
 </div>
 
+<!-- Stock Adjustment Modal -->
+<div class="modal fade" id="stockAdjustmentModal" tabindex="-1" aria-hidden="true">
+	<form id="wine_invoice_form">
+		<input type="hidden" name="transaction_type" value="stock_adjustment">
+		<input type="hidden" name="wine_uid" value="<?= $wine->uid ?>">
+	
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Stock Adjustment</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+				</div>
+	
+				<div class="modal-body">
+					<p>Create an increase/decrease transaction to adjust the total stock quantity of this wine.</p>
+	
+					<div class="mb-3">
+						<label class="form-label">Adjustment Type</label>
+						<select class="form-select" name="type" required>
+							<option value="decrease" selected>(-) Decrease</option>
+							<option value="increase">(+) Increase</option>
+						</select>
+					</div>
+	
+					<div class="mb-3">
+						<label class="form-label">Adjustment Quantity</label>
+						<input type="number" class="form-control" name="adjustment" step="1" required>
+					</div>
+	
+					<div class="mb-3">
+						<label class="form-label">Notes</label>
+						<textarea class="form-control" rows="4" name="notes"></textarea>
+					</div>
+				</div>
+	
+				<div class="modal-footer">
+					<button type="button" class="btn btn-link text-muted" data-bs-dismiss="modal">Close</button>
+					<button
+						type="submit"
+						class="btn btn-primary transaction-create-btn"
+						id="adjustment_button">
+						Adjust
+					</button>
+				</div>
+			</div>
+		</div>
+	</form>
+</div>
 
-
+<!-- Wine Fav Modal -->
 <div class="modal fade" id="wineFavouriteModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog">
 	<div class="modal-content">

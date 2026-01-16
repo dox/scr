@@ -842,7 +842,7 @@ class Wines extends Model {
 			$sql .= " WHERE " . implode(' AND ', $conditions);
 		}
 	
-		$sql .= " ORDER BY date_posted DESC";
+		$sql .= " ORDER BY date_posted DESC, date DESC";
 	
 		$rows = $db->query($sql)->fetchAll();
 	

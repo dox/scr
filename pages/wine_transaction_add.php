@@ -73,7 +73,7 @@ echo pageTitle(
 		</div>
 	</div>
 	
-	<button type="submit" class="btn btn-primary w-100">Submit Transaction</button>
+	<button type="submit" class="btn btn-primary transaction-create-btn w-100" id="create_button">Submit Transaction</button>
 </div>
 </form>
 
@@ -200,39 +200,6 @@ new tempusDominus.TempusDominus(
 	document.getElementById('date_posted'),
 	dateTimeOptions
 );
-</script>
-
-<script>
-// ----------------------------
-// AJAX form submission
-// ----------------------------
-const wineForm = document.getElementById('wine_invoice_form');
-
-wineForm.addEventListener('submit', async function(e) {
-	e.preventDefault();
-
-	const formData = new FormData(wineForm);
-
-	try {
-		const response = await fetch('./ajax/wine_transaction_create.php', {
-			method: 'POST',
-			body: formData
-		});
-
-		const result = await response.json();
-
-		if (result.success && result.transaction_uid) {
-			// Redirect to the transaction page
-			window.location.href = `index.php?page=wine_transaction&uid=${result.transaction_uid}`;
-		} else {
-			alert('Error: ' + (result.message || 'Unknown error.'));
-		}
-
-	} catch (err) {
-		console.error(err);
-		alert('Server error. Please try again.');
-	}
-});
 
 // Pre-populate wine if passed via URL
 <?php if ($prepopulateWine): ?>

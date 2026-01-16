@@ -364,6 +364,51 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 document.addEventListener('DOMContentLoaded', function () {
+
+	const wineForm = document.getElementById('wine_invoice_form');
+	if (!wineForm) return;
+
+	document.body.addEventListener('click', async function (e) {
+		const button = e.target.closest('.transaction-create-btn');
+		if (!button) return;
+
+		e.preventDefault();
+
+		const originalText = button.textContent;
+
+		// Disable button + show spinner
+		button.disabled = true;
+		button.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Creating…`;
+
+		const formData = new FormData(wineForm);
+
+		try {
+			const response = await fetch('./ajax/wine_transaction_create.php', {
+				method: 'POST',
+				body: formData
+			});
+
+			const result = await response.json();
+
+			if (result.success && result.transaction_uid) {
+				// Preserve original behaviour
+				window.location.href = `index.php?page=wine_transaction&uid=${result.transaction_uid}`;
+			} else {
+				button.disabled = false;
+				button.textContent = originalText;
+				alert('Error: ' + (result.message || 'Unknown error.'));
+			}
+
+		} catch (err) {
+			console.error(err);
+			button.disabled = false;
+			button.textContent = originalText;
+			alert('Server error. Please try again.');
+		}
+	});
+});
+
+document.addEventListener('DOMContentLoaded', function () {
 	 document.body.addEventListener('click', function(e) {
 		 const button = e.target.closest('.transaction-delete-btn');
 		 if (!button) return;
