@@ -1,5 +1,5 @@
 <?php
-//header('Content-type: text/calendar; charset=utf-8');
+header('Content-type: text/calendar; charset=utf-8');
 
 require_once "inc/autoload.php";
 require_once "inc/zapcallib.php";
@@ -20,7 +20,7 @@ if (!empty($_GET['hash'])) {
 	
 	$member = Member::fromHash($hash);
 	if (!isset($member->uid)) {
-		$log->add("iCal feed failed for hash: {$hash}", 'ical', Log::WARNING);
+		$log->add("iCal hash unknown ({$hash})", 'ical', Log::WARNING);
 		die("Invalid calendar hash.");
 	}
 	
