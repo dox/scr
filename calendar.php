@@ -4,20 +4,18 @@ header('Content-type: text/calendar; charset=utf-8');
 require_once "inc/autoload.php";
 require_once "inc/zapcallib.php";
 
-if (!empty($_GET['hash'])) {
-	$bookingsClass = new bookings();
-	
-	$hash = filter_input(
-		INPUT_GET,
-		'hash',
-		FILTER_VALIDATE_REGEXP,
-		[
-			'options' => [
-				'regexp' => '/^[a-zA-Z0-9]+$/'
-			]
+$hash = filter_input(
+	INPUT_GET,
+	'hash',
+	FILTER_VALIDATE_REGEXP,
+	[
+		'options' => [
+			'regexp' => '/^[a-zA-Z0-9]+$/'
 		]
-	);
-	
+	]
+);
+
+if ($hash !== null && $hash !== false) {
 	$member = Member::fromHash($hash);
 	if (!isset($member->uid)) {
 		$log->add("iCal hash unknown ({$hash})", 'ical', Log::WARNING);
