@@ -45,7 +45,7 @@ echo pageTitle(
 				<label class="form-check-label" for="maintainAdminAccess">Maintain Current Access Level †</label>
 			</div>
 			
-			<button type="submit" class="btn btn-primary w-100">Impersonate</button>
+			<button type="submit" class="btn btn-primary w-100 mb-3">Impersonate</button>
 			
 		<?php endif; ?>
 		

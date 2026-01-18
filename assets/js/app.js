@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', function () {
  
 				 if (countEl && progress && bar) {
 					 const capacity = parseInt(countEl.dataset.capacity, 10);
-					 const booked   = Math.min(data.booking_count, capacity);
+					 const booked   = data.booking_count;
  
 					 // Update text
 					 countEl.textContent = `${booked} of ${capacity}`;

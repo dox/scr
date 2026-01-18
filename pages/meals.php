@@ -80,10 +80,7 @@ if (strtotime($dateFrom) > strtotime($dateTo)) {
 		foreach ($mealsList as $meal) {
 			$link = "index.php?page=meal&uid=" . $meal->uid;
 			
-			$menu = !empty($meal->menu)
-			? '<a href="#" class="load-remote-menu px-3" id="menuUID-' . $meal->uid . '" data-url="./ajax/menu_modal.php?mealUID=' . $meal->uid . '" data-bs-toggle="modal" data-bs-target="#menuModal"><i class="bi bi-info-circle"></i></a>'
-			: null;
-			
+			$menu = '<a href="#" class="load-remote-menu px-3" id="menuUID-' . $meal->uid . '" data-url="./ajax/menu_modal.php?mealUID=' . $meal->uid . '" data-bs-toggle="modal" data-bs-target="#menuModal"><i class="bi bi-info-circle"></i></a>';
 			
 			echo '<tr>';
 			echo '<td>' . formatDate($meal->date_meal, 'short') . ' ' . formatTime($meal->date_meal) . '</td>';
