@@ -3,7 +3,7 @@ $bookingUID = filter_input(INPUT_GET, 'uid', FILTER_SANITIZE_NUMBER_INT);
 $booking = Booking::fromUID($bookingUID);
 $meal = new Meal($booking->meal_uid);
 
-if (!isset($booking->uid) || (!$user->hasPermission("meals") && $booking->member_ldap != $user->getUsername())) {
+if (!isset($booking->uid) || (!$user->hasPermission("meals") && strtoupper($booking->member_ldap) != $user->getUsername())) {
 	require_once "404.php";
 	die("Unknown or unavailable booking");
 }
@@ -66,49 +66,7 @@ echo pageTitle(
 	<div class="col-md-7 col-lg-8 order-2 order-md-1">
 		<h4>Diners</h4>
 		<?php
-		echo '<ul>';
-		
-		foreach ($meal->bookings() as $guestListBooking) {
-			$member = Member::fromLDAP($guestListBooking->member_ldap);
-		
-			echo '<li>';
-			echo $member->public_displayName() . ' ';
-		
-			// Member wine/dessert
-			if ($user->hasPermission('bookings')) {
-				echo renderWineDessertIcons($guestListBooking->wineChoice(), $guestListBooking->dessertChoice());
-			}
-		
-			// Guests
-			$guests = $guestListBooking->guests();
-			if (!empty($guests)) {
-				echo '<ul>';
-				foreach ($guests as $guest) {
-					$guestName = htmlspecialchars($guest['guest_name'] ?? '');
-					
-					if (!$user->hasPermission("members") && $member->opt_in != 1) {
-						$guestName = 'Hidden';
-					}
-		
-					echo '<li>';
-					echo $guestName . ' ';
-		
-					// Guest wine/dessert
-					echo renderWineDessertIcons(
-						$guest['guest_wine_choice'] ?? null,
-						$guestListBooking->dessertChoice(),
-						$meal->allowed_wine == "1"
-					);
-		
-					echo '</li>';
-				}
-				echo '</ul>';
-			}
-		
-			echo '</li>';
-		}
-		
-		echo '</ul>';
+		echo $meal->dinersList();
 		?>
 		
 		<div class="card mb-3">

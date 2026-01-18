@@ -220,6 +220,6 @@ class User {
 	}
 	
 	public function getUsername(): ?string {
-		return $this->userData['samaccountname'] ?? null;
+		return strtoupper($this->userData['samaccountname']) ?? null;
 	}
 }

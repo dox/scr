@@ -27,7 +27,7 @@ $meal = new Meal($mealUID);
 		</li>
 	</ul>
 	
-	<div class="tab-content" id="mealTabContent">
+	<div class="tab-content pt-3" id="mealTabContent">
 		<div class="tab-pane fade show active" id="menu-tab-pane" role="tabpanel" aria-labelledby="menu-tab" tabindex="0">
 			
 			<div class="text-center my-3">
@@ -37,50 +37,7 @@ $meal = new Meal($mealUID);
 		
 		<div class="tab-pane fade" id="diners-tab-pane" role="tabpanel" aria-labelledby="diners-tab" tabindex="0">
 			<?php
-			echo '<ul class="my-3">';
-			
-			foreach ($meal->bookings() as $guestListBooking) {
-				$member = Member::fromLDAP($guestListBooking->member_ldap);
-			
-				echo '<li>';
-				echo $member->public_displayName() . ' ';
-			
-				// Member wine/dessert
-				if ($user->hasPermission('bookings')) {
-					echo renderWineDessertIcons($guestListBooking->wineChoice(), $guestListBooking->dessertChoice());
-				}
-			
-				// Guests
-				$guests = $guestListBooking->guests();
-				if (!empty($guests)) {
-					echo '<ul>';
-					foreach ($guests as $guest) {
-						$guestName = htmlspecialchars($guest['guest_name'] ?? '');
-						
-						if (!$user->hasPermission("members") && $member->opt_in != 1) {
-							$guestName = 'Hidden';
-						}
-			
-						echo '<li>';
-						echo $guestName . ' ';
-			
-						// Guest wine/dessert
-						echo renderWineDessertIcons(
-							$guest['guest_wine_choice'] ?? null,
-							$guestListBooking->dessertChoice(),
-							$meal->allowed_wine == "1"
-						);
-			
-						echo '</li>';
-					}
-					echo '</ul>';
-				}
-			
-				echo '</li>';
-			}
-			
-			echo '</ul>';
-			
+			echo $meal->dinersList();
 			?>
 		</div>
 	</div>

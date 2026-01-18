@@ -558,4 +558,70 @@ class Meal extends Model {
 			&& $this->isCutoffValid()
 			&& $this->isAllowedGroupsValid();
 	}
+	
+	public function dinersList() {
+		global $user;
+		
+		$output  = '<ul>';
+		
+		foreach ($this->bookings() as $guestListBooking) {
+			$member = Member::fromLDAP($guestListBooking->member_ldap);
+		
+			$output .= '<li>';
+			$output .= $member->public_displayName() . ' ';
+		
+			// Member wine/dessert
+			if ($user->hasPermission('bookings')) {
+				$output .= $this->renderWineDessertIcons($guestListBooking->wineChoice(), $guestListBooking->dessertChoice());
+			}
+		
+			// Guests
+			$guests = $guestListBooking->guests();
+			if (!empty($guests)) {
+				$output .= '<ul>';
+				foreach ($guests as $guest) {
+					$guestName = htmlspecialchars($guest['guest_name'] ?? '');
+					
+					if (!$user->hasPermission("members") && $member->opt_in != 1) {
+						$guestName = 'Hidden';
+					}
+		
+					$output .= '<li>';
+					$output .= $guestName . ' ';
+		
+					// Guest wine/dessert
+					if ($user->hasPermission('bookings')) {
+						$output .= $this->renderWineDessertIcons(
+							$guest['guest_wine_choice'] ?? null,
+							$guestListBooking->dessertChoice(),
+							$this->allowed_wine == "1"
+						);
+					}
+		
+					$output .= '</li>';
+				}
+				$output .= '</ul>';
+			}
+		
+			$output .= '</li>';
+		}
+		
+		$output .= '</ul>';
+		
+		return $output;
+	}
+	
+	private function renderWineDessertIcons($wineChoice, $dessertChoice, $mealAllowedWine = true) {
+		$icons = [];
+	
+		if ($mealAllowedWine && $wineChoice && $wineChoice !== "None") {
+			$icons[] = '<svg class="bi" width="1em" height="1em" aria-hidden="true"><use xlink:href="assets/images/icons.svg#wine-glass"></use></svg>';
+		}
+	
+		if ($dessertChoice == "1") {
+			$icons[] = '<i class="bi bi-cookie icon-size"></i>';
+		}
+	
+		return implode(' ', $icons);
+	}
 }

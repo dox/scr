@@ -308,17 +308,3 @@ function displayToast($array) {
 function autoPluralise ($singular, $plural, $count = 1) {
 	return ($count == 1)? $singular : $plural;
 }
-
-function renderWineDessertIcons($wineChoice, $dessertChoice, $mealAllowedWine = true) {
-	$icons = [];
-
-	if ($mealAllowedWine && $wineChoice && $wineChoice !== "None") {
-		$icons[] = '<svg class="bi" width="1em" height="1em" aria-hidden="true"><use xlink:href="assets/images/icons.svg#wine-glass"></use></svg>';
-	}
-
-	if ($dessertChoice == "1") {
-		$icons[] = '<i class="bi bi-cookie icon-size"></i>';
-	}
-
-	return implode(' ', $icons);
-}
