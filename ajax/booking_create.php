@@ -75,7 +75,7 @@ try {
 			if (!empty($meal->menu)) {
 				$message .= "<hr>";
 				$message .= "<h2>Menu</h2>";
-				$message .= "<p>" . htmlspecialchars($meal->menu) . "</p>";
+				$message .= "<p>" . $meal->menu . "</p>";
 			}
 		
 			sendEmail(

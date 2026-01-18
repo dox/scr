@@ -42,7 +42,7 @@ for ($day = 0; $day < 7; $day++) {
 		$output .= sprintf(
 			'<p><strong>%s</strong> %s</p>',
 			htmlspecialchars($meal->type, ENT_QUOTES, 'UTF-8'),
-			nl2br(htmlspecialchars($meal->menu, ENT_QUOTES, 'UTF-8'))
+			$meal->menu
 		);
 	}
 }
