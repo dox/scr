@@ -332,9 +332,15 @@ class Meal extends Model {
 		} else {
 			$class = "bg-info";
 		}
-	
+		
+		if ($this->allowed_dessert == 1 && !$this->hasDessertCapacity(false)) {
+			$barTitle = '<span class="text-danger">Dessert Capacity Reached</span>';
+		} else {
+			$barTitle = '<span>Diners</span>';
+		}
+		
 		$output  = '<div class="d-flex align-items-center justify-content-between">';
-		$output .= '<span>Diners</span>';
+		$output .= $barTitle;
 		$output .= '<span class="booking-count" data-capacity="' . $capacity . '">';
 		$output .= $booked . ' of ' . $capacity;
 		$output .= '</span>';
