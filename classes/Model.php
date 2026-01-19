@@ -143,6 +143,37 @@ class Log extends Model {
 			?? $_SERVER['HTTP_X_FORWARDED_FOR'] 
 			?? 'UNKNOWN';
 	}
+	
+	public function linkify(string $text): string {
+		// Map UID types to URL patterns
+		$routes = [
+			'booking_uid' => 'index.php?page=booking&uid=%d',
+			'meal_uid'    => 'index.php?page=meal&uid=%d',
+			'member_uid'  => 'index.php?page=member&ldap=%d',
+		];
+	
+		return preg_replace_callback(
+			'/\[(\w+_uid):(\d+)\]/',
+			function ($matches) use ($routes) {
+				[$full, $type, $id] = $matches;
+	
+				// If we don’t recognise the UID type, leave it untouched
+				if (!isset($routes[$type])) {
+					return $full;
+				}
+	
+				$url = sprintf($routes[$type], $id);
+	
+				return sprintf(
+					'<a href="%s">[%s:%s]</a>',
+					htmlspecialchars($url, ENT_QUOTES, 'UTF-8'),
+					htmlspecialchars($type, ENT_QUOTES, 'UTF-8'),
+					htmlspecialchars($id, ENT_QUOTES, 'UTF-8')
+				);
+			},
+			$text
+		);
+	}
 }
 
 class Settings extends Model {
@@ -408,9 +439,9 @@ class Bookings extends Model {
 		$memberName = $member ? $member->name() : 'Unknown member';
 	
 		$log->add(
-			'Booking UID: ' . $newBooking .
-			' created for ' . $memberName .
-			'. (Meal UID: ' . ($fields['meal_uid'] ?? 'unknown') . ')',
+			'[booking_uid:' . $newBooking .
+			'] created for ' . $memberName .
+			'. [meal_uid:' . ($fields['meal_uid'] ?? 'unknown') . ']',
 			'Booking',
 			Log::SUCCESS
 		);
