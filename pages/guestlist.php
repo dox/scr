@@ -110,8 +110,18 @@ echo pageTitle(
 			  
 			  $output .= "<td>";
 				$output .= " + <strong>" . $guest['guest_name'] . "</strong>";
-				if (!empty($guest['guest_dietary'])) {
-				  $output .= "<br>" . implode(", ", $guest['guest_dietary']);
+				if (
+					isset($guest['guest_dietary']) &&
+					is_array($guest['guest_dietary'])
+				) {
+					$dietary = array_filter(
+						array_map('trim', $guest['guest_dietary']),
+						'strlen'
+					);
+				
+					if (!empty($dietary)) {
+						$output .= '<br>' . implode(', ', $dietary);
+					}
 				}
 			  $output .= "</td>";
 			  $output .= "<td>";
