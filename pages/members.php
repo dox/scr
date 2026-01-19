@@ -162,6 +162,7 @@ endforeach;
 					<div class="mb-3">
 						<label for="title" class="form-label">Title</label>
 						<select class="form-select" name="title" id="title" required>
+							<option value=""></option>
 							<?php
 							$memberTitles = explode(',', $settings->get('member_titles'));
 							foreach ($memberTitles as $title) {
@@ -212,6 +213,7 @@ endforeach;
 					<div class="mb-3">
 						<label for="category" class="form-label">Member Category</label>
 						<select class="form-select" name="category" id="category" <?= $user->hasPermission('members') ? '' : 'disabled' ?> required>
+							<option value=""></option>
 							<?php
 							$memberCategories = explode(',', $settings->get('member_categories'));
 							foreach ($memberCategories as $category) {
