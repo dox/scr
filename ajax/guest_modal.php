@@ -129,26 +129,26 @@ $guestDietary     = $booking->guests()[$guestUID]['guest_dietary']      ?? [];
 				   value="<?= $guestDomusReason; ?>">
 				<div class="invalid-feedback">Guest Charge-To is required.</div>
 			</div>
-			
+		</div>
+		
+		<?php if ($meal->allowed_wine == 1): ?>
 			<!-- Wine -->
-			<?php if ($meal->allowed_wine == 1): ?>
-				<div class="mb-3">
-					<label for="guest_wine_choice" class="form-label">Wine <small>(charged via Battels)</small></label>
-					<select class="form-select" id="guest_wine_choice" <?= $meal->canBook(true) ? '' : 'disabled' ?> required>
-						<?php
-						$wineOptions = explode(",", $settings->get('booking_wine_options'));
-						
-						foreach ($wineOptions as $i => $wineOption) {
-							$wineOption = trim($wineOption);
-							$selected = ($wineOption === $guestWineChoice) ? ' selected' : '';
-							echo "<option value=\"{$wineOption}\"{$selected}>{$wineOption}</option>";
-						}
-						?>
-					</select>
-				</div>
-			<?php endif; ?>
+			<div class="mb-3">
+				<label for="guest_wine_choice" class="form-label">Wine <small>(charged via Battels)</small></label>
+				<select class="form-select" id="guest_wine_choice" <?= $meal->canBook(true) ? '' : 'disabled' ?> required>
+					<?php
+					$wineOptions = explode(",", $settings->get('booking_wine_options'));
+					
+					foreach ($wineOptions as $i => $wineOption) {
+						$wineOption = trim($wineOption);
+						$selected = ($wineOption === $guestWineChoice) ? ' selected' : '';
+						echo "<option value=\"{$wineOption}\"{$selected}>{$wineOption}</option>";
+					}
+					?>
+				</select>
+			</div>
 		<?php endif; ?>
-	</div>
+	<?php endif; ?>
 </div>
 <!-- Footer -->
 <div class="modal-footer">

@@ -73,7 +73,9 @@ echo pageTitle(
 		</div>
 	</div>
 	
-	<button type="submit" class="btn btn-primary transaction-create-btn w-100" id="create_button">Submit Transaction</button>
+	<div class="col">
+		<button type="submit" class="btn btn-primary transaction-create-btn w-100" id="create_button">Submit Transaction</button>
+	</div>
 </div>
 </form>
 
@@ -125,7 +127,7 @@ function addWineToInvoice(wine) {
 						   name="price_per_bottle[${wine.uid}]"
 						   step="0.01"
 						   value="${wine.price_internal ?? ''}">
-					<div class="form-text">
+					<div class="form-text text-truncate">
 						Internal: £${wine.price_internal ?? '—'}
 						/ External: £${wine.price_external ?? '—'}
 					</div>
