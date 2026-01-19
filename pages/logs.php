@@ -88,11 +88,11 @@ echo pageTitle(
 			$output .= "<td>" . long2ip($row['ip']) . "</td>";
 			
 			if (isset($row['description'])) {
-				$event = nl2br(htmlspecialchars($row['description']));
+				$event = $log->linkify($row['description']);
 			} else {
 				$event = "";
 			}
-			$output .= "<td class=\"text-wrap text-break\">" . $event . "</td>";
+			$output .= "<td class=\"text-wrap text-break\">" . $log->linkify($event) . "</td>";
 			$output .= "</tr>";
 			
 			echo $output;
