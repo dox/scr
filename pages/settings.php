@@ -53,24 +53,42 @@ echo pageTitle(
 					data-bs-target="#<?= $itemName ?>"
 					aria-expanded="<?= $isActive ? "true" : "false" ?>"
 					aria-controls="<?= $itemName ?>">
-				<strong><?= $name ?></strong> — <?= $desc ?>
-				<span class="badge bg-secondary ms-2"><?= $type ?></span>
+	
+				<div class="d-flex flex-column flex-md-row w-100 gap-1 gap-md-2">
+					<div>
+						<strong><?= $name ?></strong>
+						<span class="text-muted">
+							— <?= $desc ?>
+						</span>
+					</div>
+	
+					<div class="ms-md-auto">
+						<span class="badge bg-secondary"><?= $type ?></span>
+					</div>
+				</div>
+	
 			</button>
 		</h2>
-
+	
 		<div id="<?= $itemName ?>" class="<?= $collapseClass ?>"
-			 aria-labelledby="heading-<?= $uid ?>" data-bs-parent="#accordionExample">
-
+			 aria-labelledby="heading-<?= $uid ?>"
+			 data-bs-parent="#accordionExample">
+	
 			<div class="accordion-body">
-				<form method="post" action="<?= $url ?>" class="d-flex align-items-center gap-3">
+				<form method="post"
+					  action="<?= $url ?>"
+					  class="d-flex flex-column flex-sm-row gap-2 gap-sm-3">
+	
 					<?= renderSettingField($type, $value, $setting) ?>
-
+	
 					<?php if ($type !== 'hidden'): ?>
-						<button class="btn btn-primary" type="submit">Update</button>
+						<button class="btn btn-primary w-100 w-sm-auto" type="submit">
+							Update
+						</button>
 					<?php endif; ?>
-
+	
 					<input type="hidden" name="uid" value="<?= $uid ?>">
-
+	
 				</form>
 			</div>
 		</div>
