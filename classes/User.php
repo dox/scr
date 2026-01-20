@@ -55,6 +55,10 @@ class User {
 	
 		$this->userData = $_SESSION['user'];
 		$this->loggedIn = true;
+		
+		if (empty($this->userData['samaccountname']) && !empty($member->ldap)) {
+			$_SESSION['user']['samaccountname'] = $member->ldap;
+		}
 	
 		if ($remember) {
 			$this->setToken($member->uid);
@@ -91,6 +95,7 @@ class User {
 	
 		$member = Member::fromUID($record['member_uid']);
 		if (!$member) {
+			$log->add("SECURITY ALERT: Failed login attempt for member UID: {$record['member_uid']} from {$_SERVER['REMOTE_ADDR']}", 'auth', Log::WARNING);
 			error_log("SECURITY ALERT: Failed login attempt for member UID: {$record['member_uid']} from {$_SERVER['REMOTE_ADDR']}");
 			return false;
 		}
@@ -154,8 +159,10 @@ class User {
 	}
 
 	public function logout(): void {
-		global $db;
-
+		global $db, $log, $user;
+		
+		$log->add($user->getUsername() . " logged out", 'auth', Log::SUCCESS);
+		
 		if (!empty($_COOKIE[self::COOKIE_NAME])) {
 			$db->delete('tokens', ['token' => $_COOKIE[self::COOKIE_NAME]], false);
 
@@ -220,6 +227,8 @@ class User {
 	}
 	
 	public function getUsername(): ?string {
-		return strtoupper($this->userData['samaccountname']) ?? null;
+		return isset($this->userData['samaccountname'])
+			? strtoupper($this->userData['samaccountname'])
+			: null;
 	}
 }
