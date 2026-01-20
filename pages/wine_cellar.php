@@ -307,6 +307,10 @@ liveSearch(
 	'wine_search',
 	'wine_search_results',
 	'./ajax/wine_livesearch.php',
-	{ cellar_uid: <?= $cellar->uid ?> }
+	{
+		extraParams: {
+			cellar_uid: <?= (int)$cellar->uid ?>
+		}
+	}
 );
 </script>
