@@ -8,7 +8,6 @@ class Booking extends Model {
 	public $guests_array; // json encoded array
 	public $charge_to;
 	public $domus_reason;
-	public $wine; // retired
 	public $wine_choice;
 	public $dessert;
 	
