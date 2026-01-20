@@ -27,7 +27,7 @@ if ($user->hasPermission("meals")) {
 }
 
 
-if ($meal->canBook(true)) {
+if ($meal->isCutoffValid(true)) {
 	$icons[] = [
 		'permission' => 'everyone',
 		'title' => 'Add Guest',
@@ -84,7 +84,7 @@ echo pageTitle(
 		<form method="post" action="<?= htmlspecialchars($_SERVER['REQUEST_URI']) ?>">
 		<div class="mb-3">
 			<label for="charge_to" class="form-label">Charge-To</label>
-			<select class="form-select" id="charge_to" <?= $meal->canBook(true) ? '' : 'disabled' ?> required>
+			<select class="form-select" id="charge_to" <?= $meal->isCutoffValid(true) ? '' : 'disabled' ?> required>
 				<?php
 				$chargeToOptions = explode(',', $settings->get('booking_charge-to'));
 				
@@ -110,7 +110,7 @@ echo pageTitle(
 		<?php if ($meal->allowed_wine == 1): ?>
 			<div class="mb-3">
 				<label for="wine_choice" class="form-label">Wine <small>(charged via Battels)</small></label>
-				<select class="form-select" id="wine_choice" <?= $meal->canBook(true) ? '' : 'disabled' ?> required>
+				<select class="form-select" id="wine_choice" <?= $meal->isCutoffValid(true) ? '' : 'disabled' ?> required>
 					<?php
 					$wineOptions = explode(",", $settings->get('booking_wine_options'));
 					
@@ -148,7 +148,7 @@ echo pageTitle(
 		<?php endif; ?>
 		
 		<div class="mb-3">
-		  <button type="submit" class="btn booking-update-btn <?= $meal->canBook(true) ? 'btn-primary' : 'btn-secondary disabled' ?> w-100" data-booking_uid="<?= $booking->uid ?>"><?= $meal->canBook(true) ? 'Update Booking Preferences' : 'Deadline Passed' ?></button>
+		  <button type="submit" class="btn booking-update-btn <?= $meal->isCutoffValid(true) ? 'btn-primary' : 'btn-secondary disabled' ?> w-100" data-booking_uid="<?= $booking->uid ?>"><?= $meal->isCutoffValid(true) ? 'Update Booking Preferences' : 'Deadline Passed' ?></button>
 		  <input type="hidden" name="bookingUID" id="bookingUID" value="<?= $booking->uid; ?>">
 		</div>
 		</form>
@@ -253,7 +253,7 @@ echo pageTitle(
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-link text-muted" data-bs-dismiss="modal">Close</button>
-				<button type="submit" class="btn <?= $meal->canBook(true) ? 'btn-danger' : 'btn-secondary disabled' ?> booking-delete-btn" data-booking_uid="<?= $booking->uid; ?>"><?= $meal->canBook(true) ? 'Delete Booking' : 'Deadline Passed' ?></button>
+				<button type="submit" class="btn <?= $meal->isCutoffValid(true) ? 'btn-danger' : 'btn-secondary disabled' ?> booking-delete-btn" data-booking_uid="<?= $booking->uid; ?>"><?= $meal->isCutoffValid(true) ? 'Delete Booking' : 'Deadline Passed' ?></button>
 			</div>
 		</div>
 	</div>

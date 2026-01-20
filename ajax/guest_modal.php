@@ -40,7 +40,7 @@ $guestDietary     = $booking->guests()[$guestUID]['guest_dietary']      ?? [];
 		<p>Meal capacity has been reached.</p>
 	<?php elseif ($action === 'add' && !$meal->hasGuestCapacity(count($booking->guests()), true)): ?>
 		<p>You have added the maximum number of guests allowed for this meal.</p>
-	<?php elseif (!$meal->canBook(true)): ?>
+	<?php elseif (!$meal->isCutoffValid(true)): ?>
 		<p>Deadline Passed</p>
 	<?php else: ?>
 		<!-- Guest Name -->
