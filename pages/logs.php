@@ -51,7 +51,8 @@ echo pageTitle(
 	</div>
 </form>
 
-<table class="table table-striped">
+<div class="table-responsive">
+<table class="table table-striped table-centered">
 	<thead>
 		<tr>
 			<th style="width: 180px;">Date</th>
@@ -101,6 +102,7 @@ echo pageTitle(
 		?>
 	</tbody>
 </table>
+</div>
 
 <?php
 foreach ($log->getRecent($logsDisplay) as $row) {
