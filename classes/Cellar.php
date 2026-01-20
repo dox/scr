@@ -137,24 +137,20 @@ class Cellar extends Model {
 		return $bins;
 	}
 	
-	
-	
 	public function bottlesCount(): int {
 		global $db;
 	
 		$sql = "
-			SELECT COALESCE(SUM(wine_total), 0) AS total_bottles_in_cellar
-			FROM (
-				SELECT cellar_uid, wine_uid, GREATEST(0, SUM(bottles)) AS wine_total
-				FROM wine_transactions
-				WHERE cellar_uid = ?
-				GROUP BY cellar_uid, wine_uid
-			) AS wine_sums
+			SELECT COALESCE(SUM(t.bottles), 0) AS total
+			FROM wine_transactions t
+			INNER JOIN wine_wines w ON w.uid = t.wine_uid
+			INNER JOIN wine_bins b ON b.uid = w.bin_uid
+			WHERE b.cellar_uid = ?
 		";
 	
 		$result = $db->query($sql, [$this->uid])->fetch();
 	
-		return (int) ($result['total_bottles_in_cellar'] ?? 0);
+		return (int) $result['total'];
 	}
 	
 	public function card() {

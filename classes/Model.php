@@ -683,19 +683,19 @@ class Wines extends Model {
 		return $result;
 	}
 	
-	public function wineBottlesTotal() {
+	public function wineBottlesTotal(): int {
 		global $db;
-		
-		$sql = "SELECT SUM(wine_total) AS total_bottles_in_cellar
-		FROM (
-			SELECT cellar_uid, wine_uid, GREATEST(0, SUM(bottles)) AS wine_total
-			FROM wine_transactions
-			GROUP BY cellar_uid, wine_uid
-		) AS wine_sums";
-		
+	
+		$sql = "
+			SELECT COALESCE(SUM(t.bottles), 0) AS total
+			FROM wine_transactions t
+			INNER JOIN wine_wines w ON w.uid = t.wine_uid
+			INNER JOIN wine_bins b ON b.uid = w.bin_uid
+		";
+	
 		$result = $db->query($sql)->fetch();
-		
-		return $result['total_bottles_in_cellar'];
+	
+		return (int) $result['total'];
 	}
 	
 	public function wines(array $whereFilterArray = []) : array {

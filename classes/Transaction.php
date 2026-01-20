@@ -5,7 +5,6 @@ class Transaction extends Model {
 	public $date_posted;
 	public $username;
 	public $type;
-	public $cellar_uid;
 	public $wine_uid;
 	public $bottles;
 	public $price_per_bottle;
