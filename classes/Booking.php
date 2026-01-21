@@ -103,7 +103,7 @@ class Booking extends Model {
 		
 		// write the log
 		$member = Member::fromLDAP($this->member_ldap);
-		$log->add('[booking_uid:' . $this->uid . ' for ' . $member->name() . '] updated for [meal_uid:' . $this->meal_uid . ']', 'Booking', Log::SUCCESS);
+		$log->add('[booking_uid:' . $this->uid . '] for ' . $member->name() . '] updated for [meal_uid:' . $this->meal_uid . ']', 'Booking', Log::SUCCESS);
 
 
 		return $updatedRows;
