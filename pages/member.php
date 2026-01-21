@@ -123,6 +123,7 @@ echo pageTitle(
 				<div class="col-3 mb-3">
 					<label for="title" class="form-label">Title</label>
 					<select class="form-select" name="title" id="title" required>
+						<option value=""></option>
 						<?php
 						$memberTitles = explode(',', $settings->get('member_titles'));
 						
