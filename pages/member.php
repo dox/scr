@@ -296,7 +296,7 @@ echo pageTitle(
 			</div>
 			<div class="mb-3">
 				<label for="wine_choice" class="form-label">Default Wine <small>(when available)</small></label>
-				<select class="form-select" id="wine_choice" required>
+				<select class="form-select" id="default_wine_choice" name="default_wine_choice" required>
 					<?php
 					$wineOptions = explode(",", $settings->get('booking_wine_options'));
 					
