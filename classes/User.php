@@ -40,7 +40,10 @@ class User {
 	}
 
 	private function finalizeLogin(Member $member, bool $remember = false, bool $viaCookie = false): void {
-		global $db, $log;
+		global $db, $log, $user; // <--- add $user here
+	
+		// Make this instance the global $user immediately
+		$user = $this;
 	
 		// Update last login
 		$db->update(
@@ -53,12 +56,13 @@ class User {
 		// Set session via helper
 		setUserSessionFromMember($member);
 	
-		$this->userData = $_SESSION['user'];
-		$this->loggedIn = true;
-		
-		if (empty($this->userData['samaccountname']) && !empty($member->ldap)) {
+		// Ensure samaccountname is set in session & object
+		if (empty($_SESSION['user']['samaccountname']) && !empty($member->ldap)) {
 			$_SESSION['user']['samaccountname'] = $member->ldap;
 		}
+	
+		$this->userData = $_SESSION['user'];
+		$this->loggedIn = true;
 	
 		if ($remember) {
 			$this->setToken($member->uid);
