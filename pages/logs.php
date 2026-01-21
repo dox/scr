@@ -9,18 +9,20 @@ $searchTerm = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['logs_search'])) {
 	$searchTerm = trim($_POST['logs_search'] ?? '');
-
+	
 	$sql = "
 		SELECT *
 		FROM logs
 		WHERE description LIKE ?
 		   OR username    LIKE ?
+		   OR ip = INET_ATON(?)
 		ORDER BY date DESC
-		LIMIT 500";
-
+		LIMIT 500
+	";
+	
 	$like = '%' . $searchTerm . '%';
-
-	$logResults = $db->fetchAll($sql, [$like, $like]);
+	
+	$logResults = $db->fetchAll($sql, [$like, $like, $searchTerm]);
 } else {
 	$logResults = $log->getRecent(3);
 }
