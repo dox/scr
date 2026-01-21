@@ -53,6 +53,16 @@ echo pageTitle(
 	</div>
 </form>
 
+<div
+	id="new-logs-banner"
+	class="alert alert-info py-2 px-3 mb-2"
+	style="display:none"
+>
+	<a href="#" id="load-new-logs" class="alert-link">
+		Load <span id="new-logs-count"></span> new log entr<span id="new-logs-plural">y</span>
+	</a>
+</div>
+
 <div class="table-responsive">
 <table class="table table-striped table-centered">
 	<thead>
@@ -64,8 +74,13 @@ echo pageTitle(
 			<th>Event</th>
 		</tr>
 	</thead>
-	<tbody>
+	<tbody id="logs-table-body">
 		<?php
+		$latestLogUID = 0;
+		if (!empty($logResults)) {
+			$latestLogUID = (int)$logResults[0]['uid'];
+		}
+		
 		$chartData = [];
 		
 		foreach ($logResults as $row) {
@@ -114,6 +129,11 @@ foreach ($log->getRecent($logsDisplay) as $row) {
 
 ksort($chartData);
 ?>
+
+<script>
+	let latestLogUID = <?= (int)$latestLogUID ?>;
+	let logsSearchActive = <?= $searchTerm !== '' ? 'true' : 'false' ?>;
+</script>
 <script>
 const ctx = document.getElementById('chart_logsByDay');
 new Chart(ctx, {
@@ -138,6 +158,57 @@ new Chart(ctx, {
 			x: { title: { display: false } },
 			y: { beginAtZero: true, title: { display: false } }
 		}
+	}
+});
+</script>
+
+<script>
+if (!logsSearchActive && latestLogUID > 0) {
+
+	setInterval(async () => {
+		try {
+			const res = await fetch(`/ajax/logs_check.php?after=${latestLogUID}`);
+			const data = await res.json();
+			
+			if (data.count > 0) {
+				document.getElementById('new-logs-count').textContent = data.count;
+				document.getElementById('new-logs-plural').textContent = data.count > 1 ? 'ies' : 'y';
+				document.getElementById('new-logs-banner').style.display = 'block';
+			}
+		} catch (e) {
+			console.warn('Log check failed', e);
+		}
+	}, 10000);
+}
+
+document.getElementById('load-new-logs')?.addEventListener('click', async e => {
+	e.preventDefault();
+
+	try {
+		const res = await fetch(`/ajax/logs_fetch.php?after=${latestLogUID}`);
+		const data = await res.json();
+
+		const tbody = document.getElementById('logs-table-body');
+
+		data.logs.forEach(row => {
+			const tr = document.createElement('tr');
+			tr.className = row.row_class;
+
+			tr.innerHTML = `
+				<td>${row.date}</td>
+				<td>${row.type_badge}</td>
+				<td>${row.username ?? ''}</td>
+				<td>${row.ip}</td>
+				<td class="text-wrap text-break">${row.event}</td>
+			`;
+
+			tbody.prepend(tr);
+			latestLogUID = Math.max(latestLogUID, row.uid);
+		});
+
+		document.getElementById('new-logs-banner').style.display = 'none';
+	} catch (e) {
+		alert('Failed to load new logs');
 	}
 });
 </script>
