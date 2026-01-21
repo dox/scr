@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['logs_search'])) {
 	
 	$logResults = $db->fetchAll($sql, [$like, $like, $searchTerm]);
 } else {
-	$logResults = $log->getRecent(3);
+	$logResults = $log->getRecent($logsDisplay);
 }
 
 echo pageTitle(
@@ -53,16 +53,6 @@ echo pageTitle(
 	</div>
 </form>
 
-<div
-	id="new-logs-banner"
-	class="alert alert-info py-2 px-3 mb-2"
-	style="display:none"
->
-	<a href="#" id="load-new-logs" class="alert-link">
-		Load <span id="new-logs-count"></span> new log entr<span id="new-logs-plural">y</span>
-	</a>
-</div>
-
 <div class="table-responsive">
 <table class="table table-striped table-centered">
 	<thead>
@@ -77,11 +67,7 @@ echo pageTitle(
 	<tbody id="logs-table-body">
 		<?php
 		$latestLogUID = 0;
-		if (!empty($logResults)) {
-			$latestLogUID = (int)$logResults[0]['uid'];
-		}
-		
-		$chartData = [];
+		$chartData    = [];
 		
 		foreach ($logResults as $row) {
 			if ($row['result'] == "INFO") {
@@ -105,44 +91,39 @@ echo pageTitle(
 			$output .= "<td>" . $row['username'] . "</td>";
 			$output .= "<td>" . long2ip($row['ip']) . "</td>";
 			
-			if (isset($row['description'])) {
-				$event = $log->linkify($row['description']);
-			} else {
-				$event = "";
-			}
+			$event = $row['description'] ?? '';
 			$output .= "<td class=\"text-wrap text-break\">" . $log->linkify($event) . "</td>";
 			$output .= "</tr>";
 			
 			echo $output;
-			
+
+			if ($row['uid'] > $latestLogUID) {
+				$latestLogUID = (int)$row['uid'];
+			}
+
+			$date = date('Y-m-d', strtotime($row['date']));
+			$chartData[$date] = ($chartData[$date] ?? 0) + 1;
 		}
+
+		ksort($chartData);
 		?>
 	</tbody>
 </table>
 </div>
 
-<?php
-foreach ($log->getRecent($logsDisplay) as $row) {
-	$date = date('Y-m-d', strtotime($row['date']));
-	$chartData[$date] = ($chartData[$date] ?? 0) + 1;
-}
-
-ksort($chartData);
-?>
-
 <script>
-	let latestLogUID = <?= (int)$latestLogUID ?>;
-	let logsSearchActive = <?= $searchTerm !== '' ? 'true' : 'false' ?>;
-</script>
-<script>
+let latestLogUID = <?= (int)$latestLogUID ?>;
+let logsSearchActive = <?= $searchTerm !== '' ? 'true' : 'false' ?>;
+
+// Chart setup
 const ctx = document.getElementById('chart_logsByDay');
-new Chart(ctx, {
+const logChart = new Chart(ctx, {
 	type: 'bar',
 	data: {
 		labels: <?= json_encode(array_keys($chartData)) ?>,
 		datasets: [{
 			label: 'Logs',
-			data: <?= json_encode($chartData) ?>,
+			data: <?= json_encode(array_values($chartData)) ?>,
 			borderWidth: 2,
 			tension: 0.3,
 			pointRadius: 0,
@@ -151,9 +132,7 @@ new Chart(ctx, {
 	},
 	options: {
 		maintainAspectRatio: false,
-		plugins: {
-		  legend: { display: false }
-		},
+		plugins: { legend: { display: false } },
 		scales: {
 			x: { title: { display: false } },
 			y: { beginAtZero: true, title: { display: false } }
@@ -164,51 +143,46 @@ new Chart(ctx, {
 
 <script>
 if (!logsSearchActive && latestLogUID > 0) {
-
 	setInterval(async () => {
 		try {
-			const res = await fetch(`/ajax/logs_check.php?after=${latestLogUID}`);
+			const res = await fetch(`/ajax/logs_fetch.php?after=${latestLogUID}`);
 			const data = await res.json();
-			
-			if (data.count > 0) {
-				document.getElementById('new-logs-count').textContent = data.count;
-				document.getElementById('new-logs-plural').textContent = data.count > 1 ? 'ies' : 'y';
-				document.getElementById('new-logs-banner').style.display = 'block';
+
+			if (data.logs && data.logs.length > 0) {
+				const tbody = document.getElementById('logs-table-body');
+
+				data.logs.forEach(row => {
+					const tr = document.createElement('tr');
+					tr.className = row.row_class;
+
+					tr.innerHTML = `
+						<td>${row.date}</td>
+						<td>${row.type_badge}</td>
+						<td>${row.username ?? ''}</td>
+						<td>${row.ip}</td>
+						<td class="text-wrap text-break">${row.event}</td>
+					`;
+
+					tbody.prepend(tr);
+					latestLogUID = Math.max(latestLogUID, row.uid);
+
+					// Update chart
+					const rowDate = row.date.split(' ')[0]; // yyyy-mm-dd
+					const idx = logChart.data.labels.indexOf(rowDate);
+					if (idx !== -1) {
+						logChart.data.datasets[0].data[idx] += 1;
+					} else {
+						// New day not in chart yet
+						logChart.data.labels.push(rowDate);
+						logChart.data.datasets[0].data.push(1);
+					}
+				});
+
+				logChart.update();
 			}
 		} catch (e) {
-			console.warn('Log check failed', e);
+			console.warn('Failed to fetch new logs', e);
 		}
-	}, 10000);
+	}, 10000); // every 10 seconds
 }
-
-document.getElementById('load-new-logs')?.addEventListener('click', async e => {
-	e.preventDefault();
-
-	try {
-		const res = await fetch(`/ajax/logs_fetch.php?after=${latestLogUID}`);
-		const data = await res.json();
-
-		const tbody = document.getElementById('logs-table-body');
-
-		data.logs.forEach(row => {
-			const tr = document.createElement('tr');
-			tr.className = row.row_class;
-
-			tr.innerHTML = `
-				<td>${row.date}</td>
-				<td>${row.type_badge}</td>
-				<td>${row.username ?? ''}</td>
-				<td>${row.ip}</td>
-				<td class="text-wrap text-break">${row.event}</td>
-			`;
-
-			tbody.prepend(tr);
-			latestLogUID = Math.max(latestLogUID, row.uid);
-		});
-
-		document.getElementById('new-logs-banner').style.display = 'none';
-	} catch (e) {
-		alert('Failed to load new logs');
-	}
-});
 </script>
