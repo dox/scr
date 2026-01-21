@@ -6,8 +6,7 @@ Options -Indexes
 </IfModule>
 
 # Apple touch icon redirects
-Redirect 301 /apple-touch-icon.png /assets/favicon/apple-touch-icon.png
-Redirect 301 /apple-touch-icon-precomposed.png /assets/favicon/apple-touch-icon.png
+RedirectMatch 301 ^/apple-touch-icon(-[0-9]+x[0-9]+)?(-precomposed)?\.png$ /assets/favicon/apple-touch-icon.png
 
 # Custom 404 page
 ErrorDocument 404 /index.php?page=404
@@ -16,6 +15,8 @@ ErrorDocument 404 /index.php?page=404
 <FilesMatch "\.(env|ini|log|sql|bak|old|swp|yml|yaml|json|phps)$">
 	Require all denied
 </FilesMatch>
+
+RewriteRule ^\.well-known/traffic-advice$ - [T=application/trafficadvice+json,END]
 
 # Charset
 AddDefaultCharset UTF-8
