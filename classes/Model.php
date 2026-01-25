@@ -16,12 +16,6 @@ abstract class Model {
 		}
 	}
 	
-	public function getAll() {
-		$query = "SELECT * FROM " . static::$table;
-		$rows = $this->db->fetchAll($query);
-		return $rows;
-	}
-	
 	/**
 	 * Generic INSERT for all subclasses
 	 *
@@ -178,6 +172,12 @@ class Log extends Model {
 
 class Settings extends Model {
 	protected static string $table = 'settings';
+	
+	public function getAll() {
+		$query = "SELECT * FROM " . static::$table . " ORDER BY name ASC";
+		$rows = $this->db->fetchAll($query);
+		return $rows;
+	}
 	
 	public function get($name) {
 		$query = "SELECT * FROM " . static::$table . " WHERE name = ?";
