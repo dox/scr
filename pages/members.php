@@ -51,7 +51,7 @@ echo pageTitle(
 	"Members, and their order of precedence",
 	[
 		[
-			'permission' => 'settings',
+			'permission' => 'members',
 			'title' => 'Add new',
 			'class' => '',
 			'event' => '',
