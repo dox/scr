@@ -440,8 +440,18 @@ echo pageTitle(
 						</h2>
 						<div id="collapseMicrosoft" class="accordion-collapse collapse" data-bs-parent="#accordionCalendar">
 							<div class="accordion-body">
+								<?php
+								$url = "https://" . $_SERVER['HTTP_HOST'] . "/calendar.php?hash=" . $member->calendar_hash;
+								?>
+								
 								<p>Please <strong>copy</strong> the following link (this is your unique URL to your meal calendar)</p>
-								<p><code>https://<?php echo $_SERVER['HTTP_HOST']; ?>/calendar.php?hash=<?php echo $member->calendar_hash; ?></code></p>
+								
+								<div class="input-group mb-3">
+								  <input type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1" value="<?php echo $url; ?>">
+								  <span class="input-group-text" id="basic-addon1" onclick="copyToClipboard(this)"
+								  data-copy="<?php echo $url; ?>"><i class="bi bi-copy"></i></span>
+								</div>
+								  
 								<p>Open Outlook (Or log in to your Outlook account on the web at <a href="https://outlook.live.com/">https://outlook.live.com/</a> and open your calendar.</p>
 								<p>Click on "Add calendar" in the left-hand panel.</p>
 								<p>Click "Subscribe from web" and paste in the copied URL.  Give your calendar a name, customise any details, and click "Import".</p>
@@ -507,7 +517,7 @@ const chart = new Chart(ctx, {
   options: {
 	plugins: {
 	  legend: {
-		display: false
+		display: true
 	  }
 	},
 	scales: {
@@ -541,4 +551,20 @@ document.addEventListener('click', function (e) {
 		dropdownButton.textContent = label;
 	}
 });
+
+
+
+function copyToClipboard(button) {
+	const text = button.dataset.copy;
+
+	navigator.clipboard.writeText(text).then(() => {
+		// Optional feedback
+		button.innerHTML = '<i class="bi bi-check2"></i>';
+		setTimeout(() => {
+			button.innerHTML = '<i class="bi bi-copy"></i>';
+		}, 1500);
+	}).catch(err => {
+		console.error('Failed to copy:', err);
+	});
+}
 </script>

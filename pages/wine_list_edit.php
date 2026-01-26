@@ -73,7 +73,7 @@ echo pageTitle(
 		<option value="public" <?= ($list->type === 'public') ? ' selected' : '' ?>>Public</option>
 	  </select>
 	  <div class="form-text">
-		Public wines are visible to everyone; private wines are for your use only.
+		Public lists are visible to everyone; private lists are for your use only.
 	  </div>
 	</div>
 	
