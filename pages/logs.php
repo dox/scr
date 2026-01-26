@@ -104,6 +104,28 @@ echo pageTitle(
 			$date = date('Y-m-d', strtotime($row['date']));
 			$chartData[$date] = ($chartData[$date] ?? 0) + 1;
 		}
+		
+		// fill in missing dates
+		if (!empty($chartData)) {
+			// find earliest and latest date keys
+			$dates = array_keys($chartData);
+			sort($dates); // ascending chronological order
+			$startDate = new DateTime($dates[0]);
+			$endDate   = new DateTime($dates[count($dates) - 1]);
+		
+			// ensure end date is inclusive
+			$endDateInclusive = (clone $endDate)->modify('+1 day');
+		
+			$interval = new DateInterval('P1D');
+			$period = new DatePeriod($startDate, $interval, $endDateInclusive);
+		
+			foreach ($period as $dt) {
+				$d = $dt->format('Y-m-d');
+				if (!isset($chartData[$d])) {
+					$chartData[$d] = 0;
+				}
+			}
+		}
 
 		ksort($chartData);
 		?>
