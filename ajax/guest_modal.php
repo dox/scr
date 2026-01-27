@@ -134,7 +134,7 @@ $guestDietary     = $booking->guests()[$guestUID]['guest_dietary']      ?? [];
 			<!-- Wine -->
 			<div class="mb-3">
 				<label for="guest_wine_choice" class="form-label">Wine <small>(charged via Battels)</small></label>
-				<select class="form-select" id="guest_wine_choice" <?= $meal->canBook(true) ? '' : 'disabled' ?> required>
+				<select class="form-select" id="guest_wine_choice" <?= $meal->isCutoffValid(true) ? '' : 'disabled' ?> required>
 					<?php
 					$wineOptions = explode(",", $settings->get('booking_wine_options'));
 					
@@ -153,13 +153,13 @@ $guestDietary     = $booking->guests()[$guestUID]['guest_dietary']      ?? [];
 <div class="modal-footer">
 	<button type="button" class="btn btn-link text-muted" data-bs-dismiss="modal">Close</button>
 	
-	<?php if ($meal->canBook(true)): ?>
+	<?php if ($meal->isCutoffValid(true)): ?>
 		<?php if ($action === 'edit'): ?>
 			<div class="btn-group">
-				<button type="submit" class="btn guest-update-btn btn-primary <?= !$meal->canBook(true) ? ' disabled' : ''; ?>" data-booking_uid="<?= $booking->uid ?>">Update Guest</button>
+				<button type="submit" class="btn guest-update-btn btn-primary <?= !$meal->isCutoffValid(true) ? ' disabled' : ''; ?>" data-booking_uid="<?= $booking->uid ?>">Update Guest</button>
 				
 				<button type="button"
-						class="btn btn-primary dropdown-toggle dropdown-toggle-split<?= !$meal->canBook(true) ? ' disabled' : ''; ?>"
+						class="btn btn-primary dropdown-toggle dropdown-toggle-split<?= !$meal->isCutoffValid(true) ? ' disabled' : ''; ?>"
 						data-bs-toggle="dropdown"></button>
 				<ul class="dropdown-menu">
 					<li><a class="dropdown-item guest-delete-btn text-danger" href="#" data-booking_uid="<?= $booking->uid ?>" data-delete-guest>Delete Guest</a></li>

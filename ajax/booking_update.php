@@ -25,8 +25,8 @@ if (!$booking->exists()) {
 }
 
 $meal = new Meal($booking->meal_uid);
-if (!$meal->canBook()) {
-	echo json_encode(['success' => false, 'message' => 'Meal is not bookable.']);
+if (!$meal->isCutoffValid(true)) {
+	echo json_encode(['success' => false, 'message' => 'Update failed.  Meal cut-off has passed.']);
 	exit;
 }
 
