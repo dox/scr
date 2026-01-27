@@ -1,7 +1,9 @@
 <?php
 header('Content-Type: application/json');
-
 require_once '../inc/autoload.php';
+if (!$user->isLoggedIn()) {
+	die("User not logged in.");
+}
 
 // Basic check: only allow POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {

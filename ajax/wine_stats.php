@@ -1,9 +1,6 @@
 <?php
 require_once '../inc/autoload.php';
-
-if (!$user->hasPermission("wine")) {
-	die("Permission denied.");
-}
+$user->pageCheck('wine');
 
 $cellarUID = filter_input(INPUT_GET, 'cellar_uid', FILTER_SANITIZE_NUMBER_INT);
 $wines = new Wines();

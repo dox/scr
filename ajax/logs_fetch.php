@@ -2,7 +2,6 @@
 declare(strict_types=1);
 
 require_once '../inc/autoload.php';
-
 $user->pageCheck('logs');
 
 $after = (int)($_GET['after'] ?? 0);

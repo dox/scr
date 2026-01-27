@@ -1,11 +1,7 @@
 <?php
-require_once '../inc/autoload.php';
-
 header('Content-Type: application/json');
-
-if (!$user->isLoggedIn()) {
-	die("User not logged in.");
-}
+require_once '../inc/autoload.php';
+$user->pageCheck('members');
 
 $ldap = trim($_GET['ldap'] ?? '');
 

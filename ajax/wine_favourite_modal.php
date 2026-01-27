@@ -1,9 +1,6 @@
 <?php
 require_once '../inc/autoload.php';
-
-if (!$user->isLoggedIn()) {
-	die("User not logged in.");
-}
+$user->pageCheck('wine');
 
 $wines = new Wines();
 $currentWineUid = $_GET['wine_uid'] ?? null;

@@ -1,9 +1,6 @@
 <?php
 require_once '../inc/autoload.php';
-
-if (!$user->hasPermission("wine")) {
-	die("Permission denied.");
-}
+$user->pageCheck('wine');
 
 $conditions = isset($_POST['conditions']) ? $_POST['conditions'] : '';
 

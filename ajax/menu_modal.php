@@ -1,9 +1,9 @@
 <?php
 require_once '../inc/autoload.php';
-
 if (!$user->isLoggedIn()) {
 	die("User not logged in.");
 }
+
 $mealUID = filter_input(INPUT_GET, 'mealUID', FILTER_VALIDATE_INT);
 $meal = new Meal($mealUID);
 ?>
