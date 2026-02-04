@@ -17,10 +17,23 @@ if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $start) ||
 $mealsObj = new Meals();
 $meals = $mealsObj->betweenDates($start, $end);
 
-// CSV header row
+// CSV header row (columns)
 $rowHeaders = [
-	'booking_uid','booking_date','type','member_ldap','name','guests_count',
-	'charge_to','domus_reason','wine_choice','dessert','meal_uid','meal_date','meal_menu'
+	'booking_uid',
+	'booking_date',
+	'type',
+	'member_ldap',
+	'member_type',
+	'member_category',
+	'name',
+	'guests_count',
+	'charge_to',
+	'domus_reason',
+	'wine_choice',
+	'dessert',
+	'meal_uid',
+	'meal_name',
+	'meal_date'
 ];
 fputcsv($output, $rowHeaders);
 
@@ -39,6 +52,8 @@ if (!empty($meals) && is_iterable($meals)) {
 					'booking_date'  => $booking->date ?? '',
 					'type'          => $booking->type ?? '',
 					'member_ldap'   => $booking->member_ldap ?? '',
+					'member_type'   => $member->type ?? '',
+					'member_category' => $member->category ?? '',
 					'name'          => $member ? $member->name() : '',
 					'guests_count'  => count($booking->guests() ?? []),
 					'charge_to'     => $booking->charge_to ?? '',
@@ -46,8 +61,8 @@ if (!empty($meals) && is_iterable($meals)) {
 					'wine_choice'   => $booking->wine_choice ?? '',
 					'dessert'       => $booking->dessert ?? '',
 					'meal_uid'      => $meal->uid ?? '',
-					'meal_date'     => $meal->date_meal ?? '',
-					'meal_menu'     => $meal->cleanMenu() ?? '',
+					'meal_name'     => $meal->name() ?? '',
+					'meal_date'     => $meal->date_meal ?? ''
 				];
 
 				fputcsv($output, $row);
@@ -59,6 +74,9 @@ if (!empty($meals) && is_iterable($meals)) {
 						'booking_date'  => $booking->date ?? '',
 						'type'          => $booking->type ?? '',
 						'member_ldap'   => 'GUEST',
+						'member_ldap'   => $booking->member_ldap ?? '',
+						'member_type'   => $member->type . ' GUEST' ?? '',
+						'member_category' => $member->category . ' GUEST' ?? '',
 						'name'          => $guest['guest_name'] ?? '',
 						'guests_count'  => '',
 						'charge_to'     => $guest['guest_charge_to'] ?? '',
@@ -66,8 +84,8 @@ if (!empty($meals) && is_iterable($meals)) {
 						'wine_choice'   => $guest['guest_wine_choice'] ?? '',
 						'dessert'       => $booking->dessert ?? '',
 						'meal_uid'      => $meal->uid ?? '',
-						'meal_date'     => $meal->date_meal ?? '',
-						'meal_menu'     => $meal->cleanMenu() ?? '',
+						'meal_name'     => $meal->name() ?? '',
+						'meal_date'     => $meal->date_meal ?? ''
 					];
 					fputcsv($output, $row);
 				}

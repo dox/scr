@@ -30,6 +30,8 @@ if ($format === 'csv') {
 	require_once $reportFile;
 
 	fclose($output);
+	
+	$log->add($reports[$reportKey]['file'] . ' report run', 'report', Log::SUCCESS);
 	exit;
 }
 
@@ -49,4 +51,5 @@ echo '</head>
 </div>
 </body>
 </html>';
+$log->add($reports[$reportKey]['file'] . ' report run', 'report', Log::SUCCESS);
 exit;
