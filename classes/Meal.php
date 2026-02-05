@@ -565,56 +565,71 @@ class Meal extends Model {
 			&& $this->isAllowedGroupsValid();
 	}
 	
-	public function dinersList() {
+	public function dinersList(): string {
 		global $user;
-		
-		$output  = '<ul>';
-		
-		foreach ($this->bookings() as $guestListBooking) {
-			$member = Member::fromLDAP($guestListBooking->member_ldap);
-		
+	
+		$showBookingDetails = (bool) $user->hasPermission('bookings');
+		$showMembers = (bool) $user->hasPermission('members');
+		$allowedWine = ($this->allowed_wine === "1");
+	
+		$output = '<ul>';
+	
+		foreach ($this->bookings() as $booking) {
+			$member = Member::fromLDAP($booking->member_ldap);
+			$memberName = htmlspecialchars((string) $member->public_displayName());
+	
 			$output .= '<li>';
-			$output .= $member->public_displayName() . ' ';
-		
-			// Member wine/dessert
-			if ($user->hasPermission('bookings')) {
-				$output .= $this->renderWineDessertIcons($guestListBooking->wineChoice(), $guestListBooking->dessertChoice());
+			$output .= $memberName . ' ';
+	
+			if ($showBookingDetails) {
+				$output .= $this->renderWineDessertIcons($booking->wineChoice(), $booking->dessertChoice());
 			}
-		
-			// Guests
-			$guests = $guestListBooking->guests();
+	
+			$guests = $booking->guests();
 			if (!empty($guests)) {
 				$output .= '<ul>';
-				foreach ($guests as $guest) {
-					$guestName = htmlspecialchars($guest['guest_name'] ?? '');
-					
-					if (!$user->hasPermission("members") && $member->opt_in != 1) {
-						$guestName = 'Hidden';
-					}
-		
-					$output .= '<li>';
-					$output .= $guestName . ' ';
-		
-					// Guest wine/dessert
-					if ($user->hasPermission('bookings')) {
-						$output .= $this->renderWineDessertIcons(
-							$guest['guest_wine_choice'] ?? null,
-							$guestListBooking->dessertChoice(),
-							$this->allowed_wine == "1"
-						);
-					}
-		
-					$output .= '</li>';
-				}
+				$output .= $this->renderGuestList($guests, $member, $showMembers, $showBookingDetails, $allowedWine, $booking);
 				$output .= '</ul>';
 			}
-		
+	
 			$output .= '</li>';
 		}
-		
+	
 		$output .= '</ul>';
-		
+	
 		return $output;
+	}
+	
+	/**
+	 * Render the <li> items for guests and return the HTML string.
+	 */
+	private function renderGuestList(array $guests, $member, bool $showMembers, bool $showBookingDetails, bool $allowedWine, $booking): string {
+		$html = '';
+	
+		foreach ($guests as $guest) {
+			// guest name might be missing: use empty string as fallback then escape
+			$guestName = htmlspecialchars((string) ($guest['guest_name'] ?? ''));
+	
+			// Original behaviour: hide guest name when user lacks members perm AND member hasn't opted in
+			if (!$showMembers && ($member->opt_in != 1)) {
+				$guestName = 'Hidden';
+			}
+	
+			$html .= '<li>';
+			$html .= $guestName . ' ';
+	
+			if ($showBookingDetails) {
+				$html .= $this->renderWineDessertIcons(
+					$guest['guest_wine_choice'] ?? null,
+					$booking->dessertChoice(),
+					$allowedWine
+				);
+			}
+	
+			$html .= '</li>';
+		}
+	
+		return $html;
 	}
 	
 	private function renderWineDessertIcons($wineChoice, $dessertChoice, $mealAllowedWine = true) {
