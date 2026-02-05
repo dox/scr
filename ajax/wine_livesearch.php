@@ -21,6 +21,7 @@ $sql = "SELECT wine_wines.uid, wine_wines.name
 		WHERE wine_wines.status <> 'Closed' AND
 		(
 			wine_wines.name LIKE ?
+			OR wine_wines.code LIKE ?
 			OR wine_wines.grape LIKE ?
 			OR wine_wines.region_of_origin LIKE ?
 			OR wine_wines.country_of_origin LIKE ?
@@ -28,7 +29,7 @@ $sql = "SELECT wine_wines.uid, wine_wines.name
 		)
 		";
 
-$params = ["%$q%", "%$q%", "%$q%", "%$q%", "%$q%"];
+$params = ["%$q%", "%$q%", "%$q%", "%$q%", "%$q%", "%$q%"];
 
 if ($cellarUID !== null) {
 	$sql .= " AND wine_bins.cellar_uid = ?";
