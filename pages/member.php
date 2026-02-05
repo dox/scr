@@ -451,8 +451,7 @@ echo pageTitle(
 								
 								<div class="input-group mb-3">
 								  <input type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1" value="<?php echo $url; ?>">
-								  <span class="input-group-text" id="basic-addon1" onclick="copyToClipboard(this)"
-								  data-copy="<?php echo $url; ?>"><i class="bi bi-copy"></i></span>
+								  <span class="input-group-text" id="basic-addon1" onclick="copyToClipboard(this)" onKeyDown="copyToClipboard(this)" data-copy="<?php echo $url; ?>"><i class="bi bi-copy"></i></span>
 								</div>
 								  
 								<p>Open Outlook (Or log in to your Outlook account on the web at <a href="https://outlook.live.com/">https://outlook.live.com/</a> and open your calendar.</p>
