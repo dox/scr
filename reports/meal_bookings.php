@@ -72,7 +72,7 @@ foreach ($meal->bookings() as $booking) {
 		$row['dessert']       = $booking->dessert              ?? '';
 	
 		$row['meal_uid']      = $meal->uid          ?? '';
-		$row['meal_uid']      = $meal->name();
+		$row['meal_name']     = $meal->name();
 		$row['meal_date']     = $meal->date_meal    ?? '';
 		$row['meal_menu']     = $meal->cleanMenu()         ?? '';
 	
