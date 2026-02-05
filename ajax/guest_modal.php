@@ -20,11 +20,12 @@ $meal = new Meal($booking->meal_uid);
 
 // what if no guest UID, or invalid?
 
-$guestName        = $booking->guests()[$guestUID]['guest_name']         ?? '';
-$guestChargeTo    = $booking->guests()[$guestUID]['guest_charge_to']    ?? '';
-$guestDomusReason = $booking->guests()[$guestUID]['guest_domus_reason'] ?? '';
-$guestWineChoice  = $booking->guests()[$guestUID]['guest_wine_choice']  ?? '';
-$guestDietary     = $booking->guests()[$guestUID]['guest_dietary']      ?? [];
+$guestName         = $booking->guests()[$guestUID]['guest_name']          ?? '';
+$guestChargeTo     = $booking->guests()[$guestUID]['guest_charge_to']     ?? '';
+$guestDomusReason  = $booking->guests()[$guestUID]['guest_domus_reason']  ?? '';
+$guestWineChoice   = $booking->guests()[$guestUID]['guest_wine_choice']   ?? '';
+$guestDietary      = $booking->guests()[$guestUID]['guest_dietary']       ?? [];
+$guestDietaryNotes = $booking->guests()[$guestUID]['guest_dietary_notes'] ?? '';
 ?>
 
 <div class="modal-header">
@@ -99,6 +100,8 @@ $guestDietary     = $booking->guests()[$guestUID]['guest_dietary']      ?? [];
 						
 						echo $output;
 						?>
+						
+						<textarea class="form-control mt-3" id="guest_dietary_notes" name="guest_dietary_notes" rows="3" placeholder="Additional dietary notes/requests"><?= htmlspecialchars($guestDietaryNotes, ENT_QUOTES); ?></textarea>
 						
 						<small id="nameHelp" class="form-text text-muted"><?php echo $settings->get('meal_dietary_message'); ?></small>
 					</div>

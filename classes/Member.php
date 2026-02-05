@@ -13,6 +13,7 @@ class Member extends Model {
 	public ?int $precedence = 0;
 	public ?string $email = 'unknown@unknown.com';
 	public ?string $dietary = null;
+	public ?string $dietary_notes = null;
 	public bool $opt_in = false;
 	public bool $email_reminders = false;
 	public ?string $default_wine_choice = null;
@@ -201,10 +202,11 @@ class Member extends Model {
 	
 		// Map normal text/select fields
 		$fields = [
-			'title'     => $postData['title'] ?? null,
-			'firstname' => $postData['firstname'] ?? null,
-			'lastname'  => $postData['lastname'] ?? null,
-			'email'     => $postData['email'] ?? null,
+			'title'			=> $postData['title'] ?? null,
+			'firstname'		=> $postData['firstname'] ?? null,
+			'lastname'		=> $postData['lastname'] ?? null,
+			'email'     	=> $postData['email'] ?? null,
+			'dietary_notes'	=> $postData['dietary_notes'] ?? null,
 		];
 		
 		

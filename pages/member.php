@@ -253,6 +253,7 @@ echo pageTitle(
 							<?php
 							$dietaryOptions    = array_map('trim', explode(',', $settings->get('meal_dietary')));
 							$memberDietary     = array_map('trim', explode(',', $member->dietary ?? ''));
+							$dietaryNotes      = $member->dietary_notes ?? '';
 							
 							asort($dietaryOptions);
 							
@@ -279,6 +280,8 @@ echo pageTitle(
 							
 							echo $output;
 							?>
+							
+							<textarea class="form-control mt-3" id="dietary_notes" name="dietary_notes" rows="3" placeholder="Additional dietary notes/requests"><?= htmlspecialchars($dietaryNotes, ENT_QUOTES); ?></textarea>
 							
 							<small id="nameHelp" class="form-text text-muted"><?php echo $settings->get('meal_dietary_message'); ?></small>
 						</div>

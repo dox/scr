@@ -71,6 +71,9 @@ echo pageTitle(
 			  
 			  $output .= "<br>" . implode(", ", $dietaryArray);
 			}
+			if (!empty($member->dietary_notes)) {
+				$output .= '<br><i>Dietary notes: ' . htmlspecialchars($member->dietary_notes) . '</i>';
+			}
 		  $output .= "</td>";
 		  
 		  $output .= "<td>";
@@ -113,11 +116,16 @@ echo pageTitle(
 				
 				// Dietary info (if any)
 				$guestDietary = $guest['guest_dietary'] ?? '';
+				
 				if (is_string($guestDietary)) {
 					$guestDietary = array_map('trim', explode(',', $guestDietary));
 				}
 				if (is_array($guestDietary) && !empty(array_filter($guestDietary))) {
 					$output .= '<br>' . htmlspecialchars(implode(', ', array_filter($guestDietary)));
+				}
+				$guestDietaryNotes = $guest['guest_dietary_notes'] ?? '';
+				if (!empty($guestDietaryNotes)) {
+					$output .= '<br><i>Dietary notes: ' . htmlspecialchars($guestDietaryNotes) . '</i>';
 				}
 			  $output .= "</td>";
 			  $output .= "<td>";

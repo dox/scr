@@ -41,11 +41,12 @@ try {
 		$guestDietaryArray = array_map('trim', $guestDietaryArray);
 		
 		$data = array(
-		  'guest_name'			=> $_POST['guest_name']     ?? null,
-		  'guest_charge_to'		=> $_POST['charge_to']     ?? null,
-		  'guest_domus_reason'	=> $_POST['domus_reason']  ?? null,
-		  'guest_wine_choice'	=> $_POST['wine_choice']   ?? null,
-		  'guest_dietary'		=> $guestDietaryArray
+		  'guest_name'			=> $_POST['guest_name']				?? null,
+		  'guest_charge_to'		=> $_POST['charge_to']				?? null,
+		  'guest_domus_reason'	=> $_POST['domus_reason']			?? null,
+		  'guest_wine_choice'	=> $_POST['wine_choice']			?? null,
+		  'guest_dietary'		=> $guestDietaryArray,
+		  'guest_dietary_notes'	=> $_POST['guest_dietary_notes']	?? null,
 		);
 		
 		$booking->addGuest($data);
@@ -74,12 +75,13 @@ try {
 			: '';
 		
 		$data = [
-			'guest_uid'          => $_POST['guest_uid']        ?? null,
-			'guest_name'         => $_POST['guest_name']       ?? null,
-			'guest_charge_to'    => $_POST['charge_to']        ?? null,
-			'guest_domus_reason' => $_POST['domus_reason']     ?? null,
-			'guest_wine_choice'  => $_POST['wine_choice']      ?? null,
-			'guest_dietary'      => $guestDietary,
+			'guest_uid'				=> $_POST['guest_uid']					?? null,
+			'guest_name'			=> $_POST['guest_name']					?? null,
+			'guest_charge_to'		=> $_POST['charge_to']					?? null,
+			'guest_domus_reason'	=> $_POST['domus_reason']				?? null,
+			'guest_wine_choice'		=> $_POST['wine_choice']				?? null,
+			'guest_dietary'			=> $guestDietary,
+			'guest_dietary_notes'	=> $_POST['guest_dietary_notes']		?? null,
 		];
 		
 		$booking->editGuest($data);

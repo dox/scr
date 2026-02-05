@@ -236,7 +236,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	const guestDietaryEls = container.querySelectorAll('input.dietaryOptionsMax[name="guest_dietary[]"]:checked');
 	const guestDietaryValues = Array.from(guestDietaryEls).map(el => el.value);
-	
+	const guestDietaryNotes = container.querySelector('#guest_dietary_notes');
 	
 	// Guest name validation
 	if (action !== 'guest_delete' && (!guest_nameEl || guest_nameEl.value.trim() === '')) {
@@ -279,10 +279,10 @@ document.addEventListener('DOMContentLoaded', () => {
 	  data.append('domus_reason', domusReasonEl?.value || '');
 	  data.append('wine_choice', wineEl?.value || '');
 	  data.append('dessert', dessertEl?.checked ? 1 : 0);
-	
 	  guestDietaryValues.forEach(val => {
 		data.append('guest_dietary[]', val);
 	  });
+	  data.append('guest_dietary_notes', guestDietaryNotes?.value || '');
 	}
 	
 	try {

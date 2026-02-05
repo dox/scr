@@ -193,6 +193,10 @@ echo pageTitle(
 					htmlspecialchars(implode(', ', array_filter($guestDietary))) .
 				'</small>';
 			}
+			$guestDietaryNotes = $guest['guest_dietary_notes'] ?? '';
+			if (!empty($guestDietaryNotes)) {
+				$output .= '<small class="text-muted d-block mb-1"><i>Dietary notes: ' . htmlspecialchars($guestDietaryNotes) . '</i></small>';
+			}
 		
 			// Wine/Dessert
 			$wineDessert = [];

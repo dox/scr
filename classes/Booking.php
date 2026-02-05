@@ -157,21 +157,25 @@ class Booking extends Model {
 		$guest = ['guest_uid' => $guestUid];
 		foreach ($postData as $key => $value) {
 			$guest[$key] = ($key === 'guest_dietary')
-				? $value
-				: htmlspecialchars(trim($value), ENT_QUOTES);
+			? $value
+			: trim($value);
 		}
 	
 		// push into JSON column (overwrite this guest entry)
 		$payload = json_encode($guest, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-	
+		
 		$sql = "
 			UPDATE " . self::$table . "
-			SET guests_array = JSON_SET(guests_array, '$.\"{$guestUid}\"', '{$payload}')
+			SET guests_array = JSON_SET(guests_array, '$.\"{$guestUid}\"', :payload)
 			WHERE uid = :uid
 			LIMIT 1
 		";
-	
-		$db->query($sql, [':uid' => $this->uid]);
+		
+		// then pass payload as parameter (your $db->query may already do this)
+		$db->query($sql, [
+			':payload' => $payload,
+			':uid'     => $this->uid
+		]);
 		
 		// write the log
 		$member = Member::fromLDAP($this->member_ldap);
