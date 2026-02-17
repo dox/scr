@@ -59,6 +59,76 @@ class Meal extends Model {
 		return $this->name;
 	}
 	
+	public function add(array $postData) {
+		global $db, $log;
+	
+		// Map normal text/select fields (unchanged)
+		$fields = [
+			'type'      => $postData['type'] ?? null,
+			'name'      => $postData['name'] ?? null,
+			'location'  => $postData['location'] ?? null,
+			'date_meal' => $postData['date_meal'] ?? null,
+			'date_cutoff' => $postData['date_cutoff'] ?? null,
+			'menu'      => $postData['menu'] ?? null,
+			'notes'     => $postData['notes'] ?? null,
+			'photo'     => $postData['photo'] ?? null,
+			'charge_to' => $postData['charge_to'] ?? null,
+			'allowed_wine' => $postData['allowed_wine'] ?? '0',
+			'allowed_dessert' => $postData['allowed_dessert'] ?? '0'
+		];
+	
+		// Handle capacity[...] posted structure and write to `capacity` JSON column
+		$capacityOut = [];
+	
+		if (isset($postData['capacity']) && is_array($postData['capacity'])) {
+			foreach ($postData['capacity'] as $memberTypeRaw => $vals) {
+				// Normalize key
+				$memberType = trim((string)$memberTypeRaw);
+				if ($memberType === '') {
+					continue;
+				}
+	
+				// Extract posted values, default to 0 if missing
+				$mainRaw = $vals['capacity'] ?? 0;
+				$dessertRaw = $vals['dessert_capacity'] ?? 0;
+				$guestsRaw = $vals['guests'] ?? 0;
+	
+				// Basic validation & normalization
+				$main = is_numeric($mainRaw) && intval($mainRaw) >= 0 ? (int)$mainRaw : 0;
+				$dessert = is_numeric($dessertRaw) && intval($dessertRaw) >= 0 ? (int)$dessertRaw : 0;
+				$guests = is_numeric($guestsRaw) && intval($guestsRaw) >= 0 ? (int)$guestsRaw : 0;
+	
+				$capacityOut[$memberType] = [
+					'seating' => [
+						'main' => $main,
+						'dessert' => $dessert,
+					],
+					'guests' => [
+						'max_per_member' => $guests,
+					],
+				];
+			}
+		}
+	
+		// Store capacity JSON into the dedicated 'capacity' DB column.
+		// Add to the $fields array so the same $db->update handles it.
+		$fields['capacity'] = json_encode($capacityOut, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+	
+		// Send to database update
+		$db->create(
+			static::$table,
+			$fields,
+			true
+		);
+	
+		// write the log
+		$log->add('Meal created for ' . $this->name, Log::SUCCESS);
+	
+		toast('Meal Created', 'Meal successfully created', 'text-success');
+	
+		return true;
+	}
+	
 	public function update(array $postData) {
 		global $db, $log;
 	

@@ -9,7 +9,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		$meal->delete();
 	} elseif(isset($_POST['createMeal'])) {
 		unset($_POST['createMeal']);
-		$meals->create($_POST);
+		$meal = new Meal();
+		$meal->add($_POST);
 	}
 }
 

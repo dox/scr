@@ -59,7 +59,59 @@ class Database {
 	public function rollBack() {
 		$this->pdo->rollBack();
 	}
-
+	
+	/**
+	 * Generic create/insert method.
+	 *
+	 * @param string $table Table name
+	 * @param array $fields Associative array of fields to insert ['column' => 'value']
+	 * @param bool $logChanges Whether to log creation
+	 * @return int Inserted record ID
+	 */
+	public function create(string $table, array $fields, bool $logChanges = false): int {
+		if (empty($fields)) {
+			throw new InvalidArgumentException("Fields cannot be empty for insert.");
+		}
+	
+		// Build column and placeholder lists
+		$columns = implode(", ", array_map(fn($k) => "`$k`", array_keys($fields)));
+		$placeholders = implode(", ", array_map(fn($k) => ":$k", array_keys($fields)));
+	
+		$sql = "INSERT INTO `$table` ($columns) VALUES ($placeholders)";
+	
+		// Execute insert
+		$stmt = $this->query($sql, $fields);
+		$insertId = (int)$this->lastInsertId();
+	
+		// Optional logging
+		if ($logChanges) {
+			$logger = new Log();
+	
+			$description = sprintf(
+				"Created new record in %s with ID %s",
+				$table,
+				$insertId
+			);
+	
+			$logger->add($description, Log::INFO);
+	
+			// Optional: detailed per-field logging (like update)
+			foreach ($fields as $k => $v) {
+				$logger->add(
+					sprintf(
+						" → %s.%s = '%s'",
+						$table,
+						$k,
+						$v
+					),
+					Log::INFO
+				);
+			}
+		}
+	
+		return $insertId;
+	}
+	
 	/**
 	 * Generic update method.
 	 *
