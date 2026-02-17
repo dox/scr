@@ -139,26 +139,6 @@ echo pageTitle(
 
 			<hr>
 			
-			<!--<div class="row mb-3">
-				<div class="col">
-					<label class="form-label text-truncate">Capacity</label>
-					<input type="number" class="form-control" name="scr_capacity"
-						   value="<?= $meal->scr_capacity ?>" min="0" required>
-				</div>
-			
-				<div class="col">
-					<label class="form-label text-truncate">Dessert Capacity</label>
-					<input type="number" class="form-control" name="scr_dessert_capacity"
-						   value="<?= $meal->scr_dessert_capacity ?>" min="0" required>
-				</div>
-			
-				<div class="col">
-					<label class="form-label text-truncate">Guests</label>
-					<input type="number" class="form-control" name="scr_guests"
-						   value="<?= $meal->scr_guests ?>" min="0" required>
-				</div>
-			</div>-->
-			
 			<div class="card card-body mb-3">
 			
 			<?php foreach ($memberTypes as $memberType): ?>
