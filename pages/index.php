@@ -2,7 +2,7 @@
 $currentTerm = $terms->currentTerm();
 
 echo pageTitle(
-	"SCR Meal Booking",
+	APP_NAME,
 	$currentTerm->name
 );
 ?>
