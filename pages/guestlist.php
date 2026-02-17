@@ -5,6 +5,8 @@ $mealUID = filter_input(INPUT_GET, 'uid', FILTER_SANITIZE_NUMBER_INT);
 
 $meal = new Meal($mealUID);
 
+$memberTypes = array_map('trim', explode(',', $settings->get('member_types')));
+
 echo pageTitle(
 	$meal->name(),
 	formatDate($meal->date_meal) . ", " . $meal->location
@@ -12,33 +14,76 @@ echo pageTitle(
 ?>
 
 <div class="row mb-3">
-	<div class="col mb-3">
-		<div class="card">
-			<div class="card-body">
-				<?php
-				$totalDiners = $meal->totalDiners();
-				$totalBookings = count($meal->bookings());
-				$guests = $totalDiners - $totalBookings;
-				?>
-				<div class="card-title">Diners</div>
-				<div class="card-text <?= ($meal->totalDiners() > $meal->scr_capacity) ? 'text-danger' : 'text-muted"'; ?>"><h4><?= $totalDiners . " (" . $totalBookings . " +" . $guests . autoPluralise(" guest)", " guests)", $guests) ?></h4></div>
-			</div>
-		</div>
-	</div>
-	<div class="col mb-3">
-		<div class="card">
-			<div class="card-body">
-				<?php
-				$totalDessertDiners = $meal->totalDessertDiners();
-				?>
-				<div class="card-title">Dessert</div>
-				<div class="card-text <?= ($meal->totalDessertDiners() > $meal->scr_dessert_capacity) ? 'text-danger' : 'text-muted"'; ?>"><h4><?= $totalDessertDiners ?></h4></div>
-			</div>
-		</div>
-	</div>
+	<?php
+	$output = '';
+	
+	foreach ($memberTypes as $memberType) {
+		$capacities = $meal->getCapacityForMemberType($memberType);
+		
+		// use $memberType when calling these methods
+		$totalDiners        = (int) $meal->totalDiners($memberType);
+		$totalBookings      = (int) count($meal->bookings($memberType));
+		$guests             = $totalDiners - $totalBookings;
+		
+		if ($totalDiners <= 0) {
+			continue;
+		}
+	
+		$totalDessertDiners = (int) $meal->totalDessertDiners($memberType);
+	
+		// determine classes
+		$dinersClass   = ($totalDiners > $capacities['main']) ? 'text-danger' : 'text-muted';
+		$dessertClass  = ($totalDessertDiners > $capacities['dessert']) ? 'text-danger' : 'text-muted';
+	
+		// build guest text (uses your autoPluralise helper)
+		// autoPluralise(' singular', ' plural', $count)
+		$guestSuffix = autoPluralise(' guest', ' guests', $guests);
+		$guestText = $totalBookings . ' +' . $guests . $guestSuffix . ')'; // note: add closing ')' to match original format
+	
+		// escape numeric/text for safety (numbers are cast above but still)
+		$safeTotalDiners        = htmlspecialchars((string)$totalDiners, ENT_QUOTES, 'UTF-8');
+		$safeTotalBookings      = htmlspecialchars((string)$totalBookings, ENT_QUOTES, 'UTF-8');
+		$safeGuests             = htmlspecialchars((string)$guests, ENT_QUOTES, 'UTF-8');
+		$safeTotalDessertDiners = htmlspecialchars((string)$totalDessertDiners, ENT_QUOTES, 'UTF-8');
+		$safeGuestText          = htmlspecialchars($guestText, ENT_QUOTES, 'UTF-8');
+	
+		$output .= '<div class="col-6 mb-3">';
+		$output .=     '<div class="card">';
+		$output .=         '<div class="card-body">';
+		$output .=             '<div class="card-title">' . htmlspecialchars($memberType, ENT_QUOTES, 'UTF-8') . ' Diners</div>';
+		$output .=             '<div class="card-text ' . $dinersClass . '">';
+		$output .=                 '<h4>' . $safeTotalDiners . ' (' . $safeTotalBookings . ' +' . $safeGuests . autoPluralise(' guest', ' guests', $guests) . ')</h4>';
+		$output .=             '</div>';
+		$output .=         '</div>';
+		$output .=     '</div>';
+		$output .= '</div>';
+	
+		$output .= '<div class="col mb-3">';
+		$output .=     '<div class="card">';
+		$output .=         '<div class="card-body">';
+		$output .=             '<div class="card-title">' . htmlspecialchars($memberType, ENT_QUOTES, 'UTF-8') . ' Dessert</div>';
+		$output .=             '<div class="card-text ' . $dessertClass . '">';
+		$output .=                 '<h4>' . $safeTotalDessertDiners . '</h4>';
+		$output .=             '</div>';
+		$output .=         '</div>';
+		$output .=     '</div>';
+		$output .= '</div>';
+	}
+	
+	// finally echo the built HTML
+	echo $output;
+	?>
 </div>
 
-<h4 class="d-flex justify-content-between align-items-center mb-3">Guest List</h4>
+<?php
+
+foreach ($memberTypes as $memberType) {
+	$bookings = $meal->bookings($memberType);
+	if (count($bookings) <= 0) {
+		continue;
+	}
+	?>
+<h4 class="d-flex justify-content-between align-items-center mb-3"><?= $memberType ?> Guest List</h4>
 
 <table class="table">
 	<thead>
@@ -59,7 +104,7 @@ echo pageTitle(
 	<tbody>
 		<?php
 		$i = 1;
-		foreach ($meal->bookings() AS $booking) {
+		foreach ($meal->bookings($memberType) AS $booking) {
 		  $member = Member::fromLDAP($booking->member_ldap);
 		  
 		  $output  = "<tr>";
@@ -129,7 +174,7 @@ echo pageTitle(
 				}
 			  $output .= "</td>";
 			  $output .= "<td>";
-			  	if ($meal->allowed_wine == "1") {
+				  if ($meal->allowed_wine == "1") {
 					  if (!empty($guest['guest_wine_choice']) && $guest['guest_wine_choice'] !== 'None') {
 						  $output .= "
 						  <svg class=\"bi\" width=\"1em\" height=\"1em\" aria-hidden=\"true\"
@@ -170,6 +215,9 @@ echo pageTitle(
 		?>
 	</tbody>
 </table>
+<?php
+}
+?>
 
 <p><em>Guest List generated on <?= formatDate(date('c')) . " " . formatTime(date('c')); ?> by <?= $user->getUsername(); ?></em></p>
 

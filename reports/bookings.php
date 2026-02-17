@@ -41,7 +41,7 @@ fputcsv($output, $rowHeaders);
 if (!empty($meals) && is_iterable($meals)) {
 	foreach ($meals as $meal) {
 
-		$bookings = $meal->bookings();
+		$bookings = $meal->bookings('all');
 		if (!empty($bookings) && is_iterable($bookings)) {
 
 			foreach ($bookings as $booking) {

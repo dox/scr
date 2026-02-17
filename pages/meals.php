@@ -91,8 +91,7 @@ if (strtotime($dateFrom) > strtotime($dateTo)) {
 			
 			echo '<td>' . htmlspecialchars($meal->location) . '</td>';
 			
-			$capacityClass = ($meal->totalDiners() > $meal->scr_capacity) ? 'text-danger' : '';
-			echo '<td class="{$capacityClass}">' . $meal->totalDiners() . ' / ' . $meal->scr_capacity . '</td>';
+			echo '<td>' . $meal->totalDiners('all') . '</td>';
 			
 			echo '</tr>';
 		}

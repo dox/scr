@@ -28,7 +28,7 @@ $rowHeaders = [
 
 fputcsv($output, $rowHeaders);
 
-foreach ($meal->bookings() as $booking) {
+foreach ($meal->bookings('all') as $booking) {
 	$meal = new Meal($booking->meal_uid);
 	$member = Member::fromLDAP($booking->member_ldap);
 	

@@ -235,4 +235,10 @@ class User {
 			? strtoupper($this->userData['samaccountname'])
 			: null;
 	}
+	
+	public function getMemberType(): ?string {
+		return isset($this->userData['type'])
+			? $this->userData['type']
+			: null;
+	}
 }

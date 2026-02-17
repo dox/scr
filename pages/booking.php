@@ -64,7 +64,7 @@ echo pageTitle(
 
 <div class="row">
 	<div class="col-md-7 col-lg-8 order-2 order-md-1">
-		<h4>Diners</h4>
+		<h4><?= $user->getMemberType() ?> Diners</h4>
 		<?php
 		echo $meal->dinersList();
 		?>
@@ -140,9 +140,7 @@ echo pageTitle(
 				   ) ? 'disabled' : '' ?>
 				   <?= $booking->dessertChoice() == "1" ? "checked" : "" ?>>
 				<label for="dessert" class="form-label">
-					Dessert <i><?= ($meal->hasGuestDessertCapacity(count($booking->guests()), false) ? '(applies to your guests)' : '(Unavailable capacity)') ?></i>
-					<?= ($user->hasPermission("meals") && !$meal->hasDessertCapacity(false) ? '<span class="badge rounded-pill text-bg-danger">Capacity Reached</span>' : '') ?>
-					
+					Dessert <i><?= ($meal->hasGuestDessertCapacity(count($booking->guests()), false) ? '(applies to your guests)' : '<span class="badge rounded-pill text-bg-danger">Capacity Reached</span>') ?></i>
 				</label>
 			</div>
 		<?php endif; ?>

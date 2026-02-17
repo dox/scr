@@ -13,12 +13,7 @@ class Meal extends Model {
 	  public $charge_to;
 	  public $allowed_wine;
 	  public $allowed_dessert;
-	  public $scr_capacity;
-	  public $mcr_capacity;
-	  public $scr_guests;
-	  public $mcr_guests;
-	  public $scr_dessert_capacity;
-	  public $mcr_dessert_capacity;
+	  public $capacity;
 	  public $menu;
 	  public $notes;
 	  public $photo;
@@ -43,12 +38,6 @@ class Meal extends Model {
 			$this->charge_to;
 			$this->allowed_wine = 0;
 			$this->allowed_dessert;
-			$this->scr_capacity = 0;
-			//$this->mcr_capacity;
-			$this->scr_guests = 0;
-			//$this->mcr_guests;
-			$this->scr_dessert_capacity = 0;
-			//$this->mcr_dessert_capacity;
 			$this->menu = "";
 			$this->notes = "";
 			$this->photo;
@@ -73,28 +62,62 @@ class Meal extends Model {
 	public function update(array $postData) {
 		global $db, $log;
 	
-		// Map normal text/select fields
+		// Map normal text/select fields (unchanged)
 		$fields = [
 			'type'      => $postData['type'] ?? null,
-			'name'  => $postData['name'] ?? null,
-			'location'   => $postData['location'] ?? null,
-			'date_meal'   => $postData['date_meal'] ?? null,
-			'date_cutoff'   => $postData['date_cutoff'] ?? null,
-			'scr_capacity'   => $postData['scr_capacity'] ?? null,
-			'scr_dessert_capacity'   => $postData['scr_dessert_capacity'] ?? null,
-			'scr_guests'   => $postData['scr_guests'] ?? null,
-			'menu'   => $postData['menu'] ?? null,
-			'notes'   => $postData['notes'] ?? null,
-			'photo'   => $postData['photo'] ?? null,
-			'charge_to'   => $postData['charge_to'] ?? null,
-			'allowed_wine'   => $postData['allowed_wine'] ?? '0',
-			'allowed_dessert'   => $postData['allowed_dessert'] ?? '0'
+			'name'      => $postData['name'] ?? null,
+			'location'  => $postData['location'] ?? null,
+			'date_meal' => $postData['date_meal'] ?? null,
+			'date_cutoff' => $postData['date_cutoff'] ?? null,
+			'menu'      => $postData['menu'] ?? null,
+			'notes'     => $postData['notes'] ?? null,
+			'photo'     => $postData['photo'] ?? null,
+			'charge_to' => $postData['charge_to'] ?? null,
+			'allowed_wine' => $postData['allowed_wine'] ?? '0',
+			'allowed_dessert' => $postData['allowed_dessert'] ?? '0'
 		];
-		
+	
 		// Handle checkboxes / arrays (dietary, permissions)
-		$fields['allowed'] = isset($postData['allowed']) 
-			? implode(',', array_filter($postData['allowed'])) 
+		$fields['allowed'] = isset($postData['allowed'])
+			? implode(',', array_filter($postData['allowed']))
 			: '';
+	
+		// Handle capacity[...] posted structure and write to `capacity` JSON column
+		$capacityOut = [];
+	
+		if (isset($postData['capacity']) && is_array($postData['capacity'])) {
+			foreach ($postData['capacity'] as $memberTypeRaw => $vals) {
+				// Normalize key
+				$memberType = trim((string)$memberTypeRaw);
+				if ($memberType === '') {
+					continue;
+				}
+	
+				// Extract posted values, default to 0 if missing
+				$mainRaw = $vals['capacity'] ?? 0;
+				$dessertRaw = $vals['dessert_capacity'] ?? 0;
+				$guestsRaw = $vals['guests'] ?? 0;
+	
+				// Basic validation & normalization
+				$main = is_numeric($mainRaw) && intval($mainRaw) >= 0 ? (int)$mainRaw : 0;
+				$dessert = is_numeric($dessertRaw) && intval($dessertRaw) >= 0 ? (int)$dessertRaw : 0;
+				$guests = is_numeric($guestsRaw) && intval($guestsRaw) >= 0 ? (int)$guestsRaw : 0;
+	
+				$capacityOut[$memberType] = [
+					'seating' => [
+						'main' => $main,
+						'dessert' => $dessert,
+					],
+					'guests' => [
+						'max_per_member' => $guests,
+					],
+				];
+			}
+		}
+	
+		// Store capacity JSON into the dedicated 'capacity' DB column.
+		// Add to the $fields array so the same $db->update handles it.
+		$fields['capacity'] = json_encode($capacityOut, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
 	
 		// Send to database update
 		$updatedRows = $db->update(
@@ -103,30 +126,44 @@ class Meal extends Model {
 			['uid' => $this->uid],
 			'logs'
 		);
-		
+	
 		// write the log
 		$log->add('Meal updated for ' . $this->name, Log::SUCCESS);
-		
-		toast('Meal Updated', 'Meal sucesfully updated', 'text-success');
-		
+	
+		toast('Meal Updated', 'Meal successfully updated', 'text-success');
+	
 		return $updatedRows;
 	}
 	
-	public function bookings(): array {
-		global $db;
+	public function bookings(?string $memberType = null): array {
+		global $db, $user;
 		
+		// Default to current user's member type if not specified
+		if ($memberType === null || trim($memberType) === '') {
+			$memberType = $user->getMemberType();
+		}
+	
 		$bookings = [];
+	
+		$params = ['uid' => $this->uid];
+		$memberTypeSql = '';
+	
+		if ($memberType !== null && $memberType !== 'all' && trim($memberType) !== '') {
+			$memberTypeSql = ' AND LOWER(members.type) = :member_type ';
+			$params['member_type'] = strtolower(trim($memberType));
+		}
 	
 		$sql = "
 			SELECT bookings.uid AS uid
 			FROM bookings
-			LEFT JOIN meals ON bookings.meal_uid = meals.uid
+			LEFT JOIN meals   ON bookings.meal_uid = meals.uid
 			LEFT JOIN members ON bookings.member_ldap = members.ldap
 			WHERE meals.uid = :uid
+			{$memberTypeSql}
 			ORDER BY members.precedence ASC
 		";
 	
-		$rows = $db->fetchAll($sql, ['uid' => $this->uid]);
+		$rows = $db->fetchAll($sql, $params);
 	
 		foreach ($rows as $row) {
 			$bookings[] = Booking::fromUID($row['uid']);
@@ -159,15 +196,24 @@ class Meal extends Model {
 		return $bookings;
 	}
 	
-	public function totalDiners(): int {
+	public function totalDiners(?string $memberType = null): int {
+		global $user;
+	
+		// Default to current user's member type if not specified
+		if ($memberType === null || trim($memberType) === '') {
+			$memberType = $user->getMemberType();
+		}
+	
+		$memberType = strtolower(trim($memberType));
 		$count = 0;
 	
-		foreach ($this->bookings() as $booking) {
-			// Each booking counts as one person
+		// Use the new filtered bookings() method
+		foreach ($this->bookings($memberType) as $booking) {
+	
+			// Each booking counts as one member
 			$count++;
 	
-			// Guests stored as JSON array in $booking->guests_array
-			// Decode, but guard against null or invalid content
+			// Guests stored as JSON / array via $booking->guests()
 			$guests = $booking->guests();
 	
 			if (is_array($guests)) {
@@ -178,14 +224,23 @@ class Meal extends Model {
 		return $count;
 	}
 	
-	public function totalDessertDiners(): int {
+	public function totalDessertDiners(?string $memberType = null): int {
+		global $user;
+		
 		$count = 0;
 		
 		if (!$this->allowed_dessert) {
 			return $count;
 		}
+		
+		// Default to current user's member type if not specified
+		if ($memberType === null || trim($memberType) === '') {
+			$memberType = $user->getMemberType();
+		}
+		
+		$memberType = strtolower(trim($memberType));
 	
-		foreach ($this->bookings() as $booking) {
+		foreach ($this->bookings($memberType) as $booking) {
 			if ($booking->dessert) {
 				// Each booking counts as one person
 				$count++;
@@ -263,6 +318,9 @@ class Meal extends Model {
 	}
 	
 	public function cleanMenu(): string {
+		if ($this->menu === null) {
+			return '';
+		}
 		// Remove figure blocks (images, captions, etc.)
 		$html = preg_replace('/<figure\b[^>]*>.*?<\/figure>/si', '', $this->menu);
 	
@@ -283,8 +341,84 @@ class Meal extends Model {
 		return $text;
 	}
 	
+	public function getCapacityForMemberType(?string $memberType = null): array {
+		// defensive defaults
+		$defaults = [
+			'main'    => 0,
+			'dessert' => 0,
+			'guests'  => 0,
+		];
+		
+		// Determine member type: explicit argument wins, else current user
+		if ($memberType === null || trim($memberType) === '') {
+			// Adjust this line if $user is accessed differently in your app
+			global $user;
+			if (!$user || !method_exists($user, 'getMemberType')) {
+				return $defaults;
+			}
+			$memberType = $user->getMemberType();
+		}
+		
+		$lookup = strtolower(trim((string)$memberType));
+		if ($lookup === '') {
+			return $defaults;
+		}
+	
+		// Obtain capacity as array (handle either string JSON or already-decoded array)
+		if (is_string($this->capacity)) {
+			$capacityArr = json_decode($this->capacity, true);
+			if ($capacityArr === null && json_last_error() !== JSON_ERROR_NONE) {
+				// malformed JSON -> return defaults
+				return $defaults;
+			}
+		} elseif (is_array($this->capacity)) {
+			$capacityArr = $this->capacity;
+		} else {
+			return $defaults;
+		}
+	
+		if (!is_array($capacityArr) || empty($capacityArr)) {
+			return $defaults;
+		}
+	
+		// Recursive lower-case keys helper
+		$lowercaseKeysRecursive = function ($arr) use (&$lowercaseKeysRecursive) {
+			if (!is_array($arr)) return $arr;
+			$res = [];
+			foreach ($arr as $k => $v) {
+				$res[strtolower((string)$k)] = $lowercaseKeysRecursive($v);
+			}
+			return $res;
+		};
+	
+		$capacityArr = $lowercaseKeysRecursive($capacityArr);
+	
+		// Try exact lookup, then try singular fallback if key ends with 's'
+		$member = $capacityArr[$lookup] ?? null;
+		if (!is_array($member) && substr($lookup, -1) === 's') {
+			$alt = rtrim($lookup, 's');
+			$member = $capacityArr[$alt] ?? $member;
+		}
+	
+		// If still not an array, return defaults
+		if (!is_array($member)) {
+			return $defaults;
+		}
+	
+		// Safely extract values with defaults
+		$main = (int)($member['seating']['main'] ?? 0);
+		$dessert = (int)($member['seating']['dessert'] ?? 0);
+		$guests = (int)($member['guests']['max_per_member'] ?? 0);
+	
+		return [
+			'main'    => $main,
+			'dessert' => $dessert,
+			'guests'  => $guests,
+		];
+	}
+	
 	public function card() {
-		global $user;
+		global $user, $settings;
 		
 		$mealURL = "index.php?page=meal&uid=" . $this->uid;
 		
@@ -305,8 +439,8 @@ class Meal extends Model {
 				$output .= "<li><strong>" . $this->type . "</strong>, " . $this->location . " – " . formatTime($this->date_meal) . "</li>";
 			$output .= "</ul>";
 			
-			// Progress bars
-			$output .= $this->progressBar("Dinner");
+			// Progress bar
+			$output .= $this->progressBar();
 			
 			$output .= "</div>"; // end card-body
 			
@@ -320,39 +454,65 @@ class Meal extends Model {
 		return $output;
 	}
 	
-	public function progressBar(): string {
-		$booked     = $this->totalDiners();
-		$capacity   = (int) $this->scr_capacity;
-		$percentage = $capacity > 0 ? round(($booked / $capacity) * 100) : 0;
+	public function progressBar(?string $memberType = null): string {
+		global $user;
 	
+		// Resolve the effective member type
+		$userMemberType = $user?->getMemberType();
+		$effectiveType  = $memberType ?: $userMemberType;
+	
+		// Determine number booked for this member type
+		$booked = (int) $this->totalDiners($effectiveType);
+	
+		// Determine capacity for this member type
+		$capacity = (int) ($this->getCapacityForMemberType($effectiveType)['main'] ?? 0);
+	
+		// 🔑 Only hide if capacity is 0 AND this is NOT the user's own member type
+		if ($capacity <= 0 && $effectiveType !== $userMemberType) {
+			return '';
+		}
+	
+		// Percentage (safe even when capacity = 0)
+		$percentage = $capacity > 0
+			? (int) round(($booked / $capacity) * 100)
+			: 0;
+	
+		$percentage = max(0, min(100, $percentage));
+	
+		// Choose colour class
 		if ($percentage >= 100) {
-			$class = "bg-danger";
+			$barClass = 'bg-danger';
 		} elseif ($percentage >= 80) {
-			$class = "bg-warning";
+			$barClass = 'bg-warning';
 		} else {
-			$class = "bg-info";
+			$barClass = 'bg-info';
 		}
-		
+	
+		// Title / label
+		$memberLabel = htmlspecialchars(ucfirst((string) $effectiveType));
 		if ($this->allowed_dessert == 1 && !$this->hasDessertCapacity(false)) {
-			$barTitle = '<span class="text-danger">Dessert Capacity Reached</span>';
+			$titleHtml = '<span class="text-danger">Dessert Capacity Reached</span>';
 		} else {
-			$barTitle = '<span>Diners</span>';
+			$titleHtml = '<span>' . $memberLabel . '</span>';
 		}
-		
+	
+		// Build output
 		$output  = '<div class="d-flex align-items-center justify-content-between">';
-		$output .= $barTitle;
+		$output .= $titleHtml;
 		$output .= '<span class="booking-count" data-capacity="' . $capacity . '">';
-		$output .= $booked . ' of ' . $capacity;
+		$output .= htmlspecialchars("{$booked} of {$capacity}");
 		$output .= '</span>';
 		$output .= '</div>';
 	
 		$output .= '<div class="progress mb-3" style="height: 6px;" role="progressbar" ';
-		$output .= 'data-capacity="' . $capacity . '" ';
 		$output .= 'aria-valuenow="' . $booked . '" ';
 		$output .= 'aria-valuemin="0" ';
-		$output .= 'aria-valuemax="' . $capacity . '">';
+		$output .= 'aria-valuemax="' . max(0, $capacity) . '" ';
+		$output .= 'aria-label="' . $memberLabel . ' capacity">';
 	
-		$output .= '<div class="progress-bar ' . $class . '" style="width: ' . $percentage . '%"></div>';
+		$output .= '<div class="progress-bar ' . $barClass . '" ';
+		$output .= 'style="width: ' . $percentage . '%"></div>';
+	
 		$output .= '</div>';
 	
 		return $output;
@@ -463,16 +623,20 @@ class Meal extends Model {
 	// Meal booking logic
 	public function hasCapacity(bool $factorInAdmin = true): bool {
 		global $user;
+		
+		$capacity = $this->getCapacityForMemberType()['main'];
 	
 		if ($factorInAdmin && $user->hasPermission("bookings")) {
 			return true;
 		}
 	
-		return $this->totalDiners() < $this->scr_capacity;
+		return $this->totalDiners() < $capacity;
 	}
 	
 	public function hasDessertCapacity(bool $factorInAdmin = true): bool {
 		global $user;
+		
+		$capacity = $this->getCapacityForMemberType()['dessert'];
 		
 		if (!$this->allowed_dessert) {
 			return false;
@@ -482,11 +646,13 @@ class Meal extends Model {
 			return true;
 		}
 		
-		return $this->totalDessertDiners() < $this->scr_dessert_capacity;
+		return $this->totalDessertDiners() < $capacity;
 	}
 	
 	public function hasGuestDessertCapacity(int $guests, bool $factorInAdmin = true): bool {
 		global $user;
+		
+		$capacity = $this->getCapacityForMemberType()['dessert'];
 	
 		if ($factorInAdmin && $user->hasPermission("bookings")) {
 			return true;
@@ -499,7 +665,7 @@ class Meal extends Model {
 		$totalIfAdded = $this->totalDessertDiners() + $guests + 1;
 		
 		// true only if adding would NOT exceed capacity
-		return $totalIfAdded <= $this->scr_dessert_capacity;
+		return $totalIfAdded <= $capacity;
 	}
 	
 	public function isCutoffValid(bool $factorInAdmin = true): bool {
@@ -538,13 +704,16 @@ class Meal extends Model {
 	
 	public function hasGuestCapacity(int $existingGuests, bool $factorInAdmin = true): bool {
 		global $user;
+		
+		$capacity = $this->getCapacityForMemberType()['main'];
+		$guest_capacity = $this->getCapacityForMemberType()['guests'];
 	
 		if ($factorInAdmin && $user->hasPermission("bookings")) {
 			return true;
 		}
 		
-		if ($this->totalDiners() < $this->scr_capacity) {
-			if ($existingGuests < $this->scr_guests) {
+		if ($this->totalDiners() < $capacity) {
+			if ($existingGuests < $guest_capacity) {
 				return true;
 			}
 		}
@@ -576,7 +745,7 @@ class Meal extends Model {
 	
 		foreach ($this->bookings() as $booking) {
 			$member = Member::fromLDAP($booking->member_ldap);
-			$memberName = htmlspecialchars((string) $member->public_displayName());
+			$memberName = $member->public_displayName();
 	
 			$output .= '<li>';
 			$output .= $memberName . ' ';

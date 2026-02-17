@@ -16,6 +16,8 @@ if ($isNew) {
 $meal = $isNew ? new Meal() : new Meal($mealUID);
 $meals = new Meals();
 
+$memberTypes = array_map('trim', explode(',', $settings->get('member_types')));
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	// Save or update
 	if ($isNew) {
@@ -137,7 +139,7 @@ echo pageTitle(
 
 			<hr>
 			
-			<div class="row mb-3">
+			<!--<div class="row mb-3">
 				<div class="col">
 					<label class="form-label text-truncate">Capacity</label>
 					<input type="number" class="form-control" name="scr_capacity"
@@ -155,6 +157,57 @@ echo pageTitle(
 					<input type="number" class="form-control" name="scr_guests"
 						   value="<?= $meal->scr_guests ?>" min="0" required>
 				</div>
+			</div>-->
+			
+			<div class="card card-body mb-3">
+			
+			<?php foreach ($memberTypes as $memberType): ?>
+			  <?php $limits = $meal->getCapacityForMemberType($memberType); ?>
+			
+			  <div class="row mb-3">
+				<div class="col-12 mb-2">
+				  <strong class="text-muted text-uppercase">
+					<?= htmlspecialchars($memberType) ?>
+				  </strong>
+				</div>
+			
+				<div class="col">
+				  <label class="form-label text-truncate">Capacity</label>
+				  <input
+					type="number"
+					class="form-control"
+					name="capacity[<?= htmlspecialchars($memberType) ?>][capacity]"
+					value="<?= $limits['main'] ?>"
+					min="0"
+					required
+				  >
+				</div>
+			
+				<div class="col">
+				  <label class="form-label text-truncate">Dessert Capacity</label>
+				  <input
+					type="number"
+					class="form-control"
+					name="capacity[<?= htmlspecialchars($memberType) ?>][dessert_capacity]"
+					value="<?= $limits['dessert'] ?>"
+					min="0"
+					required
+				  >
+				</div>
+			
+				<div class="col">
+				  <label class="form-label text-truncate">Guests</label>
+				  <input
+					type="number"
+					class="form-control"
+					name="capacity[<?= htmlspecialchars($memberType) ?>][guests]"
+					value="<?= $limits['guests'] ?>"
+					min="0"
+					required
+				  >
+				</div>
+			  </div>
+			<?php endforeach; ?>
 			</div>
 			
 			<div class="mb-3">
@@ -195,15 +248,15 @@ echo pageTitle(
 						<div class="accordion-body">
 							<strong>Select none for everyone to be allowed</strong><br>
 							<?php
-							$memberTypes = explode(',', $settings->get('member_categories'));
+							$memberCategories = explode(',', $settings->get('member_categories'));
 							$allowed = $meal->allowed ? explode(',', $meal->allowed) : [];
-							foreach ($memberTypes as $i => $memberType) {
-								$checked = in_array($memberType, $allowed) ? ' checked' : '';
+							foreach ($memberCategories as $i => $memberCategory) {
+								$checked = in_array($memberCategory, $allowed) ? ' checked' : '';
 								echo "
 								<div class='form-check'>
 								  <input type='checkbox' class='form-check-input' name='allowed[]' 
-									value='".htmlspecialchars($memberType)."' id='check_{$i}'{$checked}>
-								  <label class='form-check-label' for='check_{$i}'>" . htmlspecialchars($memberType) . "</label>
+									value='".htmlspecialchars($memberCategory)."' id='check_{$i}'{$checked}>
+								  <label class='form-check-label' for='check_{$i}'>" . htmlspecialchars($memberCategory) . "</label>
 								</div>";
 							}
 							?>
@@ -268,35 +321,54 @@ echo pageTitle(
 		</form>
 	</div>
 
-	<?php if (!$isNew): ?>
-	<div class="col-md-5 col-lg-4">
-		<?php $Bookings = $meal->bookings(); ?>
-		<h4 class="d-flex justify-content-between align-items-center mb-3">
-		  <span>Diners</span>
-		  <span class="badge <?= ($meal->totalDiners() > $meal->scr_capacity) ? 'bg-danger' : 'bg-secondary'; ?> rounded-pill">
-			<?= $meal->totalDiners(); ?>
-		  </span>
-		</h4>
-
-		<ul class="list-group mb-3">
-			<?php
-			foreach ($Bookings as $booking) {
-				echo $booking->displayMealListGroupItem();
+	<?php
+	// Render everything into $output (no in/out of PHP)
+	$output = '';
+	
+	// Only render member-type blocks when not a new meal
+	if (!$isNew) {
+		$memberTypes = array_map('trim', explode(',', $settings->get('member_types')));
+		
+		$output .= '<div class="col-md-5 col-lg-4 mb-4">';
+		foreach ($memberTypes as $memberType) {
+			$memberTypeKey = strtolower($memberType);
+			$limits = $meal->getCapacityForMemberType($memberTypeKey);
+			$bookings = $meal->bookings($memberTypeKey);
+			$total = $meal->totalDiners($memberTypeKey);
+			$badgeClass = ($total > $limits['main']) ? 'bg-danger' : 'bg-secondary';
+			
+			if (!empty($bookings)) {
+				$output .= '<h4 class="d-flex justify-content-between align-items-center mb-3">';
+				$output .= '<span>' . htmlspecialchars(ucfirst($memberType)) . ' Diners</span>';
+				$output .= '<span class="badge ' . $badgeClass . ' rounded-pill">' . (int)$total . '</span>';
+				$output .= '</h4>';
+				
+				$output .= '<ul class="list-group mb-3">';
+				
+				foreach ($bookings as $booking) {
+					$output .= $booking->displayMealListGroupItem();
+				}
+				
+				$output .= '</ul>';
 			}
-			?>
-		</ul>
-
-		<div class="text-end">
-			<a class="btn btn-sm btn-outline-light" href="report.php?page=meal_bookings&uid=<?= $meal->uid; ?>">
-				<i class="bi bi-download"></i> export
-			</a>
-		</div>
-
-		<h4 class="mb-3">Bookings by Day</h4>
-		<canvas id="chart_bookingsByDay"></canvas>
-	</div>
-	<?php endif; ?>
-</div>
+		}
+		
+		// Always render the global export (as in your original snippet) and overall chart if desired
+		$output .= '<div class="text-end">';
+		$output .= '<a class="btn btn-sm btn-outline-light" href="report.php?page=meal_bookings&uid=' . rawurlencode($meal->uid) . '">';
+		$output .= '<i class="bi bi-download"></i> export';
+		$output .= '</a>';
+		$output .= '</div>';
+		
+		$output .= '<h4 class="mb-3">Bookings by Day</h4>';
+		$output .= '<canvas id="chart_bookingsByDay"></canvas>';
+		$output .= '</div>'; // close column
+	}
+	
+	
+	// finally echo or return $output where appropriate
+	echo $output;
+	?>
 
 <?php if (!$isNew): ?>
 <!-- Delete Modal -->
@@ -427,83 +499,108 @@ echo pageTitle(
 
 <?php if (!$isNew && count($meal->bookings()) > 0):
 
-$points = [];
-$cumulative = 0;
+// Gather raw per-member-type totals grouped by date
+$perTypeByDate = [];    // [memberType => [ 'YYYY-MM-DD' => totalOnThatDay, ... ], ...]
+$allDates = [];         // collect all dates across member types
 
-// First, extract bookings into temporary array
-$temp = [];
-foreach ($meal->bookings() as $booking) {
+foreach ($memberTypes as $memberType) {
+	$perTypeByDate[$memberType] = [];
 
-	$date = date('Y-m-d', strtotime($booking->date));
+	foreach ($meal->bookings($memberType) as $booking) {
+		$date = date('Y-m-d', strtotime($booking->date));
 
-	$guestCount = 0;
-	if (!empty($booking->guests_array)) {
-		$guestArray = json_decode($booking->guests_array, true);
-		$guestCount = is_array($guestArray) ? count($guestArray) : 0;
+		$guestCount = 0;
+		if (!empty($booking->guests_array)) {
+			$guestArray = json_decode($booking->guests_array, true);
+			$guestCount = is_array($guestArray) ? count($guestArray) : 0;
+		}
+
+		$total = 1 + $guestCount;
+
+		if (!isset($perTypeByDate[$memberType][$date])) {
+			$perTypeByDate[$memberType][$date] = 0;
+		}
+		$perTypeByDate[$memberType][$date] += $total;
+
+		$allDates[$date] = true;
 	}
-
-	$total = 1 + $guestCount;
-
-	// Group totals by date (multiple bookings same day)
-	if (!isset($temp[$date])) {
-		$temp[$date] = 0;
-	}
-	$temp[$date] += $total;
 }
 
-// Sort dates
-ksort($temp);
-
-// Find date range
-$start = array_key_first($temp);
-$end   = array_key_last($temp);
-
-if ($start === null || $end === null) {
-	$start = $end = date('c');
+// If there were bookings but no member-specific bookings (edge-case), fall back to global bookings
+if (empty($allDates)) {
+	foreach ($meal->bookings() as $booking) {
+		$date = date('Y-m-d', strtotime($booking->date));
+		$allDates[$date] = true;
+	}
 }
 
-$current = new DateTime($start);
-$endDate = new DateTime($end);
+// If still empty, nothing to chart
+if (empty($allDates)):
+	?>
+	<p>No booking dates found to chart.</p>
+	<?php
+else:
 
+// Build full date range from earliest to latest date
+$datesSorted = array_keys($allDates);
+sort($datesSorted, SORT_STRING);
+$start = reset($datesSorted);
+$end = end($datesSorted);
 
-// Build full day-by-day set including missing days
-while ($current <= $endDate) {
+$startDt = new DateTime($start);
+$endDt = new DateTime($end);
 
-	$day = $current->format('Y-m-d');
-
-	if (isset($temp[$day])) {
-		$cumulative += $temp[$day];
-	}
-
-	$points[] = [
-		'date' => $day,
-		'cumulative' => $cumulative,
-	];
-
+// build ordered labels (YYYY-MM-DD) covering missing days too
+$labels = [];
+$current = clone $startDt;
+while ($current <= $endDt) {
+	$labels[] = $current->format('Y-m-d');
 	$current->modify('+1 day');
 }
+
+// Now for each memberType build cumulative series aligned to $labels
+$datasets = [];
+
+$colorIndex = 0;
+foreach ($memberTypes as $memberType) {
+	$daily = [];      // totals per day (not cumulative yet) for this memberType
+	foreach ($labels as $day) {
+		$daily[$day] = $perTypeByDate[$memberType][$day] ?? 0;
+	}
+
+	// cumulative
+	$cumulative = 0;
+	$cumulativeSeries = [];
+	foreach ($daily as $day => $val) {
+		$cumulative += $val;
+		$cumulativeSeries[] = $cumulative;
+	}
+
+	$datasets[] = [
+		'label' => $memberType,
+		'data' => $cumulativeSeries,
+		'borderWidth' => 2,
+		'tension' => 0.3,
+		'pointRadius' => 0,
+		'pointHoverRadius' => 0
+	];
+}
+
 ?>
 
 <script>
 const ctx = document.getElementById('chart_bookingsByDay');
-const labels = <?= json_encode(array_column($points, 'date')) ?>;
-const data = <?= json_encode(array_column($points, 'cumulative')) ?>;
+const labels = <?= json_encode($labels) ?>;
+const datasets = <?= json_encode($datasets, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
 
 new Chart(ctx, {
 	type: 'line',
 	data: {
 		labels: labels,
-		datasets: [{
-			label: 'Bookings',
-			data: data,
-			borderWidth: 2,
-			tension: 0.3,
-			pointRadius: 0,
-			pointHoverRadius: 0
-		}]
+		datasets: datasets
 	},
 	options: {
-		plugins: { legend: { display: false } },
+		plugins: { legend: { display: true } },
 		scales: {
 			x: { title: { display: false } },
 			y: { beginAtZero: true, title: { display: false } }
@@ -512,7 +609,10 @@ new Chart(ctx, {
 });
 </script>
 
-<?php endif; ?>
+<?php
+endif; // end if there are dates
+endif; // end outer condition
+?>
 
 <script>
 const icons = {

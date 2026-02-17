@@ -68,7 +68,7 @@ echo pageTitle(
 $members = new Members();
 
 $membersArray = array();
-foreach ($members->getAllByType('SCR') as $member) {
+foreach ($members->all() as $member) {
 	if ($user->getUsername() != $member->ldap) {
 		$membersArray[] = "{ id: " . $member->uid . ",  name: \"" . $member->name() . "\" }";
 	}

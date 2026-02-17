@@ -23,7 +23,7 @@ $meal = new Meal($mealUID);
 			<button class="nav-link active" id="menu-tab" data-bs-toggle="tab" data-bs-target="#menu-tab-pane" type="button" role="tab" aria-controls="menu-tab-pane" aria-selected="true">Menu</button>
 		</li>
 		<li class="nav-item" role="presentation">
-			<button class="nav-link" id="diners-tab" data-bs-toggle="tab" data-bs-target="#diners-tab-pane" type="button" role="tab" aria-controls="diners-tab-pane" aria-selected="false">Diners <span class="badge rounded-pill text-bg-secondary"><?= $meal->totalDiners() ?></span></button>
+			<button class="nav-link" id="diners-tab" data-bs-toggle="tab" data-bs-target="#diners-tab-pane" type="button" role="tab" aria-controls="diners-tab-pane" aria-selected="false"><?= $user->getMemberType() ?> Diners <span class="badge rounded-pill text-bg-secondary"><?= $meal->totalDiners() ?></span></button>
 		</li>
 	</ul>
 	
