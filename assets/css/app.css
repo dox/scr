@@ -22,6 +22,22 @@
   fill: currentColor
 }
 
+.jiggle-icon {
+  display: inline-block;
+  animation: jiggle 1s infinite;
+  color: #28a745;
+}
+
+@keyframes jiggle {
+  0% { transform: rotate(0deg); }
+  15% { transform: rotate(-10deg); }
+  30% { transform: rotate(10deg); }
+  45% { transform: rotate(-8deg); }
+  60% { transform: rotate(8deg); }
+  75% { transform: rotate(-4deg); }
+  100% { transform: rotate(0deg); }
+}
+
 /* dark/light mode check icon */
 .dropdown-item .bi-check2 {
   position: absolute;
