@@ -248,7 +248,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 	
 	// Domus validation
-	if (action != 'guest_delete' && chargeToEl?.value === 'Domus' && (!domusReasonEl?.value || domusReasonEl.value.trim() === '')) {
+	if (action != 'guest_delete' && chargeToEl?.value != 'Battels' && (!domusReasonEl?.value || domusReasonEl.value.trim() === '')) {
 	  domusReasonEl?.classList.add('is-invalid');
 	  domusReasonEl.focus();
 	  
