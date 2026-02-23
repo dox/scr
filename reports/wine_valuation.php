@@ -60,7 +60,7 @@ foreach ($winesToDate as $wine) {
 		<div class="card mb-3">
 			<div class="card-body">
 				<div class="subheader text-nowrap text-truncate">Bins</div>
-				<div class="h1 text-truncate"><?= number_format(count($wines->cellars())) ?></div>
+				<div class="h1 text-truncate"><?= number_format(count($wines->bins())) ?></div>
 			</div>
 		</div>
 	</div>
