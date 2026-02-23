@@ -2,7 +2,6 @@
 class Booking extends Model {
 	public $uid;
 	public $date;
-	public $type;
 	public $meal_uid;
 	public $member_ldap;
 	public $guests_array; // json encoded array

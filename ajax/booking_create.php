@@ -49,7 +49,6 @@ try {
 	
 	$data['meal_uid'] = $meal->uid;
 	$data['member_ldap'] = $member->ldap;
-	$data['type'] = $member->type;
 	$data['charge_to'] = $meal->charge_to;
 	$data['domus_reason'] = ($meal->charge_to === 'Domus') ? 'Meal marked as Domus' : null; // fill Domus reason if meal Domus
 	$data['wine_choice'] = ($meal->allowed_wine) ? $member->default_wine_choice : 'None';

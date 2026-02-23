@@ -14,7 +14,6 @@ if (($member->ldap != $user->getUsername()) && !$user->hasPermission("reports"))
 $rowHeaders = [
 	'booking_uid',
 	'booking_date',
-	'type',
 	'member_ldap',
 	'name',
 	'guests_count',
@@ -41,7 +40,6 @@ foreach ($recentBookings as $booking) {
 	
 	$row['booking_uid'] = $booking->uid;
 	$row['booking_date'] = $booking->date;
-	$row['booking_type'] = $booking->type;
 	$row['member_ldap'] = $booking->member_ldap;
 	$row['name'] = $member->name();
 	$row['guests_count'] = count($booking->guests());
@@ -63,7 +61,6 @@ foreach ($recentBookings as $booking) {
 	
 		$row['booking_uid']   = $booking->uid          ?? '';
 		$row['booking_date']  = $booking->date         ?? '';
-		$row['booking_type']  = $booking->type         ?? '';
 		$row['member_ldap']   = 'GUEST';
 	
 		$row['name']          = $guest['guest_name']           ?? '';

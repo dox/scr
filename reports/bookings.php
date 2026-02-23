@@ -21,7 +21,6 @@ $meals = $mealsObj->betweenDates($start, $end);
 $rowHeaders = [
 	'booking_uid',
 	'booking_date',
-	'type',
 	'member_ldap',
 	'member_type',
 	'member_category',
@@ -50,7 +49,6 @@ if (!empty($meals) && is_iterable($meals)) {
 				$row = [
 					'booking_uid'   => $booking->uid ?? '',
 					'booking_date'  => $booking->date ?? '',
-					'type'          => $booking->type ?? '',
 					'member_ldap'   => $booking->member_ldap ?? '',
 					'member_type'   => $member->type ?? '',
 					'member_category' => $member->category ?? '',
@@ -72,7 +70,6 @@ if (!empty($meals) && is_iterable($meals)) {
 					$row = [
 						'booking_uid'   => $booking->uid ?? '',
 						'booking_date'  => $booking->date ?? '',
-						'type'          => $booking->type ?? '',
 						'member_ldap'   => 'GUEST',
 						'member_ldap'   => $booking->member_ldap ?? '',
 						'member_type'   => $member->type . ' GUEST' ?? '',

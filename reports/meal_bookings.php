@@ -10,7 +10,6 @@ if(!$meal->uid) {
 $rowHeaders = [
 	'booking_uid',
 	'booking_date',
-	'type',
 	'member_ldap',
 	'member_type',
 	'member_category',
@@ -36,7 +35,6 @@ foreach ($meal->bookings('all') as $booking) {
 	
 	$row['booking_uid'] = $booking->uid;
 	$row['booking_date'] = $booking->date;
-	$row['booking_type'] = $booking->type;
 	$row['member_ldap'] = $booking->member_ldap;
 	$row['member_type'] = $member->type;
 	$row['member_category'] = $member->category;
@@ -59,7 +57,6 @@ foreach ($meal->bookings('all') as $booking) {
 	
 		$row['booking_uid']   = $booking->uid          ?? '';
 		$row['booking_date']  = $booking->date         ?? '';
-		$row['booking_type']  = $booking->type         ?? '';
 		$row['member_ldap']   = $booking->member_ldap;
 		$row['member_type']   = $member->type . ' GUEST';
 		$row['member_category'] = $member->category . ' GUEST';

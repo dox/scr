@@ -477,94 +477,93 @@ echo pageTitle(
   </div>
 </div>
 
-<?php if (!$isNew && count($meal->bookings()) > 0):
+<?php if (!$isNew && count($meal->bookings('all')) > 0):
 
-// Gather raw per-member-type totals grouped by date
-$perTypeByDate = [];    // [memberType => [ 'YYYY-MM-DD' => totalOnThatDay, ... ], ...]
-$allDates = [];         // collect all dates across member types
+// --- gather totals per member-type by date (no caching) ---
+$perTypeByDate = []; // [memberType => [ 'YYYY-MM-DD' => total, ...], ...]
+$allDates = [];      // set of dates found
 
-foreach ($memberTypes as $memberType) {
-	$perTypeByDate[$memberType] = [];
+foreach ($meal->bookings('all') as $booking) {
+	$member = Member::fromLdap($booking->member_ldap);
 
-	foreach ($meal->bookings($memberType) as $booking) {
-		$date = date('Y-m-d', strtotime($booking->date));
+	$date = date('Y-m-d', strtotime($booking->date));
+	$total = 1 + (int) count($booking->guests()); // booking itself + guests
 
-		$guestCount = 0;
-		if (!empty($booking->guests_array)) {
-			$guestArray = json_decode($booking->guests_array, true);
-			$guestCount = is_array($guestArray) ? count($guestArray) : 0;
-		}
+	$type = (string) ($member->type ?? 'unknown');
 
-		$total = 1 + $guestCount;
-
-		if (!isset($perTypeByDate[$memberType][$date])) {
-			$perTypeByDate[$memberType][$date] = 0;
-		}
-		$perTypeByDate[$memberType][$date] += $total;
-
-		$allDates[$date] = true;
+	if (!isset($perTypeByDate[$type])) {
+		$perTypeByDate[$type] = [];
 	}
+	if (!isset($perTypeByDate[$type][$date])) {
+		$perTypeByDate[$type][$date] = 0;
+	}
+	$perTypeByDate[$type][$date] += $total;
+
+	$allDates[$date] = true;
 }
 
-// If there were bookings but no member-specific bookings (edge-case), fall back to global bookings
-if (empty($allDates)) {
-	foreach ($meal->bookings() as $booking) {
-		$date = date('Y-m-d', strtotime($booking->date));
-		$allDates[$date] = true;
-	}
-}
-
-// If still empty, nothing to chart
 if (empty($allDates)):
 	?>
 	<p>No booking dates found to chart.</p>
 	<?php
 else:
+// --- build full, ordered date labels covering missing days ---
+	$datesSorted = array_keys($allDates);
+	sort($datesSorted, SORT_STRING);
+	$start = reset($datesSorted);
+	$end = end($datesSorted);
 
-// Build full date range from earliest to latest date
-$datesSorted = array_keys($allDates);
-sort($datesSorted, SORT_STRING);
-$start = reset($datesSorted);
-$end = end($datesSorted);
+	$startDt = new DateTime($start);
+	$endDt = new DateTime($end);
 
-$startDt = new DateTime($start);
-$endDt = new DateTime($end);
-
-// build ordered labels (YYYY-MM-DD) covering missing days too
-$labels = [];
-$current = clone $startDt;
-while ($current <= $endDt) {
-	$labels[] = $current->format('Y-m-d');
-	$current->modify('+1 day');
-}
-
-// Now for each memberType build cumulative series aligned to $labels
-$datasets = [];
-
-$colorIndex = 0;
-foreach ($memberTypes as $memberType) {
-	$daily = [];      // totals per day (not cumulative yet) for this memberType
-	foreach ($labels as $day) {
-		$daily[$day] = $perTypeByDate[$memberType][$day] ?? 0;
+	$labels = [];
+	$current = clone $startDt;
+	while ($current <= $endDt) {
+		$labels[] = $current->format('Y-m-d');
+		$current->modify('+1 day');
 	}
 
-	// cumulative
-	$cumulative = 0;
-	$cumulativeSeries = [];
-	foreach ($daily as $day => $val) {
-		$cumulative += $val;
-		$cumulativeSeries[] = $cumulative;
+	// Ensure we iterate in a consistent order: prefer your known $memberTypes list if present,
+	// but include any discovered types (including 'unknown') so nothing is lost.
+	$allMemberTypes = [];
+	if (!empty($memberTypes) && is_array($memberTypes)) {
+		$allMemberTypes = $memberTypes;
+	}
+	// add discovered types that aren't already in $memberTypes
+	foreach (array_keys($perTypeByDate) as $mt) {
+		if (!in_array($mt, $allMemberTypes, true)) {
+			$allMemberTypes[] = $mt;
+		}
 	}
 
-	$datasets[] = [
-		'label' => $memberType,
-		'data' => $cumulativeSeries,
-		'borderWidth' => 2,
-		'tension' => 0.3,
-		'pointRadius' => 0,
-		'pointHoverRadius' => 0
-	];
-}
+	// --- build datasets (cumulative) ---
+	$datasets = [];
+
+	foreach ($perTypeByDate as $memberType => $data) {
+		// daily totals aligned to labels (zero for missing days)
+		$dailyTotals = [];
+		foreach ($labels as $day) {
+			$dailyTotals[] = $perTypeByDate[$memberType][$day] ?? 0;
+		}
+
+		// cumulative series
+		$cumulative = 0;
+		$cumulativeSeries = [];
+		foreach ($dailyTotals as $val) {
+			$cumulative += $val;
+			$cumulativeSeries[] = $cumulative;
+		}
+
+		$datasets[] = [
+			'label' => $memberType,
+			'data' => $cumulativeSeries,
+			'borderWidth' => 2,
+			'tension' => 0.3,
+			'pointRadius' => 0,
+			'pointHoverRadius' => 0,
+		];
+	}
+	// $labels and $datasets ready for Chart.js
 
 ?>
 
