@@ -109,7 +109,7 @@ class User {
 	}
 	
 	public function authenticate(string $username, string $password, bool $remember = false): bool {
-		global $log;
+		global $log, $settings;
 	
 		try {
 			$user = AdUser::whereEquals('samaccountname', $username)->firstOrFail();
@@ -130,11 +130,41 @@ class User {
 		}
 	
 		$member = Member::fromLDAP($user->samaccountname[0]);
-		if (!$member) {
-			$log->add("Member DB record missing: {$username}", 'auth', Log::WARNING);
-			error_log("SECURITY ALERT: Failed login attempt from {$_SERVER['REMOTE_ADDR']}");
-			$this->logout();
-			return false;
+		if (!$member->uid) {
+			$autoCreate = $settings->get('member_auto_create');
+			if ($autoCreate == 'true') {
+				$type = $this->determineMemberTypeFromGroups($user->memberof ?? []);
+				
+				//$newMember['enabled'] = '';
+				$newMember['type'] = $type;
+				//$newMember['permissions'] = '';
+				//$newMember['enabled'] = '';
+				//$newMember['precedence'] = '';
+				$newMember['category'] = $type;
+				$newMember['ldap'] = $user->samaccountname[0];
+				//$newMember['title'] = '';
+				$newMember['firstname'] = $user->givenname[0];
+				$newMember['lastname'] = $user->sn[0];
+				$newMember['email'] = $user->mail[0] ?? null;
+				//$newMember['dietary'] = '';
+				//$newMember['dietary_notes'] = '';
+				$newMember['opt_in'] = '1';
+				//$newMember['email_reminders'] = '';
+				//$newMember['default_wine'] = '';
+				//$newMember['default_wine'] = '';
+				//$newMember['default_wine_choice'] = '';
+				//$newMember['default_dessert'] = '';
+				$newMember['calendar_hash'] = bin2hex(random_bytes(8));
+				
+				$member->create($newMember);
+				$member = Member::fromLDAP($user->samaccountname[0]);
+				$log->add("Member created automatically: {$username}", 'auth', Log::SUCCESS);
+			} else {
+				$log->add("Member DB record missing: {$username}", 'auth', Log::WARNING);
+				error_log("SECURITY ALERT: Failed login attempt from {$_SERVER['REMOTE_ADDR']}");
+				$this->logout();
+				return false;
+			}
 		}
 	
 		$this->finalizeLogin($member, $remember);
@@ -160,6 +190,36 @@ class User {
 			'httponly' => true,
 			'samesite' => 'Strict'
 		]);
+	}
+	
+	protected function determineMemberTypeFromGroups($memberOf): string {
+		// Use the constant you defined in your config (must be defined before this class is used)
+		$groupToTypeMap = LDAP_LOCAL_GROUPS;
+		$default = 'Unknown';
+	
+		// Normalize input to an array of trimmed, lowercased DNs
+		$userGroups = [];
+		if (is_array($memberOf)) {
+			foreach ($memberOf as $entry) {
+				if (is_string($entry) && $entry !== '') {
+					$userGroups[mb_strtolower(trim($entry))] = true;
+				}
+			}
+		} elseif (is_string($memberOf) && $memberOf !== '') {
+			$userGroups[mb_strtolower(trim($memberOf))] = true;
+		} else {
+			return $default;
+		}
+	
+		// Respect the mapping order for precedence: iterate map keys in insertion order
+		foreach ($groupToTypeMap as $mapDn => $type) {
+			$mapKey = mb_strtolower(trim($mapDn));
+			if (isset($userGroups[$mapKey])) {
+				return $type;
+			}
+		}
+	
+		return $default;
 	}
 
 	public function logout(): void {
