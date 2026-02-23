@@ -225,7 +225,7 @@ class Member extends Model {
 		$fields['default_wine_choice'] = $postData['default_wine_choice'] ?? 'None';
 	
 		// Map privileged text/select fields
-		if ($user->hasPermission("member")) {
+		if ($user->hasPermission("members")) {
 			$fields = array_merge($fields, [
 				'ldap'     => $postData['ldap'] ?? null,
 				'category' => $postData['category'] ?? null,
@@ -250,7 +250,7 @@ class Member extends Model {
 	
 		// If LDAP changed, run extra SQL
 		if (
-			$user->hasPermission("member") &&
+			$user->hasPermission("members") &&
 			array_key_exists('ldap', $fields) &&
 			$fields['ldap'] !== $originalLdap
 		) {

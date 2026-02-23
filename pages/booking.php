@@ -296,12 +296,12 @@ guestModalEl.addEventListener('show.bs.modal', function (event) {
 	  const reasonEl = guestModalEl.querySelector('#guest_domus_reason');
 	  if (chargeEl && reasonEl) {
 		// Initial visibility
-		reasonElContainer.classList.toggle('d-none', chargeEl.value !== 'Domus');
+		reasonElContainer.classList.toggle('d-none', chargeEl.value == 'Battels');
 		reasonEl.required = chargeEl.value === 'Domus';
 
 		// Listen for changes
 		chargeEl.addEventListener('change', () => {
-		  if (chargeEl.value === 'Domus') {
+		  if (chargeEl.value != 'Battels') {
 			reasonElContainer.classList.remove('d-none');
 			reasonEl.required = true;
 		  } else {
