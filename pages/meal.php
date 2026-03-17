@@ -54,6 +54,13 @@ echo pageTitle(
 			]
 		],
 		[
+			'permission' => 'logs',
+			'title' => 'Logs',
+			'class' => '',
+			'event' => 'index.php?page=logs&logs_search=[meal_uid:' . $meal->uid ."]",
+			'icon' => 'clock-history',
+		],
+		[
 			'divider' => true
 		],
 		[

@@ -8,24 +8,20 @@ if (!isset($booking->uid) || (!$user->hasPermission("meals") && strtoupper($book
 	die("Unknown or unavailable booking");
 }
 
-$icons = [];
-if ($user->hasPermission("meals")) {
-	$icons[] = [
-		'permission' => 'meals',
-		'title' => 'Guest List',
-		'class' => '',
-		'event' => 'index.php?page=guestlist&uid=' . $meal->uid,
-		'icon' => 'card-list'
-	];
-	$icons[] = [
-		'permission' => 'meals',
-		'title' => 'Edit Meal',
-		'class' => '',
-		'event' => 'index.php?page=meal&uid=' . $meal->uid,
-		'icon' => 'fork-knife'
-	];
-}
-
+$icons[] = [
+	'permission' => 'meals',
+	'title' => 'Guest List',
+	'class' => '',
+	'event' => 'index.php?page=guestlist&uid=' . $meal->uid,
+	'icon' => 'card-list'
+];
+$icons[] = [
+	'permission' => 'meals',
+	'title' => 'Edit Meal',
+	'class' => '',
+	'event' => 'index.php?page=meal&uid=' . $meal->uid,
+	'icon' => 'fork-knife'
+];
 
 if ($meal->isCutoffValid(true)) {
 	$icons[] = [
@@ -39,6 +35,17 @@ if ($meal->isCutoffValid(true)) {
 			'bs-target' => '#addEditGuestModal'
 		]
 	];
+}
+
+$icons[] = [
+	'permission' => 'logs',
+	'title' => 'Logs',
+	'class' => '',
+	'event' => 'index.php?page=logs&logs_search=[booking_uid:' . $booking->uid ."]",
+	'icon' => 'clock-history',
+];
+
+if ($meal->isCutoffValid(true)) {
 	$icons[] = [
 		'divider' => true
 	];

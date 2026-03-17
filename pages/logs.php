@@ -4,12 +4,16 @@ $user->pageCheck('logs');
 $logsDisplay   = $settings->get('logs_display');
 $logsRetention = $settings->get('logs_retention');
 
-/* Accept the search term, if offered */
+/* Accept the search term from POST or GET */
 $searchTerm = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['logs_search'])) {
-	$searchTerm = trim($_POST['logs_search'] ?? '');
-	
+	$searchTerm = trim($_POST['logs_search']);
+} elseif (!empty($_GET['logs_search'])) {
+	$searchTerm = trim($_GET['logs_search']);
+}
+
+if ($searchTerm !== '') {
 	$sql = "
 		SELECT *
 		FROM logs
