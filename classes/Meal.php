@@ -115,14 +115,14 @@ class Meal extends Model {
 		$fields['capacity'] = json_encode($capacityOut, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
 	
 		// Send to database update
-		$db->create(
+		$create = $db->create(
 			static::$table,
 			$fields,
 			true
 		);
 	
 		// write the log
-		$log->add('Meal created for ' . $this->name, Log::SUCCESS);
+		$log->add('[meal_uid:' . $create . '] created', Log::SUCCESS);
 	
 		toast('Meal Created', 'Meal successfully created', 'text-success');
 	
