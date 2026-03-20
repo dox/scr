@@ -1,18 +1,33 @@
 <?php
-$ldap   = $_GET['ldap'] ?? $user->getUsername() ?? null;
-$member = Member::fromLDAP($ldap);
+$ldap = filter_input(INPUT_GET, 'ldap', FILTER_UNSAFE_RAW);
+$memberUID = filter_input(INPUT_GET, 'uid', FILTER_SANITIZE_NUMBER_INT);
+
+if ($ldap !== null && trim($ldap) !== '') {
+	$member = Member::fromLDAP(trim($ldap));
+} elseif (!empty($memberUID)) {
+	$member = Member::fromUID((string) $memberUID);
+} else {
+	$member = Member::fromLDAP($user->getUsername());
+}
 
 if (!isset($member->uid)) {
 	die("Unknown or unavailable member");
 }
 
+$isOwnProfile = strtoupper($member->ldap) === strtoupper($user->getUsername());
+
+if (!$isOwnProfile && !$user->hasPermission('members')) {
+	require_once "404.php";
+	die("Unknown or unavailable member");
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	$member->update($_POST);
-	$member = Member::fromLDAP($ldap);
+	$member = Member::fromUID((string) $member->uid);
 }
 
 echo pageTitle(
-	(strtoupper($member->ldap) == $user->getUsername()) ? "Your Profile" : $member->name() . " Profile",
+	$isOwnProfile ? "Your Profile" : $member->name() . " Profile",
 	$member->type . " (" . $member->category . ")" . $member->stewardBadge(),
 	[
 		[

@@ -143,7 +143,7 @@ class Log extends Model {
 		$routes = [
 			'booking_uid' => 'index.php?page=booking&uid=%d',
 			'meal_uid'    => 'index.php?page=meal&uid=%d',
-			'member_uid'  => 'index.php?page=member&ldap=%d',
+			'member_uid'  => 'index.php?page=member&uid=%d',
 		];
 	
 		return preg_replace_callback(

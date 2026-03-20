@@ -130,7 +130,7 @@ const el = document.getElementById('dateFrom');
 const el2 = document.getElementById('dateTo');
 
 const options = {
-	defaultDate: new Date('<?= date('c', strtotime($meal->date_meal)) ?>'),
+	defaultDate: new Date('<?= date('c', strtotime($dateFrom)) ?>'),
 	display: {
 		icons: {
 			type: 'icons',

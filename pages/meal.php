@@ -21,8 +21,8 @@ $memberTypes = array_map('trim', explode(',', $settings->get('member_types')));
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	// Save or update
 	if ($isNew) {
-		$newUID = $meal->create($_POST);        // Create new record
-		//header("Location: index.php?page=meal&uid={$newUID}");
+		$meal->add($_POST);
+		header("Location: index.php?page=meals");
 		exit;
 	} else {
 		$meal->update($_POST);                // Update existing
