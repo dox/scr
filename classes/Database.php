@@ -12,7 +12,8 @@ class Database {
 				PDO::ATTR_EMULATE_PREPARES   => false,
 			]);
 		} catch (PDOException $e) {
-			die("Database connection failed: " . $e->getMessage());
+			error_log("Database connection failed: " . $e->getMessage());
+			throw new RuntimeException("Database connection failed.");
 		}
 	}
 
@@ -93,7 +94,7 @@ class Database {
 				$insertId
 			);
 	
-			$logger->add($description, Log::INFO);
+			$logger->add($description, 'Database', Log::INFO);
 	
 			// Optional: detailed per-field logging (like update)
 			foreach ($fields as $k => $v) {
@@ -104,6 +105,7 @@ class Database {
 						$k,
 						$v
 					),
+					'Database',
 					Log::INFO
 				);
 			}
@@ -118,7 +120,7 @@ class Database {
 	 * @param string $table Table name
 	 * @param array $fields Associative array of fields to update ['column' => 'value']
 	 * @param array $where Associative array for WHERE clause ['uid' => 123]
-	 * @param string|null $logTable Optional table name to log changes
+	 * @param bool $logChanges Whether to log field-level changes
 	 * @return int Number of affected rows
 	 */
 	public function update(string $table, array $fields, array $where, bool $logChanges = false): int {
@@ -162,7 +164,7 @@ class Database {
 						$old,
 						$v
 					);
-					$logger->add($description, Log::INFO);
+					$logger->add($description, 'Database', Log::INFO);
 				}
 			}
 		}
@@ -203,7 +205,7 @@ class Database {
 				$table,
 				json_encode($where)
 			);
-			$logger->add($description, Log::WARNING);
+			$logger->add($description, 'Database', Log::WARNING);
 		}
 	
 		return $affected;

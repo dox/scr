@@ -82,7 +82,7 @@ class Cellar extends Model {
 			static::$table,
 			$fields,
 			['uid' => $this->uid],
-			'logs'
+			true
 		);
 		
 		toast('Cellar Updated', 'Cellar sucesfully updated', 'text-success');

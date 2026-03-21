@@ -245,7 +245,7 @@ class Member extends Model {
 			static::$table,
 			$fields,
 			['uid' => $this->uid],
-			'logs'
+			true
 		);
 	
 		// If LDAP changed, run extra SQL
@@ -368,14 +368,14 @@ class Member extends Model {
 		$deleteBookings = $db->delete(
 			'bookings',
 			['member_ldap' => $this->ldap],
-			'logs'
+			true
 		);
 		
 		// Send to database to delete bookings
 		$deleteMember = $db->delete(
 			static::$table,
 			['uid' => $this->uid],
-			'logs'
+			true
 		);
 		
 		toast('Member Deleted', 'Member sucesfully updated', 'text-success');

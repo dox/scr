@@ -187,7 +187,7 @@ class WineList extends Model {
 			static::$table,
 			$fields,
 			['uid' => $this->uid],
-			'logs'
+			true
 		);
 		
 		toast('List Updated', 'List sucesfully updated', 'text-success');
@@ -204,7 +204,7 @@ class WineList extends Model {
 		$db->delete(
 			static::$table,
 			['uid' => $this->uid],
-			'logs'
+			true
 		);
 		
 		toast('List Deleted', 'List sucesfully deleted', 'text-success');

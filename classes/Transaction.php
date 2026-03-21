@@ -91,7 +91,7 @@ class Transaction extends Model {
 		$deleteBooking = $db->delete(
 			'wine_transactions',
 			['uid' => $this->uid],
-			'logs'
+			true
 		);
 		
 		return true;

@@ -44,7 +44,7 @@ class Bin extends Model {
 			static::$table,
 			$fields,
 			['uid' => $this->uid],
-			'logs'
+			true
 		);
 		
 		toast('Bin Updated', 'Bin sucesfully updated', 'text-success');
@@ -62,7 +62,7 @@ class Bin extends Model {
 		$db->delete(
 			static::$table,
 			['uid' => $this->uid],
-			'logs'
+			true
 		);
 		
 		toast('Bin Deleted', 'Bin sucesfully deleted', 'text-success');

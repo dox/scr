@@ -224,7 +224,7 @@ class Wine extends Model {
 			'notes'             => $postData['notes'] ?? null
 		];
 	
-		$updatedRows = $db->update(static::$table, $fields, ['uid' => $this->uid], 'logs');
+		$updatedRows = $db->update(static::$table, $fields, ['uid' => $this->uid], true);
 		toast('Wine Updated', 'Wine successfully updated', 'text-success');
 	
 		return $updatedRows;

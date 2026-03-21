@@ -194,7 +194,7 @@ class Meal extends Model {
 			static::$table,
 			$fields,
 			['uid' => $this->uid],
-			'logs'
+			true
 		);
 	
 		// write the log

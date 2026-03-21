@@ -42,7 +42,7 @@ class Term extends Model {
 			static::$table,
 			$fields,
 			['uid' => $this->uid],
-			'logs'
+			true
 		);
 		
 		toast('Term Updated', 'Term sucesfully updated', 'text-success');
@@ -59,7 +59,7 @@ class Term extends Model {
 		$db->delete(
 			static::$table,
 			['uid' => $this->uid],
-			'logs'
+			true
 		);
 		
 		toast('Term Deleted', 'Term sucesfully deleted', 'text-success');
