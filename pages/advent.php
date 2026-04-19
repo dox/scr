@@ -120,7 +120,7 @@ $user->pageCheck('global_admin');
 	=============================== */
   
 	const today = new Date();
-	const currentDay = (today.getMonth() === 1) ? today.getDate() : 0;
+	const currentDay = (today.getMonth() === 3) ? today.getDate() : 0;
   
 	/* ===============================
 	   MODAL SETUP
@@ -130,6 +130,22 @@ $user->pageCheck('global_admin');
 	const bsModal = new bootstrap.Modal(modalEl);
 	const modalTitle = document.getElementById('adventModalTitle');
 	const modalBody = document.getElementById('adventModalBody');
+
+	function renderModalContent(html) {
+	  modalBody.innerHTML = html;
+
+	  const scripts = modalBody.querySelectorAll('script');
+	  scripts.forEach((script) => {
+		const replacement = document.createElement('script');
+
+		for (const attr of script.attributes) {
+		  replacement.setAttribute(attr.name, attr.value);
+		}
+
+		replacement.textContent = script.textContent;
+		script.replaceWith(replacement);
+	  });
+	}
   
 	/* ===============================
 	   Loading Spinner
@@ -206,7 +222,7 @@ $user->pageCheck('global_admin');
 	  }
   
 	  modalTitle.textContent = `Day ${day}`;
-	  modalBody.innerHTML = html;
+	  renderModalContent(html);
 	}
   
 	/* ===============================

@@ -24,8 +24,14 @@
 
 .jiggle-icon {
   display: inline-block;
-  animation: jiggle 1s infinite;
-  color: #28a745;
+  color: #ff4d4d;
+}
+
+.jiggle-icon .bi-tree-fill {
+  width: 1.2rem;
+  height: 1.2rem;
+  animation: jiggle 1s ease-in-out infinite, rainbow-cycle 3.8s linear infinite;
+  transform-origin: 50% 85%;
 }
 
 @keyframes jiggle {
@@ -36,6 +42,17 @@
   60% { transform: rotate(8deg); }
   75% { transform: rotate(-4deg); }
   100% { transform: rotate(0deg); }
+}
+
+@keyframes rainbow-cycle {
+  0% { color: #ff4d4d; }
+  16% { color: #ff9f1c; }
+  32% { color: #ffe066; }
+  48% { color: #52b788; }
+  64% { color: #4cc9f0; }
+  80% { color: #4361ee; }
+  90% { color: #b5179e; }
+  100% { color: #ff4d4d; }
 }
 
 /* dark/light mode check icon */

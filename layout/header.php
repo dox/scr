@@ -44,7 +44,6 @@
 				if ($user->getUsername() == "BREAKSPEAR") {
 					echo '<a href="index.php?page=advent" class="jiggle-icon btn btn-link position-relative" role="button" aria-label="Open Advent">
 					  <i class="bi bi-tree-fill" aria-hidden="true"></i>
-					  <span class="sparkle" aria-hidden="true"></span>
 					</a>';
 				}
 				?>
