@@ -36,66 +36,89 @@ if (!array_key_exists($subpage, $allowed)) {
 
 echo pageTitle(
 	$allowed[$subpage]['title'],
-	$allowed[$subpage]['subtitle'],
-	[
-		[
-			'permission' => 'settings',
-			'title' => 'Edit',
-			'class' => '',
-			'event' => '',
-			'icon' => 'pencil',
-			'data' => [
-				'bs-toggle' => 'modal',
-				'bs-target' => '#editContentModal'
-			]
-		]
-	]
+	$allowed[$subpage]['subtitle']
 );
 
-echo $content;
+if ($user->hasPermission('settings')) {
 ?>
-
-<!-- Edit Content Modal -->
-<div class="modal modal-xl fade" tabindex="-1" id="editContentModal" data-backdrop="static" data-keyboard="false" aria-hidden="true">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-			</div>
-			<div class="modal-body">
-				<form method="post" id="contentEditForm" action="<?= htmlspecialchars($_SERVER['REQUEST_URI']) ?>">
-					<div class="modal-body">
-						<div class="mb-3">
-							<textarea class="form-control" id="value" name="value" rows="3"><?php echo $content;?></textarea>
-							<input type="hidden" name="uid" value="<?php echo $settings->getUID($subpage); ?>">
-						</div>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-link text-muted" data-bs-dismiss="modal">Close</button>
-						<button type="submit" class="btn btn-primary">Update</button>
-					</div>
-				</form>
-			</div>
-		</div>
+<form method="post" action="<?= htmlspecialchars($_SERVER['REQUEST_URI']) ?>" id="contentEditForm">
+	<div class="mb-3">
+		<input type="hidden" id="value" name="value" value="<?= htmlspecialchars($content, ENT_QUOTES); ?>">
+		<div id="value_editor"></div>
+		<input type="hidden" name="uid" value="<?php echo $settings->getUID($subpage); ?>">
 	</div>
-</div>
+	<div class="d-flex justify-content-end">
+		<button type="submit" class="btn btn-primary">Save</button>
+	</div>
+</form>
 
 <script>
-let editor;
-editor = SUNEDITOR.create(document.getElementById('value'), {
-	height: 300,
+window.scrInformationEditor = SUNEDITOR.create(document.getElementById("value_editor"), {
+	plugins: SUNEDITOR.plugins,
+	mode: "balloon",
+	value: <?= json_encode($content) ?>,
 	buttonList: [
-		['undo', 'redo'],
-		['font', 'fontSize', 'formatBlock'],
-		['bold', 'italic', 'underline', 'strike'],
-		['fontColor', 'hiliteColor', 'align', 'list', 'lineHeight'],
-		['table', 'link', 'image'],
-		['fullScreen', 'codeView']
+	  ["undo", "redo"],
+	  "|",
+	  ["bold", "italic", "underline"],
+	  "|",
+	  ["list", "link", "image"]
 	]
 });
 
-// Sync content back to textarea on submit
-document.getElementById('contentEditForm').addEventListener('submit', function(e) {
-	document.getElementById('value').value = editor.getContents();
+var scrInformationLatestHtml = <?= json_encode($content) ?>;
+
+function getInformationEditables() {
+	return Array.from(document.querySelectorAll(".sun-editor-editable"));
+}
+
+function pickInformationContents() {
+	var editables = getInformationEditables();
+	var changed = editables
+		.map(function (node) {
+			return node.innerHTML;
+		})
+		.find(function (html) {
+			return html && html !== scrInformationLatestHtml;
+		});
+
+	if (changed) {
+		return changed;
+	}
+
+	if (editables.length > 0) {
+		return editables[0].innerHTML;
+	}
+
+	return window.scrInformationEditor.getContents(true);
+}
+
+function syncInformationContent() {
+	var editor = window.scrInformationEditor;
+	var contentField = document.getElementById("value");
+	var contents = pickInformationContents().trim();
+
+	if (
+		contents === "" ||
+		contents === "<p><br></p>" ||
+		contents === "<p>&nbsp;</p>"
+	) {
+		contents = "";
+	}
+
+	contentField.value = contents;
+	scrInformationLatestHtml = contents;
+	return true;
+}
+
+document.getElementById("contentEditForm").setAttribute("onsubmit", "return syncInformationContent()");
+getInformationEditables().forEach(function (editable) {
+	editable.addEventListener("input", syncInformationContent);
+	editable.addEventListener("keyup", syncInformationContent);
 });
 </script>
+
+<?php
+} else {
+	echo $content;
+}

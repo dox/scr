@@ -672,39 +672,3 @@ new tempusDominus.TempusDominus(
 	sundayOnlyOptions
 );
 </script>
-
-<script>
-let editor = SUNEDITOR.create(document.getElementById('menu'), {
-	height: 100,
-	buttonList: [
-		['undo', 'redo'],
-		['font', 'fontSize', 'formatBlock'],
-		['bold', 'italic', 'underline', 'strike'],
-		['fontColor', 'hiliteColor', 'align', 'list'],
-		['table', 'link', 'image'],
-		['fullScreen', 'codeView']
-	],
-	callbacks: {
-		onFocus: function () {
-			if (this.getText().trim() === '') {
-				this.setContents('');
-			}
-		}
-	}
-});
-
-// Sync content back to textarea on submit
-document.getElementById('mealEditForm').addEventListener('submit', function () {
-	let contents = editor.getContents(true).trim();
-
-	if (
-		contents === '' ||
-		contents === '<p><br></p>' ||
-		contents === '<p>&nbsp;</p>'
-	) {
-		contents = '';
-	}
-
-	document.getElementById('menu').value = contents;
-});
-</script>
