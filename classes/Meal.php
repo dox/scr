@@ -396,6 +396,13 @@ class Meal extends Model {
 		
 		//$menu_html = $settings->get('menu_html'));
 		
+		return nl2br($this->menu);
+	}
+	
+	public function menu_raw(): string {
+		if ($this->menu === null) {
+			return '';
+		}
 		return $this->menu;
 	}
 	
