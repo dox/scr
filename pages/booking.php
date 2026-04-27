@@ -80,7 +80,7 @@ echo pageTitle(
 			<div class="card-body text-center">
 				<h2 class="card-title">Menu</h2>
 				<h5 class="card-title mb-3"><?= $meal->location . ", " . formatDate($meal->date_meal); ?></h5>
-				<p class="card-text"><?= $meal->menu; ?></p>
+				<p class="card-text"><?= $meal->menu(); ?></p>
 			</div>
 		</div>
 		

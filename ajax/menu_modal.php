@@ -31,7 +31,7 @@ $meal = new Meal($mealUID);
 		<div class="tab-pane fade show active" id="menu-tab-pane" role="tabpanel" aria-labelledby="menu-tab" tabindex="0">
 			
 			<div class="text-center my-3">
-				<?= !empty($meal->menu) ? nl2br($meal->menu) : "Menu not available" ?>
+				<?= !empty($meal->menu()) ? $meal->menu() : "Menu not available" ?>
 			</div>
 		</div>
 		

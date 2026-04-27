@@ -52,7 +52,7 @@ foreach ($recentBookings as $booking) {
 	$row['meal_name'] = $meal->name();
 	$row['meal_type'] = $meal->type;
 	$row['meal_date'] = $meal->date_meal;
-	$row['meal_menu'] = $meal->cleanMenu();
+	$row['meal_menu'] = $meal->menu();
 	
 	fputcsv($output, $row);
 	
@@ -74,7 +74,7 @@ foreach ($recentBookings as $booking) {
 		$row['meal_name']     = $meal->name();
 		$row['meal_type']     = $meal->type;
 		$row['meal_date']     = $meal->date_meal    ?? '';
-		$row['meal_menu']     = $meal->cleanMenu()         ?? '';
+		$row['meal_menu']     = $meal->menu()         ?? '';
 	
 		fputcsv($output, $row);
 	}

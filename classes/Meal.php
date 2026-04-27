@@ -387,7 +387,20 @@ class Meal extends Model {
 		return $output;
 	}
 	
-	public function cleanMenu(): string {
+	public function menu(): string {
+		//global $settings;
+		
+		if ($this->menu === null) {
+			return '';
+		}
+		
+		//$menu_html = $settings->get('menu_html'));
+		
+		return $this->menu;
+	}
+	
+	public function menu_clean(): string {
+		// currently unused.  Leaving here if html menus required in future
 		if ($this->menu === null) {
 			return '';
 		}
@@ -488,7 +501,7 @@ class Meal extends Model {
 	}
 	
 	public function card() {
-		global $user, $settings;
+		global $user;
 		
 		$mealURL = "index.php?page=meal&uid=" . $this->uid;
 		

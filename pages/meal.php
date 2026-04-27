@@ -256,7 +256,7 @@ echo pageTitle(
 
 			<div class="mb-3">
 				<label for="menu" class="form-label">Menu</label>
-				<textarea class="form-control" rows="4" name="menu" id="menu"><?= htmlspecialchars($meal->menu ?? '') ?></textarea>
+				<textarea class="form-control" rows="4" name="menu" id="menu"><?= htmlspecialchars($meal->menu_raw() ?? '') ?></textarea>
 			</div>
 
 			<div class="mb-3">
