@@ -29,4 +29,4 @@ $connectionsConfig = [
 	],
 ];
 
-require __DIR__ . '/../_connections.php';
+require_once(__DIR__ . '/../_connections.php');
