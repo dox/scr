@@ -85,6 +85,8 @@ function sendEmail($to, $subject = APP_NAME, $body = '') {
 	}
 
 	$mail = new PHPMailer(true);
+	$mail->CharSet  = PHPMailer::CHARSET_UTF8;
+	$mail->Encoding = PHPMailer::ENCODING_QUOTED_PRINTABLE;
 
 	try {
 		// Server settings
