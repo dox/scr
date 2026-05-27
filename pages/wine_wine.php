@@ -230,7 +230,7 @@ echo $wine->statusBanner();
 								$output .= "<td>" . ($transaction->username) . "</td>";
 								$output .= "<td class=\"" . ($transaction->bottles < 0 ? 'text-danger' : 'text-success') . "\">" . $transaction->bottles . "</td>";
 								$output .= "<td>" . formatMoney($transaction->value()) . "</td>";
-								$output .= "<td><a href=\"" . $url . "\">" . $transaction->name()) . "</a></td>";
+								$output .= "<td><a href=\"" . $url . "\">" . $transaction->name() . "</a></td>";
 								$output .= "</tr>";
 
 								echo $output;
