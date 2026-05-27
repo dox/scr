@@ -35,6 +35,10 @@ class Transaction extends Model {
 		}
 	}
 	
+	public function name() {
+		return htmlspecialchars(!empty($this->name) ? $this->name : 'No transaction name');
+	}
+	
 	public function isLinked(): bool {
 		return !empty($this->linked);
 	}

@@ -134,7 +134,7 @@ echo pageTitle(
 				  $output .= "<td>" . ($transaction->username) . "</td>";
 				  $output .= "<td>" . $transaction->totalBottles() . "</td>";
 				  $output .= "<td>" . formatMoney($transaction->totalValue()) . "</td>";
-				  $output .= "<td><a href=\"" . $url . "\">" . htmlspecialchars($transaction->name) . "</a></td>";
+				  $output .= "<td><a href=\"" . $url . "\">" . $transaction->name() . "</a></td>";
 				  $output .= "</tr>";
 				  
 				  echo $output;
