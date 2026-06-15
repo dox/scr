@@ -185,7 +185,7 @@ echo pageTitle(
 						name="ldap"
 						id="ldap"
 						placeholder="LDAP Username"
-						value="<?= htmlspecialchars($member->ldap ?? '', ENT_QUOTES) ?>"
+						value="<?= htmlspecialchars(strtoupper($member->ldap) ?? '', ENT_QUOTES) ?>"
 						<?= $user->hasPermission('global_admin') ? '' : 'readonly' ?>
 						required
 					>

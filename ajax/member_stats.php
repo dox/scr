@@ -11,7 +11,7 @@ if (!$memberUID) {
 
 $member = Member::fromUID($memberUID);
 
-if (!$user->hasPermission("members") && $member->ldap !== $user->getUsername()) {
+if (!$user->hasPermission("members") && strtoupper($member->ldap) !== strtoupper($user->getUsername())) {
 	die("User not permitted to see member stats.");
 }
 

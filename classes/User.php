@@ -141,7 +141,7 @@ class User {
 				//$newMember['enabled'] = '';
 				//$newMember['precedence'] = '';
 				$newMember['category'] = $type;
-				$newMember['ldap'] = $user->samaccountname[0];
+				$newMember['ldap'] = strtoupper($user->samaccountname[0]);
 				//$newMember['title'] = '';
 				$newMember['firstname'] = $user->givenname[0];
 				$newMember['lastname'] = $user->sn[0];
