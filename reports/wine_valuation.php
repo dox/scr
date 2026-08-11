@@ -94,12 +94,18 @@ foreach ($winesToDate as $wine) {
 </div>
 
 <?php
+$winesToDisplay = [];
 foreach ($wines->cellars() as $cellar) {
 	echo "<h2>" . $cellar->name . "</h2>";
 	
 	echo '<table class="table"><thead><tr><th scope="col" style="width: 40%;">Section</th><th scope="col">Wines</th><th scope="col">Bottles</th><th scope="col">Total Value</th></tr></thead><tbody>';
 	
+	$cellarTotalWines = 0;
+	$cellarTotalBottles = 0;
+	$cellarTotalValue = 0;
+	
 	foreach ($cellar->sections() as $section) {
+		
 		$sectionWines = $wines->wines([
 			'wine_bins.cellar_uid' => ['=', $cellar->uid],
 			'wine_bins.section'   => ['=', $section]
@@ -110,6 +116,8 @@ foreach ($wines->cellars() as $cellar) {
 		$sectionTotalValue = 0;
 		$sectionWinesTotal = 0;
 		foreach ($sectionWines as $wine) {
+			$winesToDisplay[] = $wine;
+			
 			$qty = $wine->currentQty($end);
 			
 			if ($qty > 0) {
@@ -118,6 +126,10 @@ foreach ($wines->cellars() as $cellar) {
 				$sectionTotalValue += ($qty * $wine->price_purchase);
 			}
 		}
+		
+		$cellarTotalWines += $sectionWinesTotal;
+		$cellarTotalBottles += $sectionTotalBottles;
+		$cellarTotalValue += $sectionTotalValue;
 		
 		$output  = "<tr>";
 		$output .= "<td scope=\"row\">" . $section . "</td>";
@@ -128,8 +140,47 @@ foreach ($wines->cellars() as $cellar) {
 		
 		echo $output;
 	}
+	
+	$output  = "<tr>";
+	$output .= "<td><strong></strong></td>";
+	$output .= "<td><strong>" . number_format($cellarTotalWines) . "</strong></td>";
+	$output .= "<td><strong>" . number_format($cellarTotalBottles) . "</strong></td>";
+	$output .= "<td><strong>" . formatMoney($cellarTotalValue) . "</strong></td>";
+	$output .= "</tr>";
+	
+	echo $output;
+	
 	echo '</tbody></table>';
 }
+?>
+
+<h2>Wines</h2>
+<?php
+echo '<table class="table">
+	<thead>
+		<tr>
+			<th scope="col" style="width: 50%;">Name</th>
+			<th scope="col">Bin</th>
+			<th scope="col">Bottles</th>
+			<th scope="col">Total Value</th>
+		</tr>
+	</thead>
+<tbody>';
+
+foreach ($winesToDisplay as $wine) {
+	$currentQty = $wine->currentQty($end);
+	$totalValue = ($currentQty * $wine->price_purchase);
+	
+	$output  = "<tr>";
+	$output .= "<td scope=\"row\">" . $wine->clean_name() . " (" . $wine->vintage() . ")" . "</td>";
+	$output .= "<td>" . $wine->binName() . "</td>";
+	$output .= "<td>" . $currentQty . "</td>";
+	$output .= "<td>" . formatMoney($totalValue) . "</td>";
+	$output .= "</tr>";
+	
+	echo $output;
+}
+echo '</tbody></table>';
 ?>
 
 <style>
