@@ -68,28 +68,33 @@ $meals    = new Meals();
 $user     = new User();
 $settings = new Settings();
 
-// Handle impersonation
+// Handle impersonation only for an authenticated user authorized to do so.
+// Validate both the identifier and the database record before changing the session.
 if (!empty($_POST['impersonate'])) {
-	$targetId = $_POST['impersonate'];
-	$maintainAdminAccess = $_POST['maintainAdminAccess'] ?? 0;
+	$targetId = filter_input(INPUT_POST, 'impersonate', FILTER_VALIDATE_INT, [
+		'options' => ['min_range' => 1]
+	]);
 
-	// Ensure targetId is valid
-	if ($targetId && is_numeric($targetId)) {
-		$originalMember = Member::fromUID($_SESSION['user']['uid']);
-		$member = Member::fromUID($targetId);
+	if (!$user->isLoggedIn() || !$user->hasPermission('impersonate')) {
+		$log->add("SECURITY ALERT: Unauthorized impersonation attempt from {$_SERVER['REMOTE_ADDR']}", 'auth', Log::WARNING);
+	} elseif ($targetId === false || $targetId === null) {
+		$log->add("SECURITY ALERT: Invalid impersonation target from {$_SERVER['REMOTE_ADDR']}", 'auth', Log::WARNING);
+	} else {
+		$originalMember = Member::fromUID((string) $user->getUID());
+		$member = Member::fromUID((string) $targetId);
 
-		$log->add("{$originalMember->name()} impersonating {$member->ldap} ({$member->name()})", 'member', Log::INFO);
+		if (!$originalMember->uid || !$member->uid) {
+			$log->add("SECURITY ALERT: Nonexistent impersonation target {$targetId} from {$_SERVER['REMOTE_ADDR']}", 'auth', Log::WARNING);
+		} else {
+			$maintainAdminAccess = !empty($_POST['maintainAdminAccess']);
+			$log->add("{$originalMember->name()} impersonating {$member->ldap} ({$member->name()})", 'member', Log::INFO);
 
-		// Backup original session
-		$_SESSION['impersonation_backup'] = $_SESSION['user'];
-		$existingPermissions = $_SESSION['user']['permissions'];
-
-		// Set impersonated session
-		$_SESSION['impersonating'] = true;
-		setUserSessionFromMember($member, $maintainAdminAccess ? $existingPermissions : null);
-
-		// Refresh User object
-		$user = new User();
+			$_SESSION['impersonation_backup'] = $_SESSION['user'];
+			$existingPermissions = $_SESSION['user']['permissions'] ?? [];
+			$_SESSION['impersonating'] = true;
+			setUserSessionFromMember($member, $maintainAdminAccess ? $existingPermissions : null);
+			$user = new User();
+		}
 	}
 }
 
