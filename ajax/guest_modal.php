@@ -16,6 +16,11 @@ $action = ($_GET['action'] ?? 'add') === 'edit' ? 'edit' : 'add';
 $guestUID = $guestUID ?? null;
 $bookingUID = $bookingUID ?? null;
 $booking = Booking::fromUID($bookingUID);
+if (!$booking->isAccessibleBy($user)) {
+	http_response_code(403);
+	die('You are not permitted to access this booking.');
+}
+
 $meal = new Meal($booking->meal_uid);
 
 // what if no guest UID, or invalid?

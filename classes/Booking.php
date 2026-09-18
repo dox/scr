@@ -69,6 +69,20 @@ class Booking extends Model {
 	public function exists(): bool {
 		return !empty($this->uid);
 	}
+
+	/**
+	 * Return whether the current user may view or modify this booking.
+	 * Meal managers can administer all bookings; other users are limited to
+	 * bookings belonging to their own LDAP username.
+	 */
+	public function isAccessibleBy(User $user): bool {
+		if (!$this->exists() || !$user->isLoggedIn()) {
+			return false;
+		}
+
+		return $user->hasPermission('meals')
+			|| strtoupper((string) $this->member_ldap) === $user->getUsername();
+	}
 	
 	public function getOne($uid) {
 		$query = "SELECT * FROM " . static::$table . " WHERE uid = ?";

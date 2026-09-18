@@ -24,6 +24,12 @@ if (!$booking->exists()) {
 	exit;
 }
 
+if (!$booking->isAccessibleBy($user)) {
+	http_response_code(403);
+	echo json_encode(['success' => false, 'message' => 'You are not permitted to modify this booking.']);
+	exit;
+}
+
 $meal = new Meal($booking->meal_uid);
 if (!$meal->isCutoffValid(true)) {
 	echo json_encode(['success' => false, 'message' => 'Update failed.  Meal cut-off has passed.']);

@@ -19,6 +19,18 @@ if (!$booking_uid) {
 }
 
 $booking = Booking::fromUID($booking_uid);
+if (!$booking->exists()) {
+	http_response_code(404);
+	echo json_encode(['success' => false, 'message' => 'Booking not found.']);
+	exit;
+}
+
+if (!$booking->isAccessibleBy($user)) {
+	http_response_code(403);
+	echo json_encode(['success' => false, 'message' => 'You are not permitted to delete this booking.']);
+	exit;
+}
+
 $meal = new Meal($booking->meal_uid);
 
 if (!$meal->isCutoffValid() && !$user->hasPermission("bookings")) {
