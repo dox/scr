@@ -6,13 +6,19 @@ if (!$user->isLoggedIn()) {
 
 $mealUID = filter_input(INPUT_GET, 'mealUID', FILTER_VALIDATE_INT);
 $meal = new Meal($mealUID);
+
+if (!$meal->uid) {
+	http_response_code(404);
+	die('Meal not found.');
+}
+
 ?>
 
 <div class="modal-body">
-	<h3 class="text-center"><?= $meal->name ?></h3>
+	<h3 class="text-center"><?= htmlspecialchars($meal->name, ENT_QUOTES, 'UTF-8') ?></h3>
 	<h5 class="text-secondary text-center mb-3">
 		<i>
-		<?= $meal->location ?>,
+		<?= htmlspecialchars($meal->location, ENT_QUOTES, 'UTF-8') ?>,
 		<?= formatDate($meal->date_meal, 'long') ?>
 		<?= formatTime($meal->date_meal) ?>
 		</i>
@@ -23,7 +29,7 @@ $meal = new Meal($mealUID);
 			<button class="nav-link active" id="menu-tab" data-bs-toggle="tab" data-bs-target="#menu-tab-pane" type="button" role="tab" aria-controls="menu-tab-pane" aria-selected="true">Menu</button>
 		</li>
 		<li class="nav-item" role="presentation">
-			<button class="nav-link" id="diners-tab" data-bs-toggle="tab" data-bs-target="#diners-tab-pane" type="button" role="tab" aria-controls="diners-tab-pane" aria-selected="false">Diners <span class="badge rounded-pill text-bg-secondary"><?= $meal->totalDiners('all') ?></span></button>
+			<button class="nav-link" id="diners-tab" data-bs-toggle="tab" data-bs-target="#diners-tab-pane" type="button" role="tab" aria-controls="diners-tab-pane" aria-selected="false">Diners <span class="badge rounded-pill text-bg-secondary"><?= (int) $meal->totalDiners('all') ?></span></button>
 		</li>
 	</ul>
 	
@@ -36,9 +42,7 @@ $meal = new Meal($mealUID);
 		</div>
 		
 		<div class="tab-pane fade" id="diners-tab-pane" role="tabpanel" aria-labelledby="diners-tab" tabindex="0">
-			<?php
-			echo $meal->dinersList();
-			?>
+			<?= $meal->dinersList() ?>
 		</div>
 	</div>
 	

@@ -342,13 +342,20 @@ class Wine extends Model {
 
 	protected function handleFileDelete(string $storedFilename, string $type = 'attachment'): bool {
 		global $log;
-		
-		$fileName = $storedFilename;
-		$targetDirectory = UPLOAD_DIR;
-		
-		$filePath = realpath($targetDirectory . $fileName);
 
-		if (file_exists($filePath) && !unlink($filePath)) {
+		$uploadDirectory = realpath(UPLOAD_DIR);
+		$filePath = realpath(UPLOAD_DIR . $storedFilename);
+		$directoryPrefix = $uploadDirectory !== false ? $uploadDirectory . DIRECTORY_SEPARATOR : '';
+
+		// Reject traversal, absolute paths, missing files, and symlinks resolving
+		// outside the uploads directory.
+		if ($uploadDirectory === false || $filePath === false
+			|| strpos($filePath, $directoryPrefix) !== 0 || !is_file($filePath)) {
+			$log->add("Rejected unsafe {$type} deletion {$storedFilename} for [wineUID:{$this->uid}]", 'file', Log::WARNING);
+			return false;
+		}
+
+		if (!unlink($filePath)) {
 			$log->add("Failed to physically delete {$type} file {$storedFilename} for [wineUID:{$this->uid}]", 'file', Log::WARNING);
 			return false;
 		}
@@ -408,11 +415,24 @@ class Wine extends Model {
 	public function removeAttachment(string $storedFilename): bool {
 		global $db, $log;
 
+		$attachments = $this->attachments() ?? [];
+		$knownAttachment = false;
+		foreach ($attachments as $attachment) {
+			if (isset($attachment['stored']) && hash_equals((string) $attachment['stored'], $storedFilename)) {
+				$knownAttachment = true;
+				break;
+			}
+		}
+
+		if (!$knownAttachment) {
+			$log->add("Rejected unassociated attachment deletion {$storedFilename} for [wineUID:{$this->uid}]", 'file', Log::WARNING);
+			return false;
+		}
+
 		if (!$this->handleFileDelete($storedFilename, 'attachment')) {
 			return false;
 		}
 
-		$attachments = $this->attachments() ?? [];
 		$attachments = array_filter($attachments, fn($a) => $a['stored'] !== $storedFilename);
 		$attachments = array_values($attachments);
 
