@@ -1,10 +1,20 @@
 <?php
-// Start session
-session_start();
-
-// Load configuration
+// Load configuration before starting the session so cookie policy is applied
+// consistently to every entry point.
 require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/../inc/global.php';
+
+ini_set('session.use_strict_mode', '1');
+ini_set('session.use_only_cookies', '1');
+session_set_cookie_params([
+	'lifetime' => 0,
+	'path'     => '/',
+	'domain'   => '',
+	'secure'   => true,
+	'httponly' => true,
+	'samesite' => 'Strict',
+]);
+session_start();
 
 // Set debugging
 if (APP_DEBUG) {
@@ -93,6 +103,8 @@ if (!empty($_POST['impersonate'])) {
 			$existingPermissions = $_SESSION['user']['permissions'] ?? [];
 			$_SESSION['impersonating'] = true;
 			setUserSessionFromMember($member, $maintainAdminAccess ? $existingPermissions : null);
+			// Treat impersonation as a privilege boundary as well.
+			session_regenerate_id(true);
 			$user = new User();
 		}
 	}
@@ -105,6 +117,7 @@ if (!empty($_POST['restore_impersonation']) && !empty($_SESSION['impersonation_b
 	// Restore original session
 	$_SESSION['user'] = $_SESSION['impersonation_backup'];
 	unset($_SESSION['impersonation_backup'], $_SESSION['impersonating']);
+	session_regenerate_id(true);
 
 	$user = new User();
 	$log->add("{$_SESSION['user']['name']} no longer impersonating {$impersonatedUsername}", 'member', Log::INFO);

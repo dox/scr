@@ -55,6 +55,8 @@ class User {
 	
 		// Set session via helper
 		setUserSessionFromMember($member);
+		// Prevent session fixation across password or remember-me authentication.
+		session_regenerate_id(true);
 	
 		// Ensure samaccountname is set in session & object
 		if (empty($_SESSION['user']['samaccountname']) && !empty($member->ldap)) {
@@ -242,6 +244,10 @@ class User {
 		unset($_SESSION['user']);
 		unset($_SESSION['impersonating']);
 		unset($_SESSION['impersonation_backup']);
+		$_SESSION = [];
+		if (session_status() === PHP_SESSION_ACTIVE) {
+			session_destroy();
+		}
 		$this->loggedIn = false;
 		$this->userData = [];
 	}
