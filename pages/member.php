@@ -334,7 +334,7 @@ echo pageTitle(
 			
 			<?php
 			// only show permissions to global admins
-			if ($user->hasPermission('global_admin')) {
+			if (empty($_SESSION['impersonating']) && $user->hasPermission('global_admin')) {
 				$grantedPermissions = $member->permissions();
 				
 				$output = "<hr><h4>Permissions</h4>";

@@ -233,7 +233,7 @@ class Member extends Model {
 				'enabled'  => isset($postData['enabled']) ? (int) $postData['enabled'] : 0,
 			]);
 	
-			if ($user->hasPermission("global_admin")) {
+			if (empty($_SESSION['impersonating']) && $user->hasPermission("global_admin")) {
 				$fields['permissions'] = isset($postData['permissions'])
 					? implode(',', array_filter($postData['permissions']))
 					: '';
